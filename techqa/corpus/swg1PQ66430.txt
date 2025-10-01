@@ -1,0 +1,133 @@
+Title: IBM PQ66430: CACHE IN JARFILEFACTORY HOLDS A STALE HANDLE - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If a JarFile retrieved from a JarURLConnection is closed,
+   new JarURLConnections for the same URL will have
+   problems accessing the jar file content, since the cash
+   in JarFileFactory still holds a stale handle for the old jar
+   file object.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  If a Jarfile retrieved from a JarURLConnection
+   is closed, new
+   JarURLConnections would have problems accessing the jar
+   file content since the cache in JarFileFactory still holds a
+   stale handle
+   for the old jar file object.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ66430
+   
+   
+ * REPORTED COMPONENT NAME
+   JAVA(1.3/1.4 CO
+   
+   
+ * REPORTED COMPONENT ID
+   5648C9800
+   
+   
+ * REPORTED RELEASE
+   31A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2002-09-20
+   
+   
+ * CLOSED DATE
+   2002-09-24
+   
+   
+ * LAST MODIFIED DATE
+   2002-09-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   JAVA(1.3/1.4 CO
+   
+   
+ * FIXED COMPONENT ID
+   5648C9800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R31A PSN
+   UP
+   
+   
+ * R31L PSN
+   UP
+   
+   
+ * R31O PSN
+   UP
+   
+   
+ * R31W PSN
+   UP

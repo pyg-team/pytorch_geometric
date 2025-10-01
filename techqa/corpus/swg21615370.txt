@@ -1,0 +1,36 @@
+Title: IBM What should I do if I do not have WORLD jurisdiction in WebSphere Commerce - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ In WebSphere Commerce Accelerator, when I go to Store -> Change Shipping, I do not see the tax jurisdiction, WORLD, What should I do to populate this jurisdiction? 
+
+ANSWER
+The WORLD jurisdiction is a default JURST, so it should not be deleted. If you are missing this jurisdiction, you can add the corresponding data to the database: 
+
+
+1. Add to the JURST table.
+
+
+You need two entries in the JURST table for both SUBCLASS = 1, which indicates that it is a "Shipping Jurisdiction" and SUBCLASS = 2, which means that it is a "Tax Jurisdiction". Enter the following SQL statements to add two entries for WORLD for the store:
+
+insert into JURST (JURST_ID, STOREENT_ID, CODE, SUBCLASS, MARKFORDELETE) values ((select max(JURST_ID) + 1 from JURST),<store_id>, 'World', 1, 0)
+insert into JURST (JURST_ID, STOREENT_ID, CODE, SUBCLASS, MARKFORDELETE) values ((select max(JURST_ID) + 1 from JURST),<store_id>, 'World', 2, 0) 
+
+ 
+
+where <store_id> is the store you are working with.
+
+2. Add entries to the JURSTGROUP table. Enter the following SQL statements:
+
+insert into JURSTGROUP (JURSTGROUP_ID, SUBCLASS, STOREENT_ID, CODE, MARKFORDELETE) values ((select max(JURSTGROUP_ID) + 1 from JURST), 1,<store_id>, 'World', 0)
+insert into JURSTGROUP (JURSTGROUP_ID, SUBCLASS, STOREENT_ID, CODE, MARKFORDELETE) values ((select max(JURSTGROUP_ID) + 1 from JURST), 2,<store_id>, 'World', 0)
+
+
+3. Update the JURSTGPREL table, which relates the JURST and JURSTGROUP tables. Enter the following SQL statements to relate the new entries that you inserted in the previous steps.
+
+insert into JURSTGPREL (JURST_ID, JURSTGROUP_ID, SUBCLASS) values ((select JURST_ID from JURST where STOREENT_ID = <store_id>and SUBCLASS = 1 and CODE = 'World'),(select JURSTGROUP_ID from JURSTGROUP where SUBCLASS= 1 and STOREENT_ID = <store_id>and CODE = 'World'), 1)
+insert into JURSTGPREL (JURST_ID, JURSTGROUP_ID, SUBCLASS) values ((select JURST_ID from JURST where STOREENT_ID =<store_id>and SUBCLASS = 2 and CODE = 'World'),(select JURSTGROUP_ID from JURSTGROUP where SUBCLASS= 2 and STOREENT_ID = <store_id>and CODE = 'World'), 2)
+
+After you insert these records, you might need to close and reopen Accelerator for the changes to get picked up.

@@ -1,0 +1,61 @@
+Title: IBM Remote monitoring multiple Queue Managers with ITM MQ agent - United States
+
+Text:
+multiple queue manager qmgr kmq TECHNOTE (FAQ)
+
+QUESTION
+ What are the steps to set up MQ agent to remotely monitor multiple queue managers? 
+
+CAUSE
+Documentation at
+http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/com.ibm.omegamon.mes_dist.doc_7.1/t_monitor_mult_mgr.html [http://publib.boulder.ibm.com/infocenter/tivihelp/v24r1/topic/com.ibm.omegamon.mes_dist.doc_7.1/t_monitor_mult_mgr.html]
+is a bit unclear in describing all of the steps to perform.
+
+
+ANSWER
+Let's consider the following scenario: remote queue managers QM1, QM2, QM3 with QM1 considered the primary queue manager. 
+
+ 
+1. Create a pair of sender and receiver channels between each additional queue manager that you want to monitor remotely and the WebSphere MQ Monitoring agent.
+
+This means: create client and server channel (and listener) as described in the "Setting up the environment for remote queue manager monitoring" section, point 3. 
+
+On the host where QM1 resides: 
+runmqsc QM1 
+define listener(QM1) TRPTYPE(TCP) PORT(1235) 
+define channel(REM.CH.1) CHLTYPE(SVRCONN) TRPTYPE(TCP) 
+define channel(REM.CH.1) CHLTYPE(CLNTCONN) TRPTYPE(TCP) 
+CONNAME('1.123.123.123(1235)') QMNAME(QM1) 
+
+On the host where QM2 resides: 
+runmqsc QM2 
+define listener(QM2) TRPTYPE(TCP) PORT(1236) 
+define channel(REM.CH.2) CHLTYPE(SVRCONN) TRPTYPE(TCP) 
+define channel(REM.CH.2) CHLTYPE(CLNTCONN) TRPTYPE(TCP) 
+CONNAME('1.123.123.124(1236)') QMNAME(QM2) 
+
+On the host where QM3 resides: 
+runmqsc QM3 
+define listener(QM3) TRPTYPE(TCP) PORT(1237) 
+define channel(REM.CH.3) CHLTYPE(SVRCONN) TRPTYPE(TCP) 
+define channel(REM.CH.3) CHLTYPE(CLNTCONN) TRPTYPE(TCP) 
+CONNAME('1.123.123.125(1237)') QMNAME(QM3) 
+
+
+2. Create a pair of channels between the primary queue manager and the WebSphere MQ Monitoring agent for each additional queue manager that you want to monitor remotely. 
+
+3. Configure each of the channels created in step 2 using the same configuration parameters used by the channels connecting the actual queue manager to be monitored to the WebSphere MQ Monitoring agent. 
+
+This means: create on QM1 the same objects already created on step 1 for QM2 and QM3, so that the related information is reported into the MQ1 AMQCLCHL.TAB file that will be copied on the WMQ monitoring agent host. 
+
+On the host where the QM1 resides, run the following commands: 
+define channel(REM.CH.2) CHLTYPE(SVRCONN) TRPTYPE(TCP) 
+define channel(REM.CH.2) CHLTYPE(CLNTCONN) TRPTYPE(TCP) 
+CONNAME('1.123.123.124(1236)') QMNAME(QM2) 
+define channel(REM.CH.3) CHLTYPE(SVRCONN) TRPTYPE(TCP) 
+define channel(REM.CH.3) CHLTYPE(CLNTCONN) TRPTYPE(TCP) 
+CONNAME('1.123.123.125(1237)') QMNAME(QM3) 
+
+4. Copy the AMQCLCHL.TAB file from the primary queue manager (QM1) to the system that hosts the WebSphere MQ Monitoring agent. 
+
+Then you have to create an instance of the WMQ monitoring agent for each remote queue manager you want to monitor, specifying REMOTE in the SET MANAGER statement and adding the SET AGENT statement with the hostname/ipaddress of the host where the remote queue managers reside.

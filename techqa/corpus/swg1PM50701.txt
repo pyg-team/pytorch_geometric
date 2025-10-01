@@ -1,0 +1,267 @@
+Title: IBM PM50701: PORTAL ADMINISTRATION LEFT NAV CONTEXT MENU POPUPS FAIL - United States
+
+Text:
+  FIXES ARE AVAILABLE
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This situation only occurs when a customer must disable active
+   scripting in IE's INTERNET zone and therefore has to run their
+   portal site from IE's TRUSTED zone.  It is due to a known issue
+   in IE which has been documented here, among other places:
+   
+   - http://www.eggheadcafe.com/software/aspnet/34129243/active-scr [http://www.eggheadcafe.com/software/aspnet/34129243/active-scr]
+   
+   ipting-issue--dynamic-code-uses-wrong-security-zone.aspx
+   - http://karma.nucleuscms.org/item/101 [http://karma.nucleuscms.org/item/101]
+   
+   1. Navigate to: Administration --> Portal User Interface -->
+   Manage
+   Pages
+   
+   (or, select any page link within the left navigation in Portal
+   Administration)
+   2. Once the page has loaded, hover the mouse over the selected
+   menu link in the
+   left navigation again. A black down-arrow should display as the
+   mouse is
+   hovered over the left navigation menu item.
+   3. Click on the black down-arrow  to bring up the list of
+   submenu choices in a
+   context menu.
+   
+   4. The blue rotating icon appears but the context menu never
+   displays.
+   Opened for release 7001
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Make all necessary backups before performing these changes.
+   
+   1:
+   change this file to add the line noted below
+   <install_root>/PortalServer/installer/wp
+   .ear/installableApps/wps_theme.ear/wps_theme
+   .war/themes/html/Portal/js/AsynchronousContextMenu.js
+   
+   document.body.appendChild(dialogTag);  // add this line
+   just above the innerHTML line shown below
+   
+   //create the iframe this way because onload handlers
+   attached when creating dynamically don't seem to fire
+   dialogTag.innerHTML='<iframe id="' + menuID + '"
+   name="' + ID + '_IFRAME" src="' + url + '"
+   onload="buildAndDisplayMenu( this.id, this.name, ' +
+   styleString
+   + ', ' + showMenu + ' , \''+ onMenuAffordanceShowHandler + '\'
+   ); return false;" style="height: 1px; width: 1px;"
+   ></iframe>';
+   
+   *  after making this change you need to 'touch' the following
+   files in this order to ensure this change is recognized
+   <install_root>/PortalServer/installer/wp
+   .ear/installableApps/wps_theme.ear/wps_theme
+   .war/themes/html/Portal/js.jsp
+   <install_root>/PortalServer/installer/wp
+   .ear/installableApps/wps_theme.ear/wps_theme
+   .war/themes/html/Portal/head.jspf
+   <install_root>/PortalServer/installer/wp
+   .ear/installableApps/wps_theme.ear/wps_theme
+   .war/themes/html/Portal/Default.jsp
+   
+   2:
+   in theme_en.html, for example, which is in the csa2.theme node
+   in the Page Builder 2 files accessible through webdav (and any
+   custom themes the customer may use which are based on Page
+   Builder 2), change this:
+   
+   <script type="text/javascript">
+   dojo.addOnLoad(function(){
+   com.ibm.pb.themes.commonInit({
+   setWindowTitle:false, // title is set by the head dynamic
+   content spot
+   useNavigationController: true,
+   useRenderingController: true,
+   useDNDController: true,
+   initLiveTextService: true,
+   lazyLoadModeWidgets: true,
+   navPrimingContainers: ["selectionPathPrimer","topNavLinks","nav
+   TabsRoot"],
+   customInit: com.ibm.themes.PageBuilder2.init
+   });
+   dojo.publish("com.ibm.portal.theme.portlet_ready"); // notifies
+   ASA that portlet IDs are ready to be found in the DOM
+   });
+   </script>
+   
+   to this:
+   
+   <script type="text/javascript">
+   var resolveDOMContentLoadedIssue = function(){
+   com.ibm.pb.themes.commonInit({
+   setWindowTitle:false, // title is set by the head dynamic
+   content spot
+   useNavigationController: true,
+   useRenderingController: true,
+   useDNDController: true,
+   initLiveTextService: true,
+   lazyLoadModeWidgets: true,
+   navPrimingContainers: ["selectionPathPrimer","topNavLinks","nav
+   TabsRoot"],
+   customInit: com.ibm.themes.PageBuilder2.init
+   });
+   dojo.publish("com.ibm.portal.theme.portlet_ready"); //
+   notifies ASA that portlet IDs are ready to be found in the DOM
+   }
+   
+   if (dojo.isIE) {
+   dojo.connect('onload', resolveDOMContentLoadedIssue);
+   } else {
+   dojo.addOnLoad(resolveDOMContentLoadedIssue);
+   }
+   </script>
+   
+   * after making this change, restart portal in order for this
+   change to be recognized
+   
+   The APAR which will be created for this PMR is for the first
+   change.  As for the second change, these changes are already
+   planned to be included in a future release of the PageBuilder
+   theme.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  This situation only occurs when a customer must disable active
+   scripting in IE's INTERNET zone and therefore has to run their
+   portal site from IE's TRUSTED zone.  It is due to a known issue
+   in IE which has been documented here, among other places:
+   
+   - http://www.eggheadcafe.com/software/aspnet/34129243/active-scr [http://www.eggheadcafe.com/software/aspnet/34129243/active-scr]
+   
+   ipting-issue--dynamic-code-uses-wrong-security-zone.aspx
+   - http://karma.nucleuscms.org/item/101 [http://karma.nucleuscms.org/item/101]
+   
+   1. Navigate to: Administration --> Portal User Interface -->
+   Manage
+   Pages
+   
+   (or, select any page link within the left navigation in Portal
+   Administration)
+   2. Once the page has loaded, hover the mouse over the selected
+   menu link in the
+   left navigation again. A black down-arrow should display as the
+   mouse is
+   hovered over the left navigation menu item.
+   3. Click on the black down-arrow  to bring up the list of
+   submenu choices in a
+   context menu.
+   
+   4. The blue rotating icon appears but the context menu never
+   displays.
+   Opened for release 7001
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The solution is to attach any created elements to the DOM before
+   attempting to make any innerHTML changes involving that element.
+   
+   For 6.x customers, the solution has been packaged in superfix03.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM50701
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-10-24
+   
+   
+ * CLOSED DATE
+   2011-12-14
+   
+   
+ * LAST MODIFIED DATE
+   2011-12-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,15 @@
+Title: IBM User account cannot be created or modified on Windows - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The WebSphere Application Server and DB2 Universal Database are successfully started on the same Windows system but a user account cannot be modified or created. 
+
+CAUSE
+The WebSphere Application Server and the DB2 Universal Database™ are installed on the same Windows system. The WebSphere Application Server and the DB2 Universal Database services are set up to start automatically. After rebooting the system, the WebSphere Application Server and DB2 Universal Database are successfully started, but a user or account cannot be created or modified.
+
+RESOLVING THE PROBLEM
+The messaging engine did not start because the WebSphere Application Server started before the DB2 Universal Database started. When the WebSphere Application Server starts, the messaging engine for IBM Security Identity Manager is started, ifthe DB2 Universal Database is available at that time. 
+
+After rebooting the system, manually ensure that the messaging engine for IBM Security Identity Manager started successfully. On the WebSphere Application Server Administrative Console, select Service Integration > Buses > itim_bus > Messaging engines from the Topology section. If the messaging engine is not started, you can start it from this page in the WebSphere administration console.

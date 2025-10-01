@@ -1,0 +1,95 @@
+Title: IBM ITCAM4Tx : RRT (t6)  agent for RPT scripts-  jvm settings control - United States
+
+Text:
+71RRT-ROBPLAN; 71RRT-ROBCONF; 71RRT-ROBPLAY; 71RRT-RPTPLAN; 71RRT-RPTCONF; 71RRT-RPTPLAY; 71RRT-RFTPLAN; 71RRT-RFTCONF; 71RRT-RFTPLAY robotic java virtual machine tuning performance setting TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to control the settings of the jvm running the T6 agent, and of the jvm running RPT scripts with Robotic Response Time (t6) agent? 
+
+ANSWER
+1) On Windows, you can control the behavior of the KT6agent JVM, to a
+certain extend only, by modifying the file kt6env, (for example : C:\IBM\ITM\TMAITM6\kt6env)
+with JVM parameters like:
+KT6_JVM_OPTIONS=-Xmx1024m
+to specify the maximum amount of memory used by the JVM
+
+Some parameters, for example:
+KT6_JVM_OPTIONS=-Xms256m -Xmx512m -Xcompactexplicitgc
+are not accepted, because the IBM Tivoli RAS1 Service Log
+<host>_t6_<timestamp>.log then shows :
+
+JVMJ9VM081W Malformed option value, option "-Xmx512m" contains trailing
+characters " " which have been ignored
+JVMJ9VM081W Malformed option value, option 
+
+Either amend the existing "Xms" or "Xmx" entry, or add the following line:
+KT6_JVM_OPTIONS=-Xmx1024m
+
+Windows maximum:
+KT6_JVM_OPTIONS=-Xmx1260m
+
+Note: We have found that anything > 1260m crashed T6 agent on Windows
+
+
+If you set the maximum (-Xmx) too high, the JVM process runs out of memory.
+T6 agent only use 32-bit JVMs (so far) so the process limit is 2GB.
+The JVM itself takes up some space and the maximum size only specifies the heap, so we wouldn't recommend putting the maximum above about 1.2 GB or 1260m
+(as mentioned above) .
+
+KT6_JVM_OPTIONS="-Xms256m" specifies the minimum java heap size needed to start the agent.
+
+There is no lower limit to the minimum (-Xms), but if you set it too low and memory resources are low, the JVM takes a long time to start.
+
+
+The default settings are: 
+
+Windows: <ITM_HOME>/TMAITM6/kt6env: KT6_JVM_OPTIONS=-Xms256m
+UNIX: <ITM_HOME>/config/t6.ini: KT6_JVM_OPTIONS=-Xmx512m
+
+
+
+2) The JVM running the RPT script(s) via RPT runtime(s) is controlled by the file managed_jvm.xml 
+
+(On Windows <ITM_HOME>\TMAITM6\app\RPT\config\managed_jvm.xml)
+
+So for example, you can increase the amount of java memory available for RPT script playbacks . 
+Find the entry like this: 
+<property name="Xmx512m" value="" isPath="no" /> 
+
+Change it to: 
+<property name="Xmx1024m" value="" isPath="no" />
+to increase the maximum heap size of the JVM running RPT runtime and playing back scripts.
+
+
+The config files specify by default : 
+
+Windows <ITM_HOME>\TMAITM6\app\RPT\config\managed_jvm.xml 
+
+property name="Xmx512m"... 
+
+
+UNIX: <ITM_HOME>\TMAITM6\app\RPT\config\managed_jvm.xml 
+
+property name="Xmx512m"... 
+
+ 
+
+
+The maximum value for:
+property name="Xmx
+is determined by the machines physical memory and "bitness" 
+
+Physical Memory 32bit OS 64bit OS 
+1GB 512m 512m
+2GB 1024m 1024m 
+3GB 1200m 1536m 
+4GB 1200m 1900m 
+6GB 1200m 1900m 
+8GB 1200m 1900m 
+16GB 1200m 1900m
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itcam itcam4tx itcamfortx itcamfortranmsactions

@@ -1,0 +1,27 @@
+Title: IBM Rule Execution Server J2SE mode hot deployment does not seem to work - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why is the hot deployment in J2SE mode of Rule Execution Server (RES) not working ?
+What is the meaning of the log message "2/2/12 2:10 PM [WARNING] 9005 - -.- - An MBean of a previous XU is already registered. It will be replaced by a new MBean." ?
+
+
+CAUSE
+The notification from the RES console to the execution unit (XU) happens through JMX API. If the XU MBean has not be successfully registered, the XU will not receive notifications of updates. Ruleset executions can still function as expected, but no ruleset update will be taken into account.
+
+ANSWER
+The registration of a XU MBean can replace another XU MBean if it has the same name and prevent the XU of the previously registered MBean to receive any ruleset update notification. For example if multiple webapps are deployed with an embedded XU in each, and the xuName in each webapp ra.xml is the same, then only one webapp will have a XU MBean properly registered and only this webapp XU will be notified of ruleset updates. This can be fixed by giving a setting a different xuName in each deployed ra.xml. 
+
+Another example is with the instantiation of several IlrJ2SESessionFactory in one application: if several such instances are created and set to distinct outputs ( through IlrJ2SESessionFactory.setOutput() ) then one XU is in effect created per instance, and only one will have a XU MBean properly registered. This can be addressed by instantiating only one RES session factory for the application, and by sharing it through a static reference or a singleton pattern.
+
+RELATED INFORMATION
+#An unexpected ruleset version is executed [http://www.ibm.com/support/docview.wss?uid=swg21598779]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager APIs Platform Independent 8.5.1, 8.5, 8.0.1, 8.0, 7.5

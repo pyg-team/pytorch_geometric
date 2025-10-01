@@ -1,0 +1,200 @@
+Title: IBM PM46964: SQLCODEN104 PANEL ADB21K SQ LINE COMMAND TSO PROFILE NOPREFIX - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The DB2 Administration Tool for z/OS panel ADB21K 'Packages'
+   SQ - SQL in package line command fails with a SQLCODE -104 /
+   SQLCODEN104 when the users TSO PROFILE shows NOPREFIX and the
+   DB2 release is DB2 10 in New Function Mode / NFM.
+   Additional symptom:
+   SQLCODEN199
+   DSNT408I SQLCODE = -199, ERROR:  ILLEGAL USE OF KEYWORD T.
+   TOKEN
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Issue a TSO PROFILE PREFIX command and set an appropriate
+   value for the prefix.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of the DB2 Administration Tool for     *
+   *                 z/OS who use DB2 10 New Function Mode        *
+   *                 (NFM) with TSO PROFILE NOPREFIX and          *
+   *                 execute the 'SQ' line command on panel       *
+   *                 ADB21K 'Packages' or ADB21L 'Collections'    *
+   *                 to view the SQL statements in package(s).    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The DB2 Administration Tool for z/OS    *
+   *                      'SQ' line command on panel ADB21K or    *
+   *                      ADB21L fails wit SQLCODEN104/           *
+   *                      SQLCODE=-104 when the user's TSO        *
+   *                      PROFILE uses NOPREFIX and the DB2       *
+   *                      release is DB2 10 New Function Mode:    *
+   *                                                              *
+   *                      DSNT408I SQLCODE = -104,                *
+   *                      ERROR:  ILLEGAL SYMBOL "T".             *
+   *                      SOME SYMBOLS THAT MIGHT BE              *
+   *                       LEGAL ARE:                             *
+   *                      <ERR_STMT> <WNG_STMT>                   *
+   *                      GET SQL SAVEPOINT HOLD FREE             *
+   *                      ASSOCIATE                               *
+   *                      DSNT418I SQLSTATE   = 42601             *
+   *                      SQLSTATE RETURN CODE                    *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The DB2 Administration Tool for z/OS 'SQ' line command on panel
+   ADB21K or ADB21L fails with SQLCODEN104/SQLCODE=-104 when the
+   user's TSO PROFILE uses NOPREFIX and the DB2 release is DB2 10
+   New Function Mode:
+   
+   DSNT408I SQLCODE = -104, ERROR:  ILLEGAL SYMBOL "T".  SOME
+   SYMBOLS THAT MIGHT BE LEGAL ARE:  <ERR_STMT> <WNG_STMT>
+   GET SQL SAVEPOINT HOLD FREE ASSOCIATE
+   DSNT418I SQLSTATE   = 42601 SQLSTATE RETURN CODE
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Programs have been updated to resolve the reporting problem.
+   A similar problem (SQLCODEN104) also exists on other panels
+   when a user's TSO PROFILE uses NOPREFIX and has been resolved.
+   
+   For DB2 Administration Tool for z/OS Version 10.1, these panels
+   are affected:
+   
+   ADB26COW 'Stored Procedure BIND Options'
+   ADB2ELI 'Interpretation of Row from PLAN_TABLE'
+   ADBP6CPM 'Create Row Permission panel'
+   ADBP6CFZ 'Alter SQL Scalar Bind Options panel'
+   ADBP6CCM 'Create Column Mask panel'
+   ADBPZRP 'Manage RUNSTATS Profile panel'
+   
+   For DB2 Administration Tool for z/OS Version 7.2, this panel
+   is affected:
+   
+   ADB26COW 'Stored Procedure BIND Options panel'
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM46964
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 ADMIN TOOL
+   
+   
+ * REPORTED COMPONENT ID
+   568851500
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-01
+   
+   
+ * CLOSED DATE
+   2011-11-10
+   
+   
+ * LAST MODIFIED DATE
+   2012-06-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK73725 UK73726
+   
+   
+
+MODULES/MACROS
+ *     ADBPZRP  ADBP6CCM ADBP6CFZ ADBP6CPM ADB2ELI
+   ADB21K   ADB21L   ADB26COW
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 ADMIN TOOL
+   
+   
+ * FIXED COMPONENT ID
+   568851500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY UK73725 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK73725]
+   UP11/11/12 P F111
+   
+   
+ * R720 PSY UK73726 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK73726]
+   UP11/11/12 P F111
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

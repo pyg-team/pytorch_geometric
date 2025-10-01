@@ -1,0 +1,43 @@
+Title: IBM WebSEAL generates expired LTPA token at ltpa-auth enabled - United States
+
+Text:
+ltpa-auth TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSEAL generates expired LTPA token with following condition.
+Case 1:
+[ltpa] update-cookie=-1
+[session] timeout=0
+Case 2:
+[ltpa] update-cookie=0 or <positive number>
+[session] inactive-timeout=0 
+
+CAUSE
+WebSEAL generates LTPA token with expiration time by following rules.
+When update-cookie<0
+expiration time = webseal-session-created-time + timeout
+When update-cookie>=0
+expiration time = cookie-generated-time + inactive-timeout
+
+However, when timeout or inactive-timeout equals zero, following values are set.
+When update-cookie<0 and timeout=0
+expiration time = 1970/01/01 00:00:00 GMT
+When update-cookie>=0 and inactive-timeout=0
+expiration time = cookie-generated-time
+
+
+
+RESOLVING THE PROBLEM
+Need to set positive number into timeout or inactive-timeout parameter if ltpa-auth is enabled 
+
+Case 1: 
+
+ [ltpa] update-cookie=-1 
+
+ [session] timeout= <positive number> 
+
+Case 2: 
+
+ [ltpa] update-cookie=0 or <positive number> 
+
+ [session] inactive-timeout= <positive number>

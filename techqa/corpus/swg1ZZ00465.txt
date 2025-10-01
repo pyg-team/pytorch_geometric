@@ -1,0 +1,168 @@
+Title: IBM ZZ00465: ICO 2.4 UNABLE TO OPEN ICO ADMIN UI, GETTING ERROR 'OPERATIONALERROR AT / NO EXCEPTION MESSAGE SUPPLIED' - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM DEFINITION:
+   
+   Upon building ICO 2.4 environment, unable to open the ICO Admin
+   UI, getting error:
+   
+   OperationalError at /
+   
+   
+   No exception message supplied
+   
+   Request Method:  GET
+   Request URL:  https://<servername>.ibm.com/ [https://<servername>.ibm.com/]
+   Django Version:  1.6
+   Exception Type:  OperationalError
+   Exception Location:
+   /usr/lib64/python2.6/site-packages/ibm_db_dbi.py
+   in connect, line 587
+   Python Executable:  /usr/bin/python
+   Python Version:  2.6.6
+   Python Path:
+   
+   ['/usr/share/openstack-dashboard/openstack_dashboard/wsgi/../..'
+   ,
+    '/usr/share/openstack-dashboard/openstack_dashboard',
+    '/usr/lib64/python26.zip',
+    '/usr/lib64/python2.6',
+    '/usr/lib64/python2.6/plat-linux2',
+    '/usr/lib64/python2.6/lib-tk',
+    '/usr/lib64/python2.6/lib-old',
+    '/usr/lib64/python2.6/lib-dynload',
+    '/usr/lib64/python2.6/site-packages',
+    '/usr/lib64/python2.6/site-packages/gtk-2.0',
+    '/usr/lib/python2.6/site-packages',
+    '/usr/lib/python2.6/site-packages/setuptools-0.6c11-py2.6.egg-i
+   nfo']
+   
+   
+   ADDITIONAL DETAILS:
+   
+   The abvove error indicated that horizon coulsd not connect to
+   its backend, and it turned out that the dash user password was
+   expired, and client had to reset it.
+   For this customer, the DB is not on CS1,
+   so he had to first change the dash user password on the DB
+   server. When the user can connect on the DB server, then next
+   step is to follow the ICO instructions to update the dash
+   password that will be used when connecting from cs2, etc via the
+   following link:
+   https://www-01.ibm.com/support/knowledgecenter/SS4KMC_2.4.0.1/co [https://www-01.ibm.com/support/knowledgecenter/SS4KMC_2.4.0.1/co]
+   m.ibm.sc
+   o.doc_2.4/r_how_to_change_the_various_passwords.html
+   
+   Therefore, the ICO documentation on the above mentioned link
+   needs to be modified to reflect steps for customer environments
+   where the DB is not on CS1.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ICO 2.4 UNABLE TO OPEN ICO ADMIN UI, GETTING ERROR
+   'OPERATIONALERROR AT / NO EXCEPTION MESSAGE SUPPLIED'
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  password for db2inst1 changed on database server, we need to
+   follow steps given on below link, either database is on CS1 or
+   on external node
+   
+   https://www-01.ibm.com/support/knowledgecenter/SS4KMC_2.4.0.1/co
+   m.ibm.sco.doc_2.4/r_how_to_change_the_various_passwords.html [https://www-01.ibm.com/support/knowledgecenter/SS4KMC_2.4.0.1/com.ibm.sco.doc_2.4/r_how_to_change_the_various_passwords.html]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00465
+   
+   
+ * REPORTED COMPONENT NAME
+   SMRTCLOUD ORCHS
+   
+   
+ * REPORTED COMPONENT ID
+   5725H2800
+   
+   
+ * REPORTED RELEASE
+   240
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-05
+   
+   
+ * CLOSED DATE
+   2016-03-17
+   
+   
+ * LAST MODIFIED DATE
+   2016-03-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

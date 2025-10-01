@@ -1,0 +1,84 @@
+Title: IBM Collecting Data: Virtual Portals for WebSphere Portal 6.1 - United States
+
+Text:
+mustgather; mustgather; mustgather; mustgatherdocument; PORTSE; virtual portal; virtual; realm; multiple realms; vp; hostname; url; collecting data; collecting data; collecting data TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+This technote describes how to collect data for any problem associated with configuring or operating virtual portals in IBM WebSphere Portal version 6.1. Gathering this information before calling IBM Support will help us to understand the problem and save time analyzing the data.
+
+RESOLVING THE PROBLEM
+If you already contacted IBM support or must collect data to determine the nature of a problem in WebSphere Portal regarding virtual portals, review the following information in Collecting Data: Read first for WebSphere Portal [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21312740]. 
+
+Virtual Portal Information
+
+Problem Description
+Provide a clear description of the problem and include as many details as possible. If there are error messages, collect the stacktrace (by clicking on"View Details"), error code, screenshot, etc.
+
+System Configuration Information
+
+a. Version and fixpack level of WebSphere Portal, WebSphere Application Server, LDAP, database, and other components such as Tivoli Access Manager.
+
+b. How was the virtual portal created? Was it done using the Manage Virtual Portal portlet or through the configuration task "create-virtual-portal"?
+
+c. How was the security configured? Using stand-alone or federated user registries? Please provide the details of the realm definition. 
+
+d. HTTP server configuration: type, version, httpd.conf, plugin-cfg.xml, access.log, andhttp_plugin.log
+
+e. Run the configuration task, "list-all-virtual-portals", to show the current virtual portals.
+
+f. Take screenshots from the following three portlets: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+
+Collection of troubleshooting data Enabling traces
+Enable Virtual Portal trace from the WebSphere Administrative Console: Troubleshooting -> Logs and Trace -> WebSphere_Portal -> Diagnostic Trace. We recommend to increase the log file size to 20 MB each and the historical copies to 20. Make sure "Enable Log" is checked, and then enter trace strings according to the nature of the problem as follows: 
+
+ * Use the following trace strings at a minimum: com.ibm.wps.engine.Servlet=all:com.ibm.wps.services.vpmapping.*=all: 
+   com.ibm.wps.command.vp.*=all:com.ibm.wps.portlets.managevirtualportals.*=all
+   
+   
+
+ * If the problem is related to login or user and group management in a virtual portal, add com.ibm.wps.engine.commands.*=all:com.ibm.wps.services.authentication.*=all:
+   com.ibm.wps.services.puma.*=all:com.ibm.wps.puma.*=all:com.ibm.wps.um.*=all:
+   com.ibm.ws.wim.*=all:com.ibm.websphere.wim.*=all:com.ibm.wsspi.wim.*=all
+   
+   
+   
+ * If the problem is related to permissions or access control, add: com.ibm.wps.ac.impl.AccessControlConfigFederator=all:
+   com.ibm.wps.ac.impl.AccessControlFederator=all
+   
+   
+   
+ * If the problem is related to XML access or Release Builder, add:
+
+
+com.ibm.wps.command.xml.*=all 
+
+If you want to set logging options for the current session only, use the Enable Tracing page in the WebSphere Portal Administration pages for dynamic tracing. (Be advised, however, that the potential exists for dynamic tracing to impact the performance of the system as it uses the Java Virtual Machine's (JVM) memory to fill the buffer before writing the data to the log.) 
+
+For further information regarding logging and tracing in the portal, refer to the article "WebSphere Portal run-time logs" in the WebSphere Portal InfoCenter [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?topic=/com.ibm.wp.ent.doc/trouble/run_logs.html]. 
+
+Collecting log/configuration files 
+1. Collect the following files from the server:  * <WP_profile_root>/config/cells/<cell>/wim/config/wimconfig.xml 
+ * <WP_profile_root>/ConfigEngine/properties/wkplc.properties 
+ * <WP_profile_root>/config/cells/<cell>/security.xml 
+ * <WP_profile_root>/config/cells/<cell>/fileRegistry.xml 
+ * <WP_profile_root>/ConfigEngine/log/ConfigTrace.log, 
+ * <WP_profile_root>/config/cells/<cell>/nodes/<node>/servers/WebSphere_Portal/resources.xml (standalone server) 
+   or if it's in a cluster, <DMGR_profile_root>/config/cells/<cell>/clusters/<WPcluster>/resources.xml 
+ * <WP_profile_root>/logs/WebSphere_Portal/SystemErr.log, SystemOut.log, and trace.log
+
+
+If the initialization XML files for the virtual portal were customized, provide the init XML file(s). The default location is: <WP_profile_root>/installedApps/<node>/wps.ear/wps.war/virtualportal 
+
+Be certain to indicate the relevant date and time to IBM support in your communications, and use specific entries from the log to illustrate the problem reported if necessary. 
+
+2. Send files to IBM Support by using the instructions outlined in Exchanging information with IBM Technical Support for problem determination [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571]. 
+
+Related Information  * Overview: WebSphere Portal Support [http://www.ibm.com/software/genservers/portal/support/] [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21201571] 
+ * Steps to getting support for WebSphere Portal [http://www.ibm.com/developerworks/websphere/zones/portal/support/portal_support.html] 
+ * Collecting Data: Read first for IBM WebSphere Portal [http://www.ibm.com/support/docview.wss?rs=688&uid=swg21312740]

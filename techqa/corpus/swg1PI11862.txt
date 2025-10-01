@@ -1,0 +1,205 @@
+Title: IBM PI11862: GENERATETEMPLATE FAILS IF YOU SELECT USE QUICK CAPTURE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   
+   IBM UrbanCode 6.0.1.1 with the plugins:
+   Middleware Configuration for WebSphere v4
+   
+   These steps reproduce the problem:
+   
+   1. Use UCD 6.0.1.1 and MCWAS4 on Windows 7
+   
+   2. Install the Plugin: Application Deployment for Websphere
+   v68.455164
+   
+   3. Create a Top Level Resource
+   
+   4. Add an Agent
+   
+   5. Wait some time, the WebSphere Cell is created under the Agent
+   
+   6. Set the properties to connect to a Websphere Application
+   Server 8.5 Base Profile
+   
+   7. Select Auto Import.
+   
+   8. Notice that the cell and server are created in the Resources
+   Tree
+   
+   9. Create a new Component using the Component Template:
+   Middleware
+   Configuration Foer WebSphere, called "CreateWASConfig"
+   
+   10. Create a new Application
+   
+   11. Add the Component to the Application
+   
+   12. Add a new environment to the Application
+   
+   13. Add the Top-Level resource to the Environment
+   
+   12. Position the Component under server1 in the Resources Tree
+   
+   14. Create an Application process that uses: "CreateWASConfig" >
+   GenerateTemplate. Select the check box: Use Quick Capture
+   
+   15. Launch the Application process.
+   
+   The following error occurs:
+   
+   [exec] WASX7017E: Exception received while running file
+   "C:/UDEPLOY/agent/var/plugins/COMIBM.MCW/product/action
+   s/configure/was/common/nd/scripts/QuickCapture.py"; exception
+   information:
+   com.ibm.websphere.management.exception.InvalidConfigDataTypeExce
+   ption
+   [exec]
+   com.ibm.websphere.management.exception.InvalidConfigDataTypeExce
+   ption:
+   ADMG0007E: The configuration data type ServiceClass is not
+   valid.
+   [exec]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do not select the check box: Use Quick Capture
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of the MCWAS plug-in                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Issues with Generate Template                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A fix is provided in the IBM Middleware Configuration for
+   Websphere plug-in version 6.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI11862
+   
+   
+ * REPORTED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * REPORTED COMPONENT ID
+   5725M5400
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-02-17
+   
+   
+ * CLOSED DATE
+   2014-05-28
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UC DEPLOY
+   
+   
+ * FIXED COMPONENT ID
+   5725M5400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP
+   
+   
+ * R600 PSY
+   UP
+   
+   
+ * R601 PSN
+   UP
+   
+   
+ * R601 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP
+   
+   
+ * R610 PSY
+   UP

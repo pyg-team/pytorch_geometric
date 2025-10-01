@@ -1,0 +1,24 @@
+Title: IBM Modifying the default Monitoring Level and Sampling Rate in the J2EE v7.1.1.0.0 agent. - United States
+
+Text:
+J2EE TEMA Monitoring Level Sampling Rate xml files CAMADALL CAMJ2INST DC WebLogic TECHNOTE (FAQ)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+QUESTION
+ How do I modify the default Monitoring Level and Sampling Rate in the new J2EE v7.1.1.0.0 agent? 
+
+ANSWER
+In the older release of the J2EE agent (v6.2 FP6), there was an option to specify the Monitoring Level, Sampling Rate and other parameters (threshold values, time intervals, etc..) during the configuration phase of the agent itself. This is now not possible in the new J2EE agent v7.1.1.0.0 configuration panels as these options are not available anymore. 
+
+The default values for the Monitoring Level and the Sampling Rate are L1 and 2% respectively. If you want to change these default values permanently, then please make these changes.
+
+In the $ITM_HOME/config (Unix) dir or %ITM_HOME%\TMAITM6 (Windows), you will find the <hostname>_yj.xml file. Make a copy of this file, then stop the agent and make changes to the parameters (see screenshot below) in the file. Save file, restart the agent. The new values will now be accepted in the agent. If you are deploying a new Weblogic application, stop the agent, modify the <hostname>_yj_<wls_instance>.xml file then restart the agent again.
+
+[/support/docview.wss?uid=swg21700308&aid=1] [/support/docview.wss?uid=swg21700308&aid=1]
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM ITCAM for J2EE DC JBoss WebLogic

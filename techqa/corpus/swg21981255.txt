@@ -1,0 +1,58 @@
+Title: IBM Daeja ViewOne 4.1.5 is not prompting to allow to save annotation updated - United States
+
+Text:
+Daeja Viewone; save annotation; prompt TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Daeja ViewOne 4.1.5 is not prompting to allow to save annotation updated 
+
+SYMPTOM
+ 
+
+ * With Compatibility mode enabled on the Internet Explorer browser (IE), no prompt appear after adding or updating an annotation in the Daeja ViewOne viewer and closing the browser window. 
+ * With Compatibility mode disabled on the IE, a prompt appeared after adding or updating an annotation in the Daeja ViewOne viewer and closing the browser.
+   
+   Are yo sure you want to leave this page?
+   There are unsaved annotation on this document.
+   Leave this page
+   Stay on this page 
+ *  In older Daeja release, you will get a prompt when trying to close the browser with unsaved annotation:
+   
+   Annotations
+   Do you want to save your annotation changes?
+   Click on "Ok" to save changes
+   click on "Cancel' to discard changes
+   Ok Cancel
+   
+
+
+ENVIRONMENT
+MS Internet Explorer 10, 11
+Daeja ViewOne 4.1.5x
+
+RESOLVING THE PROBLEM
+Steps to resolve this issue: 
+
+ 
+
+ 1. Add this new parameter, useBrowserAlertOnShutdown=false to the wcmJavaViewer.jsp that the Workplace XT is using and it's typically in the following location: 
+    
+    ViewOne Standard Viewer: <XT_install_path>\FileNet\WebClient\WorkplaceXT\UI-INF\jsp\ui
+    ViewOne Professional: <XT_install_path>\FileNet\WebClient\WorkplaceXT\UI-INF\jsp\ui\iviewpro\
+    
+    Per the documentation link below, this parameter did not exist in 4.0.x but implemented in 4.1.x to support browser changes.http://www.ibm.com/support/knowledgecenter/SSTPHR_4.1.5/com.ibm.viewone.configuring/dvopr458.htm [http://www.ibm.com/support/knowledgecenter/SSTPHR_4.1.5/com.ibm.viewone.configuring/dvopr458.htm]
+    
+    
+ 2. There's another parameter annotationAutoPrompt relating to the prompt to save annotation and the default value is "true". Ensure this is not set to false.
+    
+    
+ 3. Change to the customer deploy directory 
+    <XT_install_Path>\WebClient\deploy\ , backup and delete the existing web_client.war and web_client.ear. 
+    Run the shell script to create a new war file "./create_web_client_war.sh" 
+    Run the shell script to create a new ear file "./create_web_client_ear.sh" 
+    
+    
+ 4. Redeploy IBM FileNet Workplace XT to your web application server and restart the application. Ensure to delete the client browser cache, Java cache, viewer cache and the application server cache. 
+
+RELATED INFORMATION
+ useBrowserAlertOnShutdown parameter [http://www.ibm.com/support/knowledgecenter/SSTPHR_4.1.5/com.ibm.viewone.configuring/dvopr458.htm]

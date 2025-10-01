@@ -1,0 +1,16 @@
+Title: IBM Installation of IBM DB2 Content Manager V8.4 needs DB2COMM and SVCENAME DB2 parameters - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why do you receive the error message "database not found" when installing IBM DB2 Content Manager V8.4 if the database manager is started and the library server database exists on a local computer? 
+
+CAUSE
+The IBM® DB2® Content Manager V8.4 installer requires the host name, port number and database name to successfully install the product. To confirm existence of the library server database, the installer uses the host name with associated port number to connect to the server locally or remotely. Although it is not required to have the DB2COMM environment variable set to TCPIP and the SVCENAME database manager configuration parameter set to the DB2 instance port number for a local connection, it is required for the IBM DB2 Content Manager installation because the installer uses the host name and port number to communicate to the database server.
+
+ANSWER
+Perform the following two tasks to get around this problem: 
+
+ 1. Run db2set DB2COMM=tcpip. 
+ 2. Run update dbm cfg using SVCENAME <port number> (where port number is the port number that the DB2 instance for the library server database is listening on).

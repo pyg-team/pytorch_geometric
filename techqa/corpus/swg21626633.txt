@@ -1,0 +1,38 @@
+Title: IBM Event flagging - United States
+
+Text:
+netcool; impact; netcool/impact; nci; flag; flagging; impactflag; future; development; developments; dev; road; map; roadmap TECHNOTE (FAQ)
+
+QUESTION
+ The future of ImpactFlag 
+
+ANSWER
+The TechNote "Avoiding unwanted event reprocessing" [link below] examples setting up an ImpactFlag custom integer field in the ObjectServer and using it to ensure only pertinent events are captured only the desired number of times for processing by Impact.
+The general concept is that a field is dedicated to indicating the pertinence of events for processing by Impact and to also indicate if the event has been captured for processing and when processing is completed. This is most easily achieved using an Integer field and the most simple model is, for example:
+
+
+ * 
+ *  Value: Conversion: 0 Don't Impact 1 Impact 2 Impacted 
+
+The Conversion refers to the ObjectServer alerts.conversion table and the creation of several Conversions in the ObjectServer to provide human readable versions of the Integer values. Convention has led to this Integer field being called ImpactFlag, though any spare Integer field can be used for this purpose. Though the field name, the values used and their human readable conversions are entirely open to customisation and adaptation to suit your needs and/or protocol. The ones shown here are only a suggestion. 
+
+Most situations also call for an additional state used to indicate that an event has been captured for processing and, if this process is quite lengthy, can be used to prevent the event from being unnecessarily recaptured and reprocessed. This then can be represented by: 
+ * 
+ *  Value: Conversion: 0 Don't Impact 1 Impact 2 Impacting 3 Impacted 
+
+So, if an event is pertinent for being processed by Impact the setting of this field value to 1 (one - Impact) is an active process made in the Probe Rules file and/or by an ObjectServer Automation and/or a User Tool. By default the value would be 0 (zero – Don’t Impact), this ensures that only events pertinent for Impact processing are marked as such through an active decision (even if that is by configuration). 
+
+The EventReader Filter is then simply: 
+
+ * 
+
+
+Of course additional fields can be used to determine which Policy or Policies are then used to process the event, but this can be used as the core indicator of processing success for Impact action and it is open to additional states being applied to flag way-points and error situations throughout the processing. And so event flagging is not just limited to use within a GetByFilter() function or an EventReader Filter - as exampled in the TechNote "Event Flagging with Go_NoGo checking" [ link below]. 
+
+and so on... 
+
+The use of a field entitled ImpactFlag has been so vaunted over the years that it is now becoming included in future developments of the product. In future versions there is discussion that this will be a default field in Impact and the ObjectServer used by the OMNIbusEventReader to identify events that have been processed. In Impact 6.1.1 this is already being applied in the manual adaptation of OMNIbus ObjectServers and OMNIbusEventReaders to configure handling of Serial value discrepancies in ObjectServer failover and the default inability of the OMNIbusEventReader to cope with this. The topic is covered in the topic "ImpactFlag used in ObjectServer failover handling" of the Impact documentation on Info/Knowledge Centre. 
+RELATED INFORMATION
+ Avoiding unwanted event reprocessing [http://www-01.ibm.com/support/docview.wss?uid=swg21386538]
+Event Flagging with Go_NoGo checking [http://www-01.ibm.com/support/docview.wss?uid=swg21675015]
+Structured logging in Policies [http://www-01.ibm.com/support/docview.wss?uid=swg21596180]

@@ -1,0 +1,135 @@
+Title: IBM HE12222: IBM CONTENT COLLECTOR P8 CONTENT SEARCH SERVICES SUPPORT CANNOT INDEX MICROSOFT EXCHANGE (MSG) EMAIL - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.0.0.3-IBM-ICC-P8CSS-FP003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Collector&fixids=4.0.0.3-IBM-ICC-P8CSS-FP003&source=SAR]
+IBM Content Collector V4.0 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24039003]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  With IBM Content Collector Content P8 Search Services Support
+   Version 4.0.0.2, some Microsoft Exchange (MSG) emails cannot be
+   indexed
+   due to an 'ArrayIndexOutOfBoundsException' exception. The
+   following error message is logged:
+   
+   AFUI0043E  The document could not be processed as a regular
+   email.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When you use IBM Content Collector Content P8 Search Services
+   Support Version 4.0.0.2, some Microsoft Exchange(MSG) emails
+   cannot be indexed and an error message is logged.
+   The error is caused by a parsing error in the email converter.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with IBM Content Collector 4.0 Fix Pack 3, the IBM
+   Content Collector P8 Content Search Service Support is updated
+   so that the email converter can address the parsing error.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12222
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-10-23
+   
+   
+ * CLOSED DATE
+   2014-12-30
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

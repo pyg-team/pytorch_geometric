@@ -1,0 +1,156 @@
+Title: IBM IT22231: MCA USERMAP channel authentication rule does not work correctly at MQ 903 - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In IBM MQ and MQ Appliance version 903, A user may not be able
+   to
+   authenticate to a queue manager when the MCAUSER attribute is
+   being used. The user's credentials are
+   not properly mapped to that of the MCAUSER resulting in a
+   failed connection. The following error messages are seen in the
+   queue manager's error log:
+   
+   AMQ9557: Queue Manager User ID initialization failed for
+   <MCAUSER>.
+   AMQ9790: The failed authentication check was caused by a
+   CHLAUTH record with CHCKCLNT(REQUIRED).
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users using channel authentication rules to map users.
+   
+   
+   Platforms affected:
+   MultiPlatform
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   A change present in the MQ v903 continuous delivery release
+   caused a string operation against the configured user string to
+   fail, meaning that the usermap rule was not applied
+   successfully.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQ code has been modified to correct the problem.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v9.0 CD    9.0.4
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT22231
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM MQ APPL M20
+   
+   
+ * REPORTED COMPONENT ID
+   5725Z0900
+   
+   
+ * REPORTED RELEASE
+   903
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-31
+   
+   
+ * CLOSED DATE
+   2017-09-22
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM MQ APPL M20
+   
+   
+ * FIXED COMPONENT ID
+   5725Z0900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R903 PSY
+   UP

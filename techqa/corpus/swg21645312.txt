@@ -1,0 +1,42 @@
+Title: IBM Long delay when logging in to Decision Center - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why does it take up to 60 seconds to log in to Decision Center for the first time after startup? 
+
+The server log reports the following read timed-out entries:
+00000021 servlet I com.ibm.ws.webcontainer.servlet.ServletWrapper init SRVE0242I: [ILOG Rule Team Server DEV] [/teamserver] [/explore/explore.jsp]: Initialization successful. 00000021 OnlineHelpDes W Read timed out when trying to connect to http://publib.boulder.ibm.com/infocenter/dcentrbu/.../contexts.xml 00000021 OnlineHelpDes W Read timed out when trying to connect to http://publib.boulder.ibm.com/infocenter/dcentrbu/.../com.ibm.dcenter.bu.events/contexts.xml 00000021 OnlineHelpDes W Read timed out when trying to connect to http://publib.boulder.ibm.com/infocenter/dcentrbu/.../com.ibm.dcenter.bu.gloss/contexts.xml 00000021 OnlineHelpDes W Read timed out when trying to connect to http://publib.boulder.ibm.com/infocenter/dcentrbu/.../com.ibm.dcenter.bu.gsrules/contexts.xml 00000021 OnlineHelpDes W Read timed out when trying to connect to http://publib.boulder.ibm.com/infocenter/dcentrbu/.../com.ibm.dcenter.bu.rso/contexts.xml 00000021 OnlineHelpDes W Read timed out when trying to connect to http://publib.boulder.ibm.com/infocenter/dcentrbu/.../com.ibm.dcenter.bu.rules/contexts.xml 00000021 servlet I com.ibm.ws.webcontainer.servlet.ServletWrapper init SRVE0242I: [ILOG Rule Team Server DEV] [/teamserver] [/action.jsp]: Initialization successful. 
+
+CAUSE
+Decision Center gathers content from the IBM Operational Decision Center Infocenter online site during the first initialization and also upon server restart. There are six connections to IBM Infocenter. Each connection has a timeout value of 10 seconds. The long delay of 60 seconds thus happens when the application server does not have internet access or the site cannot be reached. 
+
+ANSWER
+If your application server hosting Decision Center has no outbound internet access and no replacement (hosting a local online help), you can apply this system property when you start the server: 
+
+-Dteamserver.onlinehelp.noibmaccess=true 
+
+If the server is WebSphere Application Server (WAS), you can define this property via the WAS admin console: 
+
+ 1. Log in as a WAS user with administrator rights. 
+ 2. Click Servers > Application Servers. 
+ 3. Click your application server. 
+ 4. Click Java and Process Management > Process Definition. 
+ 5. Click Java Virtual Machine. 
+ 6. Click Custom Properties. 
+ 7. Click New and enter the Name and Value.  *  Enter Name: teamserver.onlinehelp.noibmaccess Enter Value: true and then click OK. 
+    
+    
+ 8. Click Save directly to the master configuration. 
+ 9. Restart the application server. 
+
+
+If your application server hosting Decision Center has no outbound internet access but you install a local online help [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0/index.jsp?topic=%2Fcom.ibm.wodm.family.install%2Ftopics%2Ftpc_inst_view_localdoc_intro.html] for Decision Center, you must create a properties file and properties to it. 
+
+ 1. Create a preferences.properties file and add the following two properties: 
+
+ * teamserver.onlinehelp.infocenter=http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1 
+ * teamserver.onlinehelp.infocenter.dcenterbu=http://pic.dhe.ibm.com/infocenter/dcentrbu/v8r0m1 1. Change the value of these properties to point to the local online help.
+   2. Repackage this preferences.properties file in the jrules-teamserver-<appn_server>.ear\teamserver.war\WEB-INF\classes directory. 
+   3. Redeploy the EAR file to the application server.

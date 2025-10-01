@@ -1,0 +1,38 @@
+Title: IBM Huawei T2000 failover and failback - United States
+
+Text:
+ServerSwitchingTime; nco_p_huawei_T2000_corba; Huawei U2000; fail over; failover TECHNOTE (FAQ)
+
+QUESTION
+ Huawei T2000 and U2000 probe : Why does failover not work? 
+
+CAUSE
+ServerSwitchingTime property is too high or not waiting long enough for failover
+
+ANSWER
+ 
+
+The manual for the Huawei T2000 probe discusses the EMS server fail over in detail and provides details of the properties that need to be set for failover to work: 
+
+ 
+
+ *  SecondaryIORFile 
+ *  SecondaryNamingContextIORFile 
+ *  SecondaryORBInitialHost 
+ *  SecondaryORBInitialPort
+
+
+And Retry is set to "true" and ServerSwitchingTime set to a value less than 4096. If all of these properties are set then failover and failback will happen as documented, and 
+the probe will continue to switch between the primary and secondary server, in the specified ServerSwitchingTime time, until a successful connection is made to either server. 
+
+ 
+
+Therefore it is important to wait for at least the period defined by the ServerSwitchingTime property value. Therefore with a default value of 1200, the probe will switch between the EMS's every twenty minutes, if no events are seen at the EMS. 
+
+Equally, if the Primary EMS is unavailable, the probe will wait twenty minutes before attempting to connect to the Secondary EMS. 
+
+It is therefore important to set the ServerSwitchingTime to a value that is acceptable, and to consider the probes behaviour when the Primary EMS is down during the planning phase of deployment. 
+
+i.e. it may be useful to use a heartbeat event to keep the probe active and use a lower setting for ServerSwitchingTime so as to reduce the failover time in the event of the Primary EMS being unavailable. 
+
+If the Primary EMS is planned to be unavailable for an extended period of time, then it is prudent to swap the property settings for Primary and Secondary EMS.

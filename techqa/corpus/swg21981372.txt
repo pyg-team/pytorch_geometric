@@ -1,0 +1,20 @@
+Title: IBM CMIS to IBM FileNet Image Services sessions are piling up, not properly timing out - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why are CMIS-to-IS sessions not timing out, even after the default value of 30 minutes have passed (i.e. CheckIdleSessionTimeoutInterval for CMIS-IS repository.properites configuration file)? 
+
+ANSWER
+1) An IS client application (like FileNet IDM Desktop) has a 1-to-1 session behavior; however, CMIS-to-IS connections do not have a 1-to-1 session behavior. Instead, CMIS-to-IS sessions have a 1-to-N (where N varies from server to server). 
+For IDM Desktop, IDM Web Services, IDM Open Client or ISRA, the number 
+of security sessions is 1-to-1. If an IDM user logs in IS, 1 session will be created representing that session.
+
+For IBM Content Navigator (ICN)-->CMIS-->IS connections the number of IS security sessions per user is NOT 1:1. A single ICN user can have multiple security sessions. For example, a single ICN logon to IS (via CMIS) can represent 4 or 5 IS sessions. 
+
+2) In CMIS->IS environments, the 4 or 5 IS sessions that represent a single user logon, will not all be purged after the set time out (i.e. CheckIdleSessionTimeoutInterval = 30 minutes). This is expected behavior for CMIS->IS environments, and is by design. 
+
+3) Any remaining IS session(s) might not disappear ever, after user logs off and no more further activity. This behavior is explained by the statelessness of CMIS. No *logoff* notification is ever sent to the IS server when a user is being logged off from ICN. Although, there is code logic for IS to try to clean up any lingering CMIS->IS sessions; however, that in itself does not guarantee that every single generated session will be eliminated.
+
+4) SLU usage in Image Services Security Services is unlimited. Image Services does not restrict usage based on SLUs. However, if a CMIS-IS user wishes to be able to concurrently login 10 times, then the IS User setting should be set to 50 to 60 concurrent logons. This anticipates that for every IS user logged in (via ICN-CMIS-IS), it will generate 5 times (or more) sessions.

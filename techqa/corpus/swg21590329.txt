@@ -1,0 +1,26 @@
+Title: IBM INVALID_CHARACTER_ERR: An invalid or illegal XML character is specified - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When an XML document was being posted with:
+
+"Content-Type: application/x-www-form-urlencoded"
+
+to SI 5.1 HTTP Server Adapter, the error of "INVALID_CHARACTER_ERR: An invalid or illegal XML character is specified" is noted in various system logs. 
+
+SYMPTOM
+Content-Type: application/x-www-form-urlencoded, INVALID_CHARACTER_ERR: An invalid or illegal XML character is specified
+
+
+CAUSE
+The trading partner was posting a plain XML document, but document was being posted with an incorrect content type: 
+
+"Content-Type: application/x-www-form-urlencoded" 
+
+SI 5.1 was then decoding the document and then trying to parse as an XML document. This caused an Illegal Character error as the document was never urlencoded in the first place. 
+
+
+RESOLVING THE PROBLEM
+On the sending/posting system, trading partner needs to explicitly set the Content-Type to text/xml before posting to SI 5.1 system and the document can then be properly parsed.

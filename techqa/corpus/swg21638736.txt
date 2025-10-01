@@ -1,0 +1,24 @@
+Title: IBM WebSphere Adapter for JDBC V7.5 throws SQLException: ORA-06550 when executing a Packaged Stored Procedure - United States
+
+Text:
+jdbc; adapter; package; stored procedure TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ WebSphere Adapter for JDBC throws an SQL exception when executing a Packaged Stored Procedure as part of an executeSP outbound operation. 
+
+SYMPTOM
+The following SQL Exception message can be seen: 
+
+---------------------------------------------------------------------------------------------------------------------------
+ResourceException thrown in J2CMethodBindingImpl.invoke() javax.resource.ResourceException: java.sql.SQLException: ORA-06550: line 1, column 8:
+PLS-00201: identifier 'APPS.PKG_TEST.PRC_INSERT' must be declared
+ORA-06550: line 1, column 8:
+PL/SQL: Statement ignored
+, error code: 6550
+--------------------------------------------------------------------------------------------------------------------------
+
+In the above exception "PKG_TEST" is the package name, and "PRC_INSERT" is the Stored Procedure name.
+
+
+RESOLVING THE PROBLEM
+The issue has been resolved in JDBC Adapter version 7.5.0.3_IF04. JDBC Adapter now handles the Packaged Stored Procedure correctly.

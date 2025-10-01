@@ -1,0 +1,32 @@
+Title: IBM Migrating SQLJ translator JAR from sqlj.zip to JDBC 4.0 enabled sqlj4.zip in Rational Application Developer - United States
+
+Text:
+How to migrate; SQLJ; data tooling; sqlj4; JDBC 4.0; RAD TECHNOTE (FAQ)
+
+QUESTION
+IBM DB2 brings a JDBC 4.0 enabled .zip file containing the SQLJ translator in form of the sqlj4.zip with DB2 v9.5. How can I use this sqlj4.zip in my IBM Rational Application Developer projects to translate .sqlj files into .java files which utilize JDBC 4.0?
+
+ANSWER
+You need to change the preferences from the default setting using an older version of the sqlj.zip to your more recent sqlj4.zip. 
+
+ 1. Open the menu Window > Preferences. 
+ 2. Open the preference page Data Management > SQL Development > SQLJ Applications 
+ 3. Click next to the entry SQLJ translator JAR file on the button Browse and browse to sqlj4.zip
+
+
+Be aware: The project's classpath does not need to contain the SQLJ translator class sqlj.tools.Sqlj. This class is only needed for translation, not at runtime or to resolve the references for the generated .java file. When SQLJ support is added to a project, the default is to add the sqlj.zip to the classpath, since that is the only jar that the tooling is aware of the has the necessary classes. But the user can change this to include a different jar (e.g. db2jcc.jar) that does not contain the class sqlj.tools.Sqlj.
+
+So, usage of different sqlj.zip files for different projects is not possible. Users can submit an enhancement request on the RFE community. 
+
+
+
+
+Rational RFE Community homepage  Refer to the Rational RFE Community homepage [http://www.ibm.com/developerworks/support/rational/rfe] for details and status of Requests for Enhancements for Rational products.
+
+
+
+
+RELATED INFORMATION
+#RAD: Setting SQLJ preferences [http://publib.boulder.ibm.com/infocenter/radhelp/v7r5/index.jsp?topic=/com.ibm.datatools.sqlj.doc/topics/tpref.html]
+DB2: Supported drivers for JDBC and SQLJ [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.apdv.java.doc/doc/cjvintro.html]
+DB2: JDBC 4.0 support has been added [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/index.jsp?topic=/com.ibm.db2.luw.wn.doc/doc/c0052012.html]

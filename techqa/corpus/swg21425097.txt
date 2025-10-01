@@ -1,0 +1,27 @@
+Title: IBM WebSphere Message Broker V6.1.0.6 has been withdrawn. - United States
+
+Text:
+FP06 6106 FP6 FLASH (ALERT)
+
+ABSTRACT
+ WebSphere Message Broker V6.1.0.6 (Fix Pack 06) has been withdrawn 
+
+CONTENT
+WebSphere Message Broker V6.1.0.6 (Fix Pack 06) has been withdrawn because of a regression with the ESQL CAST from CHARACTER to DATE or TIMESTAMP function (APAR IC67336) and a packaging issue (APAR IC67283) with WebSphere Adapters incorporated with WebSphere Message Broker V6.1.0.6 (Fix Pack 06). 
+
+Customers who have already downloaded this Fix Pack are recommended to remain on the Fix Pack and use the information below to determine what additional actions, if any, they may need to take. 
+
+The ESQL CAST from CHARACTER to DATE or TIMESTAMP issue will affect all WebSphere Message Broker V6.1.0.6 customers who use a month pattern of MMM or MMMM immediately preceded by a numeric date or time component (i.e. with no separator). An interim fix for this issue is available on request for customers.
+
+The WebSphere Adapters packing issue will only affect WebSphere Message Broker V6.1.0.6 customers who use WebSphere Adapters (SAP, Siebel and PeopleSoft adapters) and the refresh package is available through APAR IC67283 as an Interim Fix.
+
+WebSphere Message Broker V6.1.0.6 customers who do not use the ESQL CAST from CHARACTER to DATE or TIMESTAMP or WebSphere Adapter function identified above do not need to take any further action.
+
+The fixes to the aforementioned APARs are in WebSphere Message Broker V6.1.0.7 [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg24026355]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Adapters Family 
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker MQ Integrator WBIMB WBI-MB MQSI WMQI

@@ -1,0 +1,43 @@
+Title: IBM Select statement may receive SQL0727N after drop and create the same named nickname - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why does select statement receive SQL0727N after drop and create the same named nickname? 
+
+CAUSE
+This is an known expected behavior of current DB2.
+
+ANSWER
+Here is an example scenario. 
+
+0. A federated database enabled and a nickname created.
+1. drop nickname
+2. create nickname
+3. select static SQL via nickname
+==> received -727 at db2diag.log
+
+This is an known expected behavior of current DB2.
+
+The -727 error is there because we didn't find the object. After the drop of the 
+nickname, the package becomes invalid. We didn't find the object because we did a 
+conservative rebind when doing an implicit rebind. During conservative rebind some
+objects need to have a timestamp older than the create timestamp of the package.
+
+Only those objects in the SQL path that were defined before the last explicit bind 
+time stamp are considered for resolving references to any objects.
+
+It can be worked around by running bind/rebind manually.
+
+Note:
+This behavior might be changed without notice in the future. We can confirm whether this technote
+is valid or not by following the above scenario.
+Please contact your Sales Rep to submit a potential design change towards a future release.
+Or please open a ticket, Request For Enhancement at https://www.ibm.com/developerworks/rfe/ [https://www.ibm.com/developerworks/rfe/]
+
+RELATED INFORMATION
+ Conservative rebind semantics [http://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.db2.luw.sql.ref.doc/doc/r0055431.html]
+CREATE SERVER statement [https://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.db2.luw.sql.ref.doc/doc/r0002170.html]
+CREATE NICKNAME statement [https://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.db2.luw.sql.ref.doc/doc/r0002169.html]
+DROP statement [http://www.ibm.com/support/knowledgecenter/en/SSEPGG_10.5.0/com.ibm.db2.luw.sql.ref.doc/doc/r0000945.html]

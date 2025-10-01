@@ -1,0 +1,153 @@
+Title: IBM JR45943: NEW FUNCTION: ADD DATA MASKING STAGE TO IIS 9.1 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Download the Data Masking enablement patch for InfoSphere Information Server 9.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24034662]
+IBM InfoSphere Information Server, Version 9.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24035470]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR introduces Data Masking stage to Information Server
+   9.1 or above. Data Masking stage provides capability to mask
+   sensitive data in DataStage ETL processing.
+   
+   Data Masking stage internally calls Optim Data Privacy Providers
+   (ODPP), which is a library to mask privacy data. To use Data
+   Masking stage, you need to install Optim Data Privacy Providers
+   (ODPP) on the DataStage engine machine. Please refer to the
+   prerequisite described below.
+   
+   Previous version of Data Masking stage was released as a part of
+   'DataStage pack for Data Msking (PDM)' version 8.5.
+   The new Data Masking stage delivered in this APAR has the
+   following new functions compared to the previous version of Data
+   Masking stage.
+   
+     - Support Optim Data Privacy Providers (ODPP) version 9.1
+       PDM version 8.5?supports only ODPP version 1.0.
+       The new Data Masking stage enables you to use ODPP version
+   9.1 in addition to ODPP version 1.0.
+   
+     - Support Hash masking policy
+       Hash data masking policy is newly introduced. Hash data
+   masking policy generates Hash key values from input records and
+   allows you to do look-up processing on the separated downstream
+   stages to perform hash lookup.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This is now available in APAR JR45943 patches.
+   
+   1. Prerequisite
+   To use the new version of Data Masking stage, you must have one
+   of the following software.
+   IBM InfoSphere Optim Masking On Demand version 9.1
+   DataStage pack for Data Masking version 8.5
+   
+   1.1 Using IBM InfoSphere Optim Masking On Demand version 9.1
+   
+   Optim Data Privacy Providers version 9.1 is included in IBM
+   InfoSphere Optim Masking On Demand version 9.1. IBM InfoSphere
+   Optim Masking On Demand is a part of the following Optim
+   products. To install 'IBM InfoSphere Optim Masking On Demand',
+   get a license for one of these products.
+   IBM InfoSphere Optim Data Masking Solution version 2.2
+   IBM InfoSphere Optim Data Privacy Enterprise Edition version 9.1
+   IBM InfoSphere Optim Data Privacy Work Group Edition version 9.1
+   
+   You must install ODPP version 9.1 fixpacks. For more information
+   about supported fixpacks, see
+   http://www.ibm.com/support/docview.wss?uid=swg27037945 [http://www.ibm.com/support/docview.wss?uid=swg27037945]
+   
+   1.2 Using DataStage pack for Data Masking version 8.5
+   
+   If you already have DataStage pack for Data Masking version 8.5,
+   you can use ODPP version 1.0 bundled in PDM version 8.5. You do
+   not have to install ODPP version 9.1.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR45943
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36DS
+   
+   
+ * REPORTED RELEASE
+   910
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-06
+   
+   
+ * CLOSED DATE
+   2013-03-29
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

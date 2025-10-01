@@ -1,0 +1,24 @@
+Title: IBM Working of Takeover in db2 HADR clustered system - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How does failover work in DB2 HADR and TSAMP system? 
+
+ANSWER
+When the PRIMARY system in HADR fails the "hadrV97_monitor.ksh" script detects the failure and reports it to TSAMP. 
+TSAMP will then call the "hadrV97_stop.ksh" script at the location of the failed PRIMARY. 
+
+Once this completes, the "hadrV97_start.ksh" script will be called at the location of the HADR STANDBY.
+
+The "hadrV97_start.ksh" script will call the db2gcf utility which will attempt to failover the PRIMARY HADR role to the STANDBY location.
+
+The exact takeover command run by db2gcf is "TAKEOVER HADR BY FORCE PEER WINDOW ONLY". 
+
+When the old PRIMARY server recovers from the failure, the DB2 instance will be automatically restarted by TSAMP by running the "db2V97_start.ksh" script at that location.
+
+As part of this operation the HADR database will be reintegrated into the HADR pair via the "start hadr on db <dbname> as standby" command."
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21964647]

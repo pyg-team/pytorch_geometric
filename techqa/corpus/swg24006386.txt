@@ -1,0 +1,114 @@
+Title: IBM MS81: WebSphere MQ Internet Pass-Thru - United States
+
+Text:
+ms81;MQIPT;IPT;firewall;DMZ;proxy;TLS;SHA-2;SHA2;SHA256;SHA-256;SHA384;SHA-384;SHA512;SHA-512;ECDSA;Elliptic;Curve;internet pass-thru;supportpac DOWNLOAD
+
+ABSTRACT
+WebSphere MQ Internet Pass-Thru is a WebSphere MQ base product extension that can be used to implement messaging solutions between remote sites across the internet.
+
+DOWNLOAD DESCRIPTION
+WebSphere MQ Internet Pass-Thru (MQIPT) is a WebSphere MQ base product extension that can be used to implement messaging solutions between remote sites across the internet.
+
+It makes the passage of WebSphere MQ channel protocols in to and out of a firewall simpler and more manageable, by tunnelling the protocols inside HTTP or by acting as a proxy.
+
+MQIPT has an Administration graphical user interface (GUI) for managing one or more MQIPT servers.
+
+MQIPT runs on the platforms indicated in the hardware and software requirements below. It uses the JRE supplied.
+
+
+Possible Uses 
+Used as a proxy, MQIPT is placed in the De-Militarized Zone (DMZ) on an Internet firewall and relays WebSphere MQ protocol flows from a WebSphere MQ client or queue manager on the external Internet, to a destination queue manager inside the firewall. This enables inbound WebSphere MQ communication through the firewall from an address that is in the secure DMZ. This is likely to be more acceptable to firewall administrators than an arbitrary external Internet address.
+
+Placing a pair of MQIPT servers in the path of a WebSphere MQ channel connection enables HTTP wrappers to be added to the protocol flow. This enables the WebSphere MQ connection to pass inbound through an HTTP application firewall, or outbound through an HTTP proxy. A pair of MQIPT servers can also be used to encrypt all data flows, using SSL or TLS.
+
+MQIPT can also act as a concentrator of WebSphere MQ connections, which simplifies firewall configuration when multiple WebSphere MQ clients or queue managers require access through an Internet firewall.
+
+MQIPT can be configured to act as a SOCKS client or SOCKS server, for making outbound connections. The Administration GUI can also use a SOCKS proxy to connect to an MQIPT server.
+
+MQIPT can be used with the IBM Network Dispatcher, to provide enhanced availability and load balancing across many servers.
+
+These modes of operation of MQIPT give greater flexibility to the connection of WebSphere MQ channels through a variety of firewall and network topologies and facilitate many application models - particularly in the B2B environment.
+
+MQIPT does not require any changes to WebSphere MQ application code, and only a minor modification to the hostname/port setting in MQ channel definitions.
+
+Skill Level Required 
+This SupportPac should be installed by a WebSphere MQ system administrator or network administrator. Configuration and implementation of this SupportPac requires a basic understanding of TCP/IP networking and a knowledge of Internet firewall administration.
+
+New in this Release 
+• JRE level updated to 7.0.10.10
+
+Security Notice 
+3DES ciphers are no longer considered secure and are disabled by default from MQIPT version 2.1.0.4.
+
+To improve security, DES40_CBC ciphers are no longer enabled by default in the latest JRE update. This affects the following CipherSuites in MQIPT:
+SSL_RSA_EXPORT_WITH_DES40_CBC_SHA
+SSL_KRB5_EXPORT_WITH_DES_CBC_40_MD5
+SSL_KRB5_EXPORT_WITH_DES_CBC_40_SHA
+
+If you are aware of the potential hazards but still have a need to use one of these CipherSuites, you can add support for it by removing the corresponding algorithm from the list of disabled algorithms (jdk.tls.disabledAlgorithms) in the java.security file, found in mqipt_path/java/jre/lib/security/, where mqipt_path is the location where MQIPT is installed.
+
+Details 
+Owner: Gwydion Tudur, IBM MQ for z/OS Development, IBM United Kingdom Laboratories
+Category: 3
+Released: 11Jul00
+Last Updated: 05Jun18
+Current SupportPac Version: 2.1.0.4
+Latest MQIPT fix list can be found here. [http://www-01.ibm.com/support/docview.wss?uid=swg27041821]
+»Please note that the version number shown in the right-hand pane is the version of the MQ or WBI product that this SupportPac applies to. The date is the last web page refresh.
+To view the complete portfolio of WebSphere MQ SupportPacs please visit the WebSphere MQ SupportPacs homepage. [http://www-306.ibm.com/software/integration/support/supportpacs]
+
+PREREQUISITES
+Please see full hardware and software prerequisites in the ms81.txt file below.
+
+
+URL LANGUAGE SIZE(Bytes) System Requirements [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/ms81_2.1_system_requirements.txt] US English 2468 
+INSTALLATION INSTRUCTIONS
+Note that the installation method has changed from the previous release. MQIPT 2.0 and earlier used a platform-specific installation method, such as AIX installp and Linux RPM. However, MQIPT 2.1 has no installer: simply unpack the supplied file archive in your chosen installation directory. The following guidance is provided to assist with installation of MQIPT 2.1.
+
+To install the SupportPac on a Windows platform:
+• Download file ms81_x86_nt_4.zip to a temporary directory (for example C:\temp).
+• Create a new directory where you want MQIPT to be installed (for example C:\MQIPT).
+• Move the downloaded ms81_x86_nt_4.zip to the new MQIPT installation directory.
+• Uncompress using InfoZip Unzip. If you use other unzip programs, ensure you specify the option to re-create stored directories.
+• It is recommended to make the MQIPT installation directory read-only by revoking write permissions from all users.
+• To create MQIPT icons on the Start menu, run the following command from an Administrator command prompt:
+C:\MQIPT\bin\mqiptIcons -install installation_name
+
+To install the SupportPac on a UNIX or Linux platform, you must log on as the root user. Then perform the following steps:
+• Download the tar file to a temporary directory (for example /tmp).
+• Create a new directory where you want MQIPT to be installed (for example /opt/mqipt).
+• Move the downloaded tar file to the new MQIPT installation directory, for example:
+mv /tmp/ms81_x86_linux_2.tar /opt/mqipt
+• Unpack the tar file, for example:
+cd /opt/mqipt
+tar xf ms81_x86_linux_2.tar
+• To increase security, set the file permissions for your installed files so that they are read-only. For example:
+chmod -R /opt/mqipt/* a-w
+Note: failure to run the tar command as root is likely to result in "permission denied" errors. 
+
+For more information about installation and migration from the previous release, refer to the readme and PDF documentation.
+
+Documentation 
+The link below contain SupportPac documentation in PDF format. Refer to http://www.adobe.com [http://www.adobe.com] for an Adobe Acrobat PDF viewer.
+
+Download the MQIPT package specific to your platform.
+
+JRE update installation instructions: 
+Periodically IBM releases an updated JRE for use with MQIPT in order to provide the latest Java security fixes. Updated JREs for MQIPT can be downloaded via the Download package link, in the Security Update JRE for MS81 section. To install a new JRE for MQIPT, follow the instructions here . [http://www-01.ibm.com/support/docview.wss?uid=swg21678663]The MQIPT version number is not affected by installing a new MQIPT JRE. To determine which MQIPT JRE is currently installed, use the mqiptVersion -v command.
+
+
+URL LANGUAGE SIZE(Bytes) ms81.pdf [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/ms81_2.1.0.4_amqyab02.pdf] US English 1904383 
+DOWNLOAD PACKAGE
+A JRE update package is also available from the download link below.
+Note that the installation method has changed from the previous release. Refer to the Installation Instructions section for more information. Please note that you should run as the root user in order to install MQIPT on UNIX and Linux platforms. 
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options ms81 (All platforms) 05 Jun 2018 US English 9200000 HTTP [http://www.ibm.com/services/forms/preLogin.do?source=passthru ] 
+TECHNICAL SUPPORT
+Category 3 WebSphere MQ (MQSeries) SupportPacs are supplied under the standard terms and conditions provided by the International Program License Agreement (IPLA) and thus carry program defect service.
+
+Please read the licence files that accompany the SupportPac to ensure you understand the conditions under which the SupportPac is provided.
+
+If you encounter what you believe to be a defect with the SupportPac you may request Program Services by reporting the problem via the same defect reporting channel you employ for the WebSphere MQ or MQSeries server product(s) on which you are using the SupportPac.
+
+This SupportPac has service support for as long as the WebSphere MQ V7.1, V7.5 or IBM MQ V8.0 product with which it runs remains in service. Refer tohttp://www.ibm.com/software/info/supportlifecycle [http://www.ibm.com/software/info/supportlifecycle] for the relevant service information.

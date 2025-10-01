@@ -1,0 +1,29 @@
+Title: IBM Java dump files getting created every 5 minutes - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Since this morning every 5 minutes a file is created with following 
+structure: core.20161018.144401.6700.0001.dmp 
+
+CAUSE
+Steps to disable the .dmp file creation:
+1. Navigate to your installation path of Cognos
+2. Open the \configuration directory
+3. Locate the cclWin32SEHConfig.xml file and make a backup of it before
+changing.
+4. Locate the following line and change 2:2 to 0:0 <env_var name="CCL_HWE_ABORT" value="0:0"/>
+5. Save the file
+The dump files will not be created anymore but the reason
+why they start appearing since this morning should be investigated.
+
+RESOLVING THE PROBLEM
+It seems that some Java cache was corrupt. We did the following:
+- In Windows Explorer navigate to
+C:\Windows\System32\config\systemprofile\appdata\local\javasharedresources
+- Delete all files in this directory
+- In Windows Explorer navigate to C:\Users\<username>\appdata\local\javasharedresources
+- Delete all files in this directory (do this for all users under the C:\Users directory)
+- Stop / start all IBM Cognos services
+After this, no more dump files were created.

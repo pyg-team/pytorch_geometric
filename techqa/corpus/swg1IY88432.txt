@@ -1,0 +1,132 @@
+Title: IBM IY88432: SOCKET GATEWAY SOMETIMES LOSES EVENTS BEFORE GOING INTO SAF - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Specific Binary:
+   Last-modified-by:
+   Product: Netcool/OMNIBUS
+   Component:
+   Priority: Med
+   Severity: Medium
+   Version N.n:
+   Product Group:
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Users                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Socket Gateway sometimes loses events   *
+   *                      before going into store and forward.    *
+   *                                                              *
+   *                      Unable to replicate using current       *
+   *                      version of gateway.                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Socket Gateway sometimes loses events before going into store
+   and forward.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Unable to replicate using current version of gateway.
+   
+   Date of Release: 06/29/07 Fix Pack Name: gateway-nco-g-odbc-0_0
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY88432
+   
+   
+ * REPORTED COMPONENT NAME
+   OMNI SOCKET GAT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O71GS
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED UR5
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-08-16
+   
+   
+ * CLOSED DATE
+   2006-12-02
+   
+   
+ * LAST MODIFIED DATE
+   2006-12-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

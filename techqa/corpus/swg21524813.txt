@@ -1,0 +1,78 @@
+Title: IBM Why Yantra agents and integration servers do not use connection pooling. >>dbconnections not being released closed by Agent > leak Reaptime reaper - United States
+
+Text:
+STERLINGPRI TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why Yantra agents and integration servers do not use connection pooling. >>dbconnections not being released closed by Agent > leak Reaptime reaper 
+
+SYMPTOM
+Yantra agents and integration servers do not use connection pooling. This document explains the thinking behind this.
+
+Connection pooling as a concept is used because establishing and closing connections with the database are expensive operations, and in a user activity oriented system (like the yantra console), you cant completely manage these establishment and close calls. This is why when running the console, we use connection pooling via weblogic, weblogic will maintain the pool ensure there are minimal breaks (and establishment) in the connections, and getting better performance.
+
+However, in the case of Agents, things are more predictable... they are coded under the yantra framework so that one (one per thread) connection is obtained and maintained through out the agent's life (so even if you write a custom Agent, that too will have only one connection per thread). To this extent, we think that connection pooling as provided by weblogic is not needed by our Agents. 
+
+In balance, given the nature of the Agents, we thought that there is no point having Agents participate in the pool that weblogic provides. We thought that it would be worthwhile to have one connection per thread given the intensive activity of the agent.
+
+So in summary, do Agents do connection pooling? ------> No, they manage connections internally, using one connection per thread.
+Can this be configured? ------> It is configurable to the extent that you can set the number of threads for each agent. These connections will happen ouside of the pool provided by Weblogic.
+
+There is some optimization built in the agents to ensure that threads to do not stay connected when it is idle.
+
+Each agent thread assumes it will get a connection at any time. However if the thread is idle beyond the time specified in ,
+"yfs.context.reaptime" parameter in yfs.properties, the connection is closed.
+The thread reconnects when it is ready to process the next message. 
+
+also read below for detailed explanation about connection pooling and reaping
+
+
+RESOLVING THE PROBLEM
+Agent Connection Pooling explained:
+Take a scenario where an Agent JVM has been started and running successfully.
+Now an agent criteria is triggered. 
+1 dbconnection is made by the JVM to determine the configuration parameters of the agent. 
+Once its done, it relinquishes the connection (NOT close connection). 
+The 1 dbconnection will be kept open for other process to use, it continues to be present until a reap process closes it.
+Now the trigger puts a getjobs( ) message in the JMSQueue. When the JVM next picks up this getjobs( ) message, it needs to make 1 dbconnection to fetch work for the threads of that Agent. For this it reuses the original dbconnection.
+Once it has determined the work, and put all the messages into the JMS, the execute threads, kick in and start processing the messages.
+If you had 3 threads for the agent, then the system expands the dbconnections from 1 to 3. So now you have 3 active dbconnections. 
+Once the agent runs out of work, and the connections have remained inactive for a period of time they would get reaped.
+So in this way the number of active dbconnections will expand and shrink depending on what is going on in the Agent JVM.
+In addition to the above work processes, the Agent can also make the following dbconnections
+Integration Agent keeps one dbconnection always active to check the db for reprocess errors.
+When Statistics is enabled, all agents periodically make 1 dbconnection to write to the Statistics related tables.
+
+Connection Reaping explained:
+yfs.properties has two parameters yfs.context.timeout and yfs.context.reaptime both defaulting to 600 seconds =10 minutes. We do not advise this to be changed. 
+These parameters ensure that connections inactive for more than 10 minutes are reaped by the system, when it polls the connection pool every 10 minutes.
+
+# # # # #
+# To manage database connection pooling, while running Interoperability Agents
+# specify the following properties:
+# # # # #
+
+# The interoperability agent will close a pooled connection if it has not been
+# used for the timeout specified by the following property. This property is specified 
+# in seconds. The default is 10*60 seconds.
+
+#yfs.context.timeout=
+
+
+# This is the frequency at which the connection reaper thread will examine
+# the connection pool for connections that are eligible for being closed.
+# The eligilibilty will however be determined by the previous property
+# The following property is specified in seconds. The default is 10*60
+# seconds.
+
+#yfs.context.reaptime
+
+
+
+HISTORICAL NUMBER
+ PRI49406 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact

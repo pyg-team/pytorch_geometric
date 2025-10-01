@@ -1,0 +1,130 @@
+Title: IBM 20140413_Proventia_1G_Network_Active_Bypass_update-11_fw3.9-34 - United States
+
+Text:
+20140413_Proventia_1G_Network_Active_Bypass_update-11_fw3.9-34; 1G; NAB; Proventia Active Bypass; 3.9-34; update 11; update-11; 3.0 TECHNOTE (FAQ)
+
+QUESTION
+ What fixes and known issues are included in 20140413_Proventia_1G_Network_Active_Bypass_update-11_fw3.9-34? 
+
+ANSWER
+Important: Installation instructions have changed depending on Firmware currently installed. Look at readme included with the patch for detailed instructions.
+
+New fixes added in this update (firmware 3.9-34)
+
+- Introduces fixes for OpenSSL Vulnerabilities: 
+
+ * 
+
+- Introduces fixes for OpenSSH Vulnerabilities:  * 
+
+- Introduces a new feature for uploading security certificates through the LMI.  * 
+
+- Introduces a fix in which user/password parameters are no longer required when configuring the SMTP notifications, but both are still available as optional. 
+
+- Introduces a new feature that allows for installation of this firmware at any patch.  * 
+ * 
+ * 
+ * 
+ * 
+
+- Installation of firmware 3.4-23 or higher will only allow network negotiation when both external device and NAB network ports are set to fixed, or both set to auto. 
+
+
+Known Issues in update (firmware 3.9-34) 
+
+- An issue has been encountered with some Proventia 1G NAB appliances that can cause the MAC address to reset to a factory default value after upgrading from the factory default firmware to a newer firmware version. 
+
+To correct this issue re-image appliance to firmware 2.18-43 or higher on top of firmware version 1.0.849. Users who are running a later firmware version and are experiencing this issue will receive an error when installing this patch, they will be advised to revert to firmware 1.0.849 and follow steps just mentioned. To download firmware 849, see the iss.net download center or contact customer support. 
+
+- In some cases, invalid security certificates can be uploaded to the unit. In case the LMI is no longer accessible, the user must login to the unit as the root user through a console or SSH connection, remove all pem files from the flash directory and reboot the unit. 
+
+- Upgrading to 3.9 from 3.4 may cause the root password to change. Upgrading will also break the ability to change the root and admin password from both LMI and admin console. Follow the steps in technote http://www.ibm.com/support/docview.wss?uid=swg21672103 [http://www.ibm.com/support/docview.wss?uid=swg21672103] to fix the issue. 
+
+- NTP/TACACS menus have extra options other than enable/disable. These options do not do anything and will be removed in the next release. 
+
+- Bond service is currently not working. 
+
+
+New fixes added in this update (firmware 3.4-23) 
+
+- Fixes issue where End User License Agreement does not show up after installing update with install script through console. 
+
+- Fixes issue where management interface does not negotiate to 100M full duplex. 
+
+- Upgrades to a newer version of Openssh, Lighttpd, and Php. 
+
+- Adds new implementation of switchd process to avoid possible issue seen in 10G NAB in which switchd process some times uses close to 100% CPU. 
+
+- New features added:  * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+New fixes added in this update (firmware 2.18-43) 
+
+- Upgrades to a newer version of OpenSSL. 
+
+- Corrects an issue that caused duplicate notifications (including SNMP traps and e-mails) to be sent upon state change events. 
+
+- Corrects an issue that could lead to system instability when using certain TACACS+ server configurations. 
+
+- Corrected an issue where the 'link mode' heartbeat fail-over delay was longer than normal. 
+
+
+Fixes previously included in update 8 (firmware 2.16-37) 
+
+- Adds support for additional duplex and link speed options on the management interface. 
+
+
+Fixes previously included in update 7 (firmware 2.14-35) 
+
+- Allows SMTP servers with nonstandard top-level domains to be specified through the web interface. 
+
+
+Fixes previously included in update 6 (firmware 2.13-33) 
+
+- Corrects an issue with the save button on the segment configuration page. 
+
+
+Fixes previously included in update 5 (firmware 2.10-30) 
+
+- Addresses an issue where the NAB may fail to automatically switch to bypass mode after executing a certain set of commands. 
+
+
+Fixes previously included in update 4 (firmware 2.7-26) 
+
+- Adds the ability to check link state by executing the command "cli get link_status" 
+
+
+Fixes previously included in update 3 (firmware 1.0.3096) 
+
+- Implements a new, streamlined installation process. 
+
+
+Fixes previously included in update 2 (firmware 1.0.2564) 
+
+- Corrects an issue where the heartbeat process can consume 98% CPU. 
+- Addresses an issue where TAP settings weren't showing up correctly. 
+- Fixes a bug with the Help menu on certain configuration screens. 
+- Fixes an issue where unplugging power supply 2 will cause the appliance to send out incorrect SNMP notifications. 
+- Improves the SNMP messages sent when the NAB forces a segment down due to loss of link. 
+
+
+Fixes previously included in update 1 (firmware 1.0.1901) 
+
+- This patch adds the ability to set 1000 Mbps Full on the product's monitoring interfaces. 
+
+
+
+
+[/support/docview.wss?uid=swg21670508&aid=1] [http://ibm.biz/KC-SNIPS] [/support/docview.wss?uid=swg21670508&aid=2] [http://ibm.biz/InfraSecForumTechnote] [/support/docview.wss?uid=swg21670508&aid=3] [http://ibm.biz/SecSuptUTube] [/support/docview.wss?uid=swg21670508&aid=4] [http://ibm.biz/InfraSecFixes] [/support/docview.wss?uid=swg21670508&aid=5] [http://ibm.biz/FlexLicLogin] [/support/docview.wss?uid=swg21670508&aid=6] [http://ibm.biz/MyNotification] [/support/docview.wss?uid=swg21670508&aid=7] [http://ibm.biz/ContactSecSupport]

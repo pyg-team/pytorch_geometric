@@ -1,0 +1,95 @@
+Title: IBM Does Domino use the /tmp directory on the IBM i platform? - United States
+
+Text:
+tmp; server does not start after backup; multiple console logs; /tmp; directory; temp directory TECHNOTE (FAQ)
+
+QUESTION
+Does Lotus® Domino® for IBM® i (i5/OS®) use the /tmp directory?
+
+ANSWER
+ 
+
+Yes. Domino uses the /tmp directory during normal server operation. Here are some examples of problems that may occur if the /tmp directory is not available: 
+
+
+
+
+
+
+
+What would cause the /tmp directory to be unavailable?
+
+The most common reason is a save lock on the directory due to a nightly save process. 
+
+For example, running the following save would cause a problem:
+
+
+ * SAV DEV('/qsys.lib/tap01.devd') OBJ(('/') ('/qsys.lib' *OMIT)
+ *  ('/notes/data' *OMIT) ('/qibm/proddata/*' *OMIT) 
+   ('/tmp/*' *OMIT )) 
+   
+   
+
+To correct this save, change the syntax of the omit so that it is /tmp instead of /tmp/*. This is important otherwise the /tmp directory will be locked while the save is active. By removing the /* both the /tmp directory and the files within the directory will be omitted. For example:  * 
+ * SAV DEV('/qsys.lib/tap01.devd') OBJ(('/') ('/qsys.lib' *OMIT)
+ *  ('/notes/data' *OMIT) ('/qibm/proddata/*' *OMIT) 
+   ('/tmp' *OMIT )) 
+
+
+
+
+
+How is the Domino server affected if the /tmp directory is unavailable? 
+
+ 
+
+- The server may fail to start completely. 
+
+- The server may not end normally and an immediate (*IMMED) shutdown may be required. 
+
+- The server may not be able to write to the console.log and more than one console log file may be created during one server run. 
+
+- Console log entries may be created in Domino joblogs or QPRINT files. 
+
+
+
+
+
+
+
+
+What error messages may be seen if the /tmp directory is unavailable? 
+
+- In the console.log file you may see the error "Failed to open console log" 
+
+- In the server joblog you may see the errors: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+
+
+If you find the /tmp directory is locked/in use, what can be done? 
+
+- Identify the job(s) locking the /tmp directory (Domino on IBM i errors related to locked/in use IFS files" #1259933") 
+
+- Once the job(s) have been identified, see if they can be ended safely. 
+
+- If the jobs cannot be ended, an IPL will close/resolve all locking issues.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ as/400
+os/400
+iseries
+i5/OS
+System i
+IBM i

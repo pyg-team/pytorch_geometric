@@ -1,0 +1,20 @@
+Title: IBM "installer interface mode not supported" error installing License Manager on Windows Server 2012 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ You've downloaded the Concurrent Licensing Tools for Windows from the Modeler 15 distribution and are trying to install it onto a Windows 2012 Server machine by double-clicking the spss_clt_9.5_licmgr_win_en.exe file. When you do this you see the error "installer interface mode not supported" 
+
+CAUSE
+The License Manager that ships with Modeler 15 does not support Windows Server 2012.
+
+ANSWER
+The License Manager that ships with Modeler 15 does not support Windows Server 2012. 
+
+If you are entitled to SPSS Statistics as well as SPSS Modeler you can download and install the Concurrent License Tools for Windows from the Statistics 22 distribution
+(spss_clt_9.5.0.1-licmgr_win_en.exe). This is supported with Windows 2012 and can be used with Modeler 15. 
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]

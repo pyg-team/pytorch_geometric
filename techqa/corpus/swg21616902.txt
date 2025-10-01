@@ -1,0 +1,33 @@
+Title: IBM Some IBM Business Process Manager (BPM) tools do not work correctly when used with the Google Chrome or Apple iPad Safari browsers and the Simplified Chinese (GB18030) character set - United States
+
+Text:
+Chrome; Simplified Chinese; 18030; Process Center; Coach Designer; RTC login; ibpma801relnotes; ibpms801relnotes; ibpme801relnotes; ibpma85relnotes; ibpms85relnotes; ibpme85relnotes; ibpma8501relnotes; ibpms8501relnotes; ibpme8501relnotes; Apple; Safari TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you are using Google Chrome or Apple iPad Safari browsers to run web-based IBM Business Process Manager tools (for example, Process Portal or Process Center), and if you are using the Simplified Chinese (GB18030) character set, you might have issues with corrupted or missing input text and windows. 
+
+SYMPTOM
+Because Google Chrome and Apple iPad Safari browsers do not fully support the Simplified Chinese character set, the following problems can occur: 
+
+ * The Process Center Add Link window, which is used to link external information to a process application, is unavailable or does not display correctly. 
+ * The Text Area control in a Coach displays corrupted input text. 
+ * The Process Center fields, for example the Process App Name field, display corrupted input text.
+
+
+CAUSE
+The Google Chrome and Apple iPad Safari web browsers do not fully support the Simplified Chinese GB18030 character set. 
+
+RESOLVING THE PROBLEM
+Use a browser that supports the character set. For example, you can use Mozilla Firefox or Microsoft Internet Explorer.
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21617632]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express General Linux, Windows 8.5.7, 8.5.6, 8.5.5, 8.5.0.2, 8.5.0.1, 8.5, 8.0.1.3, 8.0.1.2, 8.0.1.1, 8.0.1 Business Integration IBM Business Process Manager Standard General AIX, Linux, Solaris, Windows 8.5.7, 8.5.6, 8.5.5, 8.5.0.2, 8.5.0.1, 8.5, 8.0.1.3, 8.0.1.2, 8.0.1.1, 8.0.1 
+PRODUCT ALIAS/SYNONYM
+ BPM

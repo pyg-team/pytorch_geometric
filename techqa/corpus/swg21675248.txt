@@ -1,0 +1,29 @@
+Title: IBM Checking the Health of All Dataslices - PureData System for Analytics - United States
+
+Text:
+Netezza; RAID; DS; PDA TECHNOTE (FAQ)
+
+QUESTION
+ How to run a nzraidcheck and collect the results? 
+
+CAUSE
+IBM support has requested a nzraidcheck to verify the storage disks.
+
+ANSWER
+To run a nzraidcheck, issue the following command, as NZ user: 
+
+$ /nz/kit/bin/adm/tools/nzraidcheck -mode checkOnly
+
+or to run in background - 
+$ nohup /nz/kit/bin/adm/tools/nzraidcheck -mode checkOnly &
+
+To check status of NZRAIDCHECK
+$ /nz/kit/bin/adm/tools/nzraidcheck -mode show
+
+This can be ran with the system state 'Online' and the process can be stopped and restarted, as needed, until complete.
+
+Please review the output of the command once it reaches 100% and return the output to support.
+
+If the results indicate any issues are found, issue the following command, as NZ user, for the complete table and return the output to support.
+
+$ nzsql -c "select * from SYSTEM..V_NZRAIDCHECK_ERROR_DETAIL_LATEST"

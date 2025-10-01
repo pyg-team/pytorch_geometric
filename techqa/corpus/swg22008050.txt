@@ -1,0 +1,29 @@
+Title: IBM Is DB2 purescale supported as both a source and target? Also, do we have any docs around configuration? - United States
+
+Text:
+purescale; cdc; support TECHNOTE (FAQ)
+
+QUESTION
+ Is DB2 purescale supported as both a source and target? Also, do we have any docs around configuration? 
+
+ANSWER
+Yes DB2 purescale is supported by CDC as both a source and target.
+Here are relevant links:
+
+1. System requirements (you'll have to click on the "Supported Software" tab):
+https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=E3FF6980B5DF11E686D823753F804D5F&osPlatforms=AIX|Linux|Windows&duComponentIds=S009&optionalCapIds=9%20%28https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=E3FF6980B5DF11E686D823753F804D5F&osPlatforms=AIX|Linux|Windows&duComponentIds=S009&optionalCapIds=9%29 [https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=E3FF6980B5DF11E686D823753F804D5F&osPlatforms=AIX%7CLinux%7CWindows&duComponentIds=S009&optionalCapIds=9%20%28https://www.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProduct?deliverableId=E3FF6980B5DF11E686D823753F804D5F&osPlatforms=AIX%7CLinux%7CWindows&duComponentIds=S009&optionalCapIds=9%29]
+
+2. Knowledge Center docs:
+
+https://www.ibm.com/support/knowledgecenter/SSTRGZ_11.4.0/com.ibm.cdcdoc.cdcfordb2luw.doc/concepts/replicatingdata_DB2purescale.html [https://www.ibm.com/support/knowledgecenter/SSTRGZ_11.4.0/com.ibm.cdcdoc.cdcfordb2luw.doc/concepts/replicatingdata_DB2purescale.html]
+
+3. Recent significant Interim Fix:
+https://www.ibm.com/developerworks/community/blogs/a9b542e4-7c66-4cf3-8f7b-8a37a4fdef0c?sortby=0&maxresults=50&order=desc&lang=en [https://www.ibm.com/developerworks/community/blogs/a9b542e4-7c66-4cf3-8f7b-8a37a4fdef0c?sortby=0&maxresults=50&order=desc&lang=en]
+
+Specifically:
+IIDR 11.3.3.3-44 for DB2 LUW
+* Modify Purescale transaction ordering logic from VTS based ordering to one based on LFS and LSN.
+
+(So it's best to use v11.4 or an IF level greater or equal to the one above.)
+
+Notes: Above information is for your reference. Contact IBM support if you find other information or observe some symptom which cannot be explained by above. This information may be changed in future release.

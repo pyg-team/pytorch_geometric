@@ -1,0 +1,35 @@
+Title: IBM How do I hide the annotation toolbar of the Daeja Viewer, in Content Navigator? - United States
+
+Text:
+annotation; toolbar; hide; Daeja; Virtual; Professional; content navigator; navigator; icn TECHNOTE (FAQ)
+
+QUESTION
+ How do I hide the annotation toolbar of the Daeja Viewer, in Content Navigator? 
+
+ANSWER
+In Content Navigator v2.0.2:
+Modify the filenetViewer_properties.jsp file in the navigator.war/applets folder, like this 
+
+
+ * --------- 
+   <% 
+   response.setHeader("Cache-Control","no-cache"); //HTTP 1.1 
+   response.setHeader("Pragma","no-cache"); //HTTP 1.0 
+   response.setDateHeader ("Expires", 0); //prevents caching at the 
+   proxy server 
+   %> 
+   var filenetViewerParameters = { 
+   
+ * hideAnnotationToolbar: "false",
+ * 
+   // annotateEdit: "true", 
+   .... 
+   .... 
+   ---------
+ * 
+
+Add the line ' hideAnnotationToolbar: "false", ' (with the trailing comma) at the top as shown above. Save the changes and restart Navigator application server instance. 
+
+In Content Navigator v2.0.3: 
+Login to the admin desktop, go to the Daeja ViewONE panel and add the parameter value pair, 
+( hideAnnotationToolbar, false), in the Additional Settings section of either the Daeja Professional or Virtual viewer's tabs.

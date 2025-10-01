@@ -1,0 +1,186 @@
+Title: IBM OA38974: TEMS CRASHES DURING STARTUP. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TEMS fails during initialization when automatically starting a
+   situat
+   with malformed SQL.  The failue reported initially reported
+   occurred
+   the Windows platform but this failure can occur on all
+   platforms.
+   
+   The failing thread call stack looks a follows:
+   
+     kdsmain!VPM11CAT+0x14b4
+     kdsmain!VPM11CVP+0x78a
+     kdsmain!VVW1CSV+0x3aa
+     kdsmain!VRQ11CR+0xbf2
+     kdsmain!VPA11_CreateRequest+0x322
+     KDSBASE!sql1creq+0xb05
+     kdsmain!RUL11CRQ+0x5e4
+     kdsmain!RUL11DEC+0x41f
+     kdsmain!RUL11CRN+0x255
+     kdsmain!RUL11CRT+0xa0e
+     kdsmain!SIT11CS+0x24a
+     kdsmain!VST12SRT+0x1ce
+     kdsmain!VPM11OUT+0xeeb
+     kdsmain!VPM11CT+0x48c
+     kdsmain!VVW1CSV+0x6ba
+     kdsmain!VRQ11CR+0xbf2
+     kdsmain!VPA11_CreateRequest+0x322
+     KDSBASE!sql1creq+0xb05
+     KSM!WsSqlDSRequest::WsSqlDSRequest+0x3c3
+     KSM!WsSqlDSDB::CreateRequest+0x296
+   
+   RECREATE INSTRUCTIONS:
+   The following SQL can be issued to cause the exception reported
+   here:
+   
+     SELECT SITDB.RULENAME,
+            SITDB.PREDICATE
+     FROM   O4SRV.SITDB, O4SRV.LOCALTIME;
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Modify the offending situation to not be automatically started.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All TEMS users.                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: AGENT FAILS TO DISCARD EVENTS FOR A     *
+   *                      STOPPED SITUATION.                      *
+   ****************************************************************
+   * RECOMMENDATION: Apply the PTF.                               *
+   ****************************************************************
+   Agent fails to discard events collected in autonomous mode
+   for a stopped or modified situation. Situation events remain
+   stored in persistent files on the agent if a situation is
+   stopped while an agent is running in autonomous mode.
+   Symptom: Presence of persistent files
+   <hostname><pc>_autoattr.asa in the agent  directory when
+   agent is connected to the monitoring server.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Agent framework now discards events for stopped or modified
+   situations.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA38974
+   
+   
+ * REPORTED COMPONENT NAME
+   MGMT SERVER DS
+   
+   
+ * REPORTED COMPONENT ID
+   5608A2800
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-03-02
+   
+   
+ * CLOSED DATE
+   2012-03-05
+   
+   
+ * LAST MODIFIED DATE
+   2012-04-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IV04070 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV04070]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  KDSMAIN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MGMT SERVER DS
+   
+   
+ * FIXED COMPONENT ID
+   5608A2800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY UA64468 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA64468]
+   UP12/03/09 P F203
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

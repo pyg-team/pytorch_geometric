@@ -1,0 +1,20 @@
+Title: IBM SKLM encryption code verification - United States
+
+Text:
+AES 256-bit f PCI DSS IBMJCEFIPS and IBMJCEPlusFIPS crypto TECHNOTE (FAQ)
+
+QUESTION
+ 
+SKLM uses AES 256-bit for data encryption/decryption to conform to the PCI DSS standards. 
+Is a third party used to review IBM's implementation / code of encryption / decryption. Are there any outstanding deficiencies identified by the third party ? 
+
+
+ANSWER
+
+From SKLM perspective , it uses IBM JAVA to do encryption.
+
+IBM Java has two cryptographic providers, IBMJCEFIPS and IBMJCEPlusFIPS which are FIPS 140-2 approved cryptographic modules which have been reviewed by an external FIPS 140-2 certification lab and certified by an external third party agency via the CMVP process. 
+Internal reviews are also done on our crypto code and the resulting product, SKLM, undergoes penetration testing including the cryptography. 
+Please refer to the security policies for IBMJCEFIPS and IBMJCEPlusFIPS. 
+
+There are no known deficiencies in the cryptographic code.

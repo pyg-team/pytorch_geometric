@@ -1,0 +1,79 @@
+Title: IBM Collecting Data: for Tivoli Business Service Manager - Issues with IBM Charts - United States
+
+Text:
+5724C5100; Collecting Data; Collecting Data; Collecting Data; MustGather; MustGatherDocument TECHNOTE (FAQ)
+
+QUESTION
+ What Information needs to be collected to help analyze and understand an ITM chart issue with TBSM? 
+
+CAUSE
+ Collecting this information before calling IBM support will help you understand the problem and save time analyzing the data
+
+ANSWER
+Provide the following items to analysis TBSM problems with ITM Charts:
+Update the PMR with the output from the following: 
+
+1) Provide a concise problem description that includes things like a timeline, sequence of events, any error messages issued, and a scenario on how to recreate the problem you encountered. 
+
+2) Send TBSM version information as outlined in Version Technote [http://www.ibm.com/support/docview.wss?uid=swg21509592]
+
+3) Before you can add an ITM chart, you need to complete the installation and configuration of ITM Web Services. What version of ITM is being used? From TEPS hosts please send the following output: 
+
+ * UNIX : 
+ * 
+ * cinfo -i
+ * 
+   Windows:
+ * 
+ * kincinfo –i 
+
+
+4) send copy of The itm. properties file (check Dashboard Server)  * Windows
+ * 
+ * properties
+ * 
+ * 
+ * Unix:
+ * 
+ * properties
+ * 
+
+
+5) Please increase (TIP & Charting) trace levels on the Dashboard server.  * 
+ * com.ibm.isc.*=all: com.ibm.isclite.*=all: com.ibm.iscportal.*=all 
+ * 
+ * com.ibm.tivoli.*=all 
+   com.micromuse.common.chartcomponent.chartservice.=finest 
+   com.micromuse.common.chartcomponent.servlet.=finest 
+ * 
+ * 
+
+$TBSM_HOME/bin/setTraceLevel.sh <tipadmin> <tip_passwd> dashboard -addtrace "com.ibm.isc.*=all:com.ibm.isclite.*=all:com.ibm.iscportal.*=all:com.ibm.tivoli.*=all:com.micromuse.common.chartcomponent.chartservice.=finest:com.micromuse.common.chartcomponent.servlet.=finest" 
+6) Please recreate issue and send screen shots showing your steps...  *   *  Created a new page and add the "Charting" widget. Next select Chart source -> IBM Charts
+   
+   Then select New to create the new chart source and specify these parameters 
+ * [/support/docview.wss?uid=swg21651500&amp;aid=1]
+ *  click create 
+ * 
+ * 
+ *  select your new connection: TIPWebServiceHttpRouter on your ITM server 
+ * 
+ * [/support/docview.wss?uid=swg21651500&amp;aid=3]
+ * 
+ *  Next Select Chart to Import (this is a Group pull-down list) 
+ * 
+ * [/support/docview.wss?uid=swg21651500&amp;aid=4]
+ * 
+ *  after a group is selected, choose from the list of chart types and then click finish 
+ * 
+ * [/support/docview.wss?uid=swg21651500&amp;aid=5]
+ * 
+ *  show finished results, and/or any error messages. 
+
+
+7) From TEPS server use the pdcollect tool to collect the ITM logs 
+
+8) Collect TBSM server logs see Log and Trace Files Technote [http://www-1.ibm.com/support/docview.wss?rs=767&uid=swg21509617] : (See section Log Collection (on Unix OR on Windows): [http://www-304.ibm.com/support/docview.wss?rs=767&uid=swg21509491] [http://www-1.ibm.com/support/docview.wss?rs=767&uid=swg21509617] 
+9) Please send Date/timestamp when the recreate was done, to help search the logs. 
+
+10) What userID was logged into TIP console, performing the recreate?

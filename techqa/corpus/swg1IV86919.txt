@@ -1,0 +1,236 @@
+Title: IBM IV86919: IMPACTDB/DERBY DATABASE PROBLEMS IN CLUSTER - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+6.1.1-TIV-BSM-FP0005-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0005-zlinux&source=SAR]
+6.1.1-TIV-BSM-FP0005-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0005-windows&source=SAR]
+6.1.1-TIV-BSM-FP0005-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0005-solaris&source=SAR]
+6.1.1-TIV-BSM-FP0005-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0005-linux&source=SAR]
+6.1.1-TIV-BSM-FP0005-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Business+Service+Manager&fixids=6.1.1-TIV-BSM-FP0005-aix&source=SAR]
+6.1.1-TIV-NCI-FP0005-aix [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0005-aix&source=SAR]
+6.1.1-TIV-NCI-FP0005-zlinux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0005-zlinux&source=SAR]
+6.1.1-TIV-NCI-FP0005-windows [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0005-windows&source=SAR]
+6.1.1-TIV-NCI-FP0005-solaris [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0005-solaris&source=SAR]
+6.1.1-TIV-NCI-FP0005-linux [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=6.1.1-TIV-NCI-FP0005-linux&source=SAR]
+7.1.0-TIV-NCI-ZLINUX-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0007&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0007&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0007&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0007&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0007 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0007&source=SAR]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 7(7.1.0-TIV-NCI-FP0007) [http://www-01.ibm.com/support/docview.wss?uid=swg24042688]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 8(7.1.0-TIV-NCI-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24042885]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 9(7.1.0-TIV-NCI-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24043378]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 10(7.1.0-TIV-NCI-FP0010) [http://www-01.ibm.com/support/docview.wss?uid=swg24043588]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 11(7.1.0-TIV-NCI-FP0011) [http://www-01.ibm.com/support/docview.wss?uid=swg24043858]
+IBM Tivoli Netcool/Impact V6.1.1 Fix Pack 5 (6.1.1-TIV-NCI-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24044185]
+IBM Tivoli Business Service Manager V6.1.1 Fix Pack 5(6.1.1-TIV-BSM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24044193]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 12 (7.1.0-TIV-NCI-FP0012) [http://www-01.ibm.com/support/docview.wss?uid=swg24044312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There are problem that can occur with the ImpactDB/derby
+   database in a clsuter environment with the database working
+   reliably in master/slave mode:
+   
+   1. The secondary server did not create/have a derby.log file.
+   
+   2. The following error is reported in the primary derby.log
+   
+   Wed Jul 13 12:28:19 EDT 2016 : Connection number: 4.
+   Wed Jul 13 12:28:19 EDT 2016
+   Thread[DRDAConnThread_41,5,derby.daemons] Cleanup action
+   starting
+   java.sql.SQLException: Database 'ImpactDB' not found.
+           at
+   org.apache.derby.impl.jdbc.SQLExceptionFactory40.getSQLException
+   (Unknown Source)
+           at
+   org.apache.derby.impl.jdbc.Util.newEmbedSQLException(Unknown
+   Source)
+           at
+   org.apache.derby.impl.jdbc.Util.newEmbedSQLException(Unknown
+   Source)
+           at
+   org.apache.derby.impl.jdbc.Util.generateCsSQLException(Unknown
+   Source)
+           at
+   org.apache.derby.impl.jdbc.EmbedConnection.newSQLException(Unkno
+   wn Source)
+           at
+   org.apache.derby.impl.jdbc.EmbedConnection.handleDBNotFound(Unkn
+   own Source)
+           at
+   org.apache.derby.impl.jdbc.EmbedConnection.<init>(Unknown
+   Source)
+           at
+   org.apache.derby.jdbc.Driver40.getNewEmbedConnection(Unknown
+   Source)
+           at org.apache.derby.jdbc.InternalDriver.connect(Unknown
+   Source)
+           at org.apache.derby.jdbc.EmbeddedDriver.connect(Unknown
+   Source)
+           at
+   org.apache.derby.impl.drda.Database.makeConnection(Unknown
+   Source)
+           at
+   org.apache.derby.impl.drda.DRDAConnThread.getConnFromDatabaseNam
+   e(Unknown Source)
+           at
+   org.apache.derby.impl.drda.DRDAConnThread.verifyUserIdPassword(U
+   nknown Source)
+           at
+   org.apache.derby.impl.drda.DRDAConnThread.parseSECCHK(Unknown
+   Source)
+           at
+   org.apache.derby.impl.drda.DRDAConnThread.parseDRDAConnection(Un
+   known Source)
+           at
+   org.apache.derby.impl.drda.DRDAConnThread.processCommands(Unknow
+   n Source)
+           at
+   org.apache.derby.impl.drda.DRDAConnThread.run(Unknown Source)
+   Caused by: java.sql.SQLException: Database 'ImpactDB' not found.
+           at
+   org.apache.derby.impl.jdbc.SQLExceptionFactory.getSQLException(U
+   nknown Source)
+           at
+   org.apache.derby.impl.jdbc.SQLExceptionFactory40.wrapArgsForTran
+   sportAcrossDRDA(Unknown Source)
+           ... 17 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL IMPACT USERS                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * 1. derby.log deleted when copied from Primary to Secondary   *
+   * (when secondary starts)                                      *
+   *                                                              *
+   * db/<server>/derbyderby.log should exist for all started      *
+   * Derby instances (even if in slave mode).                     *
+   *                                                              *
+   * 2. If host names do not match those in the ImpactDB.ds file, *
+   * Impact cannot start up                                       *
+   *                                                              *
+   *                                                              *
+   * The issue here is that it is not obvious what the server is  *
+   * reporting the servername as. So it's not easy for customers  *
+   * to fix.                                                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following
+   maintenance packages:
+   |Fix Pack | 7.1.0-TIV-NCI-FP0007
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV86919
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   611
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-07-14
+   
+   
+ * CLOSED DATE
+   2016-08-05
+   
+   
+ * LAST MODIFIED DATE
+   2016-08-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UNKNOWN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

@@ -1,0 +1,136 @@
+Title: IBM WebSphere Application Server JVM version shows as 1.6 for server configured with JRE 1.7 runtime in Rational Application Developer - United States
+
+Text:
+sdk; jre TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to add a server with JVM 7 runtime using IBM Rational Application Developer for WebSphere Software (RAD) results in the server JVM still showing as "1.6_32" or "1.6_64" when it should show "1.7_xx". 
+
+SYMPTOM
+A symptom of this problem is getting an error similar to the following when trying to publish an application configured to use Java 7.
+
+### ERROR ###
+
+WebSphere Application Server error:
+The MACS project is built with Java SDK 7, which is not compatible with the server running at Java SDK 6. Try publishing the application on a later version of WebSphere Application Server. Or try increasing the JRE of the server, if you are using WebSphere Application Server v8.5.
+
+### END ERROR ###
+
+
+
+Steps to reproduce:
+
+Note: This assumes you have the IBM WebSphere SDK Java Technology Edition 7 installed for your WebSphere Application Server installation. 
+
+ 1. Right click on your server > Add and Remove
+    The "Add and Remove" window opens. 
+ 2. Select your project from the "Available" list > Add > Finish
+    
+    The error message or a similar message relating to not having the correct JVM for your server appears on the screen
+
+
+CAUSE
+This error message could mean that the profile your server is configured to be using is not configured to use Java 7 even though the runtime the server itself is using has been added with Java 7 JRE in RAD. 
+
+ * The JVM version is most likely either 1.6_32 or 1.6_64. This means the profile is using Java 6 either with 32 or 64-bit.
+   
+   If the project is configured to use Java 7, you must ensure that the JRE for the runtime environment is set to WebSphere Application Server JRE 1.7, 32 bit or WebSphere Application Server JRE 1.7, 64 bit and that the JVM version used by the application server is either 1.7_32 or 1.7_64.
+   
+   If one of those 3 values is not consistent with Java 7, this is most likely why you are encountering this issue. Moreover, it is most likely that the profile itself is simply not configured with JVM 1.7.
+
+RESOLVING THE PROBLEM
+Procedure: 
+
+ 1. Verify that your project is using Java 7  * Right click on your project > Properties > Project facets 
+     * Change your project's Java version to "1.7" if it is not at 1.7
+       
+       [/support/docview.wss?uid=swg21671938&aid=1] [/support/docview.wss?uid=swg21671938&aid=1]
+       
+       
+    
+    
+ 2. Verify that your server's runtime environment is using either WebSphere Application Server JRE 1.6, 32 bit or WebSphere Application Server JRE 1.6, 64 bit  1. Go to Window > Preferences > Server > Runtime environments > Select the appropriate runtime environment from the list > Edit 
+     2. Click on the listbox under JRE for the runtime environment  * If you have the option to use JRE 1.7, select to use JRE 1.7
+           
+           [/support/docview.wss?uid=swg21671938&aid=2] [/support/docview.wss?uid=swg21671938&aid=2]
+           
+         * If you do not have the option to use JRE 1.7, you will need to install the IBM SDK Java Technology Edition 7 product by following WebSphere Application Server Support documentation: How to install IBM SDK Java Technology Edition 7 [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/index.jsp?topic=%2Fcom.ibm.websphere.installation.express.doc%2Fae%2Ftins_installation_jdk7_gui.html]
+           
+           
+        
+        
+    
+    
+ 3. Verify that the JVM version used by the profile is either 1.6_32 or 1.6_64
+    
+    Note: All of the WebSphere Application Server (WAS) commands that are passed in this next step can be found in the WebSphere Application Server information center [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/index.jsp?topic=/com.ibm.websphere.nd.doc/info/ae/ae/rxml_managesdk.html].
+    
+    Note: As it is mentioned in the previous link, the managesdk command is new as of WAS 8.0.x; therefore, this tutorial is only relevant as of WAS 8.0.x.
+     1.  Open a command line
+         
+         
+     2.  Run the following command where {WAS INSTALL DIR} is the location of your WAS installation on your machine.
+         
+         cd {WAS INSTALL DIR}/bin
+         
+         Windows example:
+         [/support/docview.wss?uid=swg21671938&aid=3] [/support/docview.wss?uid=swg21671938&aid=3]
+         
+     3.  Check which SDKs are available for the WAS 8.5 server overall. 
+         
+         Run the following command:
+         
+         Windows: managesdk.bat -listAvailable
+         
+         Linux: ./managesdk.sh -listAvailable
+         
+         
+     4.  Take note of the SDK Name for SDK 7.
+         
+         Windows example:
+         [/support/docview.wss?uid=swg21671938&aid=4] [/support/docview.wss?uid=swg21671938&aid=4]
+         
+         
+     5.  Check which SDK your profile is using by running the following command where {PROFILE NAME} is the profile that will be used to add the server in RAD
+         
+         Windows: managesdk.bat -listEnabledProfile -profileName {PROFILE NAME} -verbose
+         
+         Linux: ./managesdk.sh -listEnabledProfile -profileName {PROFILE NAME} -verbose
+         
+         After running the command, the following names should all be 1.6:  * PROFILE_COMMAND_SDK 
+          * Node {NODE NAME} SDK 
+          * Server {SERVER NAME} SDK 
+            
+            In the example below, these are all 1.7 because the example profile is already configured to use Java 7.
+            
+            [/support/docview.wss?uid=swg21671938&aid=5] [/support/docview.wss?uid=swg21671938&aid=5]
+            
+            
+         
+         
+     6.  Enable the profile to use SDK 7 by running the following command where {PROFILE NAME} is the name of the profile that will be used with the server in RAD and {SDK NAME} is the name of the SDK that you took note of earlier after running the first command (1.7_32 or 1.7_64):
+         
+         Windows: managesdk.bat -enableProfile -profileName {PROFILE NAME} -sdkname {SDK NAME} -enableServers
+         
+         Linux: ./managesdk.sh -enableProfile -profileName {PROFILE NAME} -sdkname {SDK NAME} -enableServers
+         
+         If the command ran successfully, you should see a message similar to the following:
+         
+         Windows example:
+         [/support/docview.wss?uid=swg21671938&aid=6] [/support/docview.wss?uid=swg21671938&aid=6]
+         
+         
+     7.  Close RAD (if it is open)
+         
+         
+     8.  Reopen RAD
+         
+         
+     9.  Right click the server configured with JDK 7 runtime in the servers view > Properties > WebSphere Application Server. 
+         
+         The JVM Version should now be at the value of sdkname (for example 1.7_64 as seen below):
+         
+         [/support/docview.wss?uid=swg21671938&aid=7] [/support/docview.wss?uid=swg21671938&aid=7]
+         
+         
+     10. Publish your application in RAD

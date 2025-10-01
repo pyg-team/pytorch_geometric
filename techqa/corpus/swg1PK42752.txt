@@ -1,0 +1,254 @@
+Title: IBM PK42752: CEI ISSUE WHEN CONVERTING A SERVER TO A CLUSTER. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24020073]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24021203]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When converting an existing server as a first member of a
+   cluster the following errors occur:
+   1. CommonEventInfrastructure_Queue JMS Queue does not have the
+   Queue name updated with the correct SIB Queue destination
+   2. CommonEventInfrastructure_AllEventsTopic JMS Topic does not
+   have the Topic space updated with the correct SIB Topic
+   destination
+   
+   Both SIB destinations are not "moved" from server-scope to
+   cluster-scope although the cluster-scope SIB destinations are
+   created.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: IBM WebSphere Application Server version     *
+   *                 6.1 Common Event Infrastructure (CEI) users  *
+   *                 who want to create a cluster from a          *
+   *                 standalone WebSphere Application Server      *
+   *                 profile that has CEI deployed, by            *
+   *                 converting this standalone Application       *
+   *                 Server to the first member of the cluster.   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: You cannot use CEI anymore after        *
+   *                      creating a cluster from a standalone    *
+   *                      WebSphere Application Server profile    *
+   *                      that has Common Event Infrastructure    *
+   *                      (CEI) deployed, by converting this      *
+   *                      standalone profile to the first member  *
+   *                      of the cluster.                         *
+   ****************************************************************
+   * RECOMMENDATION: If you encounter this problem while          *
+   *                 creating the cluster from a standalone CEI   *
+   *                 WebSphere Application Server by converting   *
+   *                 this standalone Application Server to the    *
+   *                 first member of the cluster, it is           *
+   *                 recommended to install fix pack which        *
+   *                 contains this fix.                           *
+   ****************************************************************
+   The service integration bus (SIB) destination associated with
+   the JMS CEI queue and the SIB topic space associated with the
+   CEI topic space are not updated when the 'creatCluster' task
+   extension is called. The  'createCluster' task is called when
+   a stand alone server, that has CEI deployed is promoted to
+   first cluster member. This means that the CEI's JMS queue,
+   CommonEventInfrastructure_Queue, resource does not have the
+   Queue name updated with the correct associated queue on the
+   Service Integration Bus (SIB) and topic resource,
+   CommonEventInfrastructure_AllEventsTopic, does not have the
+   Topic space updated with the correct topic space that contains
+   the topic, on the service integration bus defined by the Bus
+   name property, both cluster-scoped.
+   Both resources have the old server-scoped SIB destinations
+   that are not available any more, because the 'creteCluster'
+   task extension removes these resources.
+   It happens because when 'createCluster' task is executed, CEI
+   extension verifies if the  CommonEventInfrastructure_Queue /
+   CommonEventInfrastructure_
+   AllEventsTopic exists in the resources, without checking if
+   the associated SIB destinations of these resources are in the
+   cluster scope and leaves them defined like they were, in the
+   server scope.
+   This task extension, 'createCluster', removes the actual
+   server scoped SIB destinations and creates the new cluster
+   scoped SIB destinations, so CEI will not be able to publish
+   events.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Applying the associated fix will update the SIB destinations
+   of CommonEventInfrastructure_Queue and
+   CommonEventInfrastructure_AllEventsTopic in the resources.
+   Now when creating a cluster from a standalone WebSphere
+   Application Server that has CEI deployed by converting it to
+   the first member of the cluster, the CEI task extension in
+   charged will make sure that  the SIB destinations of
+   CommonEventInfrastructure_Queue and CommonEventInfrastructure_
+   AllEventsTopic are correctly scoped.
+   
+   The fix for this APAR is currently targeted for inclusion
+   in fixpack 6.1.0.9.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Once you created the cluster from a standalone WebSphere
+   Application Server that has CEI deployed by converting it to
+   the first member of the cluster, open the Admin Console. Here
+   navigate to Resources, JMS, Queues,
+   CommonEventInfrastructure_Queue and select <ClusterName>.
+   CommonEventInfrastructureQueueDestination from the Queue name
+   drop-down list.
+   Navigate to Resources, JMS, Topic,  CommonEventInfrastructure_
+   AllEventsTopic and select <ClusterName>.
+   CommonEventInfrastructureTopicDestination from the Topic space
+   drop-down list.
+   Where <ClusterName> represents the name of the cluster you
+   created.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK42752
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   61W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-04-05
+   
+   
+ * CLOSED DATE
+   2007-05-21
+   
+   
+ * LAST MODIFIED DATE
+   2007-05-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  CEI
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

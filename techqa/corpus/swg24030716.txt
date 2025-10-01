@@ -1,0 +1,83 @@
+Title: IBM IS03:  WebSphere Message Broker - Message Flow Statistics Visualiser - United States
+
+Text:
+is03; message broker; monitoring ; statistics ; supportpac DOWNLOADABLE FILES
+
+ABSTRACT
+ SupportPac IS03 provides a graphical means of viewing WebSphere Message Broker message flow statistics. Both SnapShot and Archive statistics can be viewed in an intuitive interface 
+
+DOWNLOAD DESCRIPTION
+SupportPac IS03 is a development tool that provides a graphical means of viewing WebSphere Message Broker message flow statistics. The visualisation has the 'look and feel' of the WebSphere Message Broker Toolkit and allows you rapidly to view all available statistics in an intuitive manner. Both SnapShot and Archive statistics can be viewed using IS03 and it is highly configurable to enable the graphing of exactly the statistics that you want to see. 
+
+IS03 runs as a stand-alone Java application and uses an MQ client connection to connect to the Message Broker Queue Manager to retrieve statistics data. The SupportPac can therefore be run on any supported system which can connect to the Message Broker Queue Manager. For IS03 to function as a development tool, it needs access to the message flow source code.
+
+IS03 can also see the real time and historic statistics data in tables, and can export all recorded data to CSV for custom user processing. 
+
+Possible Uses
+• Performance evaluations of running Message Flows
+• Viewing statistics of interest (for example backout counts) in near real time. 
+• Exporting message flow statistics data to a CSV format for custom processing.
+
+New in this Release
+• Updated to support WebSphere Message Broker v8 (please see installation instructions).
+• Bug fixes.
+
+Skill Level Required
+Intermediate or Advanced skill level at Administering WebSphere Message Broker.
+
+Details
+Author: Matthew Lickman, Hursley
+Category: 2
+Released: 18Aug11
+Last updated: 25Sep12
+Current SupportPac Version: 1.1
+»Please note that the version number shown in the right-hand pane is the version of the WebSphere MQ or WebSphere MB product that this SupportPac applies to. The date is the last webpage refresh. 
+
+To view the complete portfolio of WebSphere MQ SupportPacs please visit the WebSphere MQ SupportPacs homepage. [http://www-01.ibm.com/support/docview.wss?rs=171&uid=swg27007205]
+
+PREREQUISITES
+ 
+
+ * Windows (XP or later) or a Linux system that has an IBM Java 6 JRE installed. (Other versions of Java may work but have not been tested). 
+ * WebSphere Message Broker Toolkit v7.0.0.2 or later. (When using with version 7 of WebSphere Message Broker – If using with v8 of Message Broker, the required files are included in the product runtime and the Toolkit is not required). 
+ * WebSphere MQ client JAR files.
+
+INSTALLATION INSTRUCTIONS
+Copy the file IS03.zip to a temporary directory on your chosen system and uncompress using an unzip utility. 
+Depending on if you are using the SupportPac with WebSphere Message Broker v7 or v8, the installation instructions differ:
+
+WebSphere Message Broker v7
+Edit the RunIS03v7.bat (on Windows) or RunIS03v7.sh (on Linux) file and modify it as follows:
+
+
+ 1. Modify the BASE_MQ_INSTALL variable to point to the correct location. 
+ 2. Modify the BASE_TOOLKIT_INSTALL variable to point to the correct location. (This variable should point to your SDPShared plugins directory). 
+ 3. Modify the CLASSPATH variable to ensure that it points to an existing com.ibm.broker.config.appdev* directory. To check this, navigate to the BASE_TOOLKIT_INSTALL directory and look for a directory starting with com.ibm.broker.config.appdev. Ensure the full name of this directory is the one which is included in the CLASSPATH variable. (If multiple com.ibm.broker.config.appdev.* directories exist, use the one with the latest version number). If a com.ibm.broker.config.appdev* directory does not exist, ensure that you have WebSphere Message Broker Toolkit 7.0.0.2 or higher installed (version 7.0.0.0 does not contain the required files).
+
+
+IBM Java 6 must also be on the system PATH. Check this by running the command 'java -version' at a command prompt. 
+
+IS03 can then be started by invoking the RunIS03v7.bat (on Windows) or RunIS03v7.sh (on Linux) script. 
+
+WebSphere Message Broker v8 
+Edit the RunIS03v8.bat (on Windows) or RunIS03v8.sh (on Linux) file and modify it as follows: 
+ 1. Modify the BASE_MQ_INSTALL variable to point to the correct location. 
+ 2. Modify the BASE_WMB_INSTALL variable to point to the correct location.
+
+
+IBM Java 6 must also be on the system PATH. Check this by running the command 'java -version' at a command prompt. 
+
+IS03 can then be started by invoking the RunIS03v8.bat (on Windows) or RunIS03v8.sh (on Linux) script. URL LANGUAGE SIZE(Bytes) is03.pdf [ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/is03.pdf] US English 598692 
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options is03.zip 25 Sep 2012 US English 1163264 HTTP [http://www14.software.ibm.com/cgi-bin/weblap/lap.pl?popup=Y&li_formnum=L-SBRY-8KFEVA&accepted_url=ftp://public.dhe.ibm.com/software/integration/support/supportpacs/individual/is03.zip] 
+TECHNICAL SUPPORT
+ Category 2 SupportPacs are provided in good faith and AS-IS. There is no warranty or further service implied or committed and any supplied sample code is not supported via IBM product service channels. 
+
+You may submit a question using the 'rate this page' below but a response is not guaranteed.
+
+Please read the license information contained within the zip file of this SupportPac to determine if you want to use it.

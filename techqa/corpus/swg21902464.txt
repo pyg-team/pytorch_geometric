@@ -1,0 +1,17 @@
+Title: IBM All batch reports fail without error message - United States
+
+Text:
+notification TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After migrating from another IBM Cognos instance, all batch reports (running in the background or scheduled reports) will fail instantly without any error message in run history detail. 
+
+CAUSE
+During the migration, a copy of the earlier IBM Cognos notification store database was restored and configured as the notification store database for new IBM Cognos environment.
+
+DIAGNOSING THE PROBLEM
+All batch reports will fail.
+Checking the cogserver.log, there will be many occurrence of CNC-BAL-0503 The Server has failed.
+
+RESOLVING THE PROBLEM
+Create and configure a blank database as notification store database.

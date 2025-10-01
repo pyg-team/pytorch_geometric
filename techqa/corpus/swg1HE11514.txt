@@ -1,0 +1,133 @@
+Title: IBM HE11514: IBM CONTENT COLLECTOR DOES NOT WORK WITH MICROSOFT WCF WHICH IS THE PRODUCT MICROSOFT SUPPORTS FOR WINDOWS 2008 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Content Collector V2.2 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24033009]
+IBM Content Collector V3.0 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24033902]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  IBM Content Collector V2.2 Windows installer program requires
+   WSE 3.0 which is not a supported product by Microsoft on Windows
+   Server 2008. Microsoft has replaced WSE 3.0 with WCF for Windows
+   Server 2008 and is the recommended method. The P8 connector will
+   need to be updated to support SSL connections to the P8
+   Content Engine server using Microsoft WCF.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The IBM Content Collector FileNet P8 Connector did not support
+   web service connections that use Microsoft Windows Communication
+   Foundation (WCF).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with this fix, the IBM Content Collector FileNet P8
+   Connector has been updated to support SSL connections to the
+   FileNet P8 Content Engine server that use Microsoft WCF. It now
+   makes appropriate calls using the FileNet P8 APIs to support
+   both Microsoft Web Services Enhancements (WSE) and Microsoft
+   Windows Communication Foundation (WCF) connections.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE11514
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR FILES
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5701
+   
+   
+ * REPORTED RELEASE
+   220
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-05-07
+   
+   
+ * CLOSED DATE
+   2012-08-07
+   
+   
+ * LAST MODIFIED DATE
+   2012-08-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR FILES
+   
+   
+ * FIXED COMPONENT ID
+   5724V5701
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R220 PSY
+   UP
+   
+   
+ * R300 PSY
+   UP

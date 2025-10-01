@@ -1,0 +1,48 @@
+Title: IBM Attempt to import a new licensing key results in "Invalid" license key error - United States
+
+Text:
+Caspian; Baltic; unknown; invalid; license server v7.0.1; flexnet; 10.8.0 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you import a new floating license key for IBM Software Delivery Platform (SDP) products an error message opens. 
+
+SYMPTOM
+Steps to reproduce: Import a new floating license key for IBM Software Delivery Platform products, 
+
+Expected results: New license key is imported.
+Actual results: An error pop-up is displayed:
+[/support/docview.wss?uid=swg21378048&aid=1] [/support/docview.wss?uid=swg21378048&aid=1]
+The error message is as follows:
+
+
+At least one of the licenses in the file being imported is invalid.
+Would you like to import these Floating licenses? 
+
+
+The Confirm Import window displays the key as unknown.
+
+
+CAUSE
+This error message might occur if the IBM Rational License Server is equal or lower to FLEXnet Licensing version v10.8.0. 
+Eclipse-based Rational products releases( See list below) requires a higher version of the license server as mentioned in TechNote:Product Activation of Eclipse-based Rational products [http://www-01.ibm.com/support/docview.wss?uid=swg21250404].
+
+
+DIAGNOSING THE PROBLEM
+The The Eclipse-based Rational products FLEXlm license keys require an updated version of the Rational License Server, version 7.0.0.1. The Baltic and earlier versions of the server will not serve the Caspian keys as they are in a slightly different format than Rational's traditional FLEXlm license keys. Therefore, you will need to upgrade your existing FLEXlm-based Rational License Server v7.0.1 for Windows and v7.0.0.1 for UNIX. 
+
+
+The Eclipse-based Rational products requires another daemon called: ibmratl to be served. This daemon comes with v7.0.1 for Windows and v7.0.0.1 for UNIX of the license server.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+ 1. Verify the version of the License Server.
+    
+    
+ 2. Click Start > (All) Programs > IBM Rational > Rational Software Installed Product Information.
+
+Update the License Server if necessary. 
+
+You can download newer versions from your Passport Advantage On-line Software download & Media access page. You will find the correct Rational License Server software mentioned as a component of the Optional download files of your IBM Rational Software Development Platform v7 product.

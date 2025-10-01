@@ -1,0 +1,176 @@
+Title: IBM PI62725: RATIONAL DEVELOPER FOR SYSTEM Z (RDZ) TSO SEND TO USER(*) WILL SEND TO ALL RSE USERS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Rational Developer for System z - RDz - TSO Send command with
+   the User(*) option sends the message to all RSE users.
+   
+   However, according to the TSO manual the Send 'message' USER(*)
+   should be sent only to the user executing the command.
+   *****************************
+   USER(*)
+   * - specifies the message is sent to the user ID associated
+   with the issuer of the SEND command. If * is used with a SEND
+   command in a CLIST, the message is sent to the user executing
+   the CLIST. If it is used with the SEND command at a terminal,
+   * causes the message to be sent to the same terminal.
+   
+   http://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.
+   zos.v2r2.ikjc500/ikj2l2_SEND_command_operands.htm?lang=en [http://www.ibm.com/support/knowledgecenter/SSLTBW_2.2.0/com.ibm.zos.v2r2.ikjc500/ikj2l2_SEND_command_operands.htm?lang=en]
+   
+   Also, using the LOGON parameter is not working as described in
+   the TSO/E manual.  The TSO/E manual states:
+   LOGON - specifies that you want the message retained in the
+   SYS1.BRODCAST data set or user log data set, if the recipient
+   is not logged on, is not receiving messages, or cannot receive
+   messages because of SECLABEL checking. If the recipient is
+   currently using the system and receiving messages, the
+   message is sent immediately.
+   
+   However, RDz TSO Send is sending it immediately and at LOGON.
+   
+   Therefore, users are getting lots more messages than before.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Specify a specific userid rather than using * for the userid.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: 01.ALL ZOS EXPLORER AND IDZ USERS            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 01.IBM EXPLORER FOR Z/OS V3.0 (ZEXPL)   *
+   *                      TSO SEND COMMAND WITH THE USER(*)       *
+   *                      OPTION SENDS THE MESSAGE TO ALL RSE     *
+   *                      USERS.                                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   01.TSO SEND COMMAND WITH THE USER(*) OPTION SENDS THE MESSAGE
+   TO ALL RSE USERS. HOWEVER, ACCORDING TO THE TSO MANUAL THE
+   SEND 'MESSAGE' USER(*) SHOULD BE SENT ONLY TO THE USER
+   EXECUTING THE COMMAND.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  01.UPDATED THE HANDLING OF THE TSO SEND USER(*) NOTATION TO
+   ONLY SEND THE MESSAGE TO THE INVOKER OF THE COMMAND.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI62725
+   
+   
+ * REPORTED COMPONENT NAME
+   RD/Z HOST
+   
+   
+ * REPORTED COMPONENT ID
+   5724T0723
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-05-18
+   
+   
+ * CLOSED DATE
+   2016-10-24
+   
+   
+ * LAST MODIFIED DATE
+   2017-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI41931
+   
+   
+
+MODULES/MACROS
+ *     FEKFZOS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   EXP FOR Z/OS HO
+   
+   
+ * FIXED COMPONENT ID
+   5655EXP23
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R300 PSY UI41931 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI41931]
+   UP16/11/17 P F702
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

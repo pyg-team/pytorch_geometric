@@ -1,0 +1,41 @@
+Title: IBM 7.0.1-TIV-XEforMsg-FP0002, OMXE for Messaging 7.0.1 Fix Pack #2 - United States
+
+Text:
+7.0.1.1-TIV-XEforMsg-FP0002; Messaging FP02; Messaging Fixpack 02; Messaging 7.0.1.2; OMEGAMON DOWNLOADABLE FILES
+
+ABSTRACT
+ This cumulative fix pack resolves the APARs that are listed below. It also provides support for WebSphere MQ 7.1 and WebSphere Message Broker 8.0. 
+
+DOWNLOAD DESCRIPTION
+ Note that the images listed below are IBM Tivoli OMEGAMON XE for Messaging Application Support for the z/OS customer who has no Messaging Agents on distributed systems. 
+
+ * LCD7-3513-03.tar IBM Tivoli OMEGAMON XE for Messaging V7.0.1 Application Support Files for z/OS
+
+ Download IBM Tivoli OMEGAMON XE for Messaging Application Support for z/OS systems from the following web page:
+ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3513-03.tar [ftp://public.dhe.ibm.com/software/tivoli_support/misc/PandA/tools_agent/tools/appsupt/LCD7-3513-03.tar] 
+
+For distributed systems, download the following installation images from Passport Advantage [http://www-306.ibm.com/software/howtobuy/passportadvantage/index.html]. 
+Description Part number IBM Tivoli Composite Application Manager Agents for WebSphere Messaging V7.0.1 FP2 CI5W8EN 
+For z/OS systems, install the following PTFs to bring your systems to an equivalent level to this fix pack: 
+FMID Maintenance level HKMQ701 UA64355 HKCF701 UA64357 HKMC701 UA64356 HKQI701 UA64358 
+
+PREREQUISITES
+Before you apply this fix pack, make sure the following components are at IBM Tivoli Monitoring V6.2.2 or a later version:
+
+
+ * Tivoli Enterprise Portal Server 
+ * Tivoli Enterprise Monitoring Server 
+ * Tivoli Enterprise Portal desktop client
+
+For other prerequisite information about this fix pack, refer to readme file. INSTALLATION INSTRUCTIONS
+Refer to readme file for installation instructions.
+
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 7.0.1-TIV-XEforMsg-FP0002-README 9 Mar 2012 English 1 FC [hhttp://www-933.ibm.com/support/fixcentral/swg/selectFix?product=ibm%2FTivoli%2FTivoli+Composite+Application+Manager+for+Applications&fixids=7.0.1-TIV-XEforMsg-FP0002&source=dbluesearch&function=fixId&parent=Tivoli%20Composite%20Application%20Manager] [ ] 
+ [/support/docview.wss?uid=swg24032102&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24032102&aid=2]Problems (APARS) fixed
+IZ91288, IZ93836, IZ96503, IZ98680, IV00651, IZ79111, IZ95021, IZ95669, IZ99853, IV00343, IV04704, IV01591, IV02234, IV09397, IV06918, IV08032, IV10822, IV11690, IV06924, IV09558, OA37177, IV03315, IZ95536, IZ98659

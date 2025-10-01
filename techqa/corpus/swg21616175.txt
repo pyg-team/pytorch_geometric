@@ -1,0 +1,84 @@
+Title: IBM Case Manager Client 5.1.1 - Unable to see any space running Configure Business Space Task for a new install. - United States
+
+Text:
+BMWFR0030E; NumberFormatException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After running Configure Business Space task in IBM Case Manager Administration Client (CMAC), customer is able to login to Business Space, however there is no Welcome Space listed in the Manage Space. In addition, any space that is created has no owner. and attempt to search for any users do not return any result. 
+
+SYMPTOM
+Attempts to deploy IBM Case Manager Client under this condition also fail with java.lang.Exception: The case management application could not connect to the Business Space WebDAV. Verify that the Business Space WebDAV is available. 
+at com.ibm.ecm.configmgr.app.acm.task.widgets.DeployACMWidgetsPackageBase$TestActivity.testWork(DeployACMWidgetsPackageBase.java:156) 
+at com.ibm.ecm.configmgr.engine.task.TaskTestActivity.test(TaskTestActivity.java:91) 
+at com.ibm.ecm.configmgr.ui.model.TaskEntry.testReturningResults(TaskEntry.java:268) 
+
+In WAS SystemOut.log the following error is reported 
+00000020 I com.ibm.mm.framework.persistence.StartupClass importOOBSpaces BMWFP0058I: The standard spaces are loading. 
+00000020 ControllerSer I com.ibm.mm.framework.rest.next.servlet.ControllerServlet logException A checked exception of type [com.ibm.mm.framework.rest.next.exception.LocalizedIOException] occurred during the resolution process, do not log the exception trace to avoid log file spamming. Enable trace logging for [com.ibm.mm.framework.rest.next.exception.ExceptionHelper=all] to log the exceptions. The exception message was: [400: null]
+
+
+CAUSE
+The custom property for Mashup_ConfigService "com.ibm.mashup.user.groupCacheUpdateFrequency" is missing. 
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+Enable WAS trace. 
+
+ 1. Log on to WAS administrative console. 
+ 2. In the left panel, expand Troubleshooting and click on Logs and 
+    Trace. 
+ 3. Select the application server to be traced, and than on the next page 
+    click the Diagnostic Trace link. 
+ 4. Select the Runtime tab. 
+ 5. Under Trace Output, verify the output file location. 
+ 6. Save Runtime Changes to Configuration as well to make this setting 
+    permanent. (we can remove the trace option after the trace has been 
+    collected). 
+ 7. On same panel click on Change Log Detail Levels under Additional 
+    Properties on right side panel. 
+ 8. Select the Runtime tab. 
+ 9. Under Trace Specification, enter trace string below. 
+    For StandAlone LDAP:
+    *=info: com.ibm.bspace.*=all: com.ibm.mm.*=all:com.ibm.ws.security.*=all 
+    For Federated LDAP:
+    *=info:*=all:com.ibm.bspace.*=all:com.ibm.mm.*=all:com.ibm.ws.security.*=all:com.ibm.casemgmt.rest.*=all:com.ibm.ws.wim.*=all:com.ibm.websphere.wim.*=all:com.ibm.wsspi.wim.*=all 
+
+RESOLVING THE PROBLEM
+To resolve this issue, we need to add a new custom property for Mashup_ConfigService "com.ibm.mashup.user.groupCacheUpdateFrequency" with type "java.lang.String" and the value of 24. 
+
+The new parameter is introduced by Business Space 7.5.1 IFix 3 as part of the fix for APAR JR43382.
+http://www-01.ibm.com/support/docview.wss?rs=2025&uid=swg1JR43382 [http://www-01.ibm.com/support/docview.wss?rs=2025&uid=swg1JR43382]
+
+Business Space 7.5.1 IFix 3 is bundled and included with Case Manager 5.1.1. 
+
+The absence of this parameter caused the "java.lang.NumberFormatException" when trying to instantiate class "com.ibm.mm.was.user.service.UserServiceImpl" as reported in the WAS trace below.
+
+[10/30/12 21:40:32:767 EDT] 0000000c SystemErr R org.eclipse.core.runtime.CoreException: Plug-in "com.ibm.mm.was.user.service" was unable to instantiate class "com.ibm.mm.was.user.service.UserServiceImpl".
+[10/30/12 21:40:32:767 EDT] 0000000c SystemErr R at org.eclipse.core.internal.registry.osgi.RegistryStrategyOSGI.throwException(RegistryStrategyOSGI.java:165)
+...
+...
+[10/30/12 21:40:32:820 EDT] 0000000c SystemErr R org.eclipse.core.runtime.CoreException[1]: java.lang.NumberFormatException: null
+...
+
+The was.user.service plugin handles the connection from Business Space to WAS, which then goes on the LDAP for authentication, since the plugin can not load, we can not authenticate the user and later on it resulted in the BMWFR0030E exception below.
+
+[10/30/12 21:44:01:442 EDT] 0000002c exception > com.ibm.mm.framework.rest.next.exception.ExceptionHelper sendError ENTRY com.ibm.mm.framework.rest.next.servlet.RESTRequestWrapper@2bae2bae com.ibm.ws.webcontainer.srt.SRTServletResponse@5520552 com.ibm.mm.framework.rest.next.exception.LocalizedIOException: BMWFR0030E: User (Anonymous) is not authorized to access the specified resource
+[10/30/12 21:44:01:442 EDT] 0000002c exception 3 com.ibm.mm.framework.rest.next.exception.ExceptionHelper sendError exception
+com.ibm.mm.framework.rest.next.exception.LocalizedIOException: BMWFR0030E: User (Anonymous) is not authorized to access the specified resource
+
+
+The procedure to add this parameter is documented in the Business Space 7.5.1 IFix 3. Click on the lick below and search for the "Updating the Business Space configuration" section.
+http://www-01.ibm.com/support/docview.wss?uid=swg27035637 [http://www-01.ibm.com/support/docview.wss?uid=swg27035637]
+
+Once the procedure has been completed, set all the parameter values below in oobLoadedStatus.properties file to true and restart WAS 
+importTemplates.txt=true 
+importSpaces.txt=true 
+importThemes.txt=true 
+
+Afterward verify that you can login to Business Space, e.g. http://servername:port/mum/enabler and see the Welcome Page space.
+
+If you can login to Business Space and see the Welcome Page space then continue with the Deploy Case Manager Client Task again from CMAC.
+
+Note: This is applicable to new Case Manager 5.1.1 install as well as Case Manager 5.1.0 with Fix Pack 1 or greater that has Business Space 7.5.1 IFix 3 installed.

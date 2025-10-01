@@ -1,0 +1,198 @@
+Title: IBM PK28532: SERVLET HUNG THREAD DETECTION BROKEN - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.7: WebSphere Application Server V6.1 Fix Pack 7 for Solaris [http://www-01.ibm.com/support/docview.wss?uid=swg24014824]
+6.1.0.7: WebSphere Application Server V6.1 Fix Pack 7 for HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24014827]
+6.1.0.7: WebSphere Application Server V6.1 Fix Pack 7 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24014826]
+6.1.0.5: WebSphere Application Server V6.1.0 Fix Pack 5 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24014331]
+6.1.0.3: WebSphere Application Server V6.1.0 Fix Pack 3 for Linux [http://www-01.ibm.com/support/docview.wss?uid=swg24013772]
+6.1.0.7: WebSphere Application Server V6.1 Fix Pack 7 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24014825]
+6.1.0.3: WebSphere Application Server V6.1.0 Fix Pack 3 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24013830]
+6.1.0.7 WebSphere Application Server V6.1 Fix Pack 7 for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24014799]
+6.1.0.5: WebSphere Application Server V6.1.0 Fix Pack 5 for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24014327]
+6.1.0.5: WebSphere Application Server V6.1.0 Fix Pack 5 for i5/OS [http://www-01.ibm.com/support/docview.wss?uid=swg24014332]
+6.1.0.7: WebSphere Application Server V6.1 Fix Pack 7 for i5/OS [http://www-01.ibm.com/support/docview.wss?uid=swg24014873]
+6.1.0.3: WebSphere Application Server V6.1.0 Fix Pack 3 for HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24013747]
+6.1.0.5: WebSphere Application Server V6.1.0 Fix Pack 5 for HP-UX [http://www-01.ibm.com/support/docview.wss?uid=swg24014328]
+6.1.0.3: WebSphere Application Server V6.1.0 Fix Pack 3 for i5/OS [http://www-01.ibm.com/support/docview.wss?uid=swg24013794]
+6.1.0.3: WebSphere Application Server V6.1.0 Fix Pack 3 for AIX [http://www-01.ibm.com/support/docview.wss?uid=swg24013746]
+6.1.0.5: WebSphere Application Server V6.1.0 Fix Pack 5 for Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24014336]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24020073]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24021203]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Hung thread detection is not working for servlet
+   threads.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: WebSphere Application Server version 6.1     *
+   *                 users who rely on hung thread detection for  *
+   *                 problem analysis.                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Hung thread detection does not work for *
+   *                      servlet threads.                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When the Asynchronous I/O feature was added to the HTTP
+   implementation that is used by the web container, an API was
+   used on the internal thread pool implementation that disabled
+   hung thread detection entirely rather than just disabling it
+   while the thread is waiting for I/O.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The API being used by the HTTP implementation was extended to
+   re-enable hung thread detection as necessary.
+   The fix for this APAR is currently targeted for inclusion in
+   fixpack 6.1.0.3.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK28532
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   61A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-07-21
+   
+   
+ * CLOSED DATE
+   2006-07-27
+   
+   
+ * LAST MODIFIED DATE
+   2006-10-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UTILS
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

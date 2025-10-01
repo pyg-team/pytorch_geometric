@@ -1,0 +1,28 @@
+Title: IBM Unable to scan documents in Datacap Navigator - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You get an error when you try to run the scan task in Datacap Navigator. 
+
+SYMPTOM
+The following error message is displayed: 
+
+ * 
+ * The temporary scan directory cannot be created.
+ * Provide a valid path for the temporary directory in the user settings.
+
+
+This error is displayed even though the temporary directory is valid. 
+CAUSE
+Microsoft Internet Explorer security settings are preventing the scan.
+
+
+RESOLVING THE PROBLEM
+To scan documents, change your Internet Explorer security settings: 
+
+ 1. Click Tools > Internet Options. 
+ 2. Click the Security tab and select Trusted Sites. 
+ 3. Clear the Enable Protected Mode option and click Apply. 
+ 4. Restart Internet Explorer.

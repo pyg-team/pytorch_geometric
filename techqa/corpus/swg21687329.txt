@@ -1,0 +1,34 @@
+Title: IBM Possible LMT 7.5.0 vulnerability - Clickjacking - United States
+
+Text:
+license metric tool clicjacking TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Vulnerabilities scanning tool report the following LMT 7.5.0 vulnerability - Clickjacking 
+
+SYMPTOM
+It was identified through testing that the ILMT application is vulnerable to Clickjacking. Clickjacking is a malicious technique of 
+
+tricking Web users into revealing confidential information or taking 
+control of their computer while clicking on seemingly innocuous Web 
+pages. A clickjacked page tricks a user into performing undesired 
+actions by clicking on a concealed link. 
+On a clickjacked page, the attacker displays a set of 'dummy' buttons 
+and then loads another page over it in a transparent layer. 
+The users believe they are clicking the visible buttons, while they are
+actually performing actions on the hidden page. The hidden page may be 
+an authentic page, and therefore the attacker can trick users into 
+performing actions unintentionally, and there is no way of tracing such
+actions later, as the user was genuinely authenticated on the other 
+page. 
+
+
+RESOLVING THE PROBLEM
+Clickjacking is a valid finding. However it could be easily 
+mitigated using the IHS in the front of the UI. By adding: 
+"Header always append X-Frame-Options DENY" in http.conf 
+and loading headers module: 
+#LoadModule headers_module modules/mod_headers.so 
+Below you will find instruction how to setup http server in the front
+presentation layer: 
+http://www.ibm.com/support/docview.wss?uid=swg21617987 [http://www.ibm.com/support/docview.wss?uid=swg21617987]

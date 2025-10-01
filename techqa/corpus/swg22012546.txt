@@ -1,0 +1,10 @@
+Title: IBM The IBM StoredIQ application stack configuration UI might not be rendered properly - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM StoredIQ application stack configuration UI shows garbled characters or is not displayed at all. 
+
+RESOLVING THE PROBLEM
+On the application stack VM, run the export NCURSES_NO_UTF8_ACS=1 command and rerun the /siq/bin/appstackcfg command. Alternatively, the export NCURSES_NO_UTF8_ACS=1 command can be included in the .profile file of any user who is permitted to run the /siq/bin/appstackcfg command.

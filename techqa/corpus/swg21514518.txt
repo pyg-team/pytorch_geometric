@@ -1,0 +1,52 @@
+Title: IBM InfoSphere Information Server installation fails due to table create error SQLCODE=-286, SQLSTATE=42727, SQLERRMC=8192 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A new installation of InfoSphere Information fails due to the following errors when attempting to create a table in xmeta repository:
+com.ibm.xmeta.sdk.modeldeployer.impl.DefaultModelDeployer deployModelInternal
+SEVERE: Failed executing DDL scripts, will try to rollback
+Throwable occurred: com.ibm.xmeta.exception.ModelDeployerSqlException: Error occurred running sql statement: 
+CREATE TABLE XMetaCore_xmetagen_XQMClasse07f3bbc ...
+
+Caused by: com.ibm.db2.jcc.am.xo: DB2 SQL Error: SQLCODE=-286, SQLSTATE=42727, SQLERRMC=8192;XMETA, DRIVER=3.58.135 
+
+
+RESOLVING THE PROBLEM
+The root cause for table create error is listed as:
+Caused by: com.ibm.db2.jcc.am.xo: DB2 SQL Error: SQLCODE=-286, SQLSTATE=42727, SQLERRMC=8192;XMETA, DRIVER=3.58.135 
+
+There primary causes for this failure are listed below:
+
+
+ * One cause for this error occurs when either the CREATE TABLE command did not specify a tablespace (true), and that a tablespace of correct type (USER TEMPORARY) and with sufficient page size and authorization could not be found.
+   
+   When installing Information Server, you have the option of allowing it to install DB2 for you along with any required databases and tablespaces, or you can run scripts to pre-create the xmeta database and tablespaces in an existing DB2 database. This process involves modifying then running SQL scripts. If errors occured when running those scripts, or if values were changed which should not be changed (such as tablespace names), then installation errors can occur when attempting to create tables in the xmeta database. 
+   
+   To further diagnose the current error, open a DB2 command prompt, connect to xmeta, and then confirm that the XMETA and XMETATEMP tablespaces exist, i.e.: 
+   db2 => connect to xmeta
+   db2 => list tablespaces
+   
+   If you do not see XMETA and XMETATEMP then the script to setup xmeta did not complete correctly, or the tablespaces names in script were changed to non-default names. In this situation, you can drop xmeta, ensure the script has valid value, rerun the script and confirm that it contains no errors. 
+   
+   
+   
+ * Another cause for this error occurs when the script used to pre-recreate the xmeta database defined @DATABASE_USER@ as a userid other than the primary database users (i.e. the xmeta and xmetasr userids). Note that the original error message at top of this section contains the failing userid, just after the SQLERRMC error code. Confirm that userid has the correct access to database.
+   
+   For example, if the script to create the xmeta database was updated to replace @DATABASE_USER@ with db2inst1 (instead of xmeta), then when the script is then run, it will issue the following command which then fails with the indicated error:
+   GRANT DBADM, CREATETAB, BINDADD, CONNECT, CREATE_NOT_FENCED_ROUTINE, IMPLICIT_SCHEMA, LOAD,CREATE_EXTERNAL_ROUTINE, QUIESCE_CONNECT ON DATABASE TO USER db2inst1;
+   
+   DB21034E The command was processed as an SQL statement because it was not a valid Command Line Processor command. During SQL processing it returned:
+   SQL0554N An authorization ID cannot grant a privilege or authority to itself. SQLSTATE=42502 
+   
+   As a result, the xmeta userid, does not have correct permissions granted, and thus during Information Server installation it will be unable to create tables in the xmeta database. 
+   
+   Have the DB2 DBA confirm if that the xmeta database setup script granted permissions to the correct userids, and also that the userid shown in original error message has the appropriate permissions for the database.
+
+
+
+More information on configuring the database using scripts can be found in links on the following page (similar documentation exists for prior releases): 
+Setting up an existing installation of DB2 database software [http://www-01.ibm.com/support/knowledgecenter/SSZJPZ_9.1.0/com.ibm.swg.im.iis.productization.iisinfsv.install.doc/topics/wsisinst_pre_setup_existing_db2.html] 
+
+For some releases, additional information on using scripts to create the xmeta repository database can be found in the Readme file of the DatabaseSupport directory of the Information Server installation media.

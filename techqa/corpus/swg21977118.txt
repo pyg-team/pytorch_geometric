@@ -1,0 +1,44 @@
+Title: IBM How to use filters to disable SPNEGO SSO on IBM Content Navigator for Mobile app (ICN app) - United States
+
+Text:
+content navigator mobile app sso spnego authentication iOS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If planning to use Simple and Protected GSSAPI Negotiation Mechanism (SPNEGO) Single Sign-on (SSO) with IBM Content Navigator (ICN), please note that attempting to use this feature with ICN on an iOS client is not supported. 
+
+SYMPTOM
+ Attempting to connect to an ICN desktop with the ICN app will fail citing an authentication error. The exact error will very depending on the application server and means by which Navigator is being accessed by the iOS device. Attempting to connect via iOS's Safari browser will also fail. 
+
+
+CAUSE
+At this time, limitations with Apple's iOS operating system prevents the use of SPNEGO SSO, and this must be disabled on iOS devices in so that ICN app users are able to connect to the ICN desktops. 
+
+ENVIRONMENT
+IBM Content Navigator 2.0.x
+IBM Content Navigator for Mobile
+Websphere Application Server. 
+
+RESOLVING THE PROBLEM
+If ICN is deployed on a Websphere Application Server (WAS), a workaround exists for iOS users that disables SPNEGO SSO if the application server does not detect a supported browser. Setting up a SPNEGO filter will force WAS only to use SPNEGO if the detected browser is IE, Firefox or Chrome. 
+
+- Sign into Websphere Admin Console as the WAS Administrator where ICN is deployed.
+- Go to Security > Global Security.
+- Go to Web and SIP Security and go to General Settings
+- Check Default to basic authentication when certificate authentication for the HTTPS client fails
+
+
+
+
+[/support/docview.wss?uid=swg21977118&aid=1] [/support/docview.wss?uid=swg21977118&aid=1]
+- Next, go back to Web and SIP Securuty and click SPNEGO web authentication.
+- Under SPNEGO Filters, click New..
+- Fill in the properties for your environment and check Trim Kerberos realm from principal name.
+- Set the filter criteria to this string: user-agent^=MSIE|Trident|Firefox|Chrome 
+
+
+- Click OK and then Save to Master Configuration. 
+- Restart WAS. 
+
+ 
+
+The result is that WAS will only use SPNEGO on the supported browsers, and not with the ICN App or Safari, allowing log in via basic authentication normally.

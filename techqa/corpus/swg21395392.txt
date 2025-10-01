@@ -1,0 +1,21 @@
+Title: IBM Impact: Controlling the connection type to OMNIbus - United States
+
+Text:
+Impact; Appname; omnibus; connection type; maxsqlconnection; connections; objectserver dsa TECHNOTE (FAQ)
+
+QUESTION
+ I perform actions (triggers, procedures) in my OMNIbus ObjectServer based on the AppName value in catalog.connections. Can I control the type of connections that Impact makes? 
+
+ANSWER
+It is possible to control the connection that Impact makes when inserting events (for example when using the AddDataItem function or DirectSQL). You can set it to use the same appname that the event reader services use (NCI:Impact) or alternatively explicitly specify a different appname to use for inserting events and other queries executed from policies. In $NCHOME/impact/etc/<servername>_server.props, add these properties:
+
+impact.objectserver.appname=<AnyName> 
+impact.objectserver.username=<username> 
+impact.objectserver.password=<password> 
+
+After this, restart Impact.
+
+There is a related technote for controlling the number of connections that Impact can make to the object server at the link below.
+
+RELATED INFORMATION
+ Controlling the number of connections to OMNIbus [http://www-01.ibm.com/support/docview.wss?uid=swg21680086]

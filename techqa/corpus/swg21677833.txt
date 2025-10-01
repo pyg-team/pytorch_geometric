@@ -1,0 +1,53 @@
+Title: IBM Installation of Portal CF fails with version mismatch - United States
+
+Text:
+upgrade; cf; version mismatch TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Installation of Portal CF fails with message, "Profile
+version is not the same as portal binary version before updating portal
+binary."
+
+SYMPTOM
+Installation of a Portal cumulative fix fails
+
+
+CAUSE
+The Portal binaries and the Portal profile are at different versions. 
+
+ENVIRONMENT
+Portal 7.0x
+AIX
+
+DIAGNOSING THE PROBLEM
+In this case, the upgrade-profile task was ran in 2012
+after the CF14 was applied. However, in May 2013 the ConfigTrace.log
+shows no indication of the upgrade-profile task being executed after
+CF21 was applied. This indicates the Portal binaries may have
+been upgraded to CF21 but the Portal profile remained at CF14.
+
+You can also compare the versions in the wps.properties files:
+
+<portal_profile_root>/PortalServer/wps.properties
+
+and 
+
+<portal_root>/wps.properties
+
+RESOLVING THE PROBLEM
+Upgrade the Portal profile by running...
+
+<wp_profile_root>/PortalServer/bin/UpdateProfile.sh install CF
+
+Details can be found here...
+
+http://www-01.ibm.com/support/docview.wss?uid=swg27023910 [http://www-01.ibm.com/support/docview.wss?uid=swg27023910]
+
+Specifically see this section...
+
+All other platforms: To update a profile after an upgrade, the
+following command can be used to update profiles that are not included
+in AutoUpdateMultipleProfiles. All profiles that were not included in
+AutoUpdateMultipleProfiles need to be updated after the upgrade is
+done. All profiles must be at the same level for future upgrades to be
+applied.

@@ -1,0 +1,32 @@
+Title: IBM FileNet Workplace XT NullPointerException when bootstrapping the object store or accessing Site Preferences/Access Role - United States
+
+Text:
+java.lang.NullPointerException; workplacext bootstrap; user display name TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After logging into FileNet Workplace XT, a java.lang.NullPointerException error is logged when bootstrapping the object store or when accessing Site Preferences/Access Role. 
+
+SYMPTOM
+Error Stack Trace extracted from the J2EE Application Server error log: 
+
+java.lang.NullPointerException 
+
+ at org.apache.jasper.runtime.JspWriterImpl.write(JspWriterImpl.java:421) 
+
+ at com.filenet.wcm.apps.server.ui.info.prefs.PrefAccessRolesInfoPage.renderRoleMembers(PrefAccessRolesInfoPage.java:254) 
+
+ at com.filenet.wcm.apps.server.ui.info.prefs.PrefAccessRolesInfoPage.renderRole(PrefAccessRolesInfoPage.java:220) 
+
+ at com.filenet.wcm.apps.server.ui.info.prefs.PrefBootstrapInfoPage.renderAdminRole(PrefBootstrapInfoPage.java:131) 
+
+ at com.filenet.wcm.apps.server.ui.info.prefs.PrefBootstrapInfoPage.render(PrefBootstrapInfoPage.java:303)
+
+
+CAUSE
+This behavior may occur if an invalid entry has been specified in the User Display Name Attribute or Group Display Name Attribute setting in the Directory Services Configuration in FileNet Enterprise Manager (FEM). 
+
+Workplace XT attempts to resolve the user names and groups defined within the Access Roles based on the Directory Service configuration defined in FEM. If the user name query resolves to null or if there is an invalid entry a NullPointerException error may occur. 
+
+
+RESOLVING THE PROBLEM
+ In FEM, change the User Display Name Attribute or Group Display Name Attribute to a valid LDAP entry such as cn, displayName or uid and restart the FileNet Content Engine and Workplace XT instances.

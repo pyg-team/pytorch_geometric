@@ -1,0 +1,134 @@
+Title: IBM IC87230: DUMP EVENT "SYSTHROW" (00040000) DETAIL "JAVA/LANG/OUTOFMEMORYER ROR" "FAILED TO CREATE STACK TRACE" RECEIVED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS SUGGESTION FOR FUTURE RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Dump Event "systhrow" (00040000) Detail
+   "java/lang/OutOfMemoryError" "Failed to
+   create stack trace (most likely due to lack of OS memory)"
+   received in Notes
+   8.5 FP1
+   
+   3XMTHREADINFO      "ModalContext" TID:0x061DF400,
+   j9thread_t:0x06074738,
+   state:R, prio=6
+   3XMTHREADINFO1            (native thread ID:0x1AB8, native
+   priority:0x6, native
+   policy:UNKNOWN)
+   4XESTACKTRACE          at
+   java/lang/Throwable.fillInStackTrace(Native Method)
+   4XESTACKTRACE          at java/lang/Throwable.<init>(Bytecode
+   PC:15(Compiled
+   Code))
+   4XESTACKTRACE          at java/lang/Throwable.<init>(Bytecode
+   PC:15(Compiled
+   Code))
+   4XESTACKTRACE          at
+   java/lang/NullPointerException.<init>(Bytecode PC:2)
+   4XESTACKTRACE          at
+   java/io/ByteArrayInputStream.<init>(Bytecode
+   PC:21(Compiled Code))
+   4XESTACKTRACE          at
+   com/ibm/csi/notes/internal/dispatcher/JNIDispatcher.sendRequest(
+   Bytecode
+   PC:84(Compiled Code))
+   4XESTACKTRACE          at
+   com/ibm/csi/notes/internal/NotesDesignDelegate.expandOutlineEntr
+   y(Bytecode
+   PC:85)
+   4XESTACKTRACE          at
+   com/ibm/rcp/csiviews/providers/CSINavigatorModel$2.run(Bytecode
+   PC:22)
+   4XESTACKTRACE          at
+   org/eclipse/jface/operation/ModalContext$ModalContextThread.run(
+   Bytecode PC:17)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  PMR was closed as issue was due to 3rd party software.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC87230
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS EXPEDITOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724R0900
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED SUG
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-10-15
+   
+   
+ * CLOSED DATE
+   2013-05-10
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    LO51772
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,67 @@
+Title: IBM Important server upgrade considerations for Content Manager OnDemand for i - United States
+
+Text:
+ FLASH (ALERT)
+
+ABSTRACT
+ Important considerations when upgrading to a new server version or new licensed product version of Content Manager OnDemand for i. 
+
+CONTENT
+There are a few things you should do before and after upgrading your Content Manager OnDemand for i software to a new release (such as upgrading from version 7.1 to 7.2) or to a new server version (such as upgrading from server version 9.5.0.1 to 9.5.0.2 via server upgrade PTFs). 
+
+To help increase awareness of the installation of server upgrade PTFs, an inquiry message is now sent to the QSYSOPR message queue that requires a response to confirm that you are aware of and intend to apply server upgrade PTFs. Beginning with server upgrade PTFs for server version 9.5.0.0, when you start your first Content Manager OnDemand instance (by using the Start TCP/IP Server (STRTCPSVR) command or the QRLMCTL program) after applying the server upgrade PTFs, you will receive a message in the QSYSOPR message queue that requires a response. The message text is: THE CONTENT MANAGER ONDEMAND SERVER WILL BE UPGRADED TO SERVER VERSION 9500 (C G). 
+
+If you have reviewed the Read This First document and the cover letters for the PTFs and are ready to upgrade to the new server version, reply G to Go. If you need to cancel or delay the upgrade, reply C to Cancel. The message will be issued one time, at the start of the first instance after you apply the server upgrade PTFs. If you reply C to Cancel, then the message will continue to be issued until you reply G to Go or remove the PTFs. If you reply C to cancel the upgrade, contact IBM support if you need assistance to determine if you are ready for the server upgrade, or to remove the PTFs from your system.
+
+
+BEFORE UPGRADING:
+
+End all output queue and directory monitor jobs and Archived Storage Manager (ASM) jobs 
+To end a monitor job, issue the End Monitor (ENDMONOND) command for any monitors that are running. To end ASM, allow ASM to finish processing, or issue a controlled cancel on the ASM job if you cannot wait for it to finish.
+
+If you attempt to start an instance after applying server upgrade PTFs without having ended your monitor jobs and ASM jobs, the server might fail to start and you might see error message ARS4118E in the server job log. If this occurs, end any monitor and ASM jobs that are active and then start the instance server again.
+
+
+Remove any non-IBM objects in the instance library that have a name that begins with 'ARS' and are not owned by the instance user profile
+
+Objects beginning with the characters 'ARS' that are found in the instance library and are not owned by the instance user profile, cause the starting of the server to fail after server upgrade PTFs are applied. For example, you might use the default instance named QUSROND. If QUSROND is your instance name, then the instance library and instance user profile names are also QUSROND. You might have placed a user exit program named ARSEXIT in the QUSROND instance library. The exit program might be owned by MYUSER user profile instead of the QUSROND instance user profile if you were signed on as MYUSER when you created it. In this example, the QUSROND instance server will fail to start after applying server upgrade PTFs.
+
+To correct the problem, look in the instance library for object names beginning with 'ARS' that are not owned by the instance user profile. If you find an object beginning with 'ARS' that is not owned by the instance user profile, you must do one of the following:
+
+
+ * move the object to a different library 
+ * delete it if it is no longer needed, or 
+ * change the owner of the object to be the instance user profile
+
+
+To check the owner of objects in the instance library, run the following command from qshell: 
+
+ls -dl /qsys.lib/qusrond.lib/ARS* 
+
+If you leave non-IBM objects in the instance library that are not owned by the instance user profile and you attempt to start an instance after applying server upgrade PTFs, the server might fail to start and you might see error message ARS4118E in the server job log. If this occurs, select one of the corrective actions listed and then start the instance server again. 
+
+
+Authorize the instance user profile(s) to the CHGAUT or CHGOWN commands 
+
+Each of your instance user profiles, which are named the same as the instance name, must have authority to run the Change Authority (CHGAUT) and Change Owner (CHGOWN) commands. For most customers, the instance user profiles will have the required authority, but this might not be true if your system's authorities have been modified. 
+
+To confirm the correct authorities, issue the Display Object Authority (DSPOBJAUT) command as shown below for either the CHGAUT or CHGOWN command objects: 
+
+DSPOBJAUT OBJ(CHGxxx) OBJTYPE(*CMD) 
+
+where CHGxxx is either CHGAUT or CHGOWN. *PUBLIC or the instance user profiles must have at least *USE authority. 
+
+If you need to change the authority, issue the Grant Object Authority (GRTOBJAUT) command as shown below for either the CHGAUT or CHGOWN command objects: 
+
+GRTOBJAUT OBJ(CHGxxx) OBJTYPE(*CMD) USER(myinstance) AUT(*USE) 
+
+where CHGxxx is either CHGAUT or CHGOWN, and myinstance is the name of the instance user profile that requires authority to the commands. 
+
+If the instance user profiles do not have the required authorities and you attempt to start an instance after applying server upgrade PTFs, the server might fail to start. If this occurs, grant the required authorities and then start the instance server. 
+
+
+AFTER UPGRADING: 
+
+Start and test one instance before starting others (if you have multiple instances defined) 
+
+After the first instance starts, test both storing and viewing of data to ensure that no problems exist. If no problems exist, start the remaining instances as needed. If you have a test instance and a production instance defined, you might consider working with the test instance first. This approach will greatly reduce the time it takes to resolve any issues that might arise that are unique to your environment.

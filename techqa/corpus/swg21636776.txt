@@ -1,0 +1,30 @@
+Title: IBM Latency issues with IBM Datacap Taskmaster Capture - United States
+
+Text:
+SQL; truncate; audit; Admin DB; Engine DB TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Over time, increasing delays are experienced throughout operations, from logon through every aspect of batch creation and export. 
+
+SYMPTOM
+With Rulerunner, the processing delays may become serious enough to cause intermittent hangs, crashes, and other errors.
+
+
+CAUSE
+The database has grown overly large, with tables such as the audit table in the Admin database potentially containing millions of records.
+
+RESOLVING THE PROBLEM
+Tables need to be truncated, backed up, or purged. Possible tables needing attention include the following:
+
+
+ * Admin database  * audit - contains user login/logouts.
+   
+   
+ *  Engine database  * debug - optionally can contain batch state changes. 
+    * de2kst, exportst, fixup2kst, recog2kst, scan2kst, taskstats, uploads - contains reporting and statistical information.
+   
+   
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Datacap Not Applicable Windows 9.0.0

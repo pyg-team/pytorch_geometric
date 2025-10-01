@@ -1,0 +1,26 @@
+Title: IBM Steps to install Tivoli Integrated Portal 2.2 fix packs - United States
+
+Text:
+TIPL2; TIPL2INST; installation; fix pack; 2.2; 2.2.0.7; 2.2.0.9; 2.2.0.11; 2.2.0.13; 2.2.0.15 TECHNOTE (FAQ)
+
+QUESTION
+ What are the required packages and procedures to install TIP 2.2 fix packs? For example, TIP FP 2.2.0.7, 2.2.0.9, 2.2.0.11, etc. 
+
+ANSWER
+First determine if all of the products deployed in the target TIP install are certified for the TIP fix pack. See the following instructions for determining which of the installed products are certified:
+Determining if a TIP 2.2 fix pack can be installed on a target TIP install [http://www-01.ibm.com/support/docview.wss?uid=swg21615204] 
+
+
+All available TIP 2.2 fix pack packages can be downloaded from IBM Fix Central [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~Tivoli&product=ibm/Tivoli/Tivoli+Integrated+Portal&release=All&platform=All&function=all]. For each fix pack, three downloads are required:
+
+
+ * Installation guide (e.g. 2207-fixpack-guide-PDF.pdf) - Contains the most accurate and latest installation instructions for the fix pack. 
+ * FITSuit package (e.g. 2.2.0-TIV-TIP-FITSuit-FP0007v3) -This is a required package! It must be unpacked in the <TIPProfile HOME>/etc directory before running the TIP fix pack installer. A FITSuit package exists for each TIP fix pack. This file should be acquired as close to the time of the install as possible as it is frequently updated as additional product certify on the TIP fix pack. 
+ * Fix pack installation package (e.g. 2.2.0-TIV-TIP-SolarisSparc32-FP0007) - The fix pack package itself. Download the correct package for the operating system of the target host and the bitness (e.g. 32-bit or 64-bit) of the target TIP installation. To determine the bitness of the target TIP host, see the following: 
+   Determine the bitness of a TIP install [http://www-01.ibm.com/support/docview.wss?uid=swg21621828] 
+   
+
+
+Follow the instructions in the Installation guide which covers the use of the FITSuit package as well as other requirements for the install. RELATED INFORMATION
+ Migrating from a TIP 2.1 32-bit install to a TIP 2.2 64 [http://www-01.ibm.com/support/docview.wss?uid=swg21618701]
+Applying TIP 2.2 fix packs directly to a TIP 2.1 instal [http://www-01.ibm.com/support/docview.wss?uid=swg21618719]

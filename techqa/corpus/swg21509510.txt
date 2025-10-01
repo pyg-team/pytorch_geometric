@@ -1,0 +1,27 @@
+Title: IBM How to delete a document hierarchy node in IBM Datacap Taskmaster Capture - United States
+
+Text:
+dco document hierarchy node delete remove hide blank page TECHNOTE (FAQ)
+
+QUESTION
+ How do I delete a document hierarchy node, such as a blank page, so that it no longer processes rules or appears in a batchview listing? 
+
+CAUSE
+It is sometimes desired to remove pages or documents from a batch, as they are no longer needed or to simplify processing for a Verify operator.
+
+ANSWER
+The DeleteChildType from the Validations library can be used by running it from the parent of the object to be deleted and specifying the specific child. 
+
+For example, to remove blank pages from a batch: 
+
+ 1. Create a special page type attached at the batch level called something like DeleteMe. 
+ 2. Use an action like BlankPagesIDBySize to identify the blank page:  * BlankPagesIDBySize (1000,DeleteMe)
+    
+    
+ 3. Create a rule with the action DeleteChildType(DeleteMe) and attach it at the batch level to have it remove all pages with page type DeleteMe.
+
+
+If building a custom action, the DeleteChild API method is invoked from the parent object. 
+
+ * 
+ *

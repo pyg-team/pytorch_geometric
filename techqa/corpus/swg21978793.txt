@@ -1,0 +1,22 @@
+Title: IBM Can TRIRIGA 3.5 and 3.4.2 be used with IE 11 with Compatibility Mode turned on? - United States
+
+Text:
+browser; IE; 11; Internet; Explorer; compatibility; mode; TRIBROWSER; TRIINSTALL; TRIWINDOWS; view TECHNOTE (FAQ)
+
+QUESTION
+ In TRIRIGA 3.5 and 3.4.2, can I use Internet Explorer 11 with Compatibility Mode turned on? 
+
+CAUSE
+TRIRIGA Developers and Administrators need to test and validate their environment in IE 11 before upgrading it to production.
+
+ANSWER
+No, You must have Internet Explorer 11 with compatibility mode turned off when using TRIRIGA 3.5.0. 
+
+Starting with 3.5.0.1 and 3.4.2.3 this will no longer be a requirement. The platform has been changed to force it to render in standard mode regardless of what's set by the user. This will allow the IE 11 user to configure the browser the way is required by the company and will not effect TRIRIGA functionality.
+
+If you are in 3.5 or 3.4.2 we suggest you to upgrade to the latest FixPacks.
+
+RELATED INFORMATION
+ Emulate browsers screen sizes and GPS locations in IE [https://msdn.microsoft.com/en-us/library/dn255001%28v=vs.85%29.aspx]
+Emulate Other IE versions in IE 11 for TRIRIGA [http://www-01.ibm.com/support/docview.wss?uid=swg21977653]
+Fix site display problems with Compatibility View in IE [http://windows.microsoft.com/en-us/internet-explorer/use-compatibility-view#ie=ie-11]

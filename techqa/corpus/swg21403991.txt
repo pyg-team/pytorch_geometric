@@ -1,0 +1,80 @@
+Title: IBM Error: "cannot display the webpage" in DOORS Web Access configured for HTTPS - United States
+
+Text:
+cannot display page; https; keystore; keygen TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ You are receiving an error "Cannot display the webpage" when trying to launch DOORS Web Access URL using HTTPS 
+
+SYMPTOM
+To configure DOORS Web Access for HTTPS, you will need to have a keystore containing the server certification. You can create and manage a keystore using the standard Java keytool facilities as documented on the Sun web site http://java.sun.com/ [http://java.sun.com/]. 
+
+Once keystore is created, you need to modify 'server.xml' file located under server's conf directory. DOORS Web Access "Installing_dwa.pdf" guide on page 20 stated as below: 
+
+ 
+
+ * 
+ * 
+   *** text start ***
+ * <!-- Delete this line from the file 
+ * <Connector port="8443“ maxHttpHeaderSize="8192" 
+ * maxThreads="150" inSpareThreads="25“ MaxSpareThreads="75“ 
+ * enableLookups="false" disableUploadTimeout="true“ 
+ * acceptCount="100" scheme="https" secure="true“ 
+ * clientAuth="false" sslProtocol="TLS" 
+ * keystoreFile="c:\dwaServer\keystore.ks" 
+ * keystorePass="password" 
+ * /> 
+ * --> Delete this line from the file 
+ * *** text end ***
+   
+
+
+After modifying 'server.xml' file as mentioned above, launch DOORS Web Access using HTTPS; you receive an error "Cannot display the webpage".
+
+CAUSE
+This is a known documentation defect in Rational DOORS Web Access which has been logged as APAR ID: PK90830 
+
+The reason you're receiving this error because there is a vital line missing from the documentation. Because we mandate that an IBM JRE is used, we need to use the IbmX509 algorithm for authentication. 
+
+
+
+RESOLVING THE PROBLEM
+To resolve the issue: 
+
+ 
+
+ 1. Open the 'server.xml' file for edit 
+ 2. Modify the last two entries 'keystoreFile' and 'keystorePass' as shown below:
+
+
+ *  
+   *** text start *** <Connector port="8443" maxHttpHeaderSize="8192"
+   maxThreads="150" minSpareThreads="25" maxSpareThreads="75"
+   enableLookups="false" disableUploadTimeout="true"
+   acceptCount="100" scheme="https" secure="true"
+   clientAuth="false" sslProtocol="TLS"
+   keystoreFile="c:\DOORS\DWA\keystore"
+   keystorePass="changeit" algorithm="IbmX509" 
+   
+   /> 
+   
+   *** text end ***
+   
+   
+   
+
+3. Please note: the second last line on the above new entry was created a self signed certificate using the keygen tool using the IBM JRE ($DWA\win32\ibm-java2-i386\jre) and applied the changes above in the 'server.xml' file.  
+
+
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Rational DOORS

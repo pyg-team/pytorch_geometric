@@ -1,0 +1,39 @@
+Title: IBM Clarity Studio Cannot get sources after connecting to the server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In Clarity Studio when adding in a new souce, after inputting the server name and username/ password. An error comes up saying cannot get sources. But the application looks like it was able to connect. 
+
+Upon going to the data pane, and right clicking you will notice that there are no options to add in a cube (because it cannot get sources). 
+
+SYMPTOM
+When trying to refresh sources or trying to connect initially it will prompt with an error message that says cannot get sources. 
+
+
+CAUSE
+The cause can be due to an error in the Cubes table. Where the studio connection cannot resolve the cube details and information to establish the connection. 
+
+DIAGNOSING THE PROBLEM
+When dealing with a connection issue with studio, one good thing to do is to verify that the application can reach the server. 
+
+
+- You can ping the server in which the cube is hosted on to see if it can see it 
+
+- You can log onto Clarity, go to Administration --> Security Services --> Setup --> OLAP manager. 
+
+ 
+
+In this case, when going to OLAP manager we noticed a script error on the bottom left corner, and on the main page we saw one correct record, and then multiple blanks repeating down the page. This indicated that something was wrong with the cubes table, as the OLAP manager page brings back information from the cubes table. 
+
+
+RESOLVING THE PROBLEM
+We logged onto the cubes table and noticed that there was an additional record that looked like it was added in manually. 
+
+ 
+
+The record had a blank alias as well as the word Essbase, instead of essbase. By removing this manual record, the OLAP manager page came back without a problem, and we were able to connect to Studio without getting prompted with the cannot get sources error message.
+
+
+1586791.jpg [/support/docview.wss?uid=swg21586791&aid=2]1586791.jpg [/support/docview.wss?uid=swg21586791&aid=1]

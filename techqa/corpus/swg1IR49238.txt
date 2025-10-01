@@ -1,0 +1,128 @@
+Title: IBM IR49238: JAVA.UTIL.MISSINGRESOURCEEXCEPTION: CAN'T FIND RESOURCE FOR COM.IBM.ACE.JACEINTF.ACEJAVAMSGS_EN_US ERROR ON STARTUP. - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  java.util.MissingResourceException: can't find resource for
+   com.ibm.ace.jaceintf.AceJavaMsgs_en_US error on startup of the
+   SureVision application.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *   It appears that there was an issue with the TOF
+   input file. We were missing one file to bundle with the
+   resources and classes.  This file was psk.jar.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   Added the psk.jar file to the sureview.rci f
+   file so that the resources in psk.jar will also get bundled
+   for TOF.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *   Modify SUREVIEW.RCI to include adx_ipgm:PSK.JAR
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IR49238
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM SUREVISION-
+   
+   
+ * REPORTED COMPONENT ID
+   5799RQR00
+   
+   
+ * REPORTED RELEASE
+   101
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2002-09-04
+   
+   
+ * CLOSED DATE
+   2002-09-09
+   
+   
+ * LAST MODIFIED DATE
+   2002-09-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     SUREVIEW
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM SUREVISION-
+   
+   
+ * FIXED COMPONENT ID
+   5799RQR00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R101 PSY
+   UP

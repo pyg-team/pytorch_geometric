@@ -1,0 +1,269 @@
+Title: IBM JR48508: OUTOFMEMORYERROR WITH CLASS UCAEVENTINFO IF UNNAMED SNAPSHOTS ARE USED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Version 8.5 Refresh Pack 5 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037683]
+Download Version 8.0.1 Fix Pack 3 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24037734]
+Version 8.5.0 Fix Pack 2 for the IBM Business Process Manager products [http://www-01.ibm.com/support/docview.wss?uid=swg24040683]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  CPU starvations (HMGR0152W) and java.lang.OutOfMemoryError
+   messages may occur in relationship with class UCAEventInfo, if
+   a lot of unnamed snapshots are used.
+   
+   detailed classname:
+   com/lombardisoftware/bpd/runtime/engine/message/UCAEventInfo
+   
+   Even though you increased the heapsize of the AppTarget Server
+   the problems remained the same or even got worse. The problem
+   also occurs with garbage collection policy gencon.
+   
+   The javacore-files show OutOfMemoryError messages like:
+   
+   1TISIGINFO     Dump Event "systhrow" (00040000) Detail
+   "java/lang/OutOfMemoryError" "Java heap space" received
+   
+   The system will also write heapdump files (phd files).
+   
+      The problem occurs, because of a missing DISTINCT arugment in
+   SELECT statement used to read from the LSW_BPD_EVENT table in
+   the 60database.xml file in the
+   find-intermediate-messages-for-uca-query tag.
+   .
+   analysis of heapdump shows this type of usage.
+   2,347,711,336 bytes (31.65 %) of Java heap is used by 10,195
+   instances
+   of java/util/ArrayList
+   1,326,078,048 bytes (17.88 %) of Java heap is used by 5,609,754
+   instances of
+   com/lombardisoftware/bpd/runtime/engine/message/UCAEventInfo
+   1,185,295,120 bytes (15.98 %) of Java heap is used by 4,911,294
+   instances of com/lombardisoftware/core/TWUUID
+   1,138,615,096 bytes (15.35 %) of Java heap is used by 4,853,141
+   instances of
+   com/lombardisoftware/bpd/runtime/engine/message/UCAEventInfo
+   498,866,384 bytes (6.73 %) of Java heap is used by 1,931,221
+   instances
+   of com/lombardisoftware/bpd/runtime/engine/message/UCAEventInfo
+   434,932,576 bytes (5.86 %) of Java heap is used by 1,623,968
+   instances
+   of com/lombardisoftware/bpd/runtime/engine/message/UCAEventInfo
+   425,599,728 bytes (5.74 %) of Java heap is used by 1,751,854
+   instances
+   of com/lombardisoftware/core/TWUUID
+   415,645,640 bytes (5.6 %) of Java heap is used by 3,338,113
+   instances
+   of java/lang/String
+   301,119,696 bytes (4.06 %) of Java heap is used by 20 instances
+   of
+   com/ibm/ejs/j2c/J2CGlobalConfigProperties
+   
+   while heapdump for 1933 shows
+   1,911,031,656 bytes (24.85 %) of Java heap is used by 7,688,272
+   instances of
+   com/lombardisoftware/bpd/runtime/engine/message/UCAEventInfo
+   1,261,807,240 bytes (16.41 %) of Java heap is used by 4,843,937
+   instances of
+   com/lombardisoftware/bpd/runtime/engine/message/UCAEventInfo
+   1,041,404,536 bytes (13.54 %) of Java heap is used by 3,929,963
+   instances of
+   com/lombardisoftware/bpd/runtime/engine/message/UCAEventInfo
+   Contains 4 instances of the following leak suspects:
+   -
+   com/lombardisoftware/server/ejb/persistence/versioning/ConcreteS
+   napshotC
+   ontext holding 14,220,496 bytes at 0x1cc4d97a0
+   -
+   com/lombardisoftware/server/ejb/persistence/versioning/ConcreteS
+   napshotC
+   ontext holding 14,149,080 bytes at 0x1dc206e40
+   -
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1) stop the server
+   
+   2) edit the 100Custom.xml in the Deployment Manager
+      configuration and change the following entry:
+   
+   <properties>
+     <server>
+       <bpd-engine>
+         <find-intermediate-messages-for-uca-query>
+                 select e.bpd_event_id, e.bpd_flow_object_id,
+                 e.correlation_parameter_id, e.durable_subscription
+                 from lsw_bpd_event e
+                 inner join lsw_bpd b on b.bpd_id = e.bpd_id
+                 where e.uca_id = ? and (((b.type is null or b.type
+                 in (1,2)) and e.event_type = 1) or (b.type = 3 and
+                 e.event_type in (0,1)))
+         </find-intermediate-messages-for-uca-query>
+       </bpd-engine>
+     </server>
+   </properties>
+   
+   
+   to
+   
+   <properties>
+     <server>
+       <bpd-engine>
+         <find-intermediate-messages-for-uca-query>
+                 select DISTINCT e.bpd_event_id,
+                 e.bpd_flow_object_id,
+                 e.correlation_parameter_id, e.durable_subscription
+                 from lsw_bpd_event e
+                 inner join lsw_bpd b on b.bpd_id = e.bpd_id
+                 where e.uca_id = ? and (((b.type is null or b.type
+                 in (1,2)) and e.event_type = 1) or (b.type = 3 and
+                 e.event_type in (0,1)))
+         </find-intermediate-messages-for-uca-query>
+       </bpd-engine>
+     </server>
+   </properties>
+   
+   3) Restart the Deployment Manager and the Node Agents and do a
+      full sync with all cluster members
+   
+   4) check if the 100Custom.xml file was propagated to all Nodes
+   
+   5) start all servers
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Out-Of-Memory exception occurs in Process Designer
+   PROBLEM DETAILED DESCRIPTION:
+   After storing many versions of BPD processes and UCAs, huge
+   amounts of memory are used for the DefaultMessageRoutingCache.
+   For the UNDO functionality, all those versions need to be stored
+   separately, even if only minor changes have occured.
+   The query to load the DefaultMessageRoutingCache only loads the
+   essentials of those tables, but does not check the result for
+   duplicates.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  By changing the query from "SELECT" to "SELECT DISTINCT",
+   duplicates are ignored.  Thus, the cache is filled without
+   those duplicates, and fills only a small amount of memory.
+   FIX AVAILABILITY:
+   iFix for 8.0.1.1 is available on Fix Central, search for APAR
+   JR48508 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   iFix for 8.0.1.2 is available on Fix Central, search for APAR
+   JR48508 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   iFix for 8.5.0.0 is available on Fix Central, search for APAR
+   JR48508 at http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   Fix is also targetted for inclusion in next fixpack for
+   BPM 8.0.1
+   For BPM version 8.5.0.1 the resolution for this issue is
+   JR48550 [http://www-01.ibm.com/support/docview.wss?uid=swg1JR48550] is available on Fix Central at
+   http://www.ibm.com/support/fixcentral/ [http://www.ibm.com/support/fixcentral/]
+   When obtaining any of the above fixes, be sure to download the
+   accompanying readme, for itself, and any prerequisite fixes, and
+   review them thorougly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR48508
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-14
+   
+   
+ * CLOSED DATE
+   2014-01-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-02-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * FIXED COMPONENT ID
+   5725C9500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R801 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

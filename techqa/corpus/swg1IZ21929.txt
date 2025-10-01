@@ -1,0 +1,217 @@
+Title: IBM IZ21929: UNIVERSAL AGENT IS NOT ABLE TO MONITOR HTTPS URLS THAT          ARE BEING REDIRECTED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Severity: 2
+   Approver: JLW
+   Compid:   5724K1000 Tivoli Universal Agent
+   Abstract: HTTP DP IS NOT HANDLING HTTPS ADDRESSES PROPERLY
+   .
+   Environment:
+     Testing was done on Windows but same problem may exist on
+   UNIX/LINUX
+   .
+   Problem Description:
+   .
+   The customer is attempting to monitor 4 HTTPS URLS using the UA
+   HTTP DP.
+   I re-created the problem on my box and what I found was that the
+   URLs
+   (which are public ones) are redirecting to a different URL.  In
+   my case,
+   if I specified the URL that it was being redirected to all
+   worked fine
+   which indicated to me we had some issues with the HTTP DP coping
+   with
+   redirected URLs.  To make this simpler to follow, below are the
+   4 URLs
+   that the customer was wanting to monitor for which it was not
+   working:
+   .
+   https://www.homeshop.com.au [https://www.homeshop.com.au]
+   https://www.foodtown.co.nz [https://www.foodtown.co.nz]
+   https://www.woolworths.co.nz [https://www.woolworths.co.nz]
+   https://www.everydayrewards.com.au [https://www.everydayrewards.com.au]
+   .
+   On my box the same problem was occurring that the customer was
+   seeing.
+   I changed my KUMPURLS to the following and all worked fine:
+   .
+   https://www.homeshop.com.au/Default.asp?cookie%5Ftest=1 [https://www.homeshop.com.au/Default.asp?cookie%5Ftest=1]
+   https://www.foodtown.co.nz/homeshopping/default.aspx?
+   https://www.woolworths.co.nz/homeshopping/default.aspx? [https://www.foodtown.co.nz/homeshopping/default.aspx?https://www.woolworths.co.nz/homeshopping/default.aspx?]
+   https://www.everydayrewards.com.au/CLCS-Web/ [https://www.everydayrewards.com.au/CLCS-Web/]
+   .
+   This identified problem 1 to me in that our HTTP DP could not
+   cope with
+   URL redirection.  The other HTTPS URLS that did not do a
+   redirection all
+   worked fine.  I requested that the customer change there
+   KUMPURLS to the
+   above to confirm it would now work but unfortunately they are
+   getting an
+   error displayed being "URI authority not found".  I have not
+   been able
+   to work this issue out so I need to call on your assistance.  If
+   you
+   look at the log file "pmr-http.tar.gz" which is on ECUREP you
+   will see
+   that the customer has stopped all other DPs accept HTTP and set
+   KUMP_HTTP_DEBUG=Y so as we minimise outside noise.  The KUMPURLS
+   file
+   only contains the URLs that are having this issue.  What I see
+   in the
+   trace output is:
+   .
+   (481E6A9D.0022-15:kumphact.c,218,"KUMP_DoHTTPactivity") Calling
+   KDH1_NewActivity for URL
+   <https://www.homeshop.com.au/Default.asp?cookie%5Ftest=1>
+   length=55
+   (481E6A9D.0023-15:kumphact.c,863,"KUMP_DoHTTPactivity")
+   RequestAborted 0
+   ActivityStatus 2085388366 for URL
+   <https://www.homeshop.com.au/Default.asp?cookie%5Ftest=1>
+   ActivityID
+   @NULL
+   (481E6A9D.0024-15:kumphact.c,888,"KUMP_DoHTTPactivity") *****
+   <https://www.homeshop.com.au/Default.asp?cookie%5Ftest=1> New
+   activity
+   status: URI authority not found
+   .
+   I have done a lot of reading of other similar issues but I
+   cannot locate
+   the answer to this problem.  Can you please assist and also
+   advise
+   whether I can raise an APAR for what I suspect is a problem with
+   URLs
+   that are redirecting.
+   .
+   The customer is running with build d7239a which is ITM 6.1
+   FP05/IF04
+   which is what I have tested with.
+   .
+   Detailed Recreation Procedure:
+     Add the URL https://www.homeshop.com.au to KUMPURLS and
+   restart UA.
+   Related Files and Output:
+     On ECUREP
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Add redirected URL to KUMPURLS
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The HTTP Data Provider was not handling the string https:// [https://]
+   properly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is included in the following maintenance
+   vehicle:
+   
+      | interim fix | 6.1.0.7-TIV-ITM-IF0003
+   
+   Note: Search the IBM technical support web site for maintenance
+   package availability.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ21929
+   
+   
+ * REPORTED COMPONENT NAME
+   UNIVERSAL AGENT
+   
+   
+ * REPORTED COMPONENT ID
+   5724K1000
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-05-06
+   
+   
+ * CLOSED DATE
+   2008-12-12
+   
+   
+ * LAST MODIFIED DATE
+   2008-12-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   UNIVERSAL AGENT
+   
+   
+ * FIXED COMPONENT ID
+   5724K1000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

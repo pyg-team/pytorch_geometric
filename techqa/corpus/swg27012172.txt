@@ -1,0 +1,38 @@
+Title: IBM Webcast replay: Implementing SSL with HTTP nodes in WebSphere Message Broker - United States
+
+Text:
+wste_webcast; WSTE; Support Technical Exchange; education; presentation; webcast; STEwebcastDocument; WSTE; WSTEflash; HTTPS; SSL with Broker WEBCAST
+
+ABSTRACT
+ This WebSphere Support Technical Exchange is designed to illustrate the configuration and Implementation of SSL with HTTP nodes in WebSphere Message Broker (WMB) V6.x. It covers a step-by step approach in configuring HTTPS in the message flow nodes, bar files, broker and HTTP Listener properties. The concepts in this webcast were demonstrated using WMB V6 but the concepts are applicable in WMB V7, V8 and IBM Integration Bus (IIB) V9.
+
+
+Level of Difficulty: Intermediate
+
+Presenter(s): Vivek Grover
+
+DATE: 17 April 2008 
+
+CONTENT
+To replay this exchange, click on Download Audio [http://public.dhe.ibm.com/software/websphere/techexchange/April_17_08_Vivek_Grover_Webcast.mp3] (audio in MP3 format) then open the pdf file below:
+
+Presentation (in PDF format)
+
+
+WSTE_04-17-08-HTTPS_Vivek-Grover.pdf [/support/docview.wss?uid=swg27012172&aid=2] [/support/docview.wss?uid=swg27012172&aid=1] 
+
+
+
+[http://www.ibm.com/i/v14/icons/sout.gif] Get Adobe® Reader® [http://www.adobe.com/products/acrobat/readstep2.html] to view PDF
+
+
+RELATED INFORMATION
+ WebSphere Support Technical Exchange [http://www.ibm.com/software/websphere/webcast]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Integration Bus Security 9.0 All Editions PRODUCT ALIAS/SYNONYM
+ WMB MB Message Broker MQ Integrator WBIMB WBI-MB MQSI WMQI

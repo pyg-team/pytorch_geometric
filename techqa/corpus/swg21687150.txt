@@ -1,0 +1,69 @@
+Title: IBM Upgrade prerequisites matrix nps/fdt/hpf/rhel on Pure Data for Analytics. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ What versions do I need to be at to upgrade to target release? 
+
+ANSWER
+Below you will find required NPS / FDT / HPF /RHEL version needed for each upgrade of the Pure Data for Analytics systems. 
+
+NPS :
+
+
+ 
+
+NPS Upgrade Levels Model FDT HPF NPS RHEL 7.0 N100 2.3.1 4.13 6.0 5.3/6.2 N1001 N2001 N2002 7.0.2 
+7.0.3 N100 2.3.1 4.13 6.0 5.3 N1001 N2001 3.0 5.0 6.2 N2002 7.1 N100 2.4 4.13 6.0 5.8 N1001 2.4 5.8 N2001 3.0.2 5 6.2 N2002 3.0.5 5.3 6.4 7.2 N100 2.4 4.13 6.0 5.3 N1001 2.4 5.3 N2001 3.0.2 5 7.0.2 6.2 N2002 3.0.5 5.3 7.0.4 6.4 N3001-001 4.2.1 5.4.1 7.2.0.1 6.5 N3001-002 4.2.0.1 5.4 7.2.0.0 P1 6.5 *RHEL 5.9 / 6.4 is needed for cryptography SP.
+
+
+FDT : 
+
+FDT Upgrade Levels Model FDT HPF NPS RHEL 2.6.1 N100 2.1.1 5.1 X X N1001 N2001 N2002 3.0.5.1 
+3.0.5.2 
+3.0.5.3 N100 3.0 5.1 X X N1001 N2001 N2002 4.1.1.1 N100 2.4 5.1 6.0.8 5.8 N1001 2.4 6.0.8 5.8 N2001 3.0.2 7.0.2 P6 6.2 N2002 3.0.5 7.0.4 P3 6.4 4.1.2.0 N100 2.6.1 5.3.3 7.0.2 P6 5.8 N1001 N2001 3.0.5.1 6.4 N2002 7.0.4 P3 4.3.1.0 
+4.3.1.1 
+4.3.1.2 
+4.3.1.3 
+4.3.1.4 N100 2.6.1 5.3.3 7.0.2 P6 5.8 N1001 5.8 N2001 3.0.5.1 5.3.4 6.4 N2002 7.0.4 P3 6.4 N3001-001 4.2.1 5.4.1 7.2.0.1 6.5 N3001-002 4.2.0.1 5.4 7.2.0.0 P1 6.5 
+Only S1_A system can be upgraded to 4.1.1.1 
+
+
+HPF 
+
+HPF 5.1 needs HPF 4.14 or later.
+Can be applied always regardless of other NPS/FDT/RHEL levels. 
+
+HPF 5.6.0.1 Kernel Support
+--------------------------
+HPF 5.6.0.1 does NOT support upgrade for customers who have joined the Red Hat 
+Security program and updated their system beyond supported kernel levels.
+
+The DRBD modules listed above were compiled for the following Red Hat kernels:
+
+N100 and N1001: 
+------------------
+
+RHEL5.8: drbd-km-2.6.18_308.el5-8.4.4nz3a-4.x86_64.rpm
+RHEL5.9: drbd-km-2.6.18_348.2.1.el5-8.4.4nz3a-4.x86_64.rpm
+RHEL5.10: drbd-km-2.6.18_371.9.1.el5-8.4.4nz3a-4.x86_64.rpm
+RHEL5.11: drbd-km-2.6.18_398.el5-8.4.4nz3a-4.x86_64.rpm
+RHEL5.11+: drbd-km-2.6.18_408.el5-8.4.4nz3a-4.x86_64.rpm
+RHEL5.11+: drbd-km-2.6.18_409.el5-8.4.4nz3a-4.x86_64.rpm
+
+N2001, N2002, N3001:
+-----------------------
+
+RHEL6.4: drbd-km-2.6.32_358.el6.x86_64-8.4.4nz3a-4.el6.x86_64.rpm
+RHEL6.5: drbd-km-2.6.32_431.17.1.el6.x86_64-8.4.4nz3a-4.el6.x86_64.rpm
+RHEL6.6: drbd-km-2.6.32_504.el6.x86_64-8.4.4nz3a-4.el6.x86_64.rpm
+RHEL6.6: drbd-km-2.6.32_504.30.3.el6.x86_64-8.4.4nz3a-4.el6.x86_64.rpm
+RHEL6.7+: drbd-km-2.6.32_573.18.1.el6.x86_64-8.4.4nz3a-4.el6.x86_64.rpm 
+
+RHEL 
+
+ 
+
+RHEL Version NPS FDT HPF RHEL RHEL 5.9 none 2.6.1 5.3.1 5.8 RHEL 5.10 none 4.1.1.1 5.3.4 5.9 RHEL 5.11 none 4.1.1.1 5.3.4 5.10 PDA OS Patches none 4.1.1.1 5.6.0.1 5.10 RHEL 6.4 7.0.2 P6 3.0.5.3 5.3.1 6.2 RHEL 6.5 7.0.2 P6 4.1.1.1 5.3.4 6.4 RHEL 6.6 7.0.2 P6 4.1.1.1 5.3.4 6.5 PDA OS Patches 7.0.2 P6 4.1.1.1 5.6.0.1 6.5 
+(6.6 for N3001-001 )

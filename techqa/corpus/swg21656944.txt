@@ -1,0 +1,34 @@
+Title: IBM IZE0106E Connect failed with java.security.cert.CertificateException - Certificates does not conform to algorithm constraints - United States
+
+Text:
+IZE0106E MSGIZE0106E ; upgrading Java release ; 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 R700 700 R000 000 HCI7000 5655Y0401 5655-Y04 5655Y04 KIXINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When trying to connect the CICS Explorer, you receive the error IZE0106E Connect failed with error "java.security.cert.CertificateException: Certificates does not conform to algorithm constraints". This occurs after changing the version of Java™ that you are using for CICS Explorer. You are probably using the CICS Explorer SDK and therefore providing your own Java. 
+
+SYMPTOM
+IZE0106E [http://www.ibm.com/support/knowledgecenter/SSQ2R2_14.0.0/com.ibm.cics.zos.help/topics/reference/ize0106e.html] Connect failed with error "java.security.cert.CertificateException: Certificates does not conform to algorithm constraints"
+
+
+CAUSE
+The host SSL certificate does not meet the more stringent security requirements of newer Java Virtual Machines (JVMs). 
+
+DIAGNOSING THE PROBLEM
+Verify that the problem occurs with an Oracle JRE version 7 update 40 or newer, or an IBM Runtime Environment for Java 1.7 SR6 or newer. The problem will not occur with older versions of the Java Runtime.
+
+
+You receive message IZE0106E because from these versions of Java onwards, the use of x.509 certificate with RSA keys of less than 1024 bits in length is disallowed. This was achieved by adjusting the value in jre/lib/security/java.security file as follows:
+jdk.certpath.disabledAlgorithms=MD2, RSA keySize < 1024
+
+This means that any certificate signed with MD2 or with a RSA key of length less than 1024 bits, is not acceptable.
+
+
+RESOLVING THE PROBLEM
+It is recommended that you update your certificates to include stronger keys. As a workaround, at your own risk, you can edit the keysize in the jdk.certpath.disabledAlgorithms property to permit smaller key sizes. 
+
+See "Default x.509 Certificates Have Longer Key Length" in the [/support/docview.wss?uid=swg21656944&amp;aid=1]SE Development Kit 7 Update 40 Release Notes - Oracle [http://www.oracle.com/technetwork/java/javase/7u40-relnotes-2004172.html] for more information.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

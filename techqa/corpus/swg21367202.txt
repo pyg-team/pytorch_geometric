@@ -1,0 +1,33 @@
+Title: IBM How can I find a 64 bit or 32 bit iisWASPlugin_http.dll to setup IIS to work with Domino? - United States
+
+Text:
+was; websphere application server; lotus domino server; issWASPlugin_http.dll; file; http; 64 bit; 32 bit; windows; os; operating system; iis; microsoft; fixes; download; fixpack; table; zip TECHNOTE (FAQ)
+
+QUESTION
+Where can I find and download the 64 bit or 32 bit issWASPlugin_http.dll file needed to use Microsoft IIS Server as a front-end machine for Domino HTTP?
+
+CAUSE
+The file no longer ships with Domino servers and must be downloaded from the WebSphere Application Support site.
+
+ANSWER
+Find and download the correct files from the WebSphere Application Server Support site [http://www-01.ibm.com/software/webservers/appserv/was/support/].
+
+
+Select "Download" to navigate to Featured WebSphere Application Server downloads [http://www-01.ibm.com/software/webservers/appserv/was/support/download.html].
+
+Select "Recommended Fixes" to navigate to Recommended fixes for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?rs=180&uid=swg27004980].
+
+Select the WebSphere Application Server (WAS) version you are using and then select the Windows operating system in the fix pack table section. Scroll down to see the various operating system downloads. 
+
+Select the needed fixpack download. After download, expand the zip file and navigate the folders contained in it to find the needed iisWASPlugin_http.dll for your 32 or 64 bit Windows operating system.
+
+Example: 
+Scroll down and find individual download packs table.
+Select and download 64-bit x86 AMD/Intel Plug-ins to get 6.1.0-WS-PLG-WinX64-FP0000017.pak.zip. Unzip and navigate folders to get to plg.webserverplugins.FP61017.pak/repository/plugins.http/bin/64bits/.
+Find the iisWASPlugin_http.dll file for 64 bit Windows.
+
+
+
+
+ * 
+ *

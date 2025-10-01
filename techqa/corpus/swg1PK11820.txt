@@ -1,0 +1,147 @@
+Title: IBM PK11820: SERVER TARGETING SHOULD ADD ALL JARS IN THE LIB AND LIB/EXT DIRE CTORIES TO THE BUILD CLASSPATH - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I have an web app that contains java classes that import
+   packages from
+   the eablib.jar and recjava.jar. I am targeting sever WAS 5.1.
+   The
+   properties->Java Buildpath->Libraries shows "JRE System Library
+   [WebSphere v5.1 JRE]" and "WebSphere v5.1 Runtime" are in the
+   classpath.
+   
+   When I expand the "WebSphere v5.1 Runtime" entry and view its
+   jars,
+   eablib.jar and recjava.jar are not listed, although they are in
+   "C:\Program Files\IBM\Rational\SDP\6.0\runtimes\base_v51\lib". I
+   must
+   explicitly use "Add External Jars..." to add the jar files to
+   the
+   buildpath.
+   server targeting should add all jars in the lib and lib/ext
+   directories to the build classpath.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a workaround is to add them manually
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  SERVER TARGETING SHOULD ADD ALL JARS IN THE LIB AND LIB/EXT
+   DIRE
+   CTORIES TO THE BUILD CLASSPATH
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  All of the JAR files found in the WebSphere Application
+   Server lib directory cannot be added but the eablib.jar and
+   recjava.jar JAR files were included.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK11820
+   
+   
+ * REPORTED COMPONENT NAME
+   APP DEV V6 WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724J1901
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-09-14
+   
+   
+ * CLOSED DATE
+   2006-03-17
+   
+   
+ * LAST MODIFIED DATE
+   2006-03-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  na
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   APP DEV V6 WIN
+   
+   
+ * FIXED COMPONENT ID
+   5724J1901
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSN
+   UP

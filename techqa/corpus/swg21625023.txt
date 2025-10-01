@@ -1,0 +1,67 @@
+Title: IBM ISDM URL redirection is not working - United States
+
+Text:
+service delivery manager; certificate; The certificate could not be verified; internal error; misconfiguration; ISDM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Trying to log in to the TPAE administrative UI or the SimpleSRM using the host name of the NFS server, the URL redirection fails with message:
+
+The server encountered an internal error or misconfiguration and was unable to complete your
+request. 
+
+CAUSE
+Problem with certificate: "The certificate could not be verified"
+
+RESOLVING THE PROBLEM
+1.) On the NFS server, back up the plugin-cfg.xml file and update it to change the LogLevel="Error" to LogLevel="Trace". 
+
+File is located in:
+/opt/IBM/HTTPServer/Plugins/config/cloudburst-http/ --> Linux
+/usr/IBM/HTTPServer/Plugins/config/cloudburst-http/ --> AIX
+
+
+This will generate log entries that actually give the serial number of the certificate that is missing from the signer section of the keystore and will show what WAS backend server the plugin is routing the request to. The serial number will appear in hex format in the plugin log.
+Entering this value in Windows calc.exe can convert the value to decimal to see the serial number that appears in the WAS Admin Console of the TSAM server.
+
+You will need to Restart IBM HTTP Server:
+/opt/IBM/HTTPServer/bin/apachectl restart --> Linux
+/usr/IBM/HTTPServer/bin/apachectl restart --> AIX
+
+2.) Run through the problem scenario to get the serial number in the plugin log. The message will look similar to the following:
+
+[Wed Jan 25 08:42:14 2012] 00000779 f4e94ba0 - TRACE: lib_stream:openStream: PARTNER CERTIFICATE DN=CN=s3w09978.saifg.rbc.com,O=IBM,C=US,Serial=12:6b:77:6f:d0:28:99:e0
+[Wed Jan 25 08:42:14 2012] 00000779 f4e94ba0 - ERROR: lib_stream:openStream: Failed in r_gsk_secure_soc_init: GSK_ERROR_BAD_CERT(gsk rc =414)
+
+NOTE: Serial=12:6b:77:6f:d0:28:99:e0
+
+If you take 126b776fd02899e0 (in hex) and convert to decimal, you will get 1327285837308140000.
+
+3.) On the TSAM server, login to WAS as wasadmin
+- Go to Security > SSL certificate and key management.
+- Click the Manage endpoint security configurations link.
+- Expand Inbound, expand the cell name (ctgCell01) to see the list of nodes.
+- Expand Nodes and Select ctgNode01
+- Click on Key Stores and certificates
+- Select CellDefaultTrustStore
+- Click on Signer Certificates
+- Extract s3w09978_alias matching the above serial number.
+- copy the extracted file to NFS server
+
+4.) On the NFS server start IBM Key Management program:
+/opt/IBM/HTTPServer/bin/ikeyman --> Linux
+/usr/IBM/HTTPServer/bin/ikeyman --> AIX
+
+- open plugin_key.kdb in:
+/opt/IBM/HTTPServer/Plugins/etc/plugin-key.kdb (password WebAS)
+(note that the default password is WebAS) --> Linux
+
+/usr/IBM/HTTPServer/Plugins/etc/plugin-key.kdb (password WebAS)
+(note that the default password is WebAS) --> AIX
+
+- Select Signer Certificates and Add the file extracted in step 3.
+
+5.) Restart IBM HTTP Server
+/opt/IBM/HTTPServer/bin/apachectl restart --> Linux
+/usr/IBM/HTTPServer/bin/apachectl restart --> AIX
+
+This resolve the NFS redirection problem.

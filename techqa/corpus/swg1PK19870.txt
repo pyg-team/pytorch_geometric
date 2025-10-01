@@ -1,0 +1,191 @@
+Title: IBM PK19870: Z/OS HTTP SERVER 530 - HEAD REQUEST NOT BEHAVING LIKE A GET REQUEST. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  It was brought to our attention that a HEAD request is not
+   behaving like a Get request.  When a HEAD request is done for
+   a protected resource, it will return a 200 while a Get request
+   for the same resource returns a 403.
+   ..
+   In a -vv trace you would see the following....
+   ..
+   In a -vv trace you would see the following....
+   ..
+   Connection.. Keep-Alive
+   Client sez.. Authorization: Basic ************************
+   cache_local. no hit for file '/pub/fedtest/othello.html'
+   Client sez.. Authorization: Basic ************************
+   Authorization scheme "Basic" params "************************"
+   Multi....... for path "/pub/fedtest/othello.html".
+   Authorization scheme "Basic" params "************************"
+   ..
+   The RFC 2616 for a Head Request states that The HEAD method is
+   identical to GET except that the server MUST NOT return a
+   message-body in the response. The meta information contained
+   in the HTTP headers in response to a HEAD request SHOULD be
+   identical to the information sent in response to a GET request.
+   This method can be used for obtaining metainformation about
+   the entity implied by the request without transferring the
+   entity-body itself. This method is often used for testing
+   hypertext links for validity, accessibility, and recent
+   modification.
+   ..
+   The response to a HEAD request MAY be cacheable in the sense
+   that the information contained in the response MAY be used to
+   update a previously cached entity from that resource. If the
+   new field values indicate that the cached entity differs from
+   the current entity (as would be indicated by a change in
+   Content-Length, Content-MD5, ETag or Last-Modified), then
+   the cache MUST treat the cache entry as stale.
+   ..
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of the HTTP Server for z/OS who    *
+   *                 use the HEAD request.                        *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The response to a HEAD request is not   *
+   *                      the same as a GET request as expected   *
+   *                      and as described by RFC 2616.           *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A HEAD request and a GET request take different code paths
+   when getting authorization for a protected resource. The
+   HEAD request gets a 200 response when it should get a 403
+   forbidden if the resource is protected. RFC 2616 describes
+   the response to a HEAD request as the same response that a
+   GET request would receive except that the HEAD request does
+   not get a response body.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Changed the processing of a HEAD request so that the same
+   authorization code path is traversed by both a HEAD request
+   and a GET request.
+   
+   The following COMPID is affected by these changes:
+   
+   5697D4300 HTTP Server for z/OS  Version 5
+   
+   PTF06B
+   The code changes are stored in CMVC under defect PQ19870.
+   
+   * Cross Reference between External and Internal Names
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK19870
+   
+   
+ * REPORTED COMPONENT NAME
+   DGW/WAS OS/390
+   
+   
+ * REPORTED COMPONENT ID
+   5697D4300
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2006-02-15
+   
+   
+ * CLOSED DATE
+   2006-04-13
+   
+   
+ * LAST MODIFIED DATE
+   2006-06-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  IMWSDMDR IMWSSRVR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DGW/WAS OS/390
+   
+   
+ * FIXED COMPONENT ID
+   5697D4300
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY UK13567 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK13567]
+   UP06/05/30 P F605
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

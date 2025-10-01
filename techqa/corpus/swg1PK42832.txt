@@ -1,0 +1,223 @@
+Title: IBM PK42832: LTPA TOKEN NOT RENEWING AFTER TIME OUT CAUSES LOGIN FAIL. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24020073]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24021203]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  LTPA token not renewing after timeout which causing login
+   failure with following exception in trace.log
+   
+   
+   [3/26/07 17:26:01:293 CEST] 0000003a LTPAServerObj W
+   SECJ0371W:
+   Validation of the LTPA token failed because the token expired
+   with the
+   following info: Token expiration Date: Mon Mar 26 16:05:33 CEST
+   2007,
+   current Date: Mon Mar 26 17:26:01 CEST 2007.
+   [3/26/07 17:26:01:294 CEST] 000000ab ContextManage >
+   getServerSubjectInternal Entry
+   [3/26/07 17:26:01:294 CEST] 000000ab ContextManage >
+   getRegistryObject
+   Entry
+   [3/26/07 17:26:01:294 CEST] 000000ab ContextManage <
+   getRegistryObject
+   Exit
+   
+   com.ibm.ws.security.registry.UserRegistryImpl@14ba14ba;impl=com.
+   ibm.ws.w
+   im.registry.WIMUserRegistry@6c886c88;realm=defaultWIMFileBasedRe
+   alm
+   [3/26/07 17:26:01:294 CEST] 000000ab WSCredentialI >
+   isDestroyed Entry
+   [3/26/07 17:26:01:294 CEST] 000000ab WSCredentialI <
+   isDestroyed
+   Exit.......
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: IBM WebSphere Application Server version     *
+   *                 6.1 users who are enabling Administrative    *
+   *                 or Application security.                     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: SECJ0371W error is reported due to the  *
+   *                      fact that LTPA tokens, which are used   *
+   *                      by Application Servers, weren't renewed *
+   *                                                              *
+   *                      correctly                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   LTPA tokens which represent an application server identity are
+   renewed upon expiration by the application server. However,
+   due to a code defect, there is an condition where some fields
+   in renewed LTPA tokens still carry the original expiration
+   information.
+   
+   When this condition happens, an administrator won't be able to
+   login to the Administrative Console unless the application
+   server is restarted, or the LTPA tokens which carry incorrect
+   expiration information are evicted from Authentication Cache
+   (by default, about 30 minutes.)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  With this fix, LTPA tokens are renewed correctly.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fixpack 6.1.0.9. Please refer to the
+   Recommended Updates page for delivery information:
+   http://www-1.ibm.com/support/docview.wss?uid=swg27004980 [http://www-1.ibm.com/support/docview.wss?uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK42832
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   61W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-04-06
+   
+   
+ * CLOSED DATE
+   2007-05-14
+   
+   
+ * LAST MODIFIED DATE
+   2007-05-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  SECURITY
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

@@ -1,0 +1,55 @@
+Title: IBM Windows Server 2008 R2 Certification for Db2 Version 9.7 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Is Db2 Version 9.7 certified to run on Windows Server 2008 R2? 
+
+ANSWER
+
+Yes, Db2 Version 9.7 Fix Pack 2 has passed all of the tests required for certification on Windows Server 2008 R2. This certification requires all tests succeed in a virtual environment using Microsoft® Hyper-V™ Server 2008 R2.
+
+
+The following minor issues exist about certification noncompliance of DB2 features:
+
+
+
+1 The Control Center GUI administration tool is not compliant with all Windows Server 2008 R2 certification criteria: a. Incomplete Unicode support b. The file version and manifest information for the INFOPOPS_WHELP_.EXE and INFOPOPS_JHELP_JP.EXE files is not valid. 
+2 
+The DB2 uninstall process will not remove the following objects created during install:
+a. db2admin user account
+b. DB2ADMS group
+c. DB2USERS group
+
+After uninstalling the DB2 database products, you can manually remove these objects provided that they have not created any dependencies on any object. For example, you might not want to remove the db2admin user if you have created non-DB2 data files that are owned by db2admin. 
+3 
+The db2server.dll file is installed into the following path: <Windows Directory>\Cluster. 
+For example, if the Windows directory is C:\Windows, the installation path is C:\Windows\Cluster\. 
+4 
+During the DB2 install, you can select the location for the DB2 executable files. You can also select to create the Tools Catalog database or the Control Server component so that these databases are created during the install process. These databases are always created under the "C:\DB2" path. 
+5 
+The Command Line Processor Plus (CLPPlus) interface might create a command history file at the following path:
+C:\Users\Administrator\.jline-com.ibm.clpplus.CLPPlus.history 
+6 
+The following sample files may not have valid file version information:
+C:\Program Files\IBM\SQLLIB\samples\ole\msvb\bcounter.dll
+C:\Program Files\IBM\SQLLIB\samples\ole\msvb\inbox.dll
+C:\Program Files\IBM\SQLLIB\samples\ole\msvb\invoice.dll
+C:\Program Files\IBM\SQLLIB\samples\ole\msvb\invoice.exe
+C:\Program Files\IBM\SQLLIB\samples\ole\msvb\names.dll
+C:\Program Files\IBM\SQLLIB\samples\ole\msvb\salclado.exe
+C:\Program Files\IBM\SQLLIB\samples\ole\msvb\salcltvb.exe
+C:\Program Files\IBM\SQLLIB\samples\ole\msvb\sales.dll
+C:\Program Files\IBM\SQLLIB\samples\ole\msvb\salsrv.dll
+C:\Program Files\IBM\SQLLIB\samples\ole\msvb\salsvado.dll
+C:\Program Files\IBM\SQLLIB\samples\ole\msvc\ccount.dll
+C:\Program Files\IBM\SQLLIB\samples\ole\msvc\salcltvc.exe
+C:\Program Files\IBM\SQLLIB\samples\ole\msvc\testcli.exe
+C:\Program Files\IBM\SQLLIB\samples\ole\msvc\tstsrv.dll 
+7 
+The following sample files do not launch with least privilege token:
+C:\Program Files\IBM\SQLLIB\samples\ole\msvc\salcltvc.exe
+C:\Program Files\IBM\SQLLIB\samples\ole\msvc\testcli.exe 
+8 
+The IBM Global Security Kit (GSKit) and the IBM Software Development Kit (SDK) for Java are third party components included with the DB2 database products that might not meet all criteria for the Windows Server 2008 R2.

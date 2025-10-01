@@ -1,0 +1,31 @@
+Title: IBM Non-remoteable ITIM APIs result in ClassCastException regarding ICacheValue - United States
+
+Text:
+ISIM ITIM TIM Tivoli Identity Manager lCacheValue API remoteable ClassCast java.lang.ClassCastException ClassCastException TECHNOTE (FAQ)
+
+QUESTION
+ When using non-remoteable APIs (such as com.ibm.itim.policy.analysis.ProvisioningPolicyAnalysis) remotely a ClassCastException can be encountered.
+
+
+CAUSE
+When using non-remotable APIs remotely a ClassCastException such as the following can be encountered:
+[11/14/08 16:17:23:281 CST] 0000005d SystemOut O 16:17:23,265 ERROR com.acme.integration.RestServlet:375 - com.ibm.itim.policy.analysis.PPAException: com.ibm.itim.policy.analysis.ProvisioningPolicyAnalysis.ERROR; com.ibm.itim.cache.ldap.LdapCacheValue incompatible with com.ibm.itim.cache.ICacheValue
+[11/14/08 16:17:23:281 CST] 0000005d SystemOut O java.lang.ClassCastException: com.ibm.itim.cache.ldap.LdapCacheValue incompatible with com.ibm.itim.cache.ICacheValue
+
+Invoking non-remoteable ITIM APIs, such as ProvisioningPolicyAnalysis or other Data Services APIs, outside of the ITIM classloader may result in ClassCastExceptions related to the LDAP Cache. This is due to the LDAP cache model used by ITIM which utilizes WebSphere’s Distributed Object cache. When invoked remotely, the remote application creates a new LdapCacheKey locally which is pushed to the WAS Distributed Map. Subsequent ITIM server operations retrieve this new LdapCacheKey and throw the class cast exception upon finding the retrieved key does not match the expected key local to the ITIM server.
+
+[/support/docview.wss?uid=swg21375345&amp;aid=1] 
+
+
+
+
+
+ANSWER
+Remotable APIs are only those packages under com.ibm.itim.apps.* (such as com.ibm.itim.apps.policy.ProvisioningPolicyManager). All other documented APIs should be considered non-remoteable and should not be invoked remotely. 
+
+APAR IY63656 further clarifies this distinction.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITIM ISIM

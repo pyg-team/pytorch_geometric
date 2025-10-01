@@ -1,0 +1,45 @@
+Title: IBM ITCAM for MQ Monitoring Agent on Windows will not Start - United States
+
+Text:
+primary instance; fails; unable to start service 5724K3500 5724K3500TR TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The primary instance of WebSphere MQ Monitoring agent on Windows fails to start. 
+
+SYMPTOM
+Received the error message pop up "Unable to start service, see Event Log for Information"
+
+
+
+CAUSE
+The primary instance of WebSphere MQ Monitoring agent cannot be started in Manage Tivoli Enterprise Monitoring Services if both of the following conditions are true: 
+
+ * No default queue manager is defined 
+ * Queue manager name is not specified in the agent configuration file
+   mq.cfg:
+   SET MANAGER NAME()
+
+RESOLVING THE PROBLEM
+You can use the following steps to resolve this problem without changing the WMQ configuration: 
+
+ 
+
+ 1. Go to Manage Tivoli Enterprise Monitoring Services 
+ 2. Select the primary instance of WebSphere MQ Monitoring agent 
+ 3. Right click -> Create Instance... 
+ 4. Enter your queue manager name to the Instance Name field and press OK 
+ 5. Configure and start the new MQ agent instance
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+The new MQ agent instance is used instead of the default primary instance.

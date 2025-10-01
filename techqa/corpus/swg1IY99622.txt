@@ -1,0 +1,190 @@
+Title: IBM IY99622: THE OBJECT SERVER DSA DOES NOT FAIL BACK AFTER BOTH OBJECT SERVERS GO DOWN AND THE BACKUP COMES BACK FIRST. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Replication steps:
+   
+   Setup
+   
+   1) impact.objectserver.failback and
+   impact.objectserver.failback.pollinterval properties correctly
+   set in NCI_server.props
+   2) master.impact_failback table created on BCK71 (backup object
+   server)
+   3) the files failover.sql, failover_package and
+   nco_test_primary.sh deployed as described in README_failover.txt
+   4) both object servers started, impact started
+   5) nco_test_primary.sh script started
+   
+   Scenario
+   
+   1) Trigger a policy that does something simple with the event
+   container from an object server event.  Impact server log
+   reports normally processing.
+   2) Shutdown PRM71 (primary object server).  Confirm that
+   nco_test_primary has set IsActingPrimary to 1 on BCK71.
+   3) Trigger the policy again.  Confirm that Impact server log
+   reports successful failover by Impact.
+   4) Shutdown BCK71.
+   5) Trigger the policy again.  Confirm that Impact reports
+   failure to insert event.
+   6) Bring BCK71 back up.  Confirm that IsActingPrimary is still
+   set to 1.
+   7) Trigger the policy again.  Confirm that Impact has connected
+   to BCK71 and inserted the event.
+   8) Bring PRM71 back up.  Confirm that nco_test_primary has set
+   IsActingPrimary back to 0.
+   9) Trigger the policy again.  Impact continues to put the new
+   events into BCK71.  It has not failed back.
+   
+   If the above scenario is repeated without stopping and starting
+   the backup object server, Impact is able to fail back
+   successfully.
+   
+   In a disaster recovery situation, it is plausible that the
+   scenario may occur where the backup object server is able to be
+   recovered more quickly than the primary.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Either continue to use Impact connected to the backup OS or
+   manually restart Impact when the primary OS comes back online.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Netcool/Impact Users who are using Data  *
+   *                 Source Object Server Failover                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: THE OBJECT SERVER DSA DOES NOT FAIL     *
+   *                      BACK AFTER BOTH OBJECT SERVERS GO DOWN  *
+   *                      AND THE BACKUP COMES BACK FIRST.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Steps to Replicate: ---------------------
+   
+   Pre-condition: 1) Two Netcool/OMNIbus Object Servers are
+   running and configured for Failover. 2) Netcool/Impact Server
+   is running.
+   
+   
+   
+   
+   
+   Steps: 1) Create an Object Server Data Source and enable
+   Failover 2) Create an Object Server Data Type using the Data
+   Source in step 1 3) View the Data Items,by clicking on the View
+   Data Items next to the Data Type name. The data 4) Data Items
+   should view the primary Object Server data 5) Shutdwon
+   Netcool/OMNIBbus Primary Object Server. Impact should connect
+   to the backup Object Server and the backup data items. 6)
+   Shutdown Netcool/OMNIbus Backup ObjectServer and observe
+   /log/<ServerName>_server.log. Impact will report failure to
+   insert events. 7) Start the Primary ObjectServer and observe
+   the log file again. Impact will still point to the primary
+   ObjectServer and fail to insert.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in Impact 3.1 Fix Pack 5 3.1.0.0-TIV-NCI-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY99622
+   
+   
+ * REPORTED COMPONENT NAME
+   NC/IMPACT OBJSE
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59OS
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-06-05
+   
+   
+ * CLOSED DATE
+   2007-08-13
+   
+   
+ * LAST MODIFIED DATE
+   2007-08-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

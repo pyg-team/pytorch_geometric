@@ -1,0 +1,25 @@
+Title: IBM End of Defect Support for JDK 6.0/6.2.6 Used With IBM WebSphere Application Server v7.0, v8.0, and v8.5.5 on IBM i OS. - United States
+
+Text:
+WAS; WebSphere Application Server; JDK; Java ; Support; End of Support TECHNOTE (FAQ)
+
+QUESTION
+ This document discusses current information related to the support of the IBM Java Development Kit (JDK) v6.0/6.2.6 products with IBM WebSphere Application Server (WAS) v7.0, v8.0, and v8.5.5 on the IBM i OS. 
+
+ANSWER
+After the 31st of December, 2017, the IBM JDK 6.0/6.2.6 LPPs (57xxJV1 Option 11 and 12) on IBM i 6.1.x, 7.1, and 7.2 OS will only be supported on a best effort basis with WAS v7.0, v8.0, and v8.5.5 on the IBM i OS. No defect or development support is available. This means that no further security fixes nor product updates will be made available after 12/31/17. 
+
+WAS v7.0 and v8.0 are still fully supported until April 30th, 2018. After April 30th, 2018, WAS v7.0 and v8.0 will only be supported on a best effort basis as well. Please refer to the following document for detailed WAS support information for the IBM i OS.
+Official Support Statement for the IBM WebSphere Application Server Product on the IBM i OS [http://www.ibm.com/support/docview.wss?uid=nas8N1020185] 
+
+IBM recommends clients migrate to IBM WAS v8.5.5 or v9.0 and use IBM JDK 8.0 64 bit (57xxJV1 Option 17). For WAS v8.5.5, fix pack 8.5.5.9 or later is required to support JDK 8.0. You will need to make sure you have 8.5.5.9 or later installed in order to switch your WAS profiles to use JDK 8.0. If you are currently on an older fix pack level, you might have to switch your profiles to use JDK 7.0 first until you upgrade your WAS fix pack version. 
+
+ More information on IBM JDK 8.0 and migration to WAS v8.5.5 or v9.0 can be found here in the following IBM Technical documents.
+Support of Java Development Kit (JDK) 8.0 on the IBM i OS [http://www.ibm.com/support/docview.wss?uid=nas8N1020692] 
+IBM WebSphere Application Server v8.5.5 Product Migration Steps [http://www.ibm.com/support/docview.wss?uid=nas8N1020832]
+IBM WebSphere Application Server v9.0 Product Migration Steps [http://www.ibm.com/support/docview.wss?uid=nas8N1020832]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1

@@ -1,0 +1,177 @@
+Title: IBM PI17630: DWA DOCUMENTATION UPDATE: DOUBLE QUOTES FOR THE VALUES OF DBADMI N PARAMETERS -DCNBROKERURI AND -DCNCHANNELNAME SHOULD BE REMOVED - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational DOORS and DOORS Web Access Fix Pack 1 (9.6.0.1) for 9.6 [http://www-01.ibm.com/support/docview.wss?uid=swg24037946]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Currently the documentation for format of the dbadmin command in
+   "Configuring the Rational DOORS database server" has Quotation
+   marks for all -dcnBrokerUri and -dcnChannelName parameters.
+   
+   Link:
+   http://pic.dhe.ibm.com/infocenter/doorshlp/v9r5m2/index.jsp?topi
+   c=%2Fcom.ibm.rational.dwa.install.doc%2Ftopics%2Ft_setupddbs.htm [http://pic.dhe.ibm.com/infocenter/doorshlp/v9r5m2/index.jsp?topic=%2Fcom.ibm.rational.dwa.install.doc%2Ftopics%2Ft_setupddbs.htm]
+   l
+   
+   Format specified in the above Link: dbadmin -dcnEnable -data
+   port@DOORSserver -P server_password -dcnBrokerUri
+   &#65411;  tcp://broker:61616&#65411;   -dcnChannelName &#65411;  dcn&#65411;   -dwaHost
+   DWAserver &#65411;  dwaPort port &#65411;  dwaProtocol http or https
+   
+   However, an error "CRCRD7222E Unable to connect to broker" is
+   displayed when accessing File > OSLC > Working Sets
+   if the dbadmin command has been run with the value for
+   -dcnBrokerUri parameter enclosed within double quotes.
+   Hence, these double quotes need to be removed for the value of
+   -dcnBrokerUri parameter.
+   
+   It has also been observed that if the value of -dcnChannelName
+   which is dcn by default, is enclosed within double quotes,
+   though the ETL job completes and says its successful, no data
+   would have been transferred to the Data Warehouse.  Hence, the
+   double quotes need to be removed for the value of
+   -dcnChannelName parameter.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users of DOORS Web Access                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Currently the documentation for format of the dbadmin        *
+   * command in                                                   *
+   * "Configuring the Rational DOORS database server" has         *
+   * Quotation                                                    *
+   * marks for all -dcnBrokerUri and -dcnChannelName parameters.  *
+   *                                                              *
+   * Link:                                                        *
+   * http://pic.dhe.ibm.com/infocenter/doorshlp/v9r5m2/index.jsp? *
+   * topi                                                         *
+   * c=%2Fcom.ibm.rational.dwa.install.doc%2Ftopics%2Ft_setupddbs *
+   * .htm                                                         *
+   * l                                                            *
+   *                                                              *
+   * Format specified in the above Link: dbadmin -dcnEnable -data *
+   * port@DOORSserver -P server_password -dcnBrokerUri            *
+   * &#199;&#189; &#182; tcp://broker:61616&#199;&#189; &#182;  -dcnChannelName &#199;&#189; &#182; dcn&#199;&#189; &#182;    *
+   * -dwaHost                                                     *
+   * DWAserver &#199;&#189; &#182; dwaPort port &#199;&#189; &#182; dwaProtocol http or https   *
+   *                                                              *
+   * However, an error "CRCRD7222E Unable to connect to broker"   *
+   * is                                                           *
+   * displayed when accessing File > OSLC > Working Sets          *
+   * if the dbadmin command has been run with the value for       *
+   * -dcnBrokerUri parameter enclosed within double quotes.       *
+   * Hence, these double quotes need to be removed for the value  *
+   * of                                                           *
+   * -dcnBrokerUri parameter.                                     *
+   *                                                              *
+   * It has also been observed that if the value of               *
+   * -dcnChannelName                                              *
+   * which is dcn by default, is enclosed within double quotes,   *
+   * though the ETL job completes and says its successful, no     *
+   * data                                                         *
+   * would have been transferred to the Data Warehouse.  Hence,   *
+   * the                                                          *
+   * double quotes need to be removed for the value of            *
+   * -dcnChannelName parameter.                                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The documentation has been updated to clarify the current
+   behaviour
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI17630
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC DOORS WE
+   
+   
+ * REPORTED COMPONENT ID
+   5724V97WA
+   
+   
+ * REPORTED RELEASE
+   952
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-09
+   
+   
+ * CLOSED DATE
+   2014-09-11
+   
+   
+ * LAST MODIFIED DATE
+   2014-09-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

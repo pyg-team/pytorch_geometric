@@ -1,0 +1,68 @@
+Title: IBM Running P8 Client Applications with WebSphere Application Server 8.0.0.x - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ In order to use Workplace or Workplace XT without SSL or in an SSO/Container Managed configuration with WebSphere Application Server version 8.0.0.x or higher, security settings must be updated. These settings permit non-SSL connections to P8 Content Engine and allow container-managed applications to pass HTTP session information to an applet. 
+
+CONTENT
+Ensuring consistency for P8 Content Engine and Workplace/Workplace XT SSL Settings 
+
+In WebSphere Application Server 8, the default settings for Security > Global Security > RMI/IIOP Security > Inbound and Outbound communications have changed. 
+
+The CSIv2 Transport Layer >Transport default setting in WebSphere Application Server 8.0.0.x changed to SSL-Required. Workplace and Workplace XT work with this new setting (if the P8 environment is running SSL communication between the Content Engine and Workplace/Workplace XT server), but also continue to work in the previous default (SSL-supported). The settings between the Content Engine WebSphere Application Server instance and the Workplace/Workplace XT WebSphere Application Server instance must match for a successful sign-in to occur. 
+
+If you are not running SSL, ensure that the SSL required option is turned off for both the server and client properties. This option is located at: WebSphereInstall\AppServer\profiles\AppSrv01\properties\sas.client.props
+
+Verify the following setting and restart the application server:
+com.ibm.CSI.performTransportAssocSSLTLSRequired=false
+
+These changes should also be made to the Enterprise Records or Records Manager web application in the WebSphere 8 administrative console, if using IBM Enterprise Records.
+
+Enabling Java Applet support
+
+To prevent applet sessions from failing, you must disable the relevant HTTP Only settings for your deployment.
+
+
+ 1. Enable cookies and disable HTTP Only setting for the deployed application.  1. Log in to the WebSphere Application Server admin console. 
+     2. Navigate to Applications > Application Types > WebSphere enterprise applications > Workplace XT > Session management. 
+        
+        For Workplace: Navigate to Applications > Application Types > WebSphere enterprise applications > Workplace > Session management. 
+         1. Under General properties, check the box Override session management and click Apply. 
+         2. Click the Enable cookies link under Session tracking mechanism. 
+         3. Under General properties, uncheck the box Set session cookies to HTTP Only to help prevent cross-site scripting attacks and click Apply. 
+            
+        
+        
+     3. Navigate to Applications > Application Types > WebSphere enterprise applications > Workplace XT > Manage Modules > Workplace XT > Session Management. 
+        
+        For Workplace: Navigate to Applications > Application Types > WebSphere enterprise applications > Workplace > Manage Modules > Workplace > Session Management.
+         1. Under General properties, check the box Override session management and click Apply. 
+         2. Click the Enable cookies link under Session tracking mechanism. 
+         3. Under General properties, uncheck the box Set session cookies to HTTP Only to help prevent cross-site scripting attacks and click Apply. 
+            
+        
+        
+    
+    
+ 2. Disable HTTP Only settings globally for SSO.
+    
+    Note: This step is required for all Workplace XT deployments. Skip this step for Workplace (Application Engine), unless you are using SSO or a Container Managed configuration.
+     1. Navigate to Security > Global security > Authentication > Web and SIP security > Single sign-on (SSO). 
+     2. Under General properties, uncheck the box Set security cookies to HTTP Only to help prevent cross-site scripting attacks and click Apply. 
+        
+    
+    
+ 3. Enable cookies and disable HTTP Only settings at the server level setting when using SSL.
+     1. Navigate to Servers > Server Types > WebSphere application servers. 
+     2. Select the server where Workplace/Workplace XT is deployed. 
+     3. Click Session Management. 
+     4. Click the Enable cookies link under Session tracking mechanism. 
+     5. Uncheck the box Set session cookies to HTTP Only to help prevent cross-site scripting attacks.
+        
+    
+    
+ 4. Save the settings to the master configuration. 
+    
+ 5. Restart the WebSphere Application Server.

@@ -1,0 +1,291 @@
+Title: IBM IC89384: FDC WITH PROBE IDENTIFIER XM007001 GENERATED WHEN USING WEBSPHERE MQ CLASSES FOR JMS WITH TRACE ENABLED - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.10 [http://www-01.ibm.com/support/docview.wss?uid=swg24034145]
+Fix Pack 7.1.0.3 for WebSphere MQ V7.1 [http://www-01.ibm.com/support/docview.wss?uid=swg24035405]
+WebSphere MQ V7.0 Fix Pack 7.0.1.11 [http://www-01.ibm.com/support/docview.wss?uid=swg24035750]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running a WebSphere MQ classes for JMS application with
+   trace enabled, an FDC with Probe Identifier XM007001 is
+   generated whenever the application creates either a JMS
+   connection or a JMS Session. The FDC contains the following
+   information:
+   
+   Source Class   :-
+   com.ibm.msg.client.wmq.common.internal.WMQTraceHandler
+   Source Method  :- getClassName
+   ProbeID        :- XM007001
+   
+   Data
+   ----
+   |  compid :- 60
+   |  funcid :- 0
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This issue affects users of:
+   
+   - The WebSphere MQ V7.0.1 classes for JMS.
+   - The WebSphere MQ V7.0.1 Resource Adapter.
+   - The WebSphere MQ V7.1 classes for JMS.
+   - The WebSphere MQ V7.1 Resource Adapter.
+   - The WebSphere Application Server V7 WebSphere MQ messaging
+   provider.
+   - The WebSphere Application Server V8.0 WebSphere MQ messaging
+   provider.
+   - The WebSphere Application Server V8.5 WebSphere MQ messaging
+   provider.
+   - The WebSphere Application Server V6.1 WebSphere MQ messaging
+   provider who have configured the WebSphere variable
+   MQ_INSTALL_ROOT to point to a WebSphere MQ V7.0.1
+   installation.
+   - The WebSphere Application Server V6.1 WebSphere MQ messaging
+   provider who have configured the WebSphere variable
+   MQ_INSTALL_ROOT to point to a WebSphere MQ V7.1 installation.
+   
+   who have applications that use a Client Channel Definition
+   Table (CCDT) to connect to a WebSphere MQ queue manager.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java +Java zOS
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When a JMS application has been configured to use a Client
+   Channel Definition Table (CCDT), the WebSphere MQ classes for
+   JMS, the WebSphere MQ Resource Adapter and the WebSphere
+   Application Server WebSphere MQ messaging provider will choose
+   an entry from the Table and use this to create a connection to
+   the queue manager whenever the application creates a JMS
+   Connection or a JMS Session.
+   
+   If trace is enabled, the MQCD (MQ Channel Descriptor) entry
+   from the Client Channel Definition Table that will be used to
+   create the connection to the queue manager will be written out
+   to a trace file by the underlying trace infrastructure.
+   
+   
+   The trace infrastructure provided by WebSphere MQ V7.0.1, and
+   the WebSphere Application Server V7 and V8.0 WebSphere MQ
+   messaging provider, has knowledge of all of data structures
+   supported by WebSphere MQ V7.0.1.
+   
+   Similarly, the WebSphere MQ V7.1 trace infrastructure, and the
+   trace infrastructure provided by the WebSphere Application
+   Server V8.5 WebSphere MQ messaging provider, knows about all of
+   the data structures supported by WebSphere MQ V7.1.
+   
+   
+   This had implications in the two scenarios shown below:
+   
+   Scenario 1:
+   -----------
+   If a JMS application was using one of the following:
+   
+   - The WebSphere MQ V7.0.1 classes for JMS.
+   - The WebSphere MQ V7.0.1 Resource Adapter.
+   - The WebSphere Application Server V7 WebSphere MQ messaging
+   provider.
+   - The WebSphere Application Server V8.0 WebSphere MQ messaging
+   provider.
+   - The WebSphere Application Server V6.1 WebSphere MQ messaging
+   provider who have configured the WebSphere variable
+   MQ_INSTALL_ROOT to point to a WebSphere MQ V7.0.1
+   
+   and had been configured to use a Client Channel Definition
+   Table taken from a WebSphere MQ V7.1 or WebSphere MQ V7.5
+   installation, then the underlying trace infrastructure did not
+   understand all of the contents of the MQCD structure that
+   represented entries in the Table.
+   
+   Scenario 2:
+   -----------
+   If an application that was using either of the following:
+   
+   - The WebSphere MQ V7.1 classes for JMS.
+   - The WebSphere MQ V7.1 Resource Adapter.
+   - The WebSphere Application Server V8.5 WebSphere MQ messaging
+   provider.
+   - The WebSphere Application Server V6.1 WebSphere MQ messaging
+   provider who have configured the WebSphere variable
+   MQ_INSTALL_ROOT to point to a WebSphere MQ V7.1
+   
+   and had been set up to use a Client Channel Definition Table
+   taken from a WebSphere MQ V7.5 queue manager, then the
+   WebSphere MQ V7.1 trace infrastructure would be unable to
+   understand the contents of the MQ Channel Descriptor structures
+   in the Table.
+   
+   
+   In these situations, an FDC with Probe Identifier XM007001 was
+   generated whenever the application that was running with trace
+   enabled tried to create a JMS Connection or JMS Session.
+   
+   No exceptions were thrown back to the application, the JMS
+   Connection or JMS Session would be created successfully and
+   trace information would continue to be written to the trace
+   file as normal. However, details of the Channel Descriptor that
+   was being used to create the connection to the queue manager
+   would not be output to the trace.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The trace infrastructure provided with the WebSphere MQ classes
+   for JMS, WebSphere MQ Resource Adapter and the WebSphere
+   Application Server WebSphere MQ messaging provider has been
+   updated so that writes out the trace entry:
+   
+   "Failed tracing MQI object"
+   
+   to the trace file if it is required to trace out a WebSphere MQ
+   data structure that it does not understand.
+   
+   The FDC with probe identifier XM007001 is no longer generated.
+   
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.11
+   --------           --------------------
+   Windows            7.0.1.11
+   AIX                7.0.1.11
+   HP-UX (PA-RISC)    7.0.1.11
+   HP-UX (Itanium)    7.0.1.11
+   Solaris (SPARC)    7.0.1.11
+   Solaris (x86-64)   7.0.1.11
+   iSeries            7.0.1.11
+   Linux (x86)        7.0.1.11
+   Linux (x86-64)     7.0.1.11
+   Linux (zSeries)    7.0.1.11
+   Linux (Power)      7.0.1.11
+   zOS                7.0.1.11
+   
+                      v7.1
+   Platform           Fix Pack 7.1.0.3
+   --------           --------------------
+   Windows            7.1.0.3
+   AIX                7.1.0.3
+   HP-UX (Itanium)    7.1.0.3
+   Solaris (SPARC)    7.1.0.3
+   Solaris (x86-64)   7.1.0.3
+   iSeries            7.1.0.3
+   Linux (x86)        7.1.0.3
+   Linux (x86-64)     7.1.0.3
+   Linux (zSeries)    7.1.0.3
+   Linux (Power)      7.1.0.3
+   zOS                7.1.0.3
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC89384
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-01-07
+   
+   
+ * CLOSED DATE
+   2013-01-10
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSY
+   UP

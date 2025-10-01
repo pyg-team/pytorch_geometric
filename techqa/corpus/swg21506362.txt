@@ -1,0 +1,37 @@
+Title: IBM Event Subscription filter expression using the PathName may not trigger as expected OnCreate - United States
+
+Text:
+PathName; filter expression; subscription; Folder subscription TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ FileNet Content Engine Event Subscription filter expression using the PathName may not trigger as expected OnCreate 
+
+SYMPTOM
+If an event subscription is defined on the Folder class or subclass and uses a filter expression that evaluates the PathName value and triggers an OnCreate event, then the subscription may not trigger as expected. 
+
+Using filter expression such as PathName = '/FolderA/FolderB' will return False and will not trigger the event. A filter expression such as PathName LIKE '/FolderA/FolderB%' will also fail to trigger the event and may log an exception in the p8_server_error.log indicating : 
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+CAUSE
+The PathName property for a folder is not set during the creation event. As a result, when triggering OnCreate event, the value will be Null. 
+
+
+RESOLVING THE PROBLEM
+The PathName property of a Folder object is available for use in an event subscription filter expression after the Folder has been created. For example, the FolderName may be used in a filter expression that triggers OnUpdate event after the folder has been created.

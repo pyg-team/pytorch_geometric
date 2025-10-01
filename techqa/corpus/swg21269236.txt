@@ -1,0 +1,83 @@
+Title: IBM Error GLPCAT003E: UTF-8 codepage conversion failed. - United States
+
+Text:
+UTF8; GLPCAT003E; locale TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ GLPCAT003E A character transformation error occurred while trying to output a message. The UTF-8 codepage conversion failed. This error is shown while starting the server. 
+
+CAUSE
+There are number of reasons for this error to occur. 
+
+ 1. On AIX platform, if we see UTF-8 conversion failures - it is mostly related to system resources, ulimits related issues. 
+ 2. Code conversion error can also occur if the slapd.cat file gets corrupted. 
+ 3. This error also occurs if the user does not has proper permissions in the TDS install directory.
+
+RESOLVING THE PROBLEM
+Ensure that the appropriate language packages are correctly installed and that the locale and all language-related environment variables are set correctly. Verify that the TISDIR environment variable has been set.The TISDIR system variable should point to a directory containing a "codeset" directory, which contains binary files that convert between native codepages (determined by the $LANG variable in UNIX or Regional Settings in Windows, for example) and UTF-8. 
+
+
+For example on TDS 6.0 TISDIR is usually set to /opt/IBM/ldap/V6.0/codeset 
+
+Apart from setting the above variables , check the following : 
+
+1. On Unix platform if we see UTF-8 conversion failure - it is mostly related to system resources, ulimits related issues. Execute the following commands:
+# ulimit -d unlimited 
+# ulimit -m unlimited 
+# ulimit -c unlimited (this is optional)
+
+
+2.To verify if slapd.cat is corrupt, perform the following : 
+
+For AIX,HP-UX and Solaris :
+# cd /opt/IBM/ldap/V6.0/nls/msg/en
+# iconv -f ISO8859-1 -t UTF-8 ./slapd.cat > slapd.utf8
+
+For Linux : 
+# cd /opt/IBM/ldap/V6.0/nls/msg/en
+# iconv -f ISO8859-1 -t UTF-8 ./slapd.cat > slapd.utf8
+
+If iconv returns an error, then it is some converting issue or the slapd.cat is corrupt.
+Replace the *.cat files present in /opt/IBM/ldap/V6.0/nls/msg/en and retry.
+
+3.On Unix systems recursive listing ( ls -R ) can be collected to ensure if the users has proper permissions in the folders under install directory. For example :
+drwxr-xr-x 4 root system 256 Apr 18 14:10 /opt/IBM/ldap <= working setup
+drwxr-xr-x 22 root system 4096 Apr 19 13:22 /opt/IBM/ldap/V6.0 <= working setup
+
+This output can be compared with a similar output from a working setup.
+
+4. Reinstall the product using the fixpack upgrade force procedure.
+Make sure ibmslapd and ibmdiradm processes are stopped.
+cd <path>/<fixpack_folder>
+./idsinstall -u -f
+
+5. Do not use "sudo" command.
+When using "sudo" command the effective id may not be whats expected. 
+This may be one of the reasons for the "GLPCAT003E" message.
+Either use "su - root" to get to the root credentials or use the instance owner direct login.
+
+6. Verify the locale and make sure the appropriate idsldap.msg* fileset/pkg/rpm is installed.
+Commands:
+locale
+locale -a
+
+7. Verify if the NLSPATH env variable is set appropriately: (on AIX)
+==> echo $NLSPATH
+/usr/lib/nls/msg/%L/%N:/usr/lib/nls/msg/%L/%N.cat
+If necessary set this:
+export NLSPATH=/usr/lib/nls/msg/%L/%N:/usr/lib/nls/msg/%L/%N.cat
+
+8. Verify if the bos.loc.iso.en_US (or other bos.loc.iso.xx_XX fileset for other locales as appropriate
+==> lslpp -l | grep bos.loc
+bos.loc.iso.en_US 5.3.0.0 COMMITTED Base System Locale ISO Code) is installed (on AIX)
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITDS
+TDS
+DS
+IDS

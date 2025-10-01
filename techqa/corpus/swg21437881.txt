@@ -1,0 +1,150 @@
+Title: IBM ITCAM for Transactions: Running RPT tests/scripts sequentially - United States
+
+Text:
+RPT; playback; order; sequential; concurrent; 71RRT-RPTPLAN; 71RRT-RPTCONF; 71RRT-RPTREC; 71RRT-RPTPLAY; 71RRT-RPTRPTG; 71RRT-CONF; 71RRT-REC; 71RRT-PLAY; 71RRT-RPTG TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to run Rational Performance Tester (RPT) scripts sequentially and in a specific order in an ITCAM for Transactions robotic environment? 
+
+ANSWER
+
+By default, RPT scripts run concurrently when scheduled in a ITCAM for Transactions environment (on robotic (t6) agent).
+
+There are occasions when it is desirable to run scripts sequentially, for example:
+
+
+ * License restrictions of the monitored application. Example: Only one copy of the application can be executed at a time on the playback machine
+   
+   
+ * The need to run scripts in a specific order due to inter-script dependancies. Example: Need to run a login script before attempting others steps which are refactored into a separate script for script modularity and reuse.
+   
+   
+ * Scripts running concurrently cause playback failures. Example: Restriction on the backend services that would allow more than one single user/application access at a time.
+   
+   
+
+RPT has the ability to assign multiple test scripts to a schedule. The schedule can then be exported to ITCAM for Transactions. 
+
+Exporting a schedule uploads the schedule and all the scripts associated with the schedule to the Application Management Console and makes the schedule available for deployment to RRT agents. 
+
+The remainder of this document describes the steps needed to create a schedule and explains how transactions are reported by default and how this default behaviour can be changed. 
+
+
+Create one or more test scripts with the Rational Performance Tester workbench. 
+ 1. Create a new schedule
+    
+    
+    [/support/docview.wss?uid=swg21437881&aid=1] [/support/docview.wss?uid=swg21437881&aid=1]
+    
+    
+    [/support/docview.wss?uid=swg21437881&aid=2] [/support/docview.wss?uid=swg21437881&aid=2]
+    
+    
+    [/support/docview.wss?uid=swg21437881&aid=3] [/support/docview.wss?uid=swg21437881&aid=3]
+    
+    
+ 2. Add test scripts. Select "User Group 1" and right-click:
+    
+    
+    [/support/docview.wss?uid=swg21437881&aid=4] [/support/docview.wss?uid=swg21437881&aid=4]
+    
+    
+    Test scripts can be added one at a time or all at once by using ctrl+click and/or shift+click:
+    
+    
+    [/support/docview.wss?uid=swg21437881&amp;aid=5]
+    
+    
+    The order in which the test scripts are run can be changed by using the "Up" and "Down" buttons:
+    
+    
+    [/support/docview.wss?uid=swg21437881&amp;aid=6]
+    
+    
+    The schedule can now be exported to ITCAM for Transactions:
+    
+    
+    [/support/docview.wss?uid=swg21437881&aid=7] [/support/docview.wss?uid=swg21437881&aid=7]
+    
+    
+    Hover over the selected schedule to see what test scripts are included:
+    
+    
+    [/support/docview.wss?uid=swg21437881&aid=8] [/support/docview.wss?uid=swg21437881&aid=8]
+    
+    
+
+The schedule can now be assigned to a profile and distributed to RRT T6 agents just like any other script. 
+
+The following properties apply to the schedule and not each individual test within the schedule. This means that you must ensure the Script Interval, Timeout and response time threshold settings reflect the time needed for all test scripts to complete. 
+
+[/support/docview.wss?uid=swg21437881&aid=9] [/support/docview.wss?uid=swg21437881&aid=9] 
+
+
+Response Time thresholds can be defined on a "per test script" basis by setting thresholds against sub-transactions: 
+
+[/support/docview.wss?uid=swg21437881&aid=10] [/support/docview.wss?uid=swg21437881&aid=10] 
+
+
+There is no automatic breakdown of data based on the individual test scripts in the schedule. By default, the Application Name and Transaction Name are the same as the schedule name and all sub-transactions appear under the schedule name. 
+
+
+Example: 
+
+Schedule Name = Sched1 
+Application Name = Sched1 
+Transaction Name = Sched1 
+
+The schedule contains 3 scripts each performing different steps against "PlantsByWebsphere". 
+
+The test script names and the first level of sub-transactions are: 
+
+Plants1 Plants2 Plants3 Plants by Websphere Plants by Websphere Plants by Websphere Plants by Websphere {1} [/support/docview.wss?uid=swg21437881&amp;aid=11] Plants by Websphere {1} servlet_ShoppingServlet servlet_ShoppingServlet servlet_ShoppingServlet servlet_ShoppingServlet {1} servlet_ShoppingServlet {1} servlet_ShoppingServlet {1} servlet_ShoppingServlet {2} [/support/docview.wss?uid=swg21437881&amp;aid=11] [/support/docview.wss?uid=swg21437881&amp;aid=11] servlet_ShoppingServlet {3} [/support/docview.wss?uid=swg21437881&amp;aid=11] [/support/docview.wss?uid=swg21437881&amp;aid=11] servlet_ShoppingServlet {4} [/support/docview.wss?uid=swg21437881&amp;aid=11] [/support/docview.wss?uid=swg21437881&amp;aid=11] [/support/docview.wss?uid=swg21437881&amp;aid=11] Shopping Shopping 
+For the purposes of this example, each subtransaction in this table has a "Total Requests" value of 1. 
+
+When viewed in the Robotic Response Time Applications workspace the subtransaction data seen in the SubTransaction Current Status view for Transaction "Sched1" is consolidated to show average values based on the appropriate "Total Requests" value for each of the above subtransactions as follows: 
+
+
+[/support/docview.wss?uid=swg21437881&aid=12] [/support/docview.wss?uid=swg21437881&aid=12] 
+
+
+It is possible to force subtransaction data to be reported on a "per test script" basis by adding a transaction to each individual RPT test. 
+
+Example: 
+
+
+In RPT Workbench, open the test "Plants1", select all transactions, right-click > Insert > Transaction: 
+
+[/support/docview.wss?uid=swg21437881&amp;aid=13] 
+
+
+When prompted, select "Yes": 
+
+[/support/docview.wss?uid=swg21437881&amp;aid=14] 
+
+
+By default, the transaction name is the same as the test. Save the change: 
+
+[/support/docview.wss?uid=swg21437881&amp;aid=15] 
+
+
+Repeat this process for test scripts Plants2 & Plants3. 
+
+Create a new schedule (Sched2) and "Add > Test" scripts Plants1, Plants2 & Plants3. 
+
+Export Sched2 and distribute to the RRT agent. 
+
+"Selected Transaction" and "SubTransaction Current Status", now look like this: 
+
+[/support/docview.wss?uid=swg21437881&aid=16] [/support/docview.wss?uid=swg21437881&aid=16] 
+
+
+Select a specific Transaction then display the subtransaction breakdown for that test script only: 
+
+[/support/docview.wss?uid=swg21437881&aid=17] [/support/docview.wss?uid=swg21437881&aid=17] 
+
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfT
+TCAMfT
+CAMfT

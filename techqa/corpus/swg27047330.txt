@@ -1,0 +1,42 @@
+Title: IBM Searching Box repositories in IBM Content Navigator cross-repository searches - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ A cross-repository search can be used to search across IBM Content Manager, FileNet P8, IBM Content Manager OnDemand, CMIS, and Box repositories. The cross-repository search can be saved in IBM Content Manager or FileNet P8 repositories. 
+
+CONTENT
+You can learn about cross-repository searches in the following topics: 
+
+ *  Searching for content across repositories (cross-repository searches) [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.usingeuc.doc/euche035.htm] Property mapping [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.usingeuc.doc/euche039.htm] Compatible data types [http://www.ibm.com/support/knowledgecenter/SSEUEX_2.0.3/com.ibm.usingeuc.doc/euche044.htm] 
+
+If you including Box repositories in your cross-repository search, review the following additional information. 
+
+Number of repositories and search results 
+A cross-repository search can include up to five repositories. Box repositories can return up to 200 results, and other types of repositories can return up to 500 results. If any of the included repositories exceeds the maximum allowed returned results, any search results that exceed the maximum allowed limit per repository cannot be displayed. If the number of returned results exceeds the maximum that is allowed, refine your search criteria to return fewer results. Alternatively, you can run a single repository search to return more results than the maximum allowed for a cross-repository search. 
+
+Including text search criteria 
+When you add repositories to a new cross-repository search, you can add text search criteria for IBM Content Manager, FileNet P8, CMIS, and Box repositories by selecting the Include text search criteria check box. This option is available only when the repository supports text search. For Box and CMIS repositories that support only text search, text search criteria is required for cross-repository search and cannot be excluded. 
+
+When you include text search criteria, the terms that you enter will result in the following behavior: 
+ * When you are searching across different repository types in your cross-repository search, the search will match all of the terms that you enter in the search criteria. 
+ * When you are searching only FileNet P8 repositories or only Box repositories, the search will match any of the terms that you enter in the search criteria. 
+ * When you are searching IBM Content Manager repositories or CMIS repositories, the search will match all of the terms that you enter in the search criteria.
+
+
+
+Property mappings 
+There is an additional constraint when searching Box repositories. Created On and Modified On are the only two properties that you can search with when you add them to a property mapping, and you can map each of these properties only once per search. 
+
+Tip: You can add display-only properties to your mappings, which are used to display information in the search results, but are not used as search criteria to run the actual search. Also, the data type or available search operators of display-only properties do not influence the data type or available search operators of the resulting mapping. 
+
+
+Display-only properties 
+When you map search criteria in a cross-repository search, you can add display-only properties (non-searchable properties) to your mapping. A display-only property displays information in a column for your search results without affecting the search criteria that you are using to run the search. 
+
+If all of the properties that you map are display-only ( The display-only property icon [/support/docview.wss?uid=swg27047330&amp;aid=1]), the entire mapping is display-only. For example, if you are running a search on a repository that supports and has text search criteria enabled, and you include a display-only mapping, you obtain search results only for the text search criteria. The display-only properties only display information about those text search results in columns in the search results. 
+
+If your mapping includes both display-only and searchable properties, the search criteria for the mapping is run only in repositories where the searchable properties are valid. 
+
+Display-only properties do not affect the data type or the available search operators of the resulting mapping.

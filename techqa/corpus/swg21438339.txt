@@ -1,0 +1,37 @@
+Title: IBM ITCAM4Tx : RRT Robotic Screen Capture is a Content Capture utility - United States
+
+Text:
+Robotic Screen Capture; Captured Content; RPT; 71GEN-TEPWV; 71GEN-ITM; 71RRT-RPTWV; 71RRT-RPTTS; 71RRT-RFTWV; 71RRT-RFTTS TECHNOTE (FAQ)
+
+QUESTION
+ Why is the screen content capture not complete with the Robotic Screen Capture option? 
+
+CAUSE
+The capture utility is doing a Content Capture of the HTML used to display the screen.
+
+ANSWER
+ 
+
+The "Robotic Screen Capture" utility captures the content of the web pages that are displayed during the playback of the monitor. The HTML of the web pages is stored in a ZIP file on the RRT agent for 8 hours with a maximum of 1000 captures. The images, HTML, and references that make up the content of the web pages retrieved during playback are contained in the ZIP file. The files are stored on the 
+
+ * T6 agent under kt1depot/T6/CONTENT directory 
+ * TEPS under CNP/FILETRANSFER on Windows, cq/data/FILETRANSFER on Unix
+
+
+The first successful playback of a script in ITCAM for Transactions stores the expected content for use in displaying the content. This allows these three options for the screen capture utility: Expected, Actual, and Source. The source is the base used to reconstruct the web page when it is displayed through ITCAM. There is content to display only if a verification point failure is encountered. 
+
+There are several reasons why the full content of the web pages is not displayed.  1. If the web page contains a redirect, the secondary page is not displayed. 
+ 2. If the web page relies on Java scripting, this content cannot be displayed. 
+ 3. If the page is not found, the content cannot be displayed. 
+ 4. If there is a problem with the ITCAM configuration, the data may not be displayed.
+
+
+Additional information can be found in the ITCAM for Transactions documentation. RELATED INFORMATION
+ 7.4.0.1 Robotic Screen Capture [https://www.ibm.com/support/knowledgecenter/SS5MD2_7.4.0.1/com.ibm.itcamt.doc/rt/Workspaces/T6_RRT/wksp_t6_screencapturerobotic.html]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfT
+ITCAM for Transactions

@@ -1,0 +1,94 @@
+Title: IBM Open Mic Webcast: How to get the most out of Verse - 21 October 2015 [presentation, video + audio attached] - United States
+
+Text:
+ WEBCAST
+
+ABSTRACT
+ With so many new features introduced since Verse was launched, how can you use those features to make the most of it? If you have opened a PMR, what does Support need from you to reduce the time to resolution? This Open Mic will dive into these questions and others surfaced in the Verse Support forum. 
+
+CONTENT
+ 
+
+ * Topic: How to get the most out of Verse 
+ * Date: Wednesday, October 21, 2015 
+
+
+Note: This Open Mic focuses on browser-based Verse. If you are interested in Verse mobile, please see the upcoming Open Mic Webcast: What's New in IBM Traveler? [http://www-01.ibm.com/support/docview.wss?uid=swg27046466] 
+
+Presentation OpenMic_Verse_102115.pdf [/support/docview.wss?uid=swg27046512&aid=2]OpenMic_Verse_102115.pdf [/support/docview.wss?uid=swg27046512&aid=1] 
+
+
+Audio 
+ftp://public.dhe.ibm.com/software/lotus/info/verse/OpenMic_Verse_Oct2015.mp3 [ftp://public.dhe.ibm.com/software/lotus/info/verse/OpenMic_Verse_Oct2015.mp3] 
+ * 41 minutes 29 seconds 
+ * Q&A begins at 28:09 
+
+Video recording 
+A video was made from combining the presentation and recorded audio from the session. You can download that video from this FTP site: 
+
+ftp://public.dhe.ibm.com/software/lotus/info/verse/OpenMic_Verse_Oct2015.mp4 [ftp://public.dhe.ibm.com/software/lotus/info/verse/OpenMic_Verse_Oct2015.mp4] 
+
+A shorter, 12 minute presentation covers a few Verse features and another 10 minute video describes tips and tricks as well as troubleshooting information for IBM Verse. Additional videos can be found on the ICS Support Videos YouTube channel: 
+
+A few of our favorite Verse things: https://youtu.be/4NR6G5mAknY [https://youtu.be/4NR6G5mAknY] 
+Tips, Tricks and Troubleshooting with IBM Verse: https://youtu.be/LlP9R2S4k2A [https://youtu.be/LlP9R2S4k2A] 
+
+
+Q&A written transcript 
+Q: Can you tell me about Watson integration with Verse? 
+
+A: The IBM cognitive era is being ushered into what we're doing with Verse. You're going to see it surface in two areas. The first area is the idea of a personal assistant. This would be something that can look at your email as you go along to help you understand which are the most urgent messages. Tie that to from an Analytics perspective to your reporting chain and you can begin to determine some pretty interesting things. The second way you will see cognitive integration with Verse is in the idea of a help assistant. This is the ability to send a message with Watson pointed at some corpus of knowledge. For example, maybe you are working a support line where there is a big base of answers to technical questions. If you are a user, instead of working with a Support person over the phone, you as a user just send an email message to a Watson service that helps parse things for you and you may get an answer based on a certain confidence level that comes back to you without any human intervention. 
+
+Q: When are we going to get 'attachments in-line transfer' and the ability to take a screenshot enabled in the Verse web chat? 
+
+A: Today, it is thought that our web chat experience [in Verse] does not match our expectations for Sametime elsewhere. Today, it is possible to use the rich client integration, although that does not meet with the total cost of ownership goals to be entirely-based. The (webchat) features we have in Verse should match those we have in SmartCloud Notes web, but there are still gaps around screenshots and other capabilities. It can't be commented on when we will resolve that, although there are active discussions with the Sametime team about how to get some of those things addressed as well as working to improve the integration with the Sametime rich client when you're using it side by side. Keep the feedback coming. Integration with chat/ Sametime is a high priority. 
+
+More: It was acknowledged that 'attachments in-line transfer' and screencapture are missing and wished for in the web chat experience. Participants were invited to type into the chat other things they were wanting to see in terms of web chat. Someone typed "livetext" into the chat. 
+
+Q: What about mail support for Microsoft Outlook in Verse? When will I be able to use my Outlook experience going against the cloud backend of Domino? 
+
+A: There are 2 pieces to this. The IBM Mail support for Microsoft Outlook product (code name Hawthorne) allows you to use an Outlook 2013 on Windows against an on-premises Domino based backend. One should expect a very rich, high fidelity experience. This is not a son of DAMO (Domino Access for Microsoft Outlook). We've had this product in market on a limited availability basis for about a year. The on-premises version of Hawthorne will become generally available when we release 9.0 next in 1H 2016. In terms of cloud, we have high hopes of getting the cloud version finished this year, in 2015 and if not, it will be in early 2016. It is coming. 
+
+Resource highlights from the session: 
+
+General: 
+
+System requirements: http://ibm.co/1PxYmkq [http://ibm.co/1PxYmkq] AND http://ibm.co/1RUxKsr [http://ibm.co/1RUxKsr] 
+
+IBM Verse page in the support portal: http://ibm.co/1MSPlkd [http://ibm.co/1MSPlkd] 
+
+2 places for What's New - new capabilities on IBM Cloud: [http://www.ibm.com/cloud-computing/social/us/en/whatsnew/] http://ibm.co/1OQuDBy [http://ibm.co/1OQuDBy] 
+http://bit.ly/1Go2pwP [http://bit.ly/1Go2pwP] 
+
+Developerworks Verse Forum: http://ibm.co/1KHutMq [http://ibm.co/1KHutMq] 
+
+
+Technotes: 
+
+Technote: Error "Your calendar did not load. Verify your connection" displays when loading Verse: http://ibm.co/1RUxTfk [http://ibm.co/1RUxTfk] 
+
+IBM Verse Team Analytics: http://ibm.co/1LmsScZ [http://ibm.co/1LmsScZ] 
+displays when loading IBM Verse 
+How to send a few documents from an NSF database to Support: http://ibm.co/1W2T1QY [http://ibm.co/1W2T1QY] 
+
+Tools: 
+
+How to obtain network traces for a Webpage using Firefox: http://ibm.co/1GgGurw [http://ibm.co/1GgGurw] 
+
+Using Fiddler to troubleshoot Connections Cloud issues: http://ibm.co/1LJ2VpD [http://ibm.co/1LJ2VpD] 
+
+Chrome Dev Tools Overview: http://bit.ly/1M65V1h [http://bit.ly/1M65V1h] 
+
+Firebug Extensions: http://bit.ly/1GgGKH7 [http://bit.ly/1GgGKH7] 
+https://getfirebug.com/wiki/index.php/Firebug_Extensions [https://getfirebug.com/wiki/index.php/Firebug_Extensions] 
+
+Microsoft - Using the F12 Developer tools: http://bit.ly/1MSNZGm [http://bit.ly/1MSNZGm] 
+
+Safari: Web Development tools: http://apple.co/1ZV367x [http://apple.co/1ZV367x] 
+
+About Open Mic Webcasts IBM Collaboration Solutions (Lotus) Support wants to help you take full advantage of your products. Join us for our Open Mic Webcast series as technical experts share their knowledge and answer your questions. These webcasts are designed to address specific topics and provide an in-depth and focused technical exchange in a convenient online webcast format. For more information about our Open Mic webcasts, visit the IBM Collaboration Solutions Support Open Mics [http://www.ibm.com/software/lotus/support/lotus-open-mics/] page. 
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2015/9/15

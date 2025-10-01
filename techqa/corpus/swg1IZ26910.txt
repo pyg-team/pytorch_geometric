@@ -1,0 +1,229 @@
+Title: IBM IZ26910: "BAD DATA PAGE" ERROR FROM SQLDOLRVACATE AND INSTANCE CRASH     DURING INPLACE REORG - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Instance crash may occur while running inplace reorg.  Messages
+   similar to the following will be written to the db2diag.log, but
+   note that the actual probe number may differ on different code
+   levels :
+   
+   
+   
+   
+   2008-05-20-07.08.05.607098+540 I171225A472        LEVEL: Severe
+   PID     : 5972128              TID  : 1           PROC :
+   db2reorg (XXXXXXDB) 0
+   INSTANCE: db2inst1             NODE : 000         DB   :
+   XXXXXXDB
+   APPHDL  : 0-576                APPID:
+   *LOCAL.db2inst1.080519224225
+   FUNCTION: DB2 UDB, data management, sqldOLRVacate, probe:4757
+   RETCODE : ZRC=0x87040001=-2029780991=SQLD_BADPAGE "Bad Data
+   Page"
+             DIA8500C A data file error has occurred, record id is
+   "".
+   
+   Stack trace for the db2reorg process may have the follwing
+   signature.
+   
+   <StackTrace>
+   -------Frame------ ------Function + Offset------
+   0x09000000024BE5E0 sqloDumpEDU + 0x14
+   0x0900000001CF12B4
+   sqldDumpBadPage__FP20sqle_agent_privatecbP8SQLD_TCBP13SQLD_PAGES
+   LOTP9SQLB_PAGEiT5 + 0x494
+   0x090000000318E66C @20@sqldOLRVacate__FP13SQLD_DFM_WORK + 0x788
+   0x09000000030B4AE0
+   sqldOnlineTableReorg__FP20sqle_agent_privatecbUsT2UciT5T2PcT5T8T
+   5P8SQLP_LSNT12_s + 0x239C
+   0x09000000030B21EC sqleIndCoordProcessRequest__FP13sqle_agent_cb
+   + 0x6DC
+   0x0900000001E9D17C sqleRunAgent__FPcUi - 0x3A4
+   0x09000000020DF110
+   sqloCreateEDU__FPFPcUi_vPcUlP13SQLO_EDU_INFOPi + 0x31C
+   0x09000000024BA8D8 sqloSpawnEDU + 0x274
+   0x0900000001EA3080
+   sqleCreateNewAgent__FiP8sqlekrcbP17sqlcc_init_structP16sqlkdRqst
+   RplyFmtP18sqle_master_app_cbT1P20agentPoolLatchVectorP16SQLO_EDU
+   WAITPOSTP17sqle_connect_infoPP13sqle_agent_cb + 0x1F4
+   0x0900000001EA25A8
+   sqleGetAgentFromPool__FiP17sqlcc_init_structT1P12sqlz_app_hdlP16
+   sqlkdRqstRplyFmtP17sqle_connect_info + 0x390
+   0x090000000231499C
+   sqleGetAgent__FiP17sqlcc_init_structT1P12sqlz_app_hdlPv + 0x224
+   0x0000000100004078 sqleInitSysCtlr__FPi + 0x7C4
+   0x0000000100002EDC sqleSysCtlr__Fv + 0x58
+   0x09000000020E0304 sqloRunInstance + 0x6D4
+   0x0000000100002A60 DB2main + 0x8BC
+   0x0000000100003880 main + 0x10
+   </StackTrace>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Not available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  User affected:
+   
+   DB2 Server user.
+   
+   Problem Description:
+   
+   2008-05-20-07.08.05.607098+540 I171225A472        LEVEL: Severe
+   PID     : 5972128              TID  : 1           PROC :
+   db2reorg (XXXXXXDB) 0
+   INSTANCE: db2inst1             NODE : 000         DB   :
+   XXXXXXDB
+   APPHDL  : 0-576                APPID:
+   *LOCAL.db2inst1.080519224225
+   FUNCTION: DB2 UDB, data management, sqldOLRVacate, probe:4757
+   RETCODE : ZRC=0x87040001=-2029780991=SQLD_BADPAGE "Bad Data
+   Page"
+             DIA8500C A data file error has occurred, record id is
+   "".
+   
+   Stack trace for the db2reorg process may have the follwing
+   signature.
+   
+   <StackTrace>
+   -------Frame------ ------Function + Offset------
+   0x09000000024BE5E0 sqloDumpEDU + 0x14
+   0x0900000001CF12B4
+   sqldDumpBadPage__FP20sqle_agent_privatecbP8SQLD_TCBP13SQLD_PAGES
+   LOTP9SQLB_PAGEiT5 + 0x494
+   0x090000000318E66C @20@sqldOLRVacate__FP13SQLD_DFM_WORK + 0x788
+   0x09000000030B4AE0
+   sqldOnlineTableReorg__FP20sqle_agent_privatecbUsT2UciT5T2PcT5T8T
+   5P8SQLP_LSNT12_s + 0x239C
+   0x09000000030B21EC sqleIndCoordProcessRequest__FP13sqle_agent_cb
+   + 0x6DC
+   0x0900000001E9D17C sqleRunAgent__FPcUi - 0x3A4
+   0x09000000020DF110
+   sqloCreateEDU__FPFPcUi_vPcUlP13SQLO_EDU_INFOPi + 0x31C
+   0x09000000024BA8D8 sqloSpawnEDU + 0x274
+   0x0900000001EA3080
+   sqleCreateNewAgent__FiP8sqlekrcbP17sqlcc_init_structP16sqlkdRqst
+   RplyFmtP18sqle_master_app_cbT1P20agentPoolLatchVectorP16SQLO_EDU
+   WAITPOSTP17sqle_connect_infoPP13sqle_agent_cb + 0x1F4
+   0x0900000001EA25A8
+   sqleGetAgentFromPool__FiP17sqlcc_init_structT1P12sqlz_app_hdlP16
+   sqlkdRqstRplyFmtP17sqle_connect_info + 0x390
+   0x090000000231499C
+   sqleGetAgent__FiP17sqlcc_init_structT1P12sqlz_app_hdlPv + 0x224
+   0x0000000100004078 sqleInitSysCtlr__FPi + 0x7C4
+   0x0000000100002EDC sqleSysCtlr__Fv + 0x58
+   0x09000000020E0304 sqloRunInstance + 0x6D4
+   0x0000000100002A60 DB2main + 0x8BC
+   0x0000000100003880 main + 0x10
+   </StackTrace>
+   
+   Problem Summary:
+   
+   "BAD DATA PAGE" ERROR FROM SQLDOLRVACATE AND INSTANCE CRASH
+   DURING INPLACE REORG
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem was first fixed in DB2 UDB Version 8 Fix Pack 18.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ26910
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5765F4100
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-07-15
+   
+   
+ * CLOSED DATE
+   2009-09-13
+   
+   
+ * LAST MODIFIED DATE
+   2009-09-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 UDB ESE AIX
+   
+   
+ * FIXED COMPONENT ID
+   5765F4100
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R820 PSN
+   UP

@@ -1,0 +1,77 @@
+Title: IBM Long running report SAPLSCSM_COLLECTOR - United States
+
+Text:
+SAPLSCSM_COLLECTOR; long running; take time; IBMMON_AGENT; performance; run time; SAP; ksagent TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In some SAP environment monitored by the ITM SAP Agent, the report SAPLSCSM_COLLECTOR associated to IBMMON_AGENT is running for long time, causing an unwanted resource utilization. 
+
+SYMPTOM
+The Global Work Process overview shows several instances of report SAPLSCSM_COLLECTOR taking long time to complete (red indicator under Time column).
+
+
+CAUSE
+Report SAPLSCSM_COLLECTOR collects the kernel and application statistics data in the Netweaver system. Workload performance workspace collects the statistical data. 
+
+Workload Performance workspace includes the following options: 
+
+Service Response Time (default) 
+Transaction performance 
+User Transaction performance 
+User Performance 
+Application Performance 
+Sub Application performance 
+Historical service response time
+
+The report may be invoked as a consequence of one of those workspaces, or for an historical collection / situation of one of the related attribute groups.
+
+It has been observed a direct correlation between the execution of long running report SAPLSCSM_COLLECTOR and the presence of data collection (situation and/or historical collection) for the following 4 attribute groups:
+
+Transaction Performance attribute group (KSATRANS)
+Service Response Time attribute group (KSAPERF)
+Transaction Performance Task Type attribute group (KSATRANST)
+Active Users attribute group (KSAUSERS). 
+
+
+DIAGNOSING THE PROBLEM
+From the LG0 file of the SAP Agent, verify if you have one or more situations or historical collections (situations having name UADVISOR_nnnnnnn) for above attribute groups. 
+
+For example, if you find in the LG0 file something like: 
+
+************
+UADVISOR_KSA_KSATRANS (historical collection for Transaction performance attribute group)
+
+UADVISOR_KSA_KSAPERF (historical collection for Service Response Time attribute group)
+
+abapmismatch_mysap <122757780,3444573109> for KSA.KSATRANST (situation for Transaction Performance Task Type attribute group)
+
+all_users_mysap <124798678,3444573105> for KSA.KSAUSERS (situation for Active Users attribute group)
+
+then you may experience problems like the one described in this technote.
+
+
+RESOLVING THE PROBLEM
+It is possible that not all the aforementioned attribute groups are causing the issue, it usually depends on the circumstances, on SAP configuration and workload. 
+
+You may try disabling situations and historical collection belonging to a single attribute group of the four previously identified, and verify if this has a positive impact on SAPLSCSM_COLLECTOR execution time. 
+
+Then repeat the test passing to the next attribute group, until you find the one that is causing the problem with SAPLSCSM_COLLECTOR report. 
+
+ 
+
+Some times, the impacting situations are default situations that are not really needed for your monitoring purposes. 
+
+In such cases, it is enough to identify and stop the situations and/or historical collections for the attribute groups previously mentioned. 
+
+In this way the report SAPLSCSM_COLLECTOR will no longer be invoked or at least will not have the impact previously highlighted. 
+
+If instead the impacting situation belongs to an attribute group you need for your business, the issue needs to be further investigated to identify, on SAP system, where the problem lies when SAPLSCSM_COLLECTOR is executed for a specific attribute group. 
+
+It relates with the type and amount of requested data. 
+
+Please contact Customer Support, you will be provided with specific set of traces to further troubleshoot the problem.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM SAP Agent 7.1.x

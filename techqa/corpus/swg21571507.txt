@@ -1,0 +1,32 @@
+Title: IBM Reducing SSH vulnerability - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How do I limit Open Secure Shell (SSH) vulnerability? 
+
+SYMPTOM
+During a security scan, OpenSSH may be flagged as a vulnerability. This article describes how to alleviate the potential vulnerability. 
+
+
+RESOLVING THE PROBLEM
+SSH currently supports protocol versions 1 and 2. The security scan vulnerabilty refers to the SSH protocol version 1.
+
+The default configuration of OpenSSH supports both protocol 1 and 2. To reduce the vulnerability, reconfigure OpenSSH software to restrict connections to be SSH Version 2 or above. No software upgrade should be required.
+
+Recommendation: Ensure that you have access to the Netezza host console in case you inadvertently get locked out of using SSH.
+
+
+1. Log in as the root user.
+2. Open the /etc/ssh/ssh_config file for editing.
+3. Uncomment the line that reads # Protocol 2,1
+4. Modify that same line to read 'Protocol 2' instead of 'Protocol 2,1'
+5. Save your changes.
+6. Restart the ssh service by running the following command:
+service sshd restart
+
+
+
+HISTORICAL NUMBER
+ NZ864174

@@ -1,0 +1,39 @@
+Title: IBM What I need to download from PPA to install or upgrade TRIRIGA - United States
+
+Text:
+TRIINSTALL; TRIUPGRADE ; #iotsupport ; #supiwms; #jalynch TECHNOTE (FAQ)
+
+QUESTION
+ Is it documented somewhere what the different IBM TRIRIGA part numbers in Passport Advantage (PPA) are? 
+
+CAUSE
+I am trying to figure out what I need to download.
+
+ANSWER
+Whenever a new release of TRIRIGA is made available, a 'Download Instructions' technote with a name like the following is typically published: 
+
+
+IBM TRIRIGA <Application Version> and 
+IBM TRIRIGA Application Platform <Platform Version> 
+Download Instructions 
+
+
+The 'Download Instructions' technote for a given TRIRIGA release can be found by doing a search on 'TRIRIGA download <platform version>' and contains the following information:  
+
+ * A list of what TRIRIGA images (software bundles, installers, files, etc.) are part of the release
+   
+ * A list of what each TRIRIGA image contains
+   
+ * A list of what part number to specify in Passport Advantage in order to download each of these images
+
+
+The below table provides links to TRIRIGA 'Download Instructions' technotes that, at the time of the writing of this document, are available: 
+
+ 
+
+TRIRIGA Version Technote Name 10.2 / 3.2.1 * IBM TRIRIGA Application Platform 3.2.1 Download Instructions [https://www-304.ibm.com/support/docview.wss?uid=swg24032224]
+IBM TRIRIGA 10.2 Download Instructions [https://www-304.ibm.com/support/docview.wss?uid=swg24031216] 10.3.0 / 3.3.0 IBM TRIRIGA Application Platform 3.3 Download Instructions [http://www-01.ibm.com/support/docview.wss?uid=swg24033723]
+IBM TRIRIGA 10.3 Download Instructions [http://www-01.ibm.com/support/docview.wss?uid=swg24033724] 10.3.1 / 3.3.1 IBM TRIRIGA Application Platform 3.3.1 Download Instructions [http://www-01.ibm.com/support/docview.wss?uid=swg24034795]
+IBM TRIRIGA 10.3.1 Download Instructions [http://www-01.ibm.com/support/docview.wss?uid=swg24034794] 10.3.2 / 3.3.2 IBM TRIRIGA 10.3.2 and IBM TRIRIGA Application Platform 3.3.2 Download Instructions [http://www-01.ibm.com/support/docview.wss?uid=swg24035938] 10.4.0 / 3.4.0 IBM TRIRIGA 10.4 and IBM TRIRIGA Application Platform 3.4 Download Instructions [http://www-01.ibm.com/support/docview.wss?uid=swg24037261] 10.4.1 / 3.4.1 IBM TRIRIGA 10.4.1 and IBM TRIRIGA Application Platform 3.4.1 Download Instructions [http://www-01.ibm.com/support/docview.wss?uid=swg24038161] 10.4.2 / 3.4.2 IBM TRIRIGA 10.4.2 and IBM TRIRIGA Application Platform 3.4.2 Download Instructions [http://www-01.ibm.com/support/docview.wss?uid=swg24039713] 10.5.0 / 3.5.0 IBM TRIRIGA 10.5.0 and IBM TRIRIGA Application Platform 3.5.0 Download Instructions [http://www-01.ibm.com/support/docview.wss?uid=swg24041115] 10.5.1 / 3.5.1 IBM TRIRIGA 10.5.1 and IBM TRIRIGA Application Platform 3.5.1 Download Instructions [http://www-01.ibm.com/support/docview.wss?uid=swg24042159] 10.5.2 / 3.5.2 IBM TRIRIGA 10.5.2 and IBM TRIRIGA Application Platform 3.5.2 Download Instructions [http://www-01.ibm.com/support/docview.wss?uid=swg24042381] 
+* Neither TRIRIGA Application Platform 3.2.1 nor TRIRIGA Application 10.2 are supported any longer. From TRIRIGA's Software Lifecycle page: Product Name Version/ Rel./Mod. Policy Type Product ID General Availability End of Support IBM TRIRIGA Application Platform [http://www-01.ibm.com/software/support/lifecycleapp/PLCDetail.wss?q45=N715609N42550O45] 3.2.x E 5725-F26 16-Dec-2011 26-Jun-2015 IBM TRIRIGA Portfolio Data Manager [http://www-01.ibm.com/software/support/lifecycleapp/PLCDetail.wss?q45=Y035248T85470R49] 10.2.x E 5725-F25 16-Dec-2011 30-Apr-2017 
+It is always a good idea to stay current on releases.

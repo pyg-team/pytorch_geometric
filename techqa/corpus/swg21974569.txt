@@ -1,0 +1,69 @@
+Title: IBM Low performance with ISIM 6.0.0.10 InterimFix1 APIs - United States
+
+Text:
+isim api hangs performance TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to solve low performance or thread hangs with ISIM APIs after applying FixPack 10 and the following InterimFix 1 
+
+SYMPTOM
+Hangs or low performance when using ISIM APIs.
+In the logs you can read something like the following:
+00000049 TimeoutManage I WTRN0124I: When the timeout occurred the thread with which the transaction is, or was most recently, associated was Thread[WebContainer : 8,5,main].
+
+
+CAUSE
+The root cause is WebSphere isn't able to link the itim_util.jar file
+
+ENVIRONMENT
+ISIM >= 6.0.0.10
+
+DIAGNOSING THE PROBLEM
+In SystemOut.log you can find an exception trace similar to the following:
+[1/7/16 11:31:30:887 CET] 00000049 TimeoutManage I WTRN0124I: When the timeout occurred the thread with which the transaction is, or was most recently, associated was Thread[WebContainer : 8,5,main]. The stack trace of this thread when the timeout occurred was:
+sun.misc.Unsafe.park(Native Method)
+java.util.concurrent.locks.LockSupport.park(LockSupport.java:182)
+java.util.concurrent.locks.AbstractQueuedSynchronizer.parkAndCheckInterrupt(AbstractQueuedSynchronizer.java:822)
+java.util.concurrent.locks.AbstractQueuedSynchronizer.doAcquireSharedInterruptibly(AbstractQueuedSynchronizer.java:980)
+java.util.concurrent.locks.AbstractQueuedSynchronizer.acquireSharedInterruptibly(AbstractQueuedSynchronizer.java:1292)
+java.util.concurrent.CountDownLatch.await(CountDownLatch.java:218)
+com.ibm.rmi.io.ObjectStreamClass.init(ObjectStreamClass.java:779)
+com.ibm.rmi.io.ObjectStreamClass.access$100(ObjectStreamClass.java:133)
+com.ibm.rmi.io.ObjectStreamClass$ObjectStreamClassCache.get(ObjectStreamClass.java:246)
+com.ibm.rmi.io.ObjectStreamClass.lookup(ObjectStreamClass.java:482)
+com.ibm.rmi.io.ObjectStreamClass.lookup(ObjectStreamClass.java:490)
+com.ibm.rmi.io.FastPathForCollocated.deepCopy(FastPathForCollocated.java:204)
+com.ibm.rmi.io.FastPathForCollocated.cloneAList(FastPathForCollocated.java:956)
+com.ibm.rmi.io.ORBVM.quickCopyIfPossible(ORBVM.java:66)
+com.ibm.oti.vm.ORBVMHelpers.vmDeepCopy(ORBVMHelpers.java:164)
+com.ibm.rmi.io.VMDeepCopier.performDeepCopy(VMDeepCopier.java:229)
+com.ibm.rmi.io.FastPathForCollocated.writeNonStaticNonTransientFields(FastPathForCollocated.java:349)
+com.ibm.rmi.io.FastPathForCollocated.invokeWriteAndReadObjects(FastPathForCollocated.java:607)
+com.ibm.rmi.io.FastPathForCollocated.deepCopy(FastPathForCollocated.java:276)
+com.ibm.rmi.io.ORBVM.deepCopyIfRequired(ORBVM.java:83)
+com.ibm.oti.vm.ORBVMHelpers.vmDeepCopy(ORBVMHelpers.java:206)
+com.ibm.rmi.io.VMDeepCopier.performDeepCopy(VMDeepCopier.java:229)
+com.ibm.rmi.io.FastPathForCollocated.writeNonStaticNonTransientFields(FastPathForCollocated.java:349)
+com.ibm.rmi.io.FastPathForCollocated.invokeWriteAndReadObjects(FastPathForCollocated.java:607)
+com.ibm.rmi.io.FastPathForCollocated.deepCopy(FastPathForCollocated.java:276)
+com.ibm.rmi.iiop.ObjectCopierFactory$DeepObjectCopier.doWork(ObjectCopierFactory.java:319)
+com.ibm.rmi.iiop.ObjectCopierFactory$AbstractCopier.waitForCompletion(ObjectCopierFactory.java:163)
+com.ibm.rmi.iiop.ObjectCopierFactory$AbstractCopier.getCopy(ObjectCopierFactory.java:179)
+
+RESOLVING THE PROBLEM
+Copy the itim_util.jar from 
+$WAS_HOME/profiles/$PROFILE_NAME/installedApps/$CELL_NAME/ITIM.ear/
+to the following locations across all nodes:
+- $ITIM_HOME/lib/
+- $WAS_HOME/profiles/$PROFILE_NAME/classes/
+- and lib directory of custom applications deployed on WAS
+
+Finally add the itim_util.jar into the WAS Shared Libraries using following steps :
+1. Open WAS Admin console. Go to Environment ->Shared libraries -> ITIM_LIB
+2. Add “${ITIM_HOME}/lib/itim_util.jar" under the Classpath
+
+
+
+
+
+A server restart is required to apply the changes.

@@ -1,0 +1,223 @@
+Title: IBM IZ92265: WMQ7.0.1.3 or WMQ7.0.1.4 SSL SECURED CHANNEL TO DATAPOWER FAILS TO START. THE CIPHERSPEC RC4_SHA_US MQ ERRORS AMQ9665 AMQ9492 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24029055]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.5 [http://www-01.ibm.com/support/docview.wss?uid=swg24029788]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrading to WebSphere MQ 7.0.1.3 or WebSphere MQ 7.0.1.4,
+   the SVRCONN channel, which connects WebSphere DataPower and MQ,
+   fails to start. The channel has SSL set on both sides;
+   DataPower has RC4 or RC4+SHA and MQ has RC4_SHA_US.
+   
+   On the DataPower side you may see the following MQ RC 2009.
+   The setup worked correctly before the upgrade.
+   
+   If the DataPower side changes to RC4-SHA, the channel starts
+   successfully. Before the upgrade the DataPower setup could be
+   RC4, RC4+SHA or RC4-SHA, which would all work.
+   
+   Note that RC4 and RC4+SHA are incorrect configurations for use
+   with RC4_SHA_US according to the WebSphere DataPower
+   documentation:
+   http://publib.boulder.ibm.com/infocenter/wsdatap/v3r8m1
+   /index.jsp?topic=/xi50/integratingwithmq109.htm [http://publib.boulder.ibm.com/infocenter/wsdatap/v3r8m1/index.jsp?topic=/xi50/integratingwithmq109.htm]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  DataPower could be set to RC4-SHA
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users who upgrade from 7.0.1.2 or earlier to WebSphere MQ
+   7.0.1.3 or 7.0.1.4 and who are connecting to the WebSphere MQ
+   Server with a WebSphere DataPower device that is incorrectly
+   configured for use with the CipherSpec RC4_SHA_US.
+   
+   If the user has specified RC4 or RC4+SHA as their WebSphere
+   DataPower crypto profile, then the SVRCONN channel will not
+   start.
+   
+   If the user is unable to set the correct WebSphere DataPower
+   crypto profile (RC4-SHA), then they will be affected.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   The problem occurred because the ordering of the CipherSpecs in
+   a table used for the SSL handshake negotiation changed.
+   
+   Note that the correct configuration for WebSphere DataPower, for
+   use with RC4_SHA_US, is to set the crypto profile to
+   RC4-SHA. If that option is set correctly the connection will
+   work:
+   http://publib.boulder.ibm.com/infocenter/wsdatap/v3r8m1
+   /index.jsp?topic=/xi50/integratingwithmq109.htm [http://publib.boulder.ibm.com/infocenter/wsdatap/v3r8m1/index.jsp?topic=/xi50/integratingwithmq109.htm]
+   
+   However, the behaviour of the code (allowing connections when
+   RC4 or RC4+SHA is set) changed between 7.0.1.2 and 7.0.1.3 and
+   some users, for logistic reason may not be able to change
+   the configuration of their WebSphere DataPower crypto profile,
+   so the original behaviour should be restored.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code was modified to make the order of the CipherSpecs in
+   the table match the original ordering such that there is no
+   behaviour change between WebSphere MQ 7.0.1.2 and WebSphere MQ
+   7.0.1.3/4.
+   
+   | MDVREGR 7.0.1-WS-MQ-AixPPC64-FP0003       |
+   | MDVREGR 7.0.1-WS-MQ-HpuxIA64-FP0003       |
+   | MDVREGR 7.0.1-WS-MQ-HpuxPaRISC64-FP0003   |
+   | MDVREGR 7.0.1-WS-MQ-LinuxIA32-FP0003      |
+   | MDVREGR 7.0.1-WS-MQ-LinuxPPC64-FP0003     |
+   | MDVREGR 7.0.1-WS-MQ-LinuxS390X-FP0003     |
+   | MDVREGR 7.0.1-WS-MQ-LinuxX64-FP0003       |
+   | MDVREGR 7.0.1-WS-MQ-SolarisSparc64-FP0003 |
+   | MDVREGR 7.0.1-WS-MQ-SolarisX64-FP0003     |
+   | MDVREGR 7.0.1-WS-MQ-Windows-FP0003        |
+   | MDVREGR 7.0.1-WS-MQ-AixPPC64-FP0004       |
+   | MDVREGR 7.0.1-WS-MQ-HpuxIA64-FP0004       |
+   | MDVREGR 7.0.1-WS-MQ-HpuxPaRISC64-FP0004   |
+   | MDVREGR 7.0.1-WS-MQ-LinuxIA32-FP0004      |
+   | MDVREGR 7.0.1-WS-MQ-LinuxPPC64-FP0004     |
+   | MDVREGR 7.0.1-WS-MQ-LinuxS390X-FP0004     |
+   | MDVREGR 7.0.1-WS-MQ-LinuxX64-FP0004       |
+   | MDVREGR 7.0.1-WS-MQ-SolarisSparc64-FP0004 |
+   | MDVREGR 7.0.1-WS-MQ-SolarisX64-FP0004     |
+   | MDVREGR 7.0.1-WS-MQ-Windows-FP0004        |
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.5
+   --------           --------------------
+   Windows            U200324
+   AIX                U839183
+   HP-UX (PA-RISC)    U839621
+   HP-UX (Itanium)    U839626
+   Solaris (SPARC)    U839622
+   Solaris (x86-64)   U839628
+   iSeries            tbc_p700_0_1_5
+   Linux (x86)        U839623
+   Linux (x86-64)     U839627
+   Linux (zSeries)    U839624
+   Linux (Power)      U839625
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ92265
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86-64
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7230
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-01-14
+   
+   
+ * CLOSED DATE
+   2011-01-26
+   
+   
+ * LAST MODIFIED DATE
+   2011-02-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ LIN X86-64
+   
+   
+ * FIXED COMPONENT ID
+   5724H7230
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

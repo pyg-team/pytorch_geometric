@@ -1,0 +1,173 @@
+Title: IBM IZ31242: SYSTEM WIDE PERFORMANCE PROBLEM WITH TICKING CHECKBOXES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  7.1.1.0 maxdemo, websphere environment, oracle database
+   
+   This problem appears to be system-wide in all applications.
+   e.g.
+   Go to  work order tracking , do a search for work order in WAPPR
+   status
+   this should bring up  with 147 records from the list tab
+   tick select records checkbox
+   tick a checkbox to select one record, it takes 5 - 6 seconds for
+   the checkbox to be ticked
+   tick a checkbox to select another record, it takes 5 - 6 seconds
+   for the checkbox to be ticked
+   bring up the task manager from the client workstation, click
+   performance tab to see the CPU
+   tick a checkbox to select another record, it takes 5 - 6 seconds
+   for the checkbox to be ticked
+   there's CPU spike when ticking checkboxes
+   
+   
+   do the same test again, but instead of bringing up 147 records,
+   bring up 10 records this time.
+   you will see that the more records showing in the list the
+   slower the
+   performance.  It appears that Maximo is looking at every record
+   in the
+   list or table window every time a check box is selected and this
+   causes
+   sever performance hit on check box selection
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: n/a                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Select Records mode on tables is very   *
+   *                      slow when opening and selecting a       *
+   *                      record. Large structure required to     *
+   *                      render tables with more than 20 rows    *
+   *                      makes refresh and render very slow.     *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   Select Records mode on tables is very slow when opening and
+   selecting a record. Large structure required to render tables
+   with more than 20 rows makes refresh and render very slow.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | REDWING
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ31242
+   
+   
+ * REPORTED COMPONENT NAME
+   WORK ORDER TRAC
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46WO
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-09-04
+   
+   
+ * CLOSED DATE
+   2008-09-12
+   
+   
+ * LAST MODIFIED DATE
+   2008-09-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORK ORDER TRAC
+   
+   
+ * FIXED COMPONENT ID
+   5724R46WO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

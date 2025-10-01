@@ -1,0 +1,94 @@
+Title: IBM ** Troubleshooting ** "CFG-ERR-0106 IBM Cognos Configuration did not receive a
+response..." when starting IBM Cognos service - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Administrator launches "Cognos Configuration" and clicks "Start". Administrator clicks 'Details'. After a while an error appears. 
+
+SYMPTOM
+[/support/docview.wss?uid=swg21646350&amp;aid=1] 
+
+[Start Service] 
+
+[ ERROR ] CFG-ERR-0106 IBM Cognos Configuration did not receive a
+response from the IBM Cognos service in the time allotted.
+Check that IBM Cognos service is available and properly configured.
+
+
+CAUSE
+There are many possible causes for this error: 
+
+ * Scenario #1 - Incorrect path to Java directory in environmental variables JAVA_HOME  * For more information, see separate IBM Technotes #1593083 & #1342592.
+   
+   
+
+ * Scenario #2 - Application server's hardware specification too poor/slow, causing timeouts in the software.  * For example, in one real-life customer case the server was based on a single-CPU core Hyper-V virtual server, with 4Gb RAM.
+   
+   
+ * Scenario #3 - Customer had incorrectly configured the audit database entry in ../p2pd/WEB-INF/web.xml  * For more information, see separate IBM Technote #1645422.
+   
+   
+
+ * Scenario #4 - Large number of static objects in the content store, therefore requiring the use of the DuseCMLargeResultSet parameter.  * For more information, see separate IBM Technote #1571601.
+   
+   
+ * Scenario #5 - Network file system outage caused tomcat-users.xml corruption  * For more information, see separate IBM Technote #1338826.
+   
+   
+ * Scenario #6 - Windows DEP enabled  * For more information, see separate IBM Technote #1371912. 
+   
+   
+ * Scenario #7 - Insufficient kernel settings 
+ * Scenario #8 - firewall has requires ports closed
+
+RESOLVING THE PROBLEM
+Scenario #1 
+
+Correct (or delete) the environmental variables JAVA_HOME. 
+
+ * For more information, see separate IBM Technotes #1593083 & #1342592.
+
+
+Scenario #2 
+
+Improve the hardware of the server. 
+
+ * For example, in one real-life case the problem was solved by upgrading from 4Gb RAM to 8Gb RAM, and also increasing the number of virtual CPUs from 1 to 2.
+
+Scenario #3 
+
+Correct the file ../p2pd/WEB-INF/web.xml. 
+
+ * For more information, see separate IBM Technote #1645422.
+
+Scenario #4
+Use the DuseCMLargeResultSet parameter. 
+
+ * For more information, see separate IBM Technote #1571601.
+
+Scenario #5
+See separate IBM Technote #1576139.
+
+Scenario #6
+Disable Microsoft Windows Data Execution Protection 
+
+ * See separate IBM Technote #1371912. 
+
+Scenario #7  * run ulimit -a to get the settings of the UNIX server. Ensure that "open files" is set to at least 8192 
+
+Scenario # 8  * check the ports required for each Cognos install for
+
+dispatcher URIs 
+content manager URI 
+application server shutdown port (Apache Tomcat) 
+local logging port 
+ports required to access databases... 
+content store 
+notification store 
+audit database RELATED INFORMATION
+ 1342592 - Cognos service ("Cognos 8" or "IBM Cognos") d [http://www.ibm.com/support/docview.wss?uid=swg21342592]
+1645422 - CFG-ERR-0106 IBM Cognos Configuration did not [http://www.ibm.com/support/docview.wss?uid=swg21645422]
+1571601 - Cognos Services failed to start after upgrade [http://www.ibm.com/support/docview.wss?uid=swg21571601]
+1371912 - "CFG-ERR-0106 IBM Cognos Configuration did no [http://www.ibm.com/support/docview.wss?uid=swg21371912]

@@ -1,0 +1,28 @@
+Title: IBM Upper and Lower case entries in Application User column - United States
+
+Text:
+app user name TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Entries in reports under "Application User" column are sometimes upper and sometimes lower case. This can cause a problem if the reports are configured to be sent to a SIEM that is expecting a consistent input. 
+
+CAUSE
+Uppercase is the expected format of this column. The inconsistency is caused by a defect that is resolved in GPU fixpacks after v9p200. If you are unable to upgrade, there is a work around available to solve the problem.
+
+RESOLVING THE PROBLEM
+Follow these steps to implement the work around. 
+
+1. Create a Computed Attribute to convert the column to upper case. In the CLI run the following all on one line:
+
+
+ * grdapi create_computed_attribute attributeLabel="Uppercase App User" entityLabel="Access Period" expression="UPPER(APP_USER_NAME)"
+
+
+2. In the query builder in the GUI you will now have an extra field, "Uppercase App User" available under the Access Period entity. 
+
+3. Replace the "Application User" with "Uppercase App User" in the queries that are affected. 
+
+
+RELATED INFORMATION
+ Creating Custom Reporting Attributes [http://www.ibm.com/support/docview.wss?uid=swg21623321]
+What are Computed Attributes / Custom Attributes etc [http://www.ibm.com/support/docview.wss?uid=swg21651345]

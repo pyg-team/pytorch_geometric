@@ -1,0 +1,41 @@
+Title: IBM Maps do not load in Dashboards in IBM Cognos Analytics 11.0.5+ - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a map is added to a dashboard in IBM Cognos Analytics 11.0.5+ the visualization does not load, but instead returns "We can't load this visualization".
+
+
+SYMPTOM
+"We can't load this visualization" for maps in dashboards. 
+
+[/support/docview.wss?uid=swg21995635&amp;aid=1]
+
+
+RESOLVING THE PROBLEM
+The map visualization depends on WebGL being enabled in the browser. Also make sure to have the latest video drivers for your machine (for example, Firefox blocks old drivers [https://wiki.mozilla.org/Blocklisting/Blocked_Graphics_Drivers]) 
+
+ 
+
+The following 3rd-party website can be used to verify if WebGL is enabled: https://browserleaks.com/webgl [https://browserleaks.com/webgl] 
+
+The first two entries need to be marked as successful
+[/support/docview.wss?uid=swg21995635&amp;aid=2] 
+
+Steps for Internet Explorer: 
+
+Internet Explorer 11 has WebGL enabled by default, and it cannot be disabled. 
+
+ 
+
+Steps for Mozilla Firefox: 
+
+ 1. Type about:config in the browser bar 
+ 2. Read and submit the "I´ll be careful, I promise" message 
+ 3. In the search field enter webgl.disabled 
+ 4. Change the value to false
+    [/support/docview.wss?uid=swg21995635&aid=3] [/support/docview.wss?uid=swg21995635&aid=3]
+
+
+Steps for Chrome: By default WebGL is enabled in Chrome. If the test is not successful in Chrome, verify that Chrome is not started with the additional command line option --disable-webgl.

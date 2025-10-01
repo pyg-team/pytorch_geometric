@@ -1,0 +1,33 @@
+Title: IBM Data Server Manager (DSM) showing "<table_name>" is an undefined name SQLCODE=-204, SQLSTATE=42704 error - United States
+
+Text:
+DSM SQL0204 SQL0204N SQLCODE 204 QUERYTUNER.OQWT_QUERY_RESULT Query Tuning SQLSTATE=42704 TECHNOTE (FAQ)
+
+QUESTION
+ Why is Data Server Manager (DSM) showing the "<table_name>" is an undefined name SQLCODE=-204, error when running Query Tuning? 
+
+CAUSE
+The <table_name> was not created during the initial DSM setup.
+
+ANSWER
+Rebuild the missing table by following these steps: 
+
+1. Stop DSM (via stop.bat or stop.sh script from <DSM_install>/bin directory). Make sure that there is no DSM processes running.
+
+2. Backup the DSM repository database
+
+3. Connect to the DSM repository database
+
+4. "AUTOMATIC STORAGE" needs to be set to "YES" for the DSM repository database. Run the following DB2 command: 
+ALTER DATABASE <DSM_repository_database> ADD STORAGE ON '<storage_path>
+
+5. From <DSM_install>/samples/DB2LUW directory, run the create.sql against the repository database (for example: db2 -tvf create.sql > create.log)
+This command will attempt to create tables and functions needed for DSM in the repository database.
+If the objects already exist, that creation will fail and the script proceeds to the next creation. It won't drop the existing objects, and missing objects will be created. 
+
+6. Check if all SQLs in create.log output file were executed successfully. 
+
+7. From <DSM_install>/samples/DB2LUW directory, run the validate.sql against the repository database (for example: db2 -tvf validate.sql > validate.log), to verify that all the needed repository tables and functions exist. Confirm that all ran successfully.
+If you have errors referring to the schema DB2OSC, that schema is for z/OS databases, and it can be ignored if you are monitoring LUW databases only. 
+
+8. Start DSM (via start.bat or start.sh script from <DSM_install>/bin directory)

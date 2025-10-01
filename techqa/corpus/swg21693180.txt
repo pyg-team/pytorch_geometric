@@ -1,0 +1,21 @@
+Title: IBM How to delete WebSphere BN agent Data Power instances from the command line - United States
+
+Text:
+WebSphere Data Power Agent BN CAMD4ALL CAMD4INST TECHNOTE (TROUBLESHOOTING)
+
+THIS DOCUMENT APPLIES ONLY TO THE FOLLOWING LANGUAGE VERSION(S):
+ US English 
+
+PROBLEM(ABSTRACT)
+ If unable to use the MTEMS GUI to remove ITM BN Agent Data Power Instances from the agent configuration, the alternative is to use the tacmd command. 
+
+RESOLVING THE PROBLEM
+Example on removing the BN Data Power instances:
+
+/opt/IBM/ITMSVT/bin/tacmd login -s <system> -u <userid> -p <passwd>
+/opt/IBM/ITMSVT/bin/tacmd removesystem -m instanceA:<name>:BN 
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM for SOA Agent for Data Power

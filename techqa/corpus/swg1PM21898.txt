@@ -1,0 +1,157 @@
+Title: IBM PM21898: $TEMPLATECATALOG BEHAVING UNEXPECTEDLY - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal V7.0 Combined Cumulative Fix [http://www-01.ibm.com/support/docview.wss?uid=swg24027254]
+Recommended Updates for WebSphere Portal and IBM Web Content Manager V7.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24027857]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is experiencing odd behavior with the $TemplateCatalog
+   object. It seems the parameter 'all', which was used in prior
+   Portal versions causes a failure, however, the paramter 'root'
+   which is in the Portal sample does behave properly.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Some customers are experiencing odd behavior with the
+   $TemplateCatalog object. It seems the parameter 'all', which was
+   used in prior Portal versions causes a failure, however, the
+   parameter 'root' which is in the Portal sample does behave
+   properly.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  $TemplateCatalog find folder [all] returns now all template
+   folders.
+   
+   Failing Module(s):
+      Composite Applications
+   
+   Affected Users:
+      Administrators
+   
+   Version Information:
+   
+   PM21898 is part of Cumulative Fix 09 for Portal 6.1.0.3 /
+   6.1.5.0:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PM22177&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PM22177&productid=WebSphere%20Portal&brandid=5]
+   
+   as well as part of Cumulative Fix 09 for Portal 6.1.0.4 /
+   6.1.5.1:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PM22188&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PM22188&productid=WebSphere%20Portal&brandid=5]
+   
+   Manuel Steps:
+      None
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM21898
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   61C
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-09-06
+   
+   
+ * CLOSED DATE
+   2010-10-19
+   
+   
+ * LAST MODIFIED DATE
+   2010-10-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R615 PSY
+   UP
+   
+   
+ * R61C PSY
+   UP

@@ -1,0 +1,45 @@
+Title: IBM "HTTP transport error: javax.net.ssl.SSLHandshakeException: ... PKIX path building failed ...unable to find valid certification path" when using Java-related menu - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User launches Java-related menu (for example "Company - Reports - Intercompany Report"). User receives error. 
+
+SYMPTOM
+Error 
+
+HTTP transport error: javax.net.ssl.SSLHandshakeException: com.ibm.jsse2.util.g: PKIX path building failed: java.security.cert.certPathBuilderException: unable to find valid certification path to requested target com.ibm.jsse2.util.g: PKIX path building failed: java.security.cert.certPathBuilderException: unable to find valid certification path to requested target 
+
+PKIX path building failed: java.security.cert.certPathBuilderException: unable to find valid certification path to requested target 
+
+unable to find valid certification path to requested target 
+
+[OK]
+[/support/docview.wss?uid=swg21608225&amp;aid=1]
+
+CAUSE
+The Java program components do not have access to a certificate to 'trust' the HTTPS/SSL connection.
+
+
+
+ENVIRONMENT
+Customer is using a self-created/self-signed SSL certificate (instead of paying for/using one of the 'trusted' providers of such certificates, such as Verisign). 
+
+ * In other words, customer has enabled HTTPS / SSL encryption between client device and application server, but has used a self-created certificate.
+
+RESOLVING THE PROBLEM
+Install the SSL certificate into the Java runtime environment (JRE) on the client, so that the JRE trusts the self signed certificate. 
+
+ * For more information, see separate IBM Technote #1495669.
+
+
+Workaround: 
+
+Either: 
+
+ 1. Replace the SSL certificate (used on the Controller application server's Microsoft IIS website) with a trusted commercial (not self-signed) certificate, such as one from Verisign or GoDaddy.com. 
+ 2. or reconfigure Controller to use HTTP (not HTTPS) connections between client device and Controller application server.
+
+RELATED INFORMATION
+#1495669 - "Error creating bean with name 'idGenerator'. [http://www.ibm.com/support/docview.wss?uid=swg21495669]

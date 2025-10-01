@@ -1,0 +1,16 @@
+Title: IBM Why is it that sometimes when using tssub -I, it takes a lot of cycles before it actually starts? - United States
+
+Text:
+tssub -I TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Why is it that sometimes when using tssub -I, it takes a lot of cycles before it actually starts? 
+
+RESOLVING THE PROBLEM
+When submitted using tssub -I, sometimes they take a lot of cycles before they actually start, sometimes more than 10.Adding an environment variable LSF_TS_LOGON_TIME that means the time to make a Windows Terminal Service session. In our old design, we hardly code it as 30 seconds. Actually, it should be configurable according to varying network environment.
+
+If the environment variable is not set, inside of LSF,it is set as 30000 （millisecond）by default. If it is set as a very small value, the LSF might need to try multiple times before making a TS session with the TS server succefully, which will make the job wait very long time before it really runs. 300000 ms can work in most cases. 
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

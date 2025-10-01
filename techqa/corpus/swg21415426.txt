@@ -1,0 +1,143 @@
+Title: IBM Uninstalling a monitor model version with "Synchronize changes with Nodes" option disabled - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When uninstalling a monitor model, event groups in the CEI deployment are removed by WebSphere Business Monitor. WebSphere Business Monitor has to perform specific actions in order to properly detect these changes without requiring the user to restart the CEI cluster. This can be impacted if the "Synchronize changes with Nodes" option has been disabled. 
+
+RESOLVING THE PROBLEM
+If the "Synchronize changes with Nodes" option is disabled in administration console under the System administration > Console Preferences menu, the following steps need to be performed by the user: 
+
+ 1. Synchronize the configuration across all nodes.
+    
+    
+ 2. Stop the CEI event service application.
+    
+    To stop the CEI event service deployed to a server: serverName = 'xxxx'
+    nodeName = 'yyyy'
+    applicationName = 'EventService'
+    applicationManager = AdminControl.queryNames('type=ApplicationManager,node=%s,process=%s,*' % (nodeName, serverName))
+    
+    AdminControl.invoke(applicationManager, 'stopApplication', '[%s]' % applicationName, '[java.lang.String]') 
+    To stop the CEI event service deployed to a cluster: clusterName = 'zzzz'
+    applicationName = 'EventService'
+    
+    # get list of cluster members
+    
+    clusterMembers = AdminConfig.getid('/ServerCluster:%s/ClusterMember:/' % clusterName).splitlines()
+    
+    
+    
+    # stop application in each cluster member
+    
+    for clusterMember in clusterMembers:
+    
+    
+    
+    # cluster member server name and node name
+    
+    serverName = AdminConfig.showAttribute(clusterMember, "memberName")
+    
+    nodeName = AdminConfig.showAttribute(clusterMember, "nodeName")
+    
+    
+    
+    # get ApplicationManager MBean for the cluster member
+    
+    applicationManager = AdminControl.queryNames('type=ApplicationManager,node=%s,process=%s,*' % (nodeName, serverName))
+    
+    
+    
+    # if the ApplicationManager MBean was found (e.g. cluster member is running), stop the application
+    
+    if(len(applicationManager) > 0):
+    
+    AdminControl.invoke(applicationManager, 'stopApplication', '[%s]' % applicationName, '[java.lang.String]')
+    
+    
+ 3. Invoke the reloadResources method on the ConfigUtil MBean on the target CEI event service's server (or list of cluster members).
+    
+    CEI event services deployed to a server: serverName = 'xxxx'
+    nodeName = 'yyyy'
+    configUtil = AdminControl.queryNames('type=ConfigUtil,node=%s,process=%s,*' % (nodeName, serverName))
+    
+    AdminControl.invoke(configUtil, 'reloadResources', '[]', '[]')
+    
+    CEI event service deployed to a cluster: clusterName = 'zzzz'
+    
+    # get list of cluster members
+    
+    clusterMembers = AdminConfig.getid('/ServerCluster:%s/ClusterMember:/' % clusterName).splitlines()
+    
+    
+    
+    # stop application in each cluster member
+    
+    for clusterMember in clusterMembers:
+    
+    
+    
+    # cluster member server name and node name
+    
+    serverName = AdminConfig.showAttribute(clusterMember, "memberName")
+    
+    nodeName = AdminConfig.showAttribute(clusterMember, "nodeName")
+    
+    
+    
+    # get ConfigUtil MBean for the cluster member
+    
+    configUtil = AdminControl.queryNames('type=ConfigUtil,node=%s,process=%s,*' % (nodeName, serverName))
+    
+    
+    
+    # if the ConfigUtil MBean was found (e.g. cluster member is running), stop the application
+    
+    if(len(configUtil) > 0):
+    
+    AdminControl.invoke(configUtil, 'reloadResources', '[]', '[]')
+    
+    
+ 4. Start the CEI event service application.
+    
+    To start the CEI event service deployed to a server: serverName = 'xxxx'
+    nodeName = 'yyyy'
+    applicationName = 'EventService'
+    applicationManager = AdminControl.queryNames('type=ApplicationManager,node=%s,process=%s,*' % (nodeName, serverName))
+    
+    AdminControl.invoke(applicationManager, 'startApplication', '[%s]' % applicationName, '[java.lang.String]') 
+    To start the CEI event service deployed to a cluster: clusterName = 'zzzz'
+    applicationName = 'EventService'
+    
+    # get list of cluster members
+    
+    clusterMembers = AdminConfig.getid('/ServerCluster:%s/ClusterMember:/' % clusterName).splitlines()
+    
+    
+    
+    # stop application in each cluster member
+    
+    for clusterMember in clusterMembers:
+    
+    
+    
+    # cluster member server name and node name
+    
+    serverName = AdminConfig.showAttribute(clusterMember, "memberName")
+    
+    nodeName = AdminConfig.showAttribute(clusterMember, "nodeName")
+    
+    
+    
+    # get ApplicationManager MBean for the cluster member
+    
+    applicationManager = AdminControl.queryNames('type=ApplicationManager,node=%s,process=%s,*' % (nodeName, serverName))
+    
+    
+    
+    # if the ApplicationManager MBean was found (e.g. cluster member is running), stop the application
+    
+    if(len(applicationManager) > 0):
+    
+    AdminControl.invoke(applicationManager, 'startApplication', '[%s]' % applicationName, '[java.lang.String]')

@@ -1,0 +1,15 @@
+Title: IBM Why do z/OS VB datasets require an extra 4 bytes on the record length? - United States
+
+Text:
+Sterling Connect:Direct for z/OS VB 4 bytes TECHNOTE (FAQ)
+
+QUESTION
+ I am transmitting from Windows to a z/OS variable blocked (VB) dataset using Sterling Connect:Direct. Why am I required to add an extra 4 bytes to the record length for the VB dataset? 
+
+ANSWER
+In a VB data set, the records can have different lengths. The first four bytes of each record contain the Record Descriptor Word (RDW) which describes the length of each record that follows. 
+
+ 
+
+HISTORICAL NUMBER
+ PRI11577 SCI36242

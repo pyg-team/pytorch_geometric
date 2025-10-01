@@ -1,0 +1,82 @@
+Title: IBM Open Mic Webcast: What is IBM SmartCloud Notes Hybrid? - September 24, 2013 [slides + audio recording attached] - United States
+
+Text:
+lste_webcast STEwebcastDocument WEBCAST
+
+ABSTRACT
+ The IBM SmartCloud team wants to help you take full advantage of your products. Join us for our Open Mic webcasts as technical experts share their knowledge and answer your questions. 
+
+CONTENT
+Topic: What is IBM SmartCloud Notes Hybrid? 
+
+Day: Tuesday, September 24, 2013
+
+For more information about our Open Mic webcasts, visit the IBM Collaboration Solutions Support Open Mics [http://www.ibm.com/software/lotus/support/lotus-open-mics/] page. 
+
+
+
+Presentation 
+IBM SmartCloud Notes Hybrid Configuration 24Sep13.pdf [/support/docview.wss?uid=swg27039103&aid=2]IBM SmartCloud Notes Hybrid Configuration 24Sep13.pdf [/support/docview.wss?uid=swg27039103&aid=1] 
+
+
+Audio 
+What is IBM SmartCloud Notes Hybrid Open Mic Sep 24 2013 (edited).mp3 [/support/docview.wss?uid=swg27039103&aid=4]What is IBM SmartCloud Notes Hybrid Open Mic Sep 24 2013 (edited).mp3 [/support/docview.wss?uid=swg27039103&aid=3] 
+
+1:00:47 minutes 
+Q&A starts at about the 54:05 min mark 
+
+Q&A 
+Q: Does hybrid cloud work with domino 9? 
+A: Yes we support the use of on-premises Domino 9 servers and directory templates. For on-premises Domino version requirements : https://ibm.biz/BdDzqP [https://ibm.biz/BdDzqP] 
+
+
+
+
+Q: What if you are already running an id vault? 
+A: The service creates a new ID Vault for you. It doesn't sync with your existing vault - it's just for the users in SmartCloud Notes. Only IDs of users with SmartCloud Notes accounts are uploaded to the vault. 
+
+
+
+
+Migration of users to the cloud 
+Q: Please show how to migrate existing users into SmartCloud 
+A: Migration (transferring existing mail files) is offered by certified Business Partners and IBM. There is a process that has been developed and a certification program that is in place that both enables and gives practical experience to business partners. But in essence, an ISSC [http://www-01.ibm.com/software/lotus/services/contact.html] arrangement or business partner arrangement can help you move mail files in tact from the on-premises world into the service. We go through a rigorous process to make sure the mail file is scanned for viruses before it is provisioned into the service. We do mail file transfers via a NAS device or through FTP. We do an importation and a provisioning process. Then we do a final synchronization of the delta between when the file was transferred to the service and when it was activated by the user. We do a whole mail server switch at the end and then the user gets all their mail in the service. 
+Q: What is meant by certified Business Partners and IBM? 
+A: IBM offers mail transfer through IBM Software Services for Collaboration, as do some Business Partners, but a Business Partner must have a specific certification - they need to pass an exam. 
+
+
+
+
+Legal holds, discovery - IBM Connections Compliance for Mail 
+Q: How are legal holds handled? 
+A: If you purchased the offering, IBM Connections Compliance for Mail, you do have the ability to perform searches across all subscribers' mail files and you are able to put legal holds on various collections of mail based on your search criteria 
+
+Also see: IBM Connections Compliance for Mail FAQ- http://www-01.ibm.com/support/docview.wss?uid=swg21600473 [http://www-01.ibm.com/support/docview.wss?uid=swg21600473] 
+
+Q: When a hold comes down we need to have a pic of the file as of that date unchangeable... 
+A: the Connections Compliance for Mail offering captures all mail in and out for a subscribed user - putting the content on hold prevents any modification to that data set 
+
+Q: If discovery is needed on a mail file, how far back (how old) can email still be available? 
+A: It would require that a Connections Compliance for Mail or Connections Compliance for Mail Entry subscription be in place for that user. There is no limit, unless you have specifically stated a retention period with that archive. 
+Discovery starts when you enroll the user - it does not pull in historical mail prior to the enrollment. The data can be kept as long as you need from that point forward. You can do a one time import of historical data from an existing mail account prior to enrollment. 
+
+
+
+
+
+Q: How does restore of user's mail file work in SmartCloud? 
+A: We do not back up files in the traditional way that you might do in the on-premises world. So there's no mail file restore option. We do allow you to specify the number of days before a mail is deleted from the trash folder. We also allow you to prevent a user from emptying their trash. So through those two settings you can avoid doing mail restores as you would do in the on-premises world because we don't do it in the service. This allows the end user to self serve their own restoring of an inadvertently deleted email. 
+
+[In SmartCloud Notes] IBM has 2 copies of your mail file in the primary data center plus 2 copies of your mail file in the secondary data center. We are running fixup across those copies. If a user is looking to restore a mail that they have inadvertently deleted and you (administrator) have properly configured to prevent them from emptying their trash and you have set the proper number of days to align with your internal policy, you probably will achieve the exact same result and you will avoid the effort involved in performing that restore and the effort that your employee needs to do to consume that restore and get what they wanted. 
+
+
+
+
+
+Q: How long should the [hybrid setup] configuration process take from step one trough four (taking in consideration the validation of the domain)? 
+A: I've seen it done in a day. I've seen it take longer depending upon the availability of the information needed to perform the configuration stages. Probably one of the bigger issues we find is with firewalls. If the [company] firewall is blocking ports then you are going to have problems. But it can take a matter of hours, or it can take longer if the settings are incorrect or if the information is incorrect. 
+
+We do it in the certification class in an hour BUT real dns domain validation depends on DNS replication which can be up to 24-48 hrs 
+
+Q: Do these shortened links (ex. http://ibm.co/11TujHM [http://ibm.co/11TujHM]) work any time if I go back to check for reference in say, 3 weeks? 
+A: Yes

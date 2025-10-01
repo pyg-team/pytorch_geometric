@@ -1,0 +1,196 @@
+Title: IBM HD65391: VPMV5NAV: GHOST LINK IS GENERATED WHEN SAVING THE CATDRAWING WH ICH HAS NON-BROKEN CONTRAINTS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  VPMV5NAV: Ghost Link is generated when saving
+   the CATDrawing which has Non-broken Contraints
+   .
+   Scenario:
+   Step1 Open the "ORG_MIN_001.CATDrawing"
+   Step2 Click on the "Save data in ENOVIA V5" icon.
+   Step3 Click "OK" in the "Save in ENOVIA V5" panel
+   to save the data to VPMNNav.
+   Step4 Click on the "Save data in ENOVIA V5" icon
+   again.
+   Step5 Click "OK" in the "Save in ENOVIA V5" panel
+   to save the data to VPMNav.
+   Trouble : Ghost Link is generated and cannot save
+   the data.
+   .
+   Severity:
+   Ghost links prevent operation of drawing release
+   system.
+   Drawings are the customer ￇ ￇ0 s final product.
+   Therefore it is considered necessary that an ghost
+   links should not be generated
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  VPMV5NAV: Ghost Link is generated when saving the CATDrawing wh
+   ich has Non-broken Contraints
+   VPMV5NAV: Ghost Link is generated when saving
+   the CATDrawing which has Non-broken Contraints
+   .
+   Scenario:
+   Step1 Open the "ORG_MIN_001.CATDrawing"
+   Step2 Click on the "Save data in ENOVIA V5" icon.
+   Step3 Click "OK" in the "Save in ENOVIA V5" panel
+   to save the data to VPMNNav.
+   Step4 Click on the "Save data in ENOVIA V5" icon
+   again.
+   Step5 Click "OK" in the "Save in ENOVIA V5" panel
+   to save the data to VPMNav.
+   Trouble : Ghost Link is generated and cannot save
+   the data.
+   .
+   Severity:
+   Ghost links prevent operation of drawing release
+   system.
+   Drawings are the customer    0 s final product.
+   Therefore it is considered necessary that an ghost
+   links should not be generated
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  THIS PROBLEM WILL BE FIXED ON ENOVIA
+   VERSION 5 RELEASE 19 GA level.
+   NOTE THAT THIS PROBLEM WILL ALSO BE FIXED
+   ON V5R18SP02 and V5R17SP08.
+   .
+   some ghost links are not rerouted when a document
+   is "captured" by ENOVIA. As a result, some EV5 doc
+   may keep some links on 'FILE' document. Because
+   of our "save to enovia" engine, such links may lead
+   to load pointed 'file' doc, and capture them again
+   in EV5 The end user has 2 visible effects :
+   - doc are repeated in save panel (same pb in R16
+   and R17)
+   - specifically in R17, name conflict is detected
+   and prevent the save
+   Correction Explanation
+   As a result, the 'FILE' doc loaded because of ghost
+   links are now detected as 'in name collision' with
+   ENOVIA document. This progress has a side effect
+   in our save panel. we didn't correct the minor pb,
+   but the root one:
+   we are now able to avoid getting 'FILE' doc
+   pointed by ghost links in our save transaction
+   (note CV5_EV5_KeepGhostLinks=0 means I no
+   longer want to keep GhostLink in save)
+   One must note the doc content is not cleaned (the
+   faulty doc continues to have ghost links) and the
+   doc stream is not updated in vault. Advantage is
+   we don't modify the pointing doc (kept not dirty),
+   we only impact the save transaction scope.
+   (correction can be rollback ed with en var :
+   set CV5_EV5_KeepGhostLinks=1)
+   Answer and By-Pass
+   bypass to allow save is really simple:
+   manual rename of 'FILE' documents loaded because
+   of GhostLinks, then save
+   .
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD65391
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA V5 VPM N
+   
+   
+ * REPORTED COMPONENT ID
+   569151400
+   
+   
+ * REPORTED RELEASE
+   516
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-06-22
+   
+   
+ * CLOSED DATE
+   2007-10-25
+   
+   
+ * LAST MODIFIED DATE
+   2007-11-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ENOVIA V5 VPM N
+   
+   
+ * FIXED COMPONENT ID
+   569151400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R518 PSN SP51802
+   UP07/11/13 I 1000
+   
+   
+ * R517 PSN
+   UP

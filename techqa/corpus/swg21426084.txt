@@ -1,0 +1,61 @@
+Title: IBM Understanding the fetchResultLogLimit Property - United States
+
+Text:
+TPAEPERFORMANCE;TPAELOGGING;Fetch;MBO;Set;Performance;Logging QUESTION/ANSWER
+
+QUESTION
+In the System Properties application, there is a property named mxe.db.fetchResultLogLimit.
+
+CAUSE
+Documentation
+
+ANSWER
+The mxe.db.fetchResultLogLimit property can generate critical debug information for troubleshooting performance, stability, and runtime issues.
+
+
+In Maximo, the mxe.db.fetchResultLogLimit property can be found in the System Properties application under Platform Configuration. The default value for this property is 200.
+
+When too many objects are being loaded and not released, this property can show how often a given process is loading the threshold count of objects. When set to 200, this will generate a stack trace when multiples of 200 (200, 400, 600, etc.) objects are loaded into any single set.
+
+Objects are organized in sets. You may have 20 sets. While some sets will have 5 objects, other sets have 100 objects. The mxe.db.fetchResultLogLimit monitors objects in any single set. This property will not generate any output if the threshold set by the mxe.db.fetchResultLogLimit is not met. This means that setting the value to a higher number may not provide the necessary results to diagnose a problem. For example, setting the threshold to 1000 will cause an exception only when 1000 objects are in any one set; so, if there are 11 sets and each has 999 objects 10,989 objects will be in memory but no exception will be generated because none of the sets have 1000 or more objects in them. When troubleshooting memory problems, this threshold should be set no higher than 200 to show what is loading objects in a given set.
+
+When the mxe.mbocount property is enabled, the total MBOs in memory are shown in the log once per minute in a similar format to the following:
+
+[4/6/16 8:54:15:465 EDT] 000000cb SystemOut O 06 Apr 2016 08:54:15:465 [INFO] [MAXIMO] [] TASKSCHEDULER: mbosets (23), mbos (45) 
+
+In this example, there are 23 MBO sets and the total of all MBOs in all sets is 45.
+
+Typical mxe.db.fetchResultLogLimit output to the logs might look as follows when the threshold number is met:
+
+[4/5/16 12:39:59:059 EDT] 0000010e SystemOut O 05 Apr 2016 12:39:59:059 [INFO] [mxui103] [] BMXAA6702I - -------FetchResultLogLimit logging starts------ 
+[4/5/16 12:39:59:060 EDT] 0000010e SystemOut O 05 Apr 2016 12:39:59:060 [INFO] [mxui103] [] BMXAA6703I - User Name : ME149039 
+[4/5/16 12:39:59:060 EDT] 0000010e SystemOut O 05 Apr 2016 12:39:59:060 [INFO] [mxui103] [] BMXAA6705I - Query : select * from wfassignment where assigncode = 'ME149039' and assignstatus in ( 'ACTIVE' ) 
+[4/5/16 12:39:59:060 EDT] 0000010e SystemOut O 05 Apr 2016 12:39:59:060 [INFO] [mxui103] [] BMXAA6706I - MboSet Name : WFASSIGNMENT Reference = psdi.workflow.WFAssignmentSet@e98ec5e9 
+[4/5/16 12:39:59:060 EDT] 0000010e SystemOut O 05 Apr 2016 12:39:59:060 [INFO] [mxui103] [] BMXAA6707I - MboSet Size : 400 
+[4/5/16 12:39:59:060 EDT] 0000010e SystemOut O 05 Apr 2016 12:39:59:060 [INFO] [mxui103] [] BMXAA6708I - Fetch count so far : 400 
+[4/5/16 12:39:59:061 EDT] 0000010e SystemOut O 05 Apr 2016 12:39:59:060 [INFO] [mxui103] [] psdi.util.MXSystemException: BMXAA6709I - Printing StackTrace: java.lang.Exception 
+java.lang.Exception 
+
+at psdi.mbo.MboSet.fetchMbosActual(MboSet.java:2970) 
+at psdi.mbo.MboSet.fetchMbos(MboSet.java:2806) 
+at psdi.mbo.MboSet.getMbo(MboSet.java:2053) 
+at psdi.mbo.MboSetEnumeration.nextMbo(MboSetEnumeration.java:64) 
+at psdi.workflow.WFAssignmentSet.setOwnerRecordLock(WFAssignmentSet.java:101) 
+at psdi.workflow.WFAssignmentSet.getInboxAssignments(WFAssignmentSet.java:69) 
+at psdi.app.inbxconfig.InbxConfigSet.getAssignments(InbxConfigSet.java:236) 
+at psdi.webclient.controls.InboxPortlet.getAssignments(InboxPortlet.java:81) 
+
+... 
+[4/5/16 12:39:59:061 EDT] 0000010e SystemOut O 05 Apr 2016 12:39:59:061 [INFO] [mxui103] [] BMXAA6710I - -------FetchResultLogLimit logging ends------ 
+
+IBM has internal tools that can correlate and analyze this information when combined with the output of the mxe.mbocount and mxe.db.logSQLTimeLimit monitoring properties to determine many causes of performance, stability, and runtime problems. Since this runs every minute, IBM can gather data on the health of the JVM over a period of time. Often IBM will request up to 24 hours of logs to determine trends in user loads, memory requirements and many other points of interest.
+
+This property should be enabled at all times, since a problem can often not be foreseen or replicated. To troubleshoot or find root cause of many performance issues, the data from this property is required. When enabled. it does not itself have any impact on performance.
+
+For more information on useful debug properties, see the document System Properties to Monitor and Troubleshoot Performance [http://www.ibm.com/support/docview.wss?uid=swg21291250].
+
+RELATED INFORMATION
+Understanding the logSQLTimeLimit Property [http://www.ibm.com/support/docview.wss?uid=swg21426051] 
+Understanding the MBOCount Debug Property [http://www.ibm.com/support/docview.wss?uid=swg21425963] 
+
+Cross reference information Product Component Platform Version Edition Control Desk AIX, Linux, Windows All Versions

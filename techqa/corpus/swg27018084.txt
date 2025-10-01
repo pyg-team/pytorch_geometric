@@ -1,0 +1,205 @@
+Title: IBM Frequently asked questions (FAQ) about WebSphere Process Server (updated February 18, 2011) - United States
+
+Text:
+FAQ; WebSphere Process Server; process server; wps; WPS; troubleshooting PRODUCT DOCUMENTATION
+
+ABSTRACT
+ The following list includes frequently asked questions (FAQ) about WebSphere Process Server to help you troubleshoot potential problems and enhance how you use the product. 
+
+CONTENT
+Do you have ideas for other FAQ about WebSphere Integration Developer? Give us your feedback in the Rate this page section at the bottom.
+
+
+
+
+Additional FAQ documents are available for other WebSphere Business Process Management products
+
+
+
+
+Installing WebSphere Process Server
+
+How do I install WebSphere Process Server v7 silently as a non-root user?
+
+
+
+How do I install a interim fix silently?
+
+
+
+How do I install WebSphere Integration Developer and the WebSphere Process Server UTE silently?
+
+
+
+How do I use Installation Manager without Internet connection?
+
+
+
+What to do if Installation Manager hangs or freezes?
+
+
+
+Where to get Installation Manager Help Topics Summary For Business Process Management products?
+
+
+
+Profile Management Tool
+How do I run the profile management tool (PMT) on a 64bit platform?
+
+
+
+Fix packs/APARs/interim fixes
+Where do I get recommended maintenance packages that are available for IBM WebSphere Process Server?
+
+
+
+How do I find the list of APARs being fixed in a particular WebSphere Process Server Fix Pack?
+
+
+
+WebSphere Process Server Hardware and Software Requirements
+Where can I find the list of supported hardware and software for WebSphere Process Server?
+
+
+
+WebSphere Process Server FAQ
+Where can I find the most up to date FAQ and information about WebSphere Process Server databases?
+
+
+
+Where can I find FAQ related to messaging bindings?
+
+
+
+WebSphere Process Server Assets
+How can I share my assets (Java™ binaries, XML schemas, and WSDL definitions) by-reference between Service Component Architecture (SCA) modules in the WebSphere Process Server run-time environment?
+
+
+
+Troubleshooting
+Where do I get the fixes and configuration steps to resolve my TokenExpiredException caused by LTPA token living time exceeding the default LTPA token timeout value?
+
+
+
+How do I troubleshoot clustering problems, and where can I find solutions to common problems?
+
+
+
+How do I collect troubleshooting data for problems with IBM WebSphere Process Server?
+
+
+
+Where can I get the featured documents for WebSphere Process Server from quarterly support newsletter?
+
+
+Top
+
+Installing WebSphere Process Server 
+
+ 1. FAQ: How do I install WebSphere Process Server V7 silently as a non-root user?
+    Answer: Installation process for WebSphere Process Server v7.0 by a non-root user [http://www-01.ibm.com/support/docview.wss?uid=swg21417628] [http://www-01.ibm.com/support/docview.wss?rs=2307&uid=swg27006649]
+     
+    
+    
+ 2. FAQ: How do I install a WebSphere Process Server V7 interim fix silently?
+    Answer: Install a WebSphere Process Server V7 interim fix silently [http://www-01.ibm.com/support/docview.wss?uid=swg21417656]
+     
+    
+    
+ 3. FAQ: How do I install WebSphere Integration Developer and the WebSphere Process Server UTE silently?
+    Answer: Install WebSphere Integration Developer and the WebSphere Process Server UTE silently [http://www-01.ibm.com/support/docview.wss?rs=2308&uid=swg27016440#inst01]
+     
+    
+    
+ 4. FAQ: How do I use Installation Manager without an Internet connection?
+    Answer: Use Installation Manager without Internet connection [http://www-01.ibm.com/support/docview.wss?uid=swg21420545#NoInternet]
+     
+    
+    
+ 5. FAQ: What to do if Installation Manager hangs or freezes?
+    Answer: Installation Manager hangs during startup while trying to access a URL [http://www-01.ibm.com/support/docview.wss?uid=swg21414213]
+     
+    
+    
+ 6. FAQ: Where to get Installation Manager Help Topics Summary For Business Management Process products?
+    Answer: Installation Manager Help Topics Summary For Business Management Process products. [http://www-01.ibm.com/support/docview.wss?uid=swg21449893]
+    
+    
+    
+
+Profile Management Tool  1.  FAQ: How do I run the profile management tool (PMT) on a 64bit platform?
+    Answer: You cannot use the Profile Management Tool to create or augment profiles on WebSphere Process Server installations on 64-bit architectures except on the Linux on zSeries platform. To create profiles on other 64-bit architectures, you can use the manageprofiles command. For information about using the manageprofiles command, see Creating profiles using the manageprofiles command [http://publib.boulder.ibm.com/infocenter/dmndhelp/v7r0mx/index.jsp?topic=/com.ibm.websphere.wps.doc/doc/tins_manageprofiles_create.html]. You can also use the Profile Management Tool on these architectures if you use a WebSphere Process Server 32-bit installation.
+    
+    
+    
+
+Fix packs/APARs/interim fixes  1. FAQ: Where do I get recommended maintenance packages that are available for IBM WebSphere Process Server?
+    Answer: Recommended fixes for WebSphere Process Server [http://www-01.ibm.com/support/docview.wss?rs=2307&uid=swg27006649]
+     
+    
+    
+ 2. FAQ: How do I find the list of APARs being fixed in a particular WebSphere Process Server Fix Pack?
+    Answer<V7.0>: Fix list for WebSphere Process Server and WebSphere Enterprise Service Bus, Version 7.0 [http://www.ibm.com/support/docview.wss?uid=swg27017312]
+    Top
+    
+    
+
+WebSphere Process Server Hardware and Software Requirements  1. FAQ: Where can I find list of supported hardware and software for WebSphere Process Server?
+    Answer<V7.0>: List of supported operating systems for WebSphere Process Server Version 7.0.0 [http://www.ibm.com/support/docview.wss?uid=swg27006205#700]
+    
+    
+    
+
+WebSphere Process Server FAQ  1. FAQ: Where can I find the most up to date FAQ and information about WebSphere Process Server databases?
+    Answer: WebSphere Process Server database-related frequently asked FAQs (FAQ) [http://www.ibm.com/support/docview.wss?uid=swg21403081]
+     
+    
+    
+ 2. FAQ: Where can I find FAQ related to messaging bindings?
+    Answer: Troubleshooting Messaging bindings problems [http://www.ibm.com/support/docview.wss?uid=swg21405299]
+    
+    
+    
+
+WebSphere Process Server Assets  1. FAQ: How can I share my assets (Java™ binaries, XML schemas, and WSDL definitions) by-reference between Service Component Architecture (SCA) modules in the WebSphere Process Server run-time environment?
+    Answer: By-reference sharing of Java binaries, XML schemas, and interface definitions in WebSphere Process Server (using Shared Libraries) [http://www.ibm.com/support/docview.wss?uid=swg21322617]
+    
+    
+    
+
+Troubleshooting  1. FAQ: How do I collect troubleshooting data for problems with IBM WebSphere Process Server?
+    Answer: MustGather: Read first for WebSphere Process Server [http://www.ibm.com/support/docview.wss?rs=2307&uid=swg21239895]
+     
+    
+    
+ 2. FAQ: Where can I get the featured documents for WebSphere Process Server from quarterly support newsletter?
+    Answer: Featured documents for WebSphere Process Server [http://www.ibm.com/support/docview.wss?uid=swg27008332]
+
+Top
+
+
+
+
+
+
+
+RELATED INFORMATION
+ FAQ - WebSphere Integration Developer [http://www.ibm.com/support/docview.wss?uid=swg27016440]
+FAQ - WebSphere Business Modeler [http://www.ibm.com/support/docview.wss?uid=swg27017899]
+FAQ - WebSphere Business Compass [http://www.ibm.com/support/docview.wss?uid=swg27017900]
+FAQ - WebSphere Business Monitor [http://www.ibm.com/support/docview.wss?uid=swg27017940]
+FAQ - Business Process Choreographer (BPC) [http://www.ibm.com/support/docview.wss?uid=swg27020486]
+
+
+
+
+ORIGINAL PUBLICATION DATE
+ 2010/1/30 
+
+PRODUCT ALIAS/SYNONYM
+ FAQ
+WebSphere Process Server
+process server
+wps
+WPS
+troubleshooting

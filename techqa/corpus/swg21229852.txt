@@ -1,0 +1,117 @@
+Title: IBM MVFS drive on Windows stops displaying ClearCase Views - United States
+
+Text:
+network provider order; NPO; 1229852; MVFS; Views; MVFS drive; M:\ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote explains why the IBM® Rational® ClearCase® MVFS drive suddenly fails to display Views after the Microsoft Windows client workstation is restarted. 
+
+SYMPTOM
+ 
+
+After restarting multiple Windows workstations, the clients were no longer able to see any Views from the M:\ drive (MVFS) from Windows Explorer or ClearCase Explorer. 
+
+Note: Dynamic Views accessed from the M:\ drive had previously worked before the restart. 
+
+ 
+
+CCDOCTOR no longer shows "ClearCase Dynamic Views" on the "Ordered List Of Network Providers" in the "Network Configuration" section.
+
+CAUSE
+ 
+
+This problem can be related to ordered list on the Network Provider Order (review related information for more details). 
+
+ 
+
+In this case a System Administrator pushed registry keys out to the clients that took affect after restart which inadvertently changed the list of Network Providers.
+
+
+RESOLVING THE PROBLEM
+ 
+
+
+Reinstallation of ClearCase is the best course of action as it is unknown how many other changes may have been made as a result of the registry changes; refer to technote 1179647 [http://www-1.ibm.com/support/docview.wss?&rs=984&uid=swg21179647] for directions to completely uninstall ClearCase first.
+
+If reinstalling is not an option, ensure that the list of the registry keys which directly affect the Network Provider Order on Windows, as they relate to the MVFS, are set correctly. 
+
+Note: This solution contains information about modifying the system registry. Before making any modifications to the Microsoft® Registry Editor, it is strongly recommended that you make a backup of the existing registry. For more information describing how to back up the registry, refer to the Microsoft Knowledge Base article 256986 [http://support.microsoft.com/kb/256986].
+
+This is what the registry should contain on Windows:
+
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\NetworkProvider\HwOrder\ 
+
+Key: "ProviderOrder" 
+
+Type: "REG_SZ" 
+
+Value should start with or contain the value: "Mvfs," 
+
+ 
+
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\NetworkProvider\Order\ 
+
+Key: "ProviderOrder" 
+
+Type: "REG_SZ" 
+
+Value should start with or contain the value: "Mvfs," 
+
+ 
+
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\NetworkProvider\ShortName\ 
+
+Key: "Mvfs" 
+
+Type: "REG_SZ" 
+
+Value: "ClearCase Dynamic Views" 
+
+
+After applying fix packs 7.1.2.10 and 8.0.0.6, the "Mvfs" in the Windows registry has changed to "cccredmgr": 
+
+
+This is what the registry should contain on Windows after applying the fix packs:
+
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\NetworkProvider\HwOrder\ 
+
+Key: "ProviderOrder" 
+
+Type: "REG_SZ" 
+
+Value should start with or contain the value: "cccredmgr," 
+
+ 
+
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\NetworkProvider\Order\ 
+
+Key: "ProviderOrder" 
+
+Type: "REG_SZ" 
+
+Value should start with or contain the value: "cccredmgr," 
+
+ 
+
+HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\NetworkProvider\ShortName\ 
+
+Key: "cccredmgr" 
+
+Type: "REG_SZ" 
+
+Value: "ClearCase Dynamic Views" 
+
+
+
+
+
+RELATED INFORMATION
+#About the Network Provider Order on Windows [http://www.ibm.com/support/docview.wss?uid=swg21135684]
+About the MultiVersion File System (MVFS) [http://www.ibm.com/support/docview.wss?uid=swg21230196]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase View: Dynamic Software Development Rational ClearCase MVFS Software Development Rational ClearCase GUI: Windows Explorer (Integration)

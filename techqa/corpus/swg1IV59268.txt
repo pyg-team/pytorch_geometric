@@ -1,0 +1,259 @@
+Title: IBM IV59268: REMOTE DEPLOY OF UD AGENT IN MONITORING 630.02 FAILS ON AIX 64 - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.3.0 Fix Pack 3 (6.3.0-TIV-ITM-FP0003) [http://www-01.ibm.com/support/docview.wss?uid=swg24036775]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Remote Deploy and local installation of the KUD agent into an
+   IBM Tivoli Monitoring 6.30.02 and above environment fails on
+   AIX 6.1 and 7.1 64 bit.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Perform a local installation using the <MEDIA>/unix/tfaix536.txt
+   silent install response file.  The command is similar to the
+   following:
+   
+   <MEDIA>/install.sh -q -p <MEDIA>/unix/tfaix536.txt -h <ITMHOME>
+   
+   <MEDIA>   is the Tivoli Monitoring Agents installation media,
+             not the KUD agent installation media.
+   <ITMHOME> is the Tivoli Monitoring installation directory that
+             you wish to update.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Remote deploy of the ITCAM Agent for DB2 into a 6.30.02.00
+   Tivoli Monitoring installation on AIX 64-bit fails and the ITCAM
+    Agent for DB2 is not started.
+   
+   
+   "tacmd addsystem" for the ITCAM Agent for DB2 into a 6.30.02.00
+   Tivoli Monitoring installation on an AIX 6.1 / 7.1 64-bit
+   endpoint fails and the ITCAM Agent for DB2 is not started.
+   "tacmd getdeploystatus" for the failed transaction on the
+   Monitoring Server system shows a message similar to the
+   following: Error Message  : KDY1024E: The agent failed to
+   respond to the command /usr/bin/su - db2inst1 -c
+   /opt/IBM/ITM/bin/CandleAgent  -h /opt/ IBM/ITM -o db2inst1 start
+   ud did not start or stop agent.  The command returned a failure
+   return code.
+   
+   The itm_install.trc log file on the endpoint contains entries
+   like the following:
+   2013-12-09 15:21:43.572-06:00 ITMinstall.GlobalToLocal
+   replaceForInstance [LOG_ERR]
+         Unable to set variable ICCRTE_DIR, value is null
+   
+   2013-12-09 15:22:31.393-06:00 ITMinstall.CandleInstall main
+   __ERROR__  (traceKey:1386624151393)
+     Exceptions.ITMException: Exceptions.ITMException
+           at ITMinstall.GlobalToLocal.replaceForInstance
+              (GlobalToLocal.java:83)
+           at ITMinstall.GlobalToLocal.changeEnvEntry
+              (GlobalToLocal.java:139)
+           at ITMinstall.GlobalToLocal.updateConfigurationFiles
+              (GlobalToLocal.java:345)
+           at ITMinstall.GlobalToLocal.updateConfigurationFiles
+              (GlobalToLocal.java:367)
+           at ITMinstall.GlobalToLocal.updateConfigurationFiles
+              (GlobalToLocal.java:266)
+           at ITMinstall.CandleInstall.main
+              (CandleInstall.java:16415)
+   
+   The itm_config.trc log file on the endpoint contains entries
+   like the following:
+   2013-12-09 15:34:32.810-06:00 ITMinstall.GlobalToLocal
+   replaceForInstance [LOG_ERR]
+         Unable to set variable ICCRTE_DIR, value is null
+   
+   2013-12-09 15:34:32.937-06:00 ITMinstall.CandleAgent main
+   __ERROR__  (traceKey:1386624872937)
+     Exceptions.ITMException: Exceptions.ITMException
+           at ITMinstall.GlobalToLocal.replaceForInstance
+   (GlobalToLocal.java:83)
+           at ITMinstall.GlobalToLocal.changeEnvEntry
+   (GlobalToLocal.java:139)
+           at ITMinstall.GlobalToLocal.updateConfigurationFiles
+   (GlobalToLocal.java:345)
+           at ITMinstall.CandleAgent.<init> (CandleAgent.java:308)
+           at ITMinstall.CandleAgent.main (CandleAgent.java:2549)
+   
+   "cinfo -t" on the endpoint shows the 32-bit GSKit Security
+   Interface is not installed and the 32-bit Tivoli Monitoring
+   Shared Libraries are an older version than the 64-bit Tivoli
+   Monitoring Shared Libraries.  The output is similar to the
+   following:
+   *********** Mon Dec  9 15:45:50 CDT 2013 ******************
+   User: root Groups: system bin sys security cron audit lp idsldap
+   Host name : system1       Installer Lvl:06.30.02.00
+   CandleHome: /opt/IBM/ITM
+   Version Format: VV.RM.FF.II (V: Version; R: Release; M:
+   Modification; F: Fix; I: Interim Fix)
+   ***********************************************************
+   ...Product inventory
+   
+   PC   PRODUCT DESC
+   PLAT    VER           BUILD           INSTALL DATE
+   
+   ax   IBM Tivoli Monitoring Shared Libraries
+   aix523  06.22.01.00   d9313a          20131209 1521
+   ax   IBM Tivoli Monitoring Shared Libraries
+   aix526  06.30.02.00   d3248a          20131209 0938
+   gs   IBM GSKit Security Interface
+   aix526  08.00.50.05   d3221a          -
+   jr   Tivoli Enterprise-supplied JRE
+   aix526  07.04.02.00   201308061911    -
+   ud   IBM Tivoli Composite Application Manager Agent for DB2
+   aix523  06.22.01.00   00851           20131209 1521
+   ud   IBM Tivoli Composite Application Manager Agent for DB2
+   aix526  06.22.01.00   00851           20131209 1521
+   ui   Tivoli Enterprise Services User Interface
+   aix526  06.30.02.00   d3248a          20131209 0938
+   ux   Monitoring Agent for UNIX OS
+   aix526  06.30.02.00   32411           20131209 0938
+   
+   The missing 32-bit GSKit Security Interface is the reason that
+   the ITCAM Agent for DB2 will not start.
+   
+   The documented solution for remotely installing the 32-bit GSKit
+   Security Interface is to use "tacmd updateframework".  After
+   running the "tacmd updateframework" command, "tacmd
+   getdeploystatus" for the updateframework transaction indicates
+   success and shows a message similar to the following:
+   Error Message  : KDY0028I: Request completed successful
+   
+   After "tacmd updateframework" completes, "cinfo -t" on the
+   endpoint still shows the 32-bit GSKit Security Interface is
+   still not installed and the 32-bit Tivoli Monitoring Shared
+   Libraries version has not changed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  No change has been made to allow the initial "tacmd addsystem"
+   for the ITCAM Agent for DB2 to complete successfully.
+   The code has been changed to allow "tacmd updateframework" to
+   install  the 32-bit GSKit Security Interface and upgrade the
+   32-bit Tivoli Monitoring Shared Libraries on the endpoint.
+   After "tacmd updateframework" completes,"tacmd addsystem" for
+   the ITCAM agent for DB2 will complete successfully and the ITCAM
+   Agent for DB2 will start.
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   
+     | fix pack | 6.3.0-TIV-ITM-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Perform a local silent installation of Tivoli Framework using
+   the < MEDIA >/unix/tfaix536.txt silent install response file.
+   Note: < MEDIA > is the Tivoli Monitoring Agents 6.30.02.00
+   installation media and not the ITCAM Agent for DB2 installation
+   media.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV59268
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   630
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-04-16
+   
+   
+ * CLOSED DATE
+   2014-05-27
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-08
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R630 PSY
+   UP

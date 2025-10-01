@@ -1,0 +1,157 @@
+Title: IBM PM37995: UPDATE EJBDEPLOY TO ADDRESS MULTIPLE PROBLEMS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following fixes are included:
+   RATLC01518626: Prepare for deployment fails in presence of a
+   Custom Converter
+   RATLC00325880: EJB1.1 meet-in-the-middle mapping results in
+   duplicate schema-tables in SQLServer 2000 dbm and map file
+   RATLC01819238: Fix for apar pm18803 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM18803] for WebSphere Application
+   Server V6.1
+   RATLC00326305: "RMIC Command failed" bug in WebSphere
+   Application Server V6.1.0.31 and later
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V6.1                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Update of EJBDeploy addressing          *
+   *                      multiple problems                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The following issues are fixed:
+   Prepare for deployment fails in presence of a
+   Custom Converter
+   EJB1.1 meet-in-the-middle mapping results in
+   duplicate schema-tables in SQLServer 2000 dbm and map file
+   "RMIC Command failed" bug in WebSphere Application Server
+   V6.1.0.31 and later
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The EJBDeploy code has been udpated to fix these problems.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 6.1.0.39.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM37995
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-28
+   
+   
+ * CLOSED DATE
+   2011-06-07
+   
+   
+ * LAST MODIFIED DATE
+   2011-06-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R61I PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

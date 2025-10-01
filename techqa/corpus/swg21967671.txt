@@ -1,0 +1,13 @@
+Title: IBM To "View Data" for SPSS .sav file in AMOS requires that SPSS Statistics Base be installed - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ I have SPSS AMOS installed on my Windows computer. I do not have SPSS Statistics installed on that computer but I oftern receive SPSS Statistics data files (.sav) to analyze. When I try to view the data, either from the File->Data Files dialog in AMOS or by the View Data choice in the IBM SPSS AMOS section of the Start->All Programs menu, I receive a message that SPSS Base must be installed to view an SPSS data file in AMOS. 
+
+ANSWER
+The message is correct. When you choose View Data in AMOS and point to an SPSS Statistics data file (.sav), SPSS Statistics is launched with the data viewer forward. If SPSS Statistics is not installed, then the error message will be printed. (Several years ago, the facilities that used to be packaged as the Base module were divided in previo into the Core, which includes the Data Viewer, and the Base Module, which includes procedures such as Frequencies, Correlations and Linear Regression. The core would be enough to launch the Data Viewer from AMOS). 
+
+RELATED INFORMATION
+ Need more help? Our AMOS forum is Live! [https://developer.ibm.com/answers/search.html?f=&type=question&redirect=search%2Fsearch&sort=relevance&q=%2B[amos]]

@@ -1,0 +1,114 @@
+Title: IBM About the 2 Gigabyte limitation of VOB database files - United States
+
+Text:
+vista; transaction; journal; journaling; schema; 54; 53; 80; size; 2 gig; 2GB; 2gig; 1124619; vob schema 54; vob schema 80 TECHNOTE (FAQ)
+
+QUESTION
+ Which IBM® Rational® ClearCase® schema 54 or 80 VOB database files can and cannot grow over 2 Gigabytes (GB) when working on Microsoft® Windows®, UNIX® or Linux®? 
+
+ANSWER
+ 
+
+Here is a simple breakdown of what files can and cannot grow over 2 GB: 
+
+ * Files allowed to grow over 2 Gigabytes under schema versions 54 and 80 are the VOB database files of the form: " vob_db.* " 
+ * Files not allowed to grow over 2 Gigabytes under schema versions 54 and 80 are the VOB database control files and transaction logs of the form: " vista.* " 
+ * Under schema version 53 (without extended VOB support), none of the database files are allowed to grow over 2 Gigabytes.
+
+
+The VOB db directory contains these files: 
+
+ 1. vob_db.dbd - A compiled database schema, used by embedded database routines for database access. The schema describes the structure of the VOB database.
+    
+    
+ 2. vob_db_schema_version - A schema version file, used by embedded database routines to verify that the compiled schema file is at the expected revision level.
+    
+    
+ 3. vob_db.d0n and vob_db.k0n - Files in which the database's contents are stored.
+    
+    
+ 4. vob_db.str_file - Database string file that stores long strings.
+    
+    
+ 5. vista.* - Database control files and transaction logs.
+
+
+Note: See the IBM Rational ClearCase Administrator's Guide for a complete list of all files contained in the db directory. The above is only an excerpt as it pertains to the subject of this technote. 
+
+Below is a directory listing of a VOB db directory to show the actual file names: 
+
+Note: This example was taken from a Schema 54 VOB on a Windows host, however, it also represents the directory listing on UNIX and Linux. 
+
+C:\vobs\WebSite.vbs\db> dir 
+
+Volume in drive C has no label.
+Volume Serial Number is 442A-CFFA
+
+Directory of C:\vobs\WebSite.vbs\db 
+
+10/20/2002 08:52 AM <DIR> .
+10/20/2002 08:52 AM <DIR> ..
+11/27/2002 04:42 AM <DIR> logs
+11/27/2002 05:42 AM 5,154 vista.taf 
+11/27/2002 05:42 AM 4,096 vista.tcf 
+11/27/2002 05:42 AM 4,096 vista.tjf 
+11/27/2002 04:42 AM 36,864 vob_db.d01 
+10/23/2002 07:47 AM 45,056 vob_db.d02 
+10/20/2002 08:54 AM 8,192 vob_db.d03 
+07/09/2001 11:15 PM 25,173 vob_db.dbd 
+10/23/2002 07:47 AM 32,768 vob_db.k01 
+10/23/2002 07:47 AM 40,960 vob_db.k02 
+10/20/2002 08:54 AM 8,192 vob_db.k03 
+10/20/2002 08:54 AM 8,192 vob_db.k04 
+10/22/2002 11:58 AM 1,043 vob_db.str_file 
+10/20/2002 08:52 AM 4 vob_db_schema_version 
+13 File(s) 219,790 bytes
+3 Dir(s) 2,476,974,080 bytes free 
+
+Any modification to the VOB database will update the vista.* files. Periodically, the vista files get flushed to disk (or played into the VOB database). The VOB database (db) refers to the database files that are stored in the db directory under the VOB storage; vob_db.d0# files (d01, d02, or d03) and vob_db.k0# files (k01, k02, or k03). When a transaction is flushed from the vista.* files, it is played into the vob_db.d0# and vob_db.k0# files; where the k files serve as indexes into the d files for faster searching. The vista.taf file is emptied when the transaction completes. However, the flush for the vista.tcf file is dependent on the flush of the transaction journal file, vista.tjf. There is no process running to periodically flush the transaction journal file, rather the file is checked whenever there is a write to the database. The frequency of the flush for the vista.tjf and vista.tcf adhere to the following: 
+
+ * Every 5 minutes, by default, for any completed transaction that is 5 minutes or older 
+ * When the 'journal_file_limit' is reached (see #2 below) 
+ * When the VOB gets locked
+
+
+Note: The permanent contents of artifacts that are under ClearCase control are stored in the source pools (.s and its subdirectories), not in the VOB database. 
+
+Example of warning messages that get logged in the ClearCase vobrpc and db logs is: 11/07/02 04:45:12 db_server(4036): Warning: Rollforward recovery using "C:\vobs\WebSite.vbs\db\vista.tjf" started Thu Nov 07 04:45:12 2002
+
+These messages are informational only and are sent whenever the system is unsure about the transaction state of a database. The journal file is scanned for outstanding transactions that may need to be completed. This usually happens when the lock manager is restarted and the database is opened up the first time. See technote 1123492 [http://www-1.ibm.com/support/docview.wss?uid=swg21123492] for more details.
+
+1. In the case that a vista.tjf file does grow to a file size greater than 2 GB: 
+
+ * Use cleartool lock to lock the VOB, then, unlock it with cleartool unlock. This will force flushing of the data to disk and refresh the file back to zero length. 
+ * The lock may fail since it is a transaction itself, or it may fail because the transaction file is corrupt, which can occur due to it exceeding the 2 GB limit. In either of these cases, stop ClearCase, so that nothing will get written the vista files, and remove the vista.tjf and vista.tcf files manually from the db directory. Then, re-start ClearCase, and immediately lock and unlock the VOB. This will reduce the chances of data loss, because it forces the data to disk. However, a loss of data is still possible. 
+
+
+2. With db schema 53 or 54 or 80, a limit can be set so that the vista.tjf file never grows over 2 GB. It is recommended to set the limit at 1.2 Gigabytes (1200000000 Kilobytes). This means that the transaction journaling file will be forced to disk and zeroed out whenever it reaches a file size of 1.2 GB.  * Create the following file if it does not already exist:
+   
+   UNIX or Linux: /var/adm/atria/config/db.conf 
+   
+   Windows: {ClearCase Installation Path}\var\config\db.conf
+   
+   Review the ClearCase Command Reference Guide on the topic of config_ccase [http://publib.boulder.ibm.com/infocenter/cchelp/v7r0m1/index.jsp?topic=/com.ibm.rational.clearcase.cc_ref.doc/topics/config_ccase.htm](cleartool man config_ccase) for more information.
+   
+ * Add the line without the quotes "-journal_file_limit 1200000000"
+   
+   Note: It is important to be aware that certain transactions in large VOBs, like clearimport, cleartool mklabel, multitool rmreplica or many scripted commands, can cause the vista.* files to grow beyond 2 GB even with the journal_file_limit set to 1.2 GB in the db.conf file. This is expected behavior because, though the journal_file_limit is exceeded, the vista.* files cannot get flushed until the transaction completes, which may not occur before the 2 GB limit is met. You will need to use the appropriate workaround.
+   
+   WORKAROUNDS:
+   
+   Note: In large VOBs, where these operations may run for several hundred element versions and metadata, you should perform them during a scheduled downtime. This will help minimize any potential data loss due to corruption of the transaction log or the VOB database should the transaction log exceed the 2 GB limit.  1. Some operations, such as clearimport and cleartool mklabel, can be broken up into smaller parts to prevent the vista.* files from reaching the 2 GB limit.
+       
+       
+    2. In the case of operations like multitool rmreplica, it is recommended to scrub the oplogs before removing the replica, see technote 1128018 [http://www.ibm.com/support/docview.wss?&uid=swg21128018] for more information.
+   
+   
+
+RELATED INFORMATION
+ About the vista.* files [http://www.ibm.com/support/docview.wss?uid=swg21149322]
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase Database

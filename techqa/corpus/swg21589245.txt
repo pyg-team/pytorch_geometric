@@ -1,0 +1,34 @@
+Title: IBM No data in NT agent workspaces - United States
+
+Text:
+itm; no data; missing data; empty; knt; nt TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The NT agent does not show any data in the TEP workspaces 
+
+DIAGNOSING THE PROBLEM
+The Windows OS agent log shows an error message similar to this:
+4F06FECA.0030-110C:kntkthrd.cpp,526,"kntkthrd::ServiceThreadMain") 5 memory leaks found, excluding counter:'236'
+
+
+RESOLVING THE PROBLEM
+The Monitoring agent for Windows OS agent process, called kntcma.exe, may leak memory due to incorrectly installed perfmon counters or to a corrupted perfmon registry. The default behaviour when the agent starts is to perform a memory leak analysis on the perfmon counters that the agent uses to collect data: forty data samples per counter are sampled and if the counter is found to leak memory then that counter is excluded and a Windows event is posted to the Windows Application Event Log. The NT_PERFMON_MEMORY_CHECK environment variable can be set in the KNTENV file to disable the memory check on the perfmon counters, when the agent starts. 
+
+
+To disable the perfmon memory leak check:
+NT_PERFMON_MEMORY_CHECK=0
+
+To enable the perfmon memory leak check:
+NT_PERFMON_MEMORY_CHECK=1 
+
+Sometimes reloading performance counters help as well. To reload counter open a DOS/command prompt window and enter 
+
+cd \windows\system32 
+lodctr /R 
+
+Note /R is uppercase. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management IBM Tivoli Monitoring V6 ITM Agent Windows V6

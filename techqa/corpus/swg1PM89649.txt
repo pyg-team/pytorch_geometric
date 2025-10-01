@@ -1,0 +1,223 @@
+Title: IBM PM89649: CICS VR 4.2 TOLERATING VR 5.1 RCDS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Provide capability for CICS VR 5.1 to tolerate a CICS VR 4.2 or
+   4.3 RCDS (Recovery Control Dataset).
+   Additional Symptom(s) Search Keyword(s): KIXREVWJB migration
+   upgrade RFE 32974
+   http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&C
+   R_ID=32974 [http://www.ibm.com/developerworks/rfe/execute?use_case=viewRfe&CR_ID=32974]
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: This APAR affects all CICSVR 5.1 users       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: 1. Provide capability for CICS VR 5.1   *
+   *                      to tolerate a CICS VR 4.2 or 4.3 RCDS   *
+   *                      (Recovery Control Dataset)              *
+   *                                                              *
+   *                      2. Add PROCSTEP to RCDS REPORT output   *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The APAR changes the format of CICS VR 5.1 RCDS backout record
+   to tolerate a CICS VR 4.2 or 4.3 RCDS and adds the PROCSTEP
+   column to the RCDS REPORT UNDO output.
+   
+   The APAR also changes the RCDS migration utility for RCDS
+   migration from version 5.1 to version 5.1 with APAR PM89649.
+   
+   The APAR also fixes some english popup messages and panels.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following publication changes to publication SC34-2813-00,
+   CICS VSAM Recovery Implementation Guide and Reference Version 5
+   Release 1, correspond with APAR PM89649.
+   
+   ----------------------------------------------------------------
+   The text of section "Migration from earlier CICS VR release"
+   till JCL Sample EXEC sentence must be replaced with following
+   text:
+   
+   CICS  VR stores all recovery information in the CICS VR
+   recovery control data sets (RCDSs). The RCDS format in CICS VR
+   V5R1 with APAR PM89649 applied is the same as the RCDS format
+   in CICS VR V4R2 or V4R3, so migration of these data sets is not
+   required. However, if you have CICS VR V5R1 without APAR
+   PM89649 applied and have already migrated the RCDSs, additional
+   migration is required.
+   
+   If you are migrating from CICS VR V4R2 or V4R3 to CICS VR V5R1
+   with APAR PM89649 applied, you do not need to migrate
+   the contents of your existing CICS VR RCDSs. If you have
+   already migrated from CICS VR V4R2 or V4R3 to CICS VR V5R1
+   without APAR PM89649 and have already run the DWWMIW utility
+   to migrate the contents of your existing CICS VR RCDSs, use
+   the following procedure:
+   
+     1. Apply APAR PM89649.
+     2. Create the target CICS VR V5R1 RCDSs.
+     3. Run the CICS VR DWWMIW migration utility again.
+   
+   CICSVR V5R1 implements the MIGRATE RCDS command to migrate
+   CICSVR Server AS defaults from previous releases. See
+   MIGRATE RCDS: Specify migration option for a detailed
+   description of the MIGRATE command.
+   
+   The following sample JCL to run the CICS VR migration utility
+   contains an example of running the DWWMIW program to migrate
+   RCDSs:
+   Figure 1. Sample JCL to run the CICS VR V5R1 migration utility
+   //MIGRATE JOB (ACCOUNT),MSGLEVEL=(1,1),MSGCLASS=H,REGION=4M
+   
+   The description of sentences 7-9 and 10 in JCL Sample should be
+   replaced with following text:
+   
+    7 - 9  Specifies the RCDSs to be migrated.
+   
+    10  DWWIN defines the data set that contains the CICS VR
+   commands. You can either specify a sequential data set with
+   80-byte, fixed-length records, or include the CICS VR MIRGATE
+   RCDS command in-stream as shown. You can also specify dummy or
+   empty input data set for using default value for option
+   DEFAULT(NO).
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  *********
+   * HIPER *
+   *********
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM89649
+   
+   
+ * REPORTED COMPONENT NAME
+   CICS VSAM RECOV
+   
+   
+ * REPORTED COMPONENT ID
+   5655Y2400
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   YesHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-23
+   
+   
+ * CLOSED DATE
+   2013-07-10
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK95711 UK95712
+   
+   
+
+MODULES/MACROS
+ *  DWWARDJO DWWBATOP DWWBAVUP DWWBBBRP DWWGDBAI
+   DWWGDTOP DWWGJEXT DWWGJIMP DWWGJREP DWWGJURE DWWGRBAI DWWGRTOP
+   DWWITDVR DWWITDVT DWWITD33 DWWITD4A DWWITD41 DWWITMMT DWWKBFD
+   DWWKBFI1 DWWKHUC  DWWKHUC1 DWWKII3  DWWKJE   DWWKTY3  DWWKUD5
+   DWWKUX5  DWWKVL   DWWKVL1  DWWKVL2  DWWMIWTP DWWPPDS2 DWWPPQDR
+   DWWPPVSC DWWP10   DWWP11   DWWP12   DWWP20   DWWP30   DWWP40
+   DWWP41   DWWP50   DWWP51   DWWP52   DWWP56   DWWP60   DWWP68
+   DWW3GEOX
+   
+   
+    
+   
+   
+
+Publications Referenced SC34281300 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CICS VSAM RECOV
+   
+   
+ * FIXED COMPONENT ID
+   5655Y2400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R51E PSY UK95712 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK95712]
+   UP13/07/18 P F307
+   
+   
+ * R510 PSY UK95711 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK95711]
+   UP13/07/18 P F307
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

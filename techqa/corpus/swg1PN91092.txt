@@ -1,0 +1,222 @@
+Title: IBM PN91092: C-FTP SERVER DOES NOT CORRECTLY HANDLE BDAM (DSORG=DA) FILE TRANSFERS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When GETting BDAM ( DSORG=DA ), direct access file, from MVS
+   with the C-FTP server using LE/370 1.4 or 1.5, an I/O abend
+   occurs when the data set is attempted to be opened.  The
+   following message is seen in the C-FTP server trace:
+      ' seq_open_file: failed (92): EDC5092I An I/O abend was
+        trapped. '
+   Message ' IEC141I 013-AC,IGG0191A ' is seen in the syslog.
+   .
+      When transferring the same direct access data set in MODE B,
+   TYPE E the data seems to be transferred, but a client thread
+   abend (abend0C4-4) occurs when attempting to close the data
+   set.  The following is seen in the C-FTP server trace:
+        seq_close_file: close an open file
+        thread_abend_handler: recovery entered with
+        srvr: 05D0517C, abend code: 0C4-4
+        .... ERR_CODE 000C4000
+        .... ERR_REASON 00000004
+   And, the MVS syslog reflects error messages:
+        IEC331I 028-002(000C0010),USER22  ,ISPF42  ,IOEA,IGG0CLEG
+        IEC332I ACDV,ACD1,IDVR,ALTR,MAXI,PUPD
+        IEC333I P016(000),03,SYSENV.MASTCAT,SYS1.TCPPARMS
+        EZY2624E Client Thread abend detected, reason: 0C4-4
+   ADDITIONAL SYMPTOMS:
+   Various abends may occur during the open of the data set
+   when using C/370 RTL, as well.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of C-FTP trying to do a 'get' of   *
+   *                 a DSORG=DA file.                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When GETting BDAM ( DSORG=DA ),         *
+   *                      direct access file, from MVS            *
+   *                      with the C-FTP server using LE/370      *
+   *                      1.4 or 1.5, an I/O abend                *
+   *                      occurs when the data set is attempted   *
+   *                      to be opened.  The following message is *
+   *                      seen in the C-FTP server trace:         *
+   *                       ' seq_open_file: failed (92): EDC5092I *
+   *                         An I/O abend was trapped. '          *
+   *                                                              *
+   *                      Message ' IEC141I 013-AC,IGG0191A '     *
+   *                      is seen in the syslog.                  *
+   *                                                              *
+   *                      When transferring the same direct       *
+   *                      access data set in MODE B,              *
+   *                      TYPE E the data seems to be transferred *
+   *                      but a client thread abend (abend0C4-4)  *
+   *                      occurs when attempting to close the     *
+   *                      data set. The following is seen in      *
+   *                      the C-FTP server trace:                 *
+   *                       seq_close_file: close an open file     *
+   *                       thread_abend_handler: recovery entered *
+   *                       srvr: 05D0517C, abend code: 0C4-4      *
+   *                       .... ERR_CODE 000C4000                 *
+   *                       .... ERR_REASON 00000004               *
+   *                      And, the MVS syslog reflects error mes  *
+   *                      IEC331I 028-002(000C0010),USER22,ISPF4  *
+   *                      IEC332I ACDV,ACD1,IDVR,ALTR,MAXI,PUPD   *
+   *                      IEC333I P016(000),03,SYSENV.MASTCAT,SY  *
+   *                      EZY2624E Client Thread abend detected,  *
+   *                               reason: 0C4-4                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The open of the data set needs to be done without LE.  This
+   requires adding a BSMOP (BSAM Open), BSMRD (BSAM read) and
+   BSCL (BSAM close) function to do these operations.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  EZAFTSMV has been updated to check if the DSORG is DA and then
+   set the useBASM flag accordingly.  A new module has been added,
+   EZAFTSIO that contains the I/O routines needed to do the I/O
+   for DSORG=DA files.
+   
+   For DSORG=DA files, only get (retrieve) operations of fixed
+   format (record format=fixed) files in binary mode are supported.
+   If an attempt to get a DSORG=DA file is made, and the above
+   conditions are not met, the client will receive message:
+   "550 DSORG=DA requires structure: FILE, mode:STREAM, and
+   transfer type:  IMAGE."
+   
+   There is no support for PUT operations of DSORG=DA data sets.
+   
+   
+   * Cross Reference between External and Internal Names
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Fixtest is available for originating customer only.
+   
+   
+    
+   
+   
+
+COMMENTS
+ *  The fix is being provided to customer to test 'get' of DSORG=DA
+   data in binary mode only.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PN91092
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   1996-11-11
+   
+   
+ * CLOSED DATE
+   1997-06-03
+   
+   
+ * LAST MODIFIED DATE
+   1997-11-10
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ05863 PQ05055 [http://www-01.ibm.com/support/docview.wss?uid=isg1PQ05055] PQ05316
+   
+   
+
+MODULES/MACROS
+ *  EZAFTSIO EZAFTSME EZAFTSMV EZAFTSRI EZAFTSRR
+   HTCP310J
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * FIXED COMPONENT ID
+   5655HAL00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY UQ05863 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ05863]
+   UP97/06/10 P F706
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

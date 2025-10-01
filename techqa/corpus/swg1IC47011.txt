@@ -1,0 +1,196 @@
+Title: IBM IC47011: DOCUMENTATION IS UNCLEAR REGARDING TSM MIGRATION/UPGRADE USE OF RPM PARAMETERS. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Documentation is unclear regarding TSM migration/upgrade use of
+   rpm parameters.
+   .
+   The Linux 5.3 installation guide also  references rpm -ivh on a
+   migrate install.  To use rpm -ivh one needs to use rpm -e to
+   remove the existing packages before the new can be installed
+   (not mentioned).  In Linux rpm -U should remove existing
+   packages before installing but documentation does not mention
+   this parameter.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of IBM Tivoli Storage Manager      *
+   *                 for Linux Installation Guide Version 5.3.    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See Error Description in APAR.          *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Steps 2 - 7 were updated in the "Installation and
+   Configuration" section of the Linux  Installation Guide,
+   making the installation/configuration instructions more
+   clear and including more information on the rpm commands.
+   
+   2. If you are installing from a CD media, insert the
+   Tivoli Storage Manager CD into a CD-ROM  drive and change
+   to that drive. For example: cd /mnt/cdrom If you are
+   installing from a .bz2  file obtained from the IBM
+   software maintenance web site, go to the directory where
+   the .bz2  file resides and issue the following command:
+   tar xjf TIVsm-server-5.3.2.0.i686.tar.bz2
+   
+   3. See the README file on the CD for changes to the
+   installation procedure.
+   
+   4. To install the server on Linux , you must accept the
+   license agreement. Perform the following steps.
+   a. Run the install_server script. The syntax is: ./install_
+   server [prefix] where prefix is  optional, and it denotes
+   the file system where you would like IBM Tivoli Storage
+   Manager to  be installed. If no prefix is given, the
+   default is /opt.
+   b. From the displayed menu, select a number for the
+   language that you prefer to display the license agreement.
+   Press Enter.
+   c. The install_server script will display the license
+   agreement in the language specified,  and ask for you to
+   accept them. To accept the license agreement, press 1,
+   followed by the Enter key.
+   
+   5. Once you have accepted the license agreement, a
+   menu will be displayed with all the  available RPM
+   packages for the corresponding platform. At this point,
+   you can either quit the install_server script by
+   pressing 'q,' followed by the Enter key, or select packages
+   from the menu to be installed. If you exit the menu, you
+   can install any of the RPM packages  that correspond
+   to your platform manually, using the Red Hat Package
+   Manager (rpm). The default installation location that
+   rpm uses to install the IBM Tivoli Storage
+   Manager packages is /opt. To install to a different
+   location, use the --prefix option in rpm.
+   
+   6. If you chose to use the menu, choosing the Basic(b)
+   installation will install the server.  If you have an
+   older version of Tivoli Storage Manager installed, the
+   install server script  will detect that and issue the
+   rpm -U command to upgrade the existing Tivoli Storage
+   Manager  packages. If no Tivoli Storage Manager packages
+   are installed on the system, the  install_server script
+   will issue the rpm -i command to perform a fresh install
+   of the Tivoli Storage Manager packages. If you are
+   installing from a CD-ROM media, the Basic(b) selection
+   will also install or upgrade the license enabler.
+   
+   7. If you decide to install the packages manually,
+   outside of the install_server script,  here is how you can
+   install the packages. If an older version of the Tivoli
+   Storage Manager  package is installed, issue the following
+   command: rpm -Uvh <packagename> where  <packagename> is one
+   of the packages that you want to install. With the
+   above command, rpm will upgrade the existing
+   Tivoli Storage Manager package in the same file system
+   where it is currently installed.
+   
+   To install to a different file system, you would have to
+   remove the existing package and  perform a fresh install
+   of the new package, using the --prefix option. For
+   example: rpm -e  <packagename> rpm -ivh <packagename>
+   --prefix /usr
+   
+   Note: To find out which Tivoli packages are installed
+   on the system, enter the following command:
+   rpm -qa | grep TIVsm If the Tivoli Storage
+   Manager package is not installed,  perform a fresh
+   installation by issuing the following command:
+   rpm -ivh <packagename> [-- prefix] where --prefix is
+   optional and denotes the file system where you want the
+   Tivoli  Storage Manager package to be installed.
+   
+   
+   This information is projected to be documented in the
+   next release.
+   Note that this is subject to change at the discretion of IBM.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC47011
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER 510
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   53L
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-08-04
+   
+   
+ * CLOSED DATE
+   2005-09-29
+   
+   
+ * LAST MODIFIED DATE
+   2005-09-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced GC32159900 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,21 @@
+Title: IBM I would like SPSS 15 Production Facility to report error messages if my commands fail - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When I run a run my command syntax in SPSS 15 Production Mode, I set the defaults to "Stop Processing After an Error" and my output as a .txt file. Despite this setting, SPSS will continue to run without prompting me with any error message. 
+
+For example, in a DATA LIST command, I deliberately added a formatting error to illustrate my issue. This results in the output window activating for a few seconds but I have to go into the .txt file to find out whether or not the job completed successfully. Running the same code in interactive produces an informative error message, can SPSS Production Facility at least indicate whether or not a command syntax job ran successfully? 
+
+RESOLVING THE PROBLEM
+SPSS Development has been notified of this issue. We apologize for any inconvenience this has caused. In the meantime the only workaround is to keep SPSS open, from the Production facility menu choose Edit->Options then check "Show SPSS when running"
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 67630

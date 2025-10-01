@@ -1,0 +1,203 @@
+Title: IBM IZ04179: CLARIFY FIPS COMPLIANCE IN REGARDS TO OS, GSKIT, AND APPLICATION TYPE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  FIPS compliance information is not clearly stated in the
+   WebSphere MQ Fixpack readme nor the WebSphere MQ Security
+   manual.
+   
+   FIPS compliance depends upon the GSkit version, application
+   type, type of connection and operating system.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   WMQ customers running Windows or UNIX who require FIPS 140-2
+   compliant SSL connections for their channels.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows) +Java
+   ****************************************************************
+   PROBLEM SUMMARY:
+   Customers who need to use FIPS 140-2 compliant SSL connections
+   for their channels were unsure as to whether their SSL was FIPS
+   140-2 compliant.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  For WMQ 6 on AIX, Linux, HP-UX, Solaris and Windows, the FIPS
+   140-2 compliance of WMQ on these platforms is as follows:
+   
+   1. For all WMQ message channels (all channel types except
+   SVRCONN and CLNTCONN), the connection will be FIPS-compliant if
+   both of the following conditions are met:
+   a. The installed GSkit ICC version has been certified FIPS
+   140-2 compliant on the installed operating system version and
+   hardware architecture
+   b. The queue manager's SSLFIPS attribute has been set to YES.
+   
+   2. For all WMQ client applications (except Java/JMS applications
+   using client mode), the connection will use GSkit and will be be
+   FIPS-compliant if both of the following conditions are met:
+   a. The installed GSkit ICC version has been certified FIPS
+   140-2 compliant on the installed operating system version and
+   hardware architecture
+   b. SSLFIPS mode has been enabled on the client as described in
+   Chapter 9 of the WMQ Clients manual.
+   
+   3. For all WMQ Java or JMS client applications which use client
+   (not bindings) mode, the connection will use the JRE's SSL
+   implementation and will be FIPS-compliant if both of the
+   following conditions are met:
+   a. The Java Runtime Environment used to run the application is
+   FIPS-compliant on the installed operating system version and
+   hardware architecture
+   b. SSLFIPS mode has been enabled on the client as described in
+   the WMQ Using Java manual.
+   
+   In general, all of the AIX, Linux, HP-UX, Solaris and Windows
+   platforms are FIPS 140-2 certified except as noted in the readme
+   file shipped with each fix pack or refresh pack.
+   
+   For SSL connections using GSkit, the component which is FIPS
+   140-2 certified is named ICC. It is the version of this
+   component which determines GSkit FIPS compliance on any given
+   platform. Customers may run the gsk7ver command to determine the
+   ICC version currently installed. Here is an example extract of
+   the gsk7ver output relating to ICC:
+   
+   ICC
+   ============
+   @(#)CompanyName:      IBM Corporation
+   @(#)LegalTrademarks:  IBM
+   @(#)FileDescription:  IBM Crypto for C-language
+   @(#)FileVersion:      1.4.5.0
+   @(#)LegalCopyright:   Licensed Materials - Property of IBM
+   @(#)                  ICC
+   @(#)                  (C) Copyright IBM Corp. 2002-2005
+   @(#)                  All Rights Reserved. US Government Users
+   @(#)                  Restricted Rights - Use, duplication or
+   disclosure
+   @(#)                  restricted by GSA ADP Schedule Contract
+   with IBM Corp.
+   @(#)ProductName:      icc_1.4 (GoldCoast Build)
+   @(#)ProductVersion:   1.4.5.0
+   @(#)ProductInfo:      07/03/12.23:55:21.07/03/13.15:00:28
+   @(#)CMVCInfo:         icc_1.4/icc1.4.0_051026
+   
+   The NIST certification statement for GSkit ICC 1.1, 1.2, 1.2.1
+   and 1.2.2 (applicable to WMQ versions 6.0.0.0, 6.0.1.0, 6.0.1.1,
+   6.0.2.0 and 6.0.2.1) can be found at the following link:
+   http://csrc.nist.gov/cryptval/140-1/1401val2004.htm#384 [http://csrc.nist.gov/cryptval/140-1/1401val2004.htm#384]
+   
+   The NIST certification statement for GSkit ICC 1.4.5 (shipped in
+   GSkit 7.0.4.11, applicable to WMQ 6.0.2.2 or later) can be found
+   at the following link:
+   http://csrc.nist.gov/cryptval/140-1/1401val2007.htm#775 [http://csrc.nist.gov/cryptval/140-1/1401val2007.htm#775]
+   
+   This information is to be added the FIPS section of Chapter 6 in
+   the WMQ Security manual (topic sy11010_) to help customers
+   determine whether they are FIPS-compliant.
+   Furthermore, since 19th May 2007, the following DES-based SSL
+   cipherspecs are no longer FIPS 140-2 compliant:
+   TLS_RSA_WITH_DES_CBC_SHA
+   FIPS_WITH_DES_CBC_SHA
+   
+   The SSL cipherspec tables in the manuals are to be amended
+   accordingly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ04179
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ LIN X86 V6
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7204
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-09-04
+   
+   
+ * CLOSED DATE
+   2007-09-27
+   
+   
+ * LAST MODIFIED DATE
+   2007-09-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

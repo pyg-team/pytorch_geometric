@@ -1,0 +1,25 @@
+Title: IBM BIP2322E Problems connecting to a broker - United States
+
+Text:
+MQIINFO TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Problems connecting to IBM Integration Bus (IIB) or WebSphere Message Broker (WMB). The following error is returned when the mqsicvp command is run:
+
+BIP2322E: Database error: SQL State 'IM004'; Native Error Code '0'; Error Text '[DataDirect][ODBC lib] Driver's SQLAllocHandle on SQL_HANDLE_ENV failed'. The error has the following diagnostic information: SQL State 'IM004' SQL Native Error Code '0' SQL Error Text '[DataDirect][ODBC lib] Driver's SQLAllocHandle on SQL_HANDLE_ENV 
+failed'. 
+
+This message can be accompanied by other messages describing the effect on the message broker itself. Use the reason identified in this message with the accompanying messages to determine the cause of the error. 
+
+RESOLVING THE PROBLEM
+Ensure that you have run both DB2 profile and sample profile for the broker's service id. You can also source both profiles in the brokers service id .profile.
+Note: Ensure that you are using the correct ODBC driver as documented in the online information:
+IIB: Sample IBM Integration Bus ODBC configuration files [http://www.ibm.com/support/knowledgecenter/SSMKHH_9.0.0/com.ibm.etools.mft.doc/bk58070_.htm] 
+WMB: Sample WebSphere Message Broker ODBC configuration files [http://www.ibm.com/support/knowledgecenter/SSKM8N_8.0.0/com.ibm.etools.mft.doc/bk58070_.htm]
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere Message Broker AIX, HP-UX, Linux, Solaris 7.0, 8.0 
+PRODUCT ALIAS/SYNONYM
+ WMB MB WebSphere Message Broker MQ Integrator WBIMB WBI-MB MQSI WMQI

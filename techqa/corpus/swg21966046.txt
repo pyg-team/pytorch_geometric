@@ -1,0 +1,106 @@
+Title: IBM How to Encode IBM FileNet Application Engine Workplace or FileNet Workplace XT Usertoken? - United States
+
+Text:
+workplace; XT; usertoken; encoding; encode; WcmEncodingUtil; .NET TECHNOTE (FAQ)
+
+QUESTION
+ How to encode special characters in the token? 
+
+CAUSE
+When the token URL are not properly encoded, the authentication error will surface for usernames who have special characters in them:
+
+com.filenet.wcm.api.InvalidCredentialsException: com.filenet.api.exception.EngineRuntimeException;The user is not authenticated.
+
+ANSWER
+Workplace can be configured to generate and/or accept user tokens. One case for setting Workplace to accept tokens is presented by the Application Engine UI Service, allowing external applications to execute Workplace operations. When invoked by a call that includes a token, the AE UI Service will respond with the requested resource without first posting the Workplace sign-on page.
+
+Before we pass the token, it is always recommended to encode the token with the Java API method URLEncoder.encode(), or with the encodeURL method in the Workplace encode/decode utility class, WcmEncodingUtil.
+
+
+URLEncoder.encode():
+https://docs.oracle.com/javase/6/docs/api/java/net/URLEncoder.html [https://docs.oracle.com/javase/6/docs/api/java/net/URLEncoder.html] 
+
+WcmEncodingUtil:
+https://www-304.ibm.com/support/knowledgecenter/api/content/nl/en-us/SSNW2F_5.2.0/com.ibm.p8.ae.dev.java.tlkt.doc/com/filenet/wcm/toolkit/util/WcmEncodingUtil.html [https://www-304.ibm.com/support/knowledgecenter/api/content/nl/en-us/SSNW2F_5.2.0/com.ibm.p8.ae.dev.java.tlkt.doc/com/filenet/wcm/toolkit/util/WcmEncodingUtil.html]
+
+Notice that the Java API method URLEncoder.encode() may work in some cases but it is not as robust especially for cases with special characters in the username, such as a dot ".". 
+For example: paul.lee.
+
+As documented by Oracle above, the special characters ".", "-", "*", and "_" remain the same, therefore, it is recommend to use FileNet WcmEncodingUtil to encode. 
+
+For example:
+com.filenet.wcm.toolkit.util.WcmEncodingUtil
+
+For .NET, WcmEncodingUtil API doesn't exist therefore cannot be used. Use the following code to encode the URL, which is documented here:
+http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.0.0/com.ibm.p8.ae.dev.doc/workplace/guide/appendixes.htm%23csharp [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.0.0/com.ibm.p8.ae.dev.doc/workplace/guide/appendixes.htm%23csharp] 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+RELATED INFORMATION
+ C# Label Encoding Method [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.0.0/com.ibm.p8.ae.dev.doc/workplace/guide/appendixes.htm%23csharp]
+CPE 5.2 Class WcmEncodingUtil [https://www-304.ibm.com/support/knowledgecenter/api/content/nl/en-us/SSNW2F_5.2.0/com.ibm.p8.ae.dev.java.tlkt.doc/com/filenet/wcm/toolkit/util/WcmEncodingUtil.html]
+Java Class URLEncoder [https://docs.oracle.com/javase/6/docs/api/java/net/URLEncoder.html]

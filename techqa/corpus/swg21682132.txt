@@ -1,0 +1,23 @@
+Title: IBM Datapower SOA Appliances Log format changed after upgrading to firmware 5.0.0 or later - United States
+
+Text:
+DataPower; log; error; format; message TECHNOTE (FAQ)
+
+QUESTION
+ Why has the log format changed for some log messages after upgrading to firmware 5.0.0 or newer on DataPower SOA Appliances? 
+
+CAUSE
+After upgrading to firmware version 5.0.0 or later a customer may notice that the log message now include a message ID, when it previously hadn't for example:
+Some messages previously had the following format in a firmware version prior to 5.0.0:
+May 29 21:42:00 <host name> 1 [DomainName][system][error]trans(751): ...(DataPower message)
+Would now look like:
+May 29 21:42:00 <host name> 1 [DomainName][0x80000001][system][error] trans(751): ...(DataPower message)
+
+This may effect log monitoring configurations which relied on the previous format and match expressions may need to be changed to account for this behavior.
+
+
+ANSWER
+The release for firmware version 5.0.0 state that "Enhanced logging capabilities of appliance internal information" has been added as a new feature. One of the changes made is to ensure that all logs include a message id. This is not something that can be controlled by the user.
+
+
+Typically new features are documented in firmware release notes and it is recommended when upgrading to review release notes from all firmware versions between the version you are upgrading from to the firmware version you are upgrading to, to understand how the firmware may change.

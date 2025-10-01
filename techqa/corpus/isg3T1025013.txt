@@ -1,0 +1,90 @@
+Title: IBM PCM/HPC v3.2 and v4.1.x support for SSLv3 - United States
+
+Text:
+sslv3 support TECHNOTE (FAQ)
+
+QUESTION
+ Is there a way PCM/HPC v3.2 and v4.1.x can support newer version of SSL/TLS ? 
+
+ANSWER
+SSLv3 contains a vulnerability that has been referred to as the Padding Oracle On Downgraded Legacy Encryption (POODLE) attack. SSLv3 is enabled in Platform Cluster Manager and Platform HPC. 
+Product could allow a remote attacker to obtain sensitive information, caused by a design error when using the SSLv3 protocol. A remote user with the ability to conduct a man-in-the-middle attack could exploit this vulnerability via a POODLE (Padding Oracle On Downgraded Legacy Encryption) attack to decrypt SSL sessions and access the plain text of encrypted connections. 
+
+Workarounds and Mitigations 
+
+IBM recommends that you review your entire environment to identify other areas that enable the SSLv3 protocol and take appropriate mitigation such as disabling SSLv3 and remediation actions. 
+
+If you have HTTPS enabled, complete the following steps. Otherwise, no action is required. 
+For Platform Cluster Manager – Standard Edition and Platform HPC:
+
+1. Source your environment. 
+- For Platform HPC Version 3.2 or Platform Cluster Manager Version 3.2, run the following command:
+# source /opt/kusu/bin/pcmenv.sh
+- For Platform HPC Version 4.1.1 or 4.1.1.1, run the following command: 
+# source /opt/pcm/bin/pcmenv.sh
+- For Platform Cluster Manager Version 4.1, 4.1.1, or 4.1.1.1, run the following command: 
+# source /opt/pcm/bin/pcmenv.sh
+
+2. Edit the $GUI_CONFDIR/server.xml file. In the connector XML tag, set the sslProtocol value from SSL to TLS, and save the file. For example:
+<Connector port="${CATALINA_HTTPS_START_PORT}" maxHttpHeaderSize="8192” maxThreads="${CATALINA_MAX_THREADS}" minSpareThreads="25" maxSpareThreads="75"
+enableLookups="false" disableUploadTimeout="true"
+acceptCount="100" scheme="https" secure="true"
+clientAuth="want" sslProtocol="TLS" algorithm="ibmX509"
+compression="on" compressionMinSize="2000"
+compressableMimeType="text/html,text/xml,text/css,text/javascript,text/plain"
+connectionTimeout="20000" URIEncoding="UTF-8"/>
+
+Note: 
+If you have a high availability environment enabled in Platform HPC Version 3.2 or Platform Cluster Manager Version 3.2, the server.xml file must be modified on the master host and on the master candidate host. 
+If you have a high availability environment enabled in Platform HPC Version 4.1.1 or later, the server.xml must be modified on the primary management node only. 
+If you have a high availability environment enabled in Platform Cluster Manager Version 4.1 or later, the server.xml must be modified on the primary management node only. 
+
+3. Restart the Web Portal service.
+- If a high availability environment is not enabled, run the following command:
+
+# pmcadmin stop
+# pmcadmin start
+
+- If a high availability environment is enabled:
+- For Platform HPC Version 3.2 or Platform Cluster Manager Version 3.2, run the following command on the master host:
+# pmcadmin stop
+# pmcadmin start
+- For Platform HPC Version 4.1.1 or 4.1.1.1, run the following command on the primary management node: 
+# pcm-ha-support stop --service WEBGUI 
+# pcm-ha-support start --service WEBGUI
+- For Platform Cluster Manager Version 4.1, 4.1.1, or 4.1.1.1, run the following command on the primary management node: 
+# pcm-ha-support stop --service WEBGUI 
+# pcm-ha-support start --service WEBGUI
+
+For Platform Cluster Manager – Advanced Edition:
+
+1. Edit the install_dir/gui/conf/server.xml file. In the connector XML tag, set the sslProtocol value from SSL to TLS, and save the file, where install_dir is the top-level management server installation directory. install_dir is set to /opt/platform by default. For example:
+
+<Connector port="${CATALINA_HTTPS_START_PORT}" maxHttpHeaderSize="8192” maxThreads="${CATALINA_MAX_THREADS}" minSpareThreads="25" maxSpareThreads="75"
+enableLookups="false" disableUploadTimeout="true"
+acceptCount="100" scheme="https" secure="true"
+clientAuth="want" sslProtocol="TLS" algorithm="ibmX509"
+compression="on" compressionMinSize="2000"
+compressableMimeType="text/html,text/xml,text/css,text/javascript,text/plain"connectionTimeout="20000" URIEncoding="UTF-8"/>
+
+Note: 
+If a high availability environment is enabled, the path to the server.xml is SHAREDDIR/gui/conf/server.xml, where SHAREADDIR is the directory set by the users during the installation process. The server.xml only needs to be modified on the primary management node. 
+
+2. Restart the Web Portal service.
+# egosh user logon -u Admin -x Admin
+# egosh service stop WEBGUI
+# egosh service start WEBGUI
+
+Note:
+If a high availability environment is enabled, only restart the Web Portal service on the primary management node. 
+
+For more information follow the below related url link or open support PMR.
+
+RELATED INFORMATION
+ http://www-01.ibm.com/support/docview.wss?uid=isg3T1021 [http://www-01.ibm.com/support/docview.wss?uid=isg3T1021416%0A]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Platform Computing Platform HPC for System x Platform Computing Platform Cluster Manager

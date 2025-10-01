@@ -1,0 +1,43 @@
+Title: IBM Operational Decision Manager V8.9.1.0: Interim Fix 25 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This interim fix provides a solution for several APARs. 
+
+DOWNLOAD DESCRIPTION
+The following list shows the component in Operational Decision Manager that is directly affected by this interim fix:
+
+
+ * Decision Center
+
+
+Refer to the following list for APAR fixes:  * RS02912 [http://www.ibm.com/support/docview.wss?uid=swg1RS02912]: NPE WHEN TRYING TO CLOSE A CHANGE ACTIVITY 
+ * RS02957 [http://www.ibm.com/support/docview.wss?uid=swg1RS02957]: IN BUSINESS CONSOLE TESTING, COMPARING COLLECTIONS IN A TEST REPORT IS DIFFICULT. 
+ * RS02974 [http://www.ibm.com/support/docview.wss?uid=swg1RS02974]: DEPLOYMENT IS MADE IMPOSSIBLE DUE TO CONFLICT WITH ANOTHER DEPLOYMENT CONFIGURATION 
+ * RS02979 [http://www.ibm.com/support/docview.wss?uid=swg1RS02979]: OPENING A TEST REPORT THROWS INDEXOUTOFBOUNDSEXCEPTION 
+ * RS02980 [http://www.ibm.com/support/docview.wss?uid=swg1RS02980]: IMPROVE PERFORMANCE WHILE BROWSING A SUB-BRANCH IN ENTERPRISE CONSOLE. 
+ * RS02999 [http://www.ibm.com/support/docview.wss?uid=swg1RS02999]: CAN'T LOG IN TO DECISION CENTER BECAUSE OF THE HELPBEAN EXCEPTION 
+ * RS03004 [http://www.ibm.com/support/docview.wss?uid=swg1RS03004]: IN BC TESTING REPORTS, VALUES IN COLLECTION DETAILS DIALOG MAY BE TRUNCATED 
+ * RS03072 [http://www.ibm.com/support/docview.wss?uid=swg1RS03072]: HUGE DOMAIN LEADS TO "METHOD CODE TOO LARGE!" WITH BC TEST SUITE 
+ * RS03073 [http://www.ibm.com/support/docview.wss?uid=swg1RS03073]: OPENING A TEST REPORT THROWS NULLPOINTEREXCEPTION 
+ * RS03090 [http://www.ibm.com/support/docview.wss?uid=swg1RS03090]: WHEN THE RULESET IS NOT GENERATED DUE TO AN UNEXPECTED ERROR THE RULEAPP IS DEPLOYED 
+ * RS03100 [http://www.ibm.com/support/docview.wss?uid=swg1RS03100]: QUERY EDITOR NOT VISIBLE AND USABLE IN BUSINESS CONSOLE 
+ * RS03101 [http://www.ibm.com/support/docview.wss?uid=swg1RS03101]: UNABLE TO CREATE A NEW RELEASE WHEN LOCALE IS SET TO PORTUGUESE(BRAZIL)
+
+SEE ALSO
+Operational Decision Manager Interim Fixes [http://www.ibm.com/support/docview.wss?uid=swg21640630] 
+
+] INSTALLATION INSTRUCTIONS
+Follow the instructions in the readme.
+
+URL LANGUAGE SIZE(Bytes) Readme [http://download4.boulder.ibm.com/sar/CMA/WSA/07m5c/0/Readme.html] English 1740 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 8.9.1.0-WS-ODM_DC-IF025 28-May-18 Language Independent 28870000 FC [https://www-945.ibm.com/support/fixcentral/swg/downloadFixes?parent=ibm%2FWebSphere&product=ibm/WebSphere/WebSphere+Operational+Decision+Management&release=All&platform=All&function=fixId&fixids=8.9.1.0-WS-ODM_DC-IF025&includeRequisites=1&includeSupersed] [ ] DD 
+ [/support/docview.wss?uid=swg24044929&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24044929&aid=2]Problems (APARS) fixed
+RS02912 RS02957 RS02974 RS02979 RS02980 RS02999 RS03004 RS03072 RS03073 RS03090 RS03100 RS03101

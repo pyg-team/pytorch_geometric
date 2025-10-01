@@ -1,0 +1,94 @@
+Title: IBM ActiveMQ Fails To Start - United States
+
+Text:
+Update; Patch;Upgrade; Migrate; STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ActiveMQ Fails To Start 
+
+SYMPTOM
+
+
+After Installing 4321_BR99999_203888_204086, ActiveMQ is failing to start with: java.sql.SQLException: ORA-00942: table or view does not exist.
+
+Error Message 2010-02-02 15:20:51.278] ALL 000000000000 GLOBAL_SCOPE User [Joe User] Executing Query:SELECT * FROM ACTIVEMQ_MSGS
+[2010-02-02 15:20:51.285] ERROR 000000000000 GLOBAL_SCOPE [SQLBean::Exception]
+SQL Error Code: 942
+SQL State: 42000
+java.sql.SQLException: ORA-00942: table or view does not exist
+
+at oracle.jdbc.driver.DatabaseError.throwSqlException(DatabaseError.java:112)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:331)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:288)
+at oracle.jdbc.driver.T4C8Oall.receive(T4C8Oall.java:743)
+at oracle.jdbc.driver.T4CStatement.doOall8(T4CStatement.java:207)
+at oracle.jdbc.driver.T4CStatement.executeForDescribe(T4CStatement.java:790)
+at oracle.jdbc.driver.OracleStatement.executeMaybeDescribe(OracleStatement.java:1037)
+at oracle.jdbc.driver.T4CStatement.executeMaybeDescribe(T4CStatement.java:830)
+at oracle.jdbc.driver.OracleStatement.doExecuteWithTimeout(OracleStatement.java:1132)
+at oracle.jdbc.driver.OracleStatement.doScrollExecuteCommon(OracleStatement.java:4051)
+at oracle.jdbc.driver.OracleStatement.doScrollStmtExecuteQuery(OracleStatement.java:4191)
+at oracle.jdbc.driver.OracleStatement.executeInternal(OracleStatement.java:1691)
+at oracle.jdbc.driver.OracleStatement.execute(OracleStatement.java:1653)
+at com.sterlingcommerce.woodstock.adminui.jspbean.SQLBean.execSQL(SQLBean.java:340)
+at org.apache.jsp.sqltool_jsp._jspService(sqltool_jsp.java:154)
+at org.apache.jasper.runtime.HttpJspBase.service(HttpJspBase.java:137)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:853)
+at org.apache.jasper.servlet.JspServletWrapper.service(JspServletWrapper.java:210)
+at org.apache.jasper.servlet.JspServlet.serviceJspFile(JspServlet.java:295)
+at org.apache.jasper.servlet.JspServlet.service(JspServlet.java:241)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:853)
+at org.mortbay.jetty.servlet.ServletHolder.handle(ServletHolder.java:358)
+at org.mortbay.jetty.servlet.WebApplicationHandler.dispatch(WebApplicationHandler.java:294)
+at org.mortbay.jetty.servlet.Dispatcher.dispatch(Dispatcher.java:222)
+at org.mortbay.jetty.servlet.Dispatcher.forward(Dispatcher.java:135)
+at com.sterlingcommerce.woodstock.ui.servlet.ServletBase.gotoPage(ServletBase.java:287)
+at com.sterlingcommerce.woodstock.adminui.servlet.Page.doPost(Page.java:164)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:760)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:853)
+at org.mortbay.jetty.servlet.ServletHolder.handle(ServletHolder.java:358)
+at org.mortbay.jetty.servlet.WebApplicationHandler$Chain.doFilter(WebApplicationHandler.java:342)
+at com.sterlingcommerce.woodstock.ui.dlsso.DLSSOFilter.doFilter(DLSSOFilter.java:140)
+at org.mortbay.jetty.servlet.WebApplicationHandler$Chain.doFilter(WebApplicationHandler.java:334)
+at org.mortbay.jetty.servlet.WebApplicationHandler.dispatch(WebApplicationHandler.java:286)
+at org.mortbay.jetty.servlet.ServletHandler.handle(ServletHandler.java:567)
+at org.mortbay.http.HttpContext.handle(HttpContext.java:1807)
+at org.mortbay.jetty.servlet.WebApplicationContext.handle(WebApplicationContext.java:526)
+at org.mortbay.http.HttpContext.handle(HttpContext.java:1757)
+at org.mortbay.http.HttpServer.service(HttpServer.java:879)
+at org.mortbay.http.HttpConnection.service(HttpConnection.java:789)
+at org.mortbay.http.HttpConnection.handleNext(HttpConnection.java:960)
+at org.mortbay.http.HttpConnection.handle(HttpConnection.java:806)
+at org.mortbay.http.SocketListener.handleConnection(SocketListener.java:218)
+at org.mortbay.util.ThreadedServer.handle(ThreadedServer.java:331)
+at org.mortbay.util.ThreadPool$PoolThread.run(ThreadPool.java:520)
+[2010-02-02 15:26:53.328] ALL 000000000000 GLOBAL_SCOPE User [Joe User] Executing Query:SELECT * FROM MSGS
+[2010-02-02 15:26:53.334] ERROR 000000000000 GLOBAL_SCOPE [SQLBean::Exception]
+SQL Error Code: 942
+SQL State: 42000
+java.sql.SQLException: ORA-00942: table or view does not exist
+
+
+RESOLVING THE PROBLEM
+
+
+These tables are created by ActiveMQ at startup. The customer had revoked create and drop tables permissions on the GIS user in Oracle. Starting GIS with the permissions as defined in the online documentation solved the issue.
+
+ 
+
+HISTORICAL NUMBER
+ NFX8342 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Function Area
+
+
+Database
+
+
+Severity
+
+
+Normal

@@ -1,0 +1,87 @@
+Title: IBM Open Mic "iNotes and Sametime integration - Overview and Troubleshooting", April 25, 2013 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Presentation and Q&A session for Open Mic "iNotes and Sametime integration - Overview and Troubleshooting", April 25, 2013
+
+RESOLVING THE PROBLEM
+IBM hosted an Open Mic session on topic "iNotes and Sametime integration - Overview and Troubleshooting" on 25th April 2013. In this Open Mic, the presenter walked through a 45 minute presentation followed by Q&A session. You can download the PDF presentation at the end of this document. 
+
+Q&A- 
+
+Q. Whether Sametime Entry server supports iNotes chat ? 
+
+A: Yes Sametime Entry server can be used for iNotes chat. 
+
+************************************************************************************************************************** 
+
+Q. What are main advantages of new Sametime Web Client integration method ? 
+
+A: Using this new method, you only need to perform 1-2 steps for iNotes integration while using earlier stlinks method, you need to perform 8-9 steps. Also chat window will be rich in new method. 
+
+************************************************************************************************************************** 
+
+Q. Is using Web SSO mandatory for iNotes and Sametime integration ? 
+
+A: There are 2 methods of authentication for traditional stlinks method. You can use either Secrets and Token authentication or Web SSO authentication. For new Sametime Web client integration method, Web SSO is highly recommended (but not mandatory) to avoid user inconvenience. Sametime Web client integration method, does not support use of Secrets and Token authentication. If you don't have SSO, then browser will prompt for user credentials for login to Sametime server. 
+
+************************************************************************************************************************** 
+
+Q. What if we have multiple Sametime servers and only one iNotes server ? How to copy the "stlinks" folder to iNotes server in such case ? 
+
+A: This is rare situation. In that case you first need to decide which Sametime server you want to use for iNotes integration. Then you have to copy to "stlinks" folder from that Sametime server. Remember there is no need to copy the "stlinks" folder if you use the new Sametime Web Client integration method 
+
+************************************************************************************************************************** 
+
+Q. Why should we enable HTTP tunneling ? What if we don't enable it ? 
+
+A: We recommend to keep the HTTP tunneling in disabled mode (default setting when you install Sametime server). HTTP tunneling is required only if your firewall is allowing only port 80 and blocking other ports like 8082. In that case, traffic from other ports will be redirected to port 80. There is no any disadvantage of disabling HTTP tunneling. 
+
+************************************************************************************************************************** 
+
+Q. Sametime awareness is coming but when we type anything in chat window, then it is disappearing. What could be the problem here ? 
+
+A: It happens because of different version of "stlinks" on iNotes server and Sametime server. Please make sure that, you have copied "stlinks" folder to iNotes server. In browser side, please clear cache and from Windows OS > Control Panel > Java, please clear temporary files of Java. 
+
+************************************************************************************************************************** 
+
+Q. Can we get Sametime awareness in DOLS (offline mode of iNotes) ? 
+
+A:- Sorry you can't get Sametime awareness in offline mode (DOLS). 
+
+************************************************************************************************************************** 
+
+Q. How to create SSO if servers are in different domain ? 
+
+A: For creating SSO, you need end part of the FQHN same for both the servers. 
+
+e.g.- mail.acme.com & chat.acme.com. Here acme.com is common ending part, so you can configure SSO between them. However SSO can't be configured if the FQHN are like this. 
+
+e.g.- mail.acme.com & chat.super.com 
+
+************************************************************************************************************************** 
+
+Q. What maintenance is required to keep it running properly ? (Fixup, updall or any other maintenance). 
+
+A: No maintenance is required for iNotes and Sametime integration. Once configured it will work fine without any maintenance. 
+
+************************************************************************************************************************** 
+
+Q. Is it mandatory to use WAS (WebSphere Application Server) for Sametime Proxy server ? Can we install it on Domino instead of WAS ? 
+
+A: You must install Sametime Proxy server on WAS. It can't be installed on Domino server. 
+
+************************************************************************************************************************** 
+
+Download Presentation PDF- 
+
+iNotes and Sametime integration_Open Mic_2013.pdf [/support/docview.wss?uid=swg21636147&aid=2]iNotes and Sametime integration_Open Mic_2013.pdf [/support/docview.wss?uid=swg21636147&aid=1]
+
+
+
+
+
+ * 
+ *

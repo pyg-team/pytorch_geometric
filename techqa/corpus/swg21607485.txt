@@ -1,0 +1,58 @@
+Title: IBM Risk of high CPU consumption due to hashmap deadlock - United States
+
+Text:
+threadSafeUI hashtable FuzaoThread getExclusiveLock RpcServlet WSVR0605W Waiting to be notified 3LKNOTIFYQ 3LKWAITNOTIFY FLASH (ALERT)
+
+ABSTRACT
+ In older versions of the product, it is possible to get a hashmap deadlock which causes the CPU usage to rise dramatically resulting in the deadlock. These deadlocked processes may consume all the CPU resources. 
+
+CONTENT
+The IBM WebSphere Application Server team has discovered that we can get high CPU usage when multiple threads access a HashMap concurrently. 
+
+InfoSphere Master Data Management Server for Product Information Management is affected by the above condition and so the product source code has been modified to circumvent the hashmap deadlock. However, older versions of the product may still be vulnerable to this. To check whether you have the fix, open the $TOP/etc/default/log.xml.default file and search for the following entry:
+
+<category name="com.ibm.ccd.common.context.AustinContext" additivity="false">
+<priority value="info"/>
+<appender-ref ref="CONTEXT"/>
+</category> 
+
+If you do not have the above entry, but you have periodic high CPU consumption and want to confirm that the CPU usage spike is related to the issue mentioned in this tech note, please review the SystemOut.log of your WebSphere Application Server or the javacores. You are affected if you see entries similar to the following:
+
+00000023 ThreadMonitor W WSVR0605W: Thread "jsp_315: /ccd_workflow/collaboration_console.jsp" (00000016) has been active for 607692 milliseconds and may be hung. There is/are 1 thread(s) in total in the server that may be hung.
+at java.util.HashMap.findNonNullKeyEntry(Unknown Source)
+at java.util.HashMap.getEntry(Unknown Source)
+at java.util.HashMap.get(Unknown Source)
+at com.ibm.ccd.common.context.common.SessionContext.getFromShortTermCache(Unknown Source)
+....
+
+"jsp_20: /ccd_workflow/collaboration_console.jsp" TID:0x34E93900, j9thread_t:0x3560B3FC, state:CW, prio=5
+3XMTHREADINFO1 (native thread ID:0x12B00DB, native priority:0x5, native policy:UNKNOWN)
+4XESTACKTRACE at java/util/HashMap.rehash(Bytecode PC:97(Compiled Code))
+4XESTACKTRACE at java/util/HashMap.rehash(Bytecode PC:6(Compiled Code))
+4XESTACKTRACE at java/util/HashMap.putImpl(Bytecode PC:6(Compiled Code))
+4XESTACKTRACE at java/util/HashMap.put(Bytecode PC:3(Compiled Code))
+4XESTACKTRACE at com/ibm/ccd/common/context/common/SessionContext.putInShortTermCache(Bytecode PC:3(Compiled Code))
+...
+
+Work around:
+Restart the produce services using $TOP/bin/go/stop_local.sh and $TOP/bin/start_local.sh for immediate but temporary relief.
+
+Fix:
+Migrate your environment to the newest version to ensure you have the fix.
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management InfoSphere Master Data Management Collaboration Server Not Applicable AIX, Linux, Solaris 10.0 All Editions 
+PRODUCT ALIAS/SYNONYM
+ WPC 
+MDMCS
+MDMPIM
+MDM Server for PIM
+WebSphere Product Center
+InfoSphere MDM Server for PIM
+Infosphere Master Data Management Collaboration Server
+InfoSphere Master Data Management Server for Product Information Management

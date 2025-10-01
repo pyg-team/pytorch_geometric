@@ -1,0 +1,164 @@
+Title: IBM IV41929: INTERACTIVE JOBS DOES NOT WORK IF THE STREAMLOGON HAS A DOMAIN. - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+8.5.1-TIV-TDWC-WINDOWS-X86-64-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-WINDOWS-X86-64-FP0006&source=SAR]
+8.5.1-TIV-TDWC-WINDOWS-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-WINDOWS-FP0006&source=SAR]
+8.5.1-TIV-TDWC-LINUXS390-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-LINUXS390-FP0006&source=SAR]
+8.5.1-TIV-TDWC-LINUX-I386-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-LINUX-I386-FP0006&source=SAR]
+8.5.1-TIV-TDWC-LINUX-X86-64-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-LINUX-X86-64-FP0006&source=SAR]
+8.5.1-TIV-TDWC-LINUXPPC-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-LINUXPPC-FP0006&source=SAR]
+8.5.1-TIV-TDWC-SOLARIS-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-SOLARIS-FP0006&source=SAR]
+8.5.1-TIV-TDWC-AIX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-AIX-FP0006&source=SAR]
+8.5.1-TIV-TDWC-SOLARIS-I386-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-SOLARIS-I386-FP0006&source=SAR]
+8.5.1-TIV-TDWC-HPUX-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-HPUX-FP0006&source=SAR]
+8.5.1-TIV-TDWC-HPUXIA64-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TDWC-HPUXIA64-FP0006&source=SAR]
+8.5.1-TIV-TWS-AIX-FP0006.TAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-AIX-FP0006.TAR&source=SAR]
+8.5.1-TIV-TWS-HPIA64-FP0006.TAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-HPIA64-FP0006.TAR&source=SAR]
+8.5.1-TIV-TWS-HPUX-FP0006.TAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-HPUX-FP0006.TAR&source=SAR]
+8.5.1-TIV-TWS-LINUX_I386-FP0006.TAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-LINUX_I386-FP0006.TAR&source=SAR]
+8.5.1-TIV-TWS-LINUX_PPC-FP0006.TAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-LINUX_PPC-FP0006.TAR&source=SAR]
+8.5.1-TIV-TWS-LINUX_S390-FP0006.TAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-LINUX_S390-FP0006.TAR&source=SAR]
+8.5.1-TIV-TWS-LINUX_X86_64-FP0006.TAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-LINUX_X86_64-FP0006.TAR&source=SAR]
+8.5.1-TIV-TWS-SOLARIS_I386-FP0006.TAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-SOLARIS_I386-FP0006.TAR&source=SAR]
+8.5.1-TIV-TWS-SOLARIS-FP0006.TAR [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-SOLARIS-FP0006.TAR&source=SAR]
+8.5.1-TIV-TWS-WIN_X86_64-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-WIN_X86_64-FP0006&source=SAR]
+8.5.1-TIV-TWS-WIN-FP0006 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Workload+Scheduler&fixids=8.5.1-TIV-TWS-WIN-FP0006&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  On Windows system interactive jobs does not work if the stream
+   logon is specified with the DOMAIN.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The problem happens when the user launching the job is a Domain
+   user, and the
+   streamlogon looks like <domain name>/<user name> (it is enough
+   that the streamlogon
+   is specified as <domain name>/<user name>).
+   In this case when JOBMON,exe looks for active desktops, the
+   owner of each active desktop
+   is matched against the streamlogon user name: a check on the
+   domain name is missing here,
+   and the check between user name and domain/user names always
+   fail.
+   Now we added a furthur check on the domain of the user owning
+   the active desktop, and the
+   domain of the streamlogon user.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This apar will be fixed   8.6.0-TIV-TWS-FP0003,
+   8.5.1-TIV-TWS-FP0005
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  See Local Fix
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV41929
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV WKLD SCHDL
+   
+   
+ * REPORTED COMPONENT ID
+   5698WKB85
+   
+   
+ * REPORTED RELEASE
+   858
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-05-08
+   
+   
+ * CLOSED DATE
+   2013-05-31
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV WKLD SCHDL
+   
+   
+ * FIXED COMPONENT ID
+   5698WKB85
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R858 PSY
+   UP

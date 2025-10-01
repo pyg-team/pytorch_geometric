@@ -1,0 +1,25 @@
+Title: IBM Why do I get an error when I try to view a TIFF image using ImagePlus workstation? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why am I getting error message: EVNW7FCE and a 2026, which tell me the error is related to a TIFF document being stored and displayed? I uploaded a TIFF image to ImagePlus using WRAPI. When I use IWPM I can see the image listed, but if I try to view it, I get the error message. 
+
+ANSWER
+The error message: EVNW7FCE is explained in the Help in IWPM (ImagePlus&reg; Workstation Program) itself. The Help has an index heading for "Messages for IWPM/NT" or the applicable IWPM platform. Look here for information about the error message. 
+
+The appearance of 2026 suggests a missing annotation object or file. It is possible that the annotations are not being written to the mainframe. 
+
+Another cause of this error might be that your pszODmUserid and pszODmPassword are incorrect. This is particularly the case if they are the same as the ID and password that were provided by a sample program. You must specify an ID and a password; they cannot be left blank. 
+
+Alternatively, the WRAPI function, FAFSTOREDEFDOC, might not be sufficient for storing annotations. The WRAPI books do not define an annotation store option for this function. 
+
+In this case, you will need to store the object and then store the annotations. This assumes that you initially had an object and then added or modified the annotations. If so, to add the annotation after you have stored the document, use the FAFUPDATEDOCANNOTATION function. 
+
+Reminder: Each time you modify the object, it is given a new document name in OAM. However, the annotation does not follow the object under its new name and will not show up if the modified object is displayed. If you display the earlier version, then the annotation will then display..
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management Content Manager ImagePlus OS390

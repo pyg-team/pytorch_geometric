@@ -1,0 +1,119 @@
+Title: IBM PI55513: WMB PREREQ UNCLEAR WHEN USING WMQ 8 WITH WBIFN 3.11 - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The WBIFN PIC Software requirements page describes that
+   WebSphere Message Broker 8.0.0.4 is required, when MQ 8 is to be
+   used.
+   This indicates, that it needs to be exactly this fixpack level.
+   The limitation should read:
+   8.0.0.4 or later to make clear, that any FP level at or above FP
+   4 is allowed for Message Broker 8.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  *************************************************************
+   * RECOMMENDATION:
+   *************************************************************
+   In Planning, Installation, and Customization,
+   Chapter 2. Hardware and software requirements,
+   Table 1. Runtime system requirements change description.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  In Planning, Installation, and Customization,
+   Chapter 2. Hardware and software requirements,
+   Table 1. Runtime system requirements, notes text for
+   IBM MQ for z/OS V8.0 changed to "Requires WebSphere MB V8
+   Fixpack 8.0.0.4 or later and PTF for WebSphere MB V8
+   APAR IT03599.
+   The changes will be reflected in the next edition of the PIC.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI55513
+   
+   
+ * REPORTED COMPONENT NAME
+   WBI FOR FN ZOS
+   
+   
+ * REPORTED COMPONENT ID
+   5655FIN00
+   
+   
+ * REPORTED RELEASE
+   11B
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-01-18
+   
+   
+ * CLOSED DATE
+   2016-01-19
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced SH12693625 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,147 @@
+Title: IBM PI23489: NPE when deploying a Worklight Runtime with a customized url on Oracle database with the Server Configuration Tool - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When deploying a Worklight with the Server Configuration Tool,
+   with Oracle as database and with the connection information as a
+   JDBC URL a Null Pointer Exception occurs when deploying a
+   Runtime.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Edit the configuration in the Server Configuration Tool, but do
+   not enter the password information.
+   Export the configuration as a ant file (Menu File/Export
+   Configuration as Ant Files...)
+   Edit the ant file of the runtime and comment out the element
+   <adminDatabase>...</adminDatabase>
+   and run that file with ant:
+   <WorklightInstallDir>/shortcuts/ant -f <antFile> databases
+   install
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Administrators of a Worklight server  or Developers who      *
+   * wants to deploy a Worklight runtime with the Server          *
+   * Configuration Tool using a customized url to connect to      *
+   * Oracle database.                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The server configuration tools performs consistency checks   *
+   * to verify that the database of a runtime will not overlap    *
+   * with another database in the same configuration. This        *
+   * consistency check does not support a connection information  *
+   * defined as a JDBC URL.                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * -                                                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The Server Configuration Tool has been modified so that the
+   consistency check does not fail if the connection information is
+   provided as a customized JDBC URL.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI23489
+   
+   
+ * REPORTED COMPONENT NAME
+   WORKLIGHT CONSU
+   
+   
+ * REPORTED COMPONENT ID
+   5725I4301
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-08
+   
+   
+ * CLOSED DATE
+   2014-08-14
+   
+   
+ * LAST MODIFIED DATE
+   2014-08-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORKLIGHT CONSU
+   
+   
+ * FIXED COMPONENT ID
+   5725I4301
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

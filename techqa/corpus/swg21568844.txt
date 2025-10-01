@@ -1,0 +1,71 @@
+Title: IBM Developer for z Systems and Rational Developer for z Systems Backward/Forward compatibility - United States
+
+Text:
+RDz; compatible; backward; forward; IDz; Debug Tool: Debugger TECHNOTE (FAQ)
+
+QUESTION
+ What levels of the IBM Developer for z Systems and Rational Developer for z Systems host and client are compatible? 
+
+ANSWER
+Client/Server Compatibility
+
+
+
+In general, IBM Developer for z Systems, Rational Developer for z Systems and Rational Developer for System z follow a two level backward and forward compatibility tolerance for basic Client /Server functionality. 
+
+IBM Developer for z Systems v14.1.x host/client is compatible with IBM Developer for z Systems v14.1.x client/host, IBM Developer for z Systems v14.0.x client/host and Rational Developer for z Systems v9.5.x client/host. 
+
+IBM Developer for z Systems v14.0.x host/client is compatible with IBM Developer for z Systems v14.1.x client/host, IBM Developer for z Systems v14.0.x client/host, Rational Developer for z Systems v9.5.x client/host and Rational Developer for System z v9.1.x client/host. 
+
+Rational Developer for z Systems v9.5.x host/client is compatible with IBM Developer for z Systems v14.1.x client/host, IBM Developer for z Systems v14.0.x client/host, Rational Developer for z Systems v9.5.x client/host and Rational Developer for System z v9.1.x, and v9.0.x client/host. 
+
+Rational Developer for System z v9.1.x host/client is compatible with IBM Developer for z Systems v14.0.x client/host, Rational Developer for z Systems v9.5.x client/host and Rational Developer for System z v9.1, v9.0.x, and v8.5.x client/host. 
+
+Rational Developer for System z v9.0.x host/client is compatible with versions v9.5.x, v9.1.x, v9.0.x, v8.5.x and v8.0.x client/host. 
+
+Rational Developer for System z v8.5.x host/client is compatible with versions v9.1, v9.0, v8.5, v8.0.x, and v7.6.x client/host. 
+
+Basic Client/Server functionality includes: 
+• Connecting to a z/OS System 
+• Allocating z/OS Data sets 
+• Creating a z/OS Project 
+• Working with z/OS COBOL & Pl/I remote assets – edit, syntax check, submit, execute, debug and view the output 
+• Basic CARMA functionality 
+• Compatibility between service levels within a release is also supported (for example, using the v9.5 client to access a v9.5.1 server). 
+
+As an example, if you upgrade your Developer for z Systems host to 14.0.x, client versions v9.1.x, v9.5.x, v14.0 and v14.1.x are compatible with the 14.0.x server. 
+
+Likewise, if you upgrade your Developer for z Systems client to 14.0.x, server versions v9.1.x, v9.5.x, v14.0.x and v14.1.x are compatible with the 14.0.x client. 
+
+Note: Server enhancements that are client-dependent are not available to developers using earlier versions of the client. 
+
+Client enhancements that are server-dependent are not available to developers accessing earlier versions of the server. 
+
+For Debugger, 
+
+[/support/docview.wss?uid=swg21568844&amp;aid=1] 
+Developer for System z v9.0.1.x (host) 
+Developer for System z v9.1.x (host) 
+Developer for System z v9.5.x (host) 
+Developer for z Systems v14.0.x (host) 
+Developer for z Systems v14.1.x (host) 
+Debug for z Systems v14.0.x (host) 
+Debug for z Systems v14.1.x (host) Debug Tool v12 Debug Tool v13 
+Developer for System z v9.0.1.x (Client) X [/support/docview.wss?uid=swg21568844&amp;aid=1] [/support/docview.wss?uid=swg21568844&amp;aid=1] [/support/docview.wss?uid=swg21568844&amp;aid=1] [/support/docview.wss?uid=swg21568844&amp;aid=1] [/support/docview.wss?uid=swg21568844&amp;aid=1] [/support/docview.wss?uid=swg21568844&amp;aid=1] X X 
+Developer for System z v9.1.x (Client) X X X X X X X X X 
+Developer for System z v9.5.x (Client) X X X X X X X [/support/docview.wss?uid=swg21568844&amp;aid=1] X 
+Developer for System z v14.0.x (Client) X(1) X(1) X X X X X X X 
+Developer for System z v14.1.x (Client) X(1) X(1) X X X X X X X  * (1) Launch configurations and JCL Generation not supported for these host versions.
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Workspace Data Compatibility
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *

@@ -1,0 +1,24 @@
+Title: IBM Access custom rule properties during RES.NET execution - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I access custom rule properties during RES.NET execution? 
+
+CAUSE
+The default ruleset deployment from Rule Studio (RS), Rule Team Server (RTS) or Rule Execution Sever (RES), results in a ruleset Binary Ruleset Compilation (BRC) file. 
+In Rules for .NET 3.0 and 7.0, the BRC file does not support custom rule property. 
+When using rule.Properties to access rule properties during RES execution, only the value of the default properties can be retrieved; the custom property will return null. 
+
+
+ANSWER
+If you use custom rule properties, typically in a rule filter for dynamic selection, be sure to use ruleset assembly (dll file), instead of brc file, for execution.
+Follow the steps below: 
+
+ 1. In RES console, remove the .brc ruleset (deployed by default) from the ruleapp. 
+    [/support/docview.wss?uid=swg21421294&aid=1] [/support/docview.wss?uid=swg21421294&aid=1] 
+ 2. Click on Add Ruleset
+    [/support/docview.wss?uid=swg21421294&aid=2] [/support/docview.wss?uid=swg21421294&aid=2] 
+ 3. Select Ruleset Assembly as the file type and select the ruleset .dll file
+    [/support/docview.wss?uid=swg21421294&aid=3] [/support/docview.wss?uid=swg21421294&aid=3]

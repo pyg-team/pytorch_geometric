@@ -1,0 +1,65 @@
+Title: IBM MQ resource adapter V8.0 statement of support - United States
+
+Text:
+st14willkc PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document contains the statement of support for the IBM MQ resource adapter provided with IBM MQ V8.0 
+
+CONTENT
+The resource adapter that comes with IBM MQ Version 8.0 uses JMS 2.0, and can only be deployed into an application server that is Java™ EE 7 compliant and therefore supports JMS 2.0. 
+
+
+
+Deployment within WebSphere Application Server - Liberty profile
+WebSphere Application Server Liberty Profile 8.5.5.6 and later can be configured to use either an IBM MQ V8.0 or a WebSphere MQ V7.5 resource adapter. WebSphere Application Server Liberty Profile 8.5.5.6 became a Java™ EE 7 certified application sever so the IBM MQ V8 resource adapter can be used. 
+
+The WebSphere Application Server Liberty Profile contains both wmqJmsClient-1.1 and wmqJmsClient-2.0 features to permit working with both JMS 1.1 and JMS 2.0 resource adapters respectively. 
+
+Information on this configuration is in the Scenario Connecting WebSphere Application Server Liberty Profile to WebSphere MQ [http://www-01.ibm.com/support/knowledgecenter/prodconn_1.0.0/com.ibm.prodconn.doc/infocenter_homepage/mqwasliberty_home.htm?cp=SSFKSJ_7.5.0%2F8&lang=en]. 
+
+Deployment within WebSphere Application Server
+The IBM MQ V8.0 resource adapter cannot be deployed in WebSphere Application Server.
+
+WebSphere Application Server is supplied with a WebSphere MQ resource adapter already installed. This resource adapter can connect to Version 8 queue managers. For more information, please see the section called "Connectivity IBM MQ V8 queue managers"
+
+
+Using the resource adapter with other application servers
+For all other Java™ EE 7 compliant application servers, problems following successful completion of the IBM MQ resource adapter Installation Verification Test (IVT) can be reported to IBM for the investigation of IBM MQ product trace and other IBM MQ diagnostic information. If the IBM MQ resource adapter IVT cannot be run successfully, problems encountered are likely to be caused by incorrect deployment or incorrect resource definitions which are application server specific and the problems should be investigated using application server documentation and / or the support organization for that application server.
+
+IBM has tested the resource adapter IVT on the application servers listed below 
+
+ * Glassfish V4 
+ * Wildfly V8
+
+
+Java Runtime 
+The Java Runtime (JRE) that is used to run the application server must be one that is supported with the MQ Client V8. These are listed in the IBM System Requirements for IBM MQ v8 [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/softwareReqsForProductByComponent?deliverableId=1350550241693&duComponent=Miscellaneous_569814401AEF11E38F7D228059AF1569#sw-2]. (Follow the 'Java' link listed under the Supported Software tab). 
+
+Connectivity to IBM MQ V8 queue managers 
+The full range of JMS 2.0 functionality is available when connecting to a Version 8 queue manager using the Version 8 resource adapter that has been deployed into a Java EE 7 application server. 
+
+If you are using an application server which is not Java EE 7 compliant and does not support JMS 2.0 (for WebSphere Application Server this is currently Versions 7.0 to 8.5.5), you can still connect to IBM MQ V8 queue managers using an older version of the WebSphere MQ resource adapter. With this configuration it is not possible to make use of the new JMS 2.0 functionality provided by IBM MQ V8, however existing JMS 1.1, and earlier, functionality will be preserved. 
+
+Connectivity to WebSphere MQ V7.5 queue managers and earlier 
+It is supported to deploy the IBM MQ V8 resource adapter into a Java EE 7 compliant application server that supports JMS 2,0, and connect that resource adapter to a queue manger running WebSphere MQ V7.5 or earlier. The functionality that will be available will be limited by the capabilities of the queue manager. 
+
+This is supported for both the BINDINGS and CLIENT transport. When using the BINDINGS transport, ensure that the java.library.path is set to: 
+ * MQ_INSTALLATION_PATH\java\lib if the application server is running with a 32-bit Java runtime environment. 
+ * MQ_INSTALLATION_PATH\java\lib64 if the application server is running with a 64-bit Java runtime environment.
+
+
+where MQ_INSTALLATION_PATH is the location where WebSphere MQ has been installed. If there are multiple WebSphere MQ installations on the same system, MQ_INSTALLATION_PATH should be the location where the latest version of WebSphere MQ has been installed. 
+
+General issues 
+
+Session interleaving is not supported: 
+Some application servers provide a capability called session interleaving, where the same JMS session can be used in multiple transactions, although it is only enlisted in one at a time. This is not supported by the WebSphere MQ resource adapter, and can lead to the issues shown below: 
+ * An attempt to put a message to a WebSphere MQ queue fails with reason code 2072 (MQRC_SYNCPOINT_NOT_AVAILABLE). 
+ * Calls to xa_close() fail with reason code -3 (XAER_PROTO), and an FDC with probe ID AT040010 is generated on the WebSphere MQ queue manager being accessed from the application server.
+
+
+Please see your application server documentation for how to disable this capability. 
+
+Java™ Transaction API (JTA) Specification of how XA resources are recovered for XA transaction recovery: 
+Section 3.4.8 of the JTA specification does not define a specific mechanism by which XA resources are recreated to perform XA transactional recovery. As such, it is up to each individual transaction manager (and therefore application server) how XA resources involved in an XA transaction are recovered. It is possible that, for some application servers, the WebSphere MQ resource adapter does not implement the application server specific mechanism utilized to perform XA transactional recovery.

@@ -1,0 +1,47 @@
+Title: IBM Failed to retrieve a list of databases for the selected repository error upon ClearQuest Web login - United States
+
+Text:
+1567010; CQ; Web; HTTP Server; IHS; Httpd.conf; rational.preserve; 64 bit; Failed to retreive a list of databases; Windows TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote identifies an issue that can occur in IBM Rational ClearQuest (CQ) Web. After installation, login fails with a "Failed to retrieve a list of databases" error. 
+
+SYMPTOM
+Post install or upgrade of the ClearQuest Web server components, IBM HTTP Server does not start. The application log indicates an error in the httpd.conf file. After review of the httpd.conf file in a text editor, you can see that the application was looking for the server root directory in 
+
+C:\Rational\IBM\RationalSDLC\... 
+
+It should reflect what was selected during install: C:\Program Files (x86)\...
+
+Once the location references are fixed in httpd.conf file saved, the IBM Http Server starts. Attempt to login to ClearQuest Web, results in error: "Failed to retrieve a list of databases for the selected repository."
+
+CAUSE
+ 
+
+ * Cause 1: If there were references to different locations than the one you selected for install, it is more than likely that there are multiple rational.preserve folders. Those folders interfering with the installation of the Web components.
+
+ * Cause 2: The Linux-based ClearQuest Web server has a registry entry in the server path /opt/ibm/RationalSDLC/clearquest/CQDB_rgys/cqdb_registry/<version>/<connection_name>. However, the ClearQuest ".database" registry entry file has the wrong entry in the DATABASE field.
+
+
+DIAGNOSING THE PROBLEM
+Web Services are up and running. You can to login using local ClearQuest clients, even on the Web Server itself. You can use PDSQL and ping database server from Web Server.
+
+
+
+RESOLVING THE PROBLEM
+ 
+
+Cause 1 resolution: 
+
+Check for a rational.preserve folder at any root drive where you have previously tried an installation. Also look for \IBM\Rational.preserve\ in the Common Application Data directory. You can find all references to the rational.preserve folder with a Search. 
+
+Steps to Resolve: 
+
+ 1. Do a complete uninstall of ClearQuest with IBM Installation Manager. 
+ 2. Search all the drives for rational.preserve folders. Delete them all. 
+ 3. Install ClearQuest Web Server Components again.
+
+
+Cause 2 resolution: 
+
+Manually correct the ".database" file as needed.

@@ -1,0 +1,169 @@
+Title: IBM IC61174: DOCUMENTATION FOR INSTALLING TSM REPORTING AND MONITORING IN AN EXISTING ITM ENVIRONMENT NEEDS CLARIFICATION - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Documentation for installing TSM reporting and monitoring in an
+   existing ITM environment needs clarification
+   Tivoli Storage Manager version 6.1 Installation Guide
+   Chapter 5. Installing the Tivoli Storage Manager reporting and
+   monitoring feature
+   Planning to install the Tivoli Storage Manager reporting and
+   monitoring feature
+   Before installing the Tivoli Storage Manager reporting and
+   monitoring feature, there are some decisions you must make.
+   You have IBM Tivoli Monitoring currently installed on a server
+   If you are currently using IBM Tivoli Monitoring, the Tivoli
+   Storage Manager reporting and monitoring feature can be
+   installed on your existing IBM Tivoli Monitoring server but
+   the following requirements must be met:
+       * The IBM Tivoli Monitoring server must be a fully licensed
+         version of IBM Tivoli Monitoring
+       * The IBM Tivoli Monitoring server must be at the 6.2
+         FP1 level
+   For this type of Tivoli Storage Manager reporting and monitoring
+   installation, the IBM Tivoli Monitoring option would not be
+   checked on the install wizard and the IBM Tivoli Monitoring
+   server is identified when prompted by the installation script.
+   The documentation should be updated to clearly state the
+   following:
+   To use the Tivoli Storage Manager reporting and monitoring
+   feature in an existing IBM Tivoli Monitoring (ITM) environment,
+   the "Tivoli Storage Manager monitoring agent" should be
+   installed on the ITM Server.
+   
+   Although a "Reporting Agent for Tivoli Storage manager" instance
+   may not need to be configured on the ITM server, it is still
+   necessary to install the "Tivoli Storage Manager monitoring
+   agent" product in the existing ITM environment to operate the
+   TSM Reporting and Monitoring feature.
+   
+   When installing the "Tivoli Storage Manager monitoring agent"
+   product in an existing ITM environment, the current
+   install directory should be specified during the install
+   process. For example, if installing on AIX, and ITM is already
+   installed in /opt/IBM/ITM, the same directory should be
+   specified when the "Tivoli Storage Manager monitoring agent"
+   is installed.
+   
+   When installing the "Tivoli Storage Manager monitoring agent",
+   refer to apar IC61723 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC61723] to properly install the agent.
+   
+   TEMS and TEPS are automatically restarted when the "Tivoli
+   Storage Manager monitoring agent" is installed in an existing
+   ITM environment.
+   
+   Versions Affected:
+   All versions of Tivoli Storage Manager reporting and monitoring
+   feature
+   Initial Impact:
+   Low
+   Additional Keywords:
+   zz61 zzrm61
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users running Tivoli Storage Manager for *
+   *                                                              *
+   *                 Reporting and Monitoring 6.1 on              *
+   *                 AIX/Linux/Windows.                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Information was missing from the        *
+   *                      following topics:                       *
+   *                      Installing the Tivoli Storage Manager   *
+   *                      reporting and monitoring feature        *
+   *                      Planning to install the Tivoli Storage  *
+   *                      Manager reporting and monitoring        *
+   *                      feature                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The problem is currently projected to be fixed in level 6.1.2.
+   Note that this is subject to change at the discretion of IBM.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC61174
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   61A
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-18
+   
+   
+ * CLOSED DATE
+   2009-06-04
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+Publications Referenced GC23978500 FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,67 @@
+Title: IBM ITCAM configuring password utilization with SYSADMIN user on TEP - United States
+
+Text:
+ITCAM for SOA; DataPower; Tivoli Enterprise Portal; TEP; SYSADMIN; user ID; passord TECHNOTE (FAQ)
+
+QUESTION
+ While configuring ITCAM for SOA and WebSphere DataPower Appliances, I am able to access Tivoli Enterprise Portal (TEP) using the default SYSADMIN user ID without the use of a passord. How to I enable TEP to require a password for the SYSADMIN user? 
+
+CAUSE
+The SYSADMIN user ID is created by default to not require the use of a password.
+
+ANSWER
+The SYSADMIN ID is a special ID and the password used for it is the operating system password. 
+
+For setting and changing the password in Windows:
+
+1. Reset thesysadmin password:
+a. Open a command window.
+b. Issue the following command:
+
+
+ * net user sysadmin new_password
+
+
+For example, issue the following command: 
+ * net user sysadmin Passw0rd
+
+
+2. Ensure that the sysadmin user is not disabled. Sometimes the user is disabled because of too many logins. 
+a. Right-click My Computer 
+b. Select Manage > Local Users and Groups > Users > sysadmin 
+c. Verify that the account is not disabled. 
+
+3. Recycle (stop and then start) the Tivoli Enterprise Monitor Server agent and Tivoli Enterprise Portal Server agent from the Manage Tivoli Enterprise Monitoring Server: 
+a. Open the Manage Tivoli Enterprise Monitoring Server. 
+b. Select the Tivoli Enterprise Monitoring Server. 
+c. At the top of the window, select the recycle icon. 
+d. Select the Tivoli Enterprise Portal Server. 
+e. At the top of the window, select the recycle icon. 
+
+For setting and changing the password in Unix: 
+
+1. Add SYSADMIN as a UNIX ID by issuing the following command: 
+ * useradd sysadmin
+ * 
+
+
+2. Specify a password for sysadmin by issuing the following command: 
+ * passwd sysadmin
+
+
+3. Recycle (stop and then start) the Tivoli Enterprise Monitor Server agent and Tivoli Enterprise Portal Server agent from the Manage Tivoli Enterprise Monitoring Server: 
+a. Open the Manage Tivoli Enterprise Monitoring Server. 
+b. Select the Tivoli Enterprise Monitoring Server. 
+c. At the top of the window, select the recycle icon. 
+d. Select the Tivoli Enterprise Portal Server. 
+e. At the top of the window, select the recycle icon. 
+
+To require SYSADMIN to enter a password at TEP login: 
+
+1. Navigate to the Manage Tivoli Enterprise Monitoring Services - TEMS Mode window 
+2. Right click on Tivoli Enterprise Monitoring Server 
+3. Select Reconfigure from the drop down list 
+4. Select the Security: Validate User check box 
+5. Select okay button for this window and at the Hub TEMS Configuration window which pops up. 
+6. Select yes to restart Tivoli Enterprise Monitoring Server. RELATED INFORMATION
+ Tivoli Monitoring 6.2 FP 1 for Windows -- User ID or pa [https://www.ibm.com/developerworks/mydeveloperworks/wikis/home/wiki/Tivoli%20Storage%20Manager/page/Tivoli%20Monitoring%206.2%20FP%201%20for%20Windows%20--%20User%20ID%20or%20password%20is%20invalid?lang=en]

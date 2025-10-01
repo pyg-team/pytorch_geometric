@@ -1,0 +1,227 @@
+Title: IBM IZ70296: NETCOOL/OMNIBUS 7.3.0 INSTALL ON LINUX X86 MAY FAIL WHEN AUTONOMIC DEPLOYMENT ENGINE 1.3.X IS INSTALLED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When attempting to install Netcool/OMNIbus on Linux x86 the
+   following errors may be encountered.
+   
+   GUI Mode
+   
+   In the final panel:-
+   "The installation of OMNIbus is finished, but some serious
+   errors occurred during the install. Please refer the log file
+   /home/nick/IA-Netcool-OMNIbus-00.log  for further details"
+   
+   Console Mode
+   
+   In the console:-
+   "The installation of OMNIbus is complete, but some errors
+   occurred during the install.
+      Please see the installation log for details."
+   
+   Silent Mode
+   
+   In the OMNIbus_InstallLog.log left in $NCHOME:-
+   "Deployement Plan execution general failure:: Check log files
+   for further informations."
+   
+   If another Tivoli product which uses Autonomic Deployment Engine
+   (DE) 1.3.x is installed this is probably due to a problem in
+   upgrading to DE 1.4. To confirm that this issue has been
+   encountered check $HOME/IA-Netcool-OMNIbus-00.log for "".
+   
+   > grep java.nio.channels.OverlappingFileLockException
+   IA-Netcool-OMNIbus-??.log
+   2010-02-04 16:51:26.084+00:00 :  STDOUT :
+   org.apache.derby.client.am.SqlException: DERBY SQL error:
+   SQLCODE: -1, SQLSTATE: XJ040, SQLERRMC: Failed to start database
+   'TouchPointRegistryDB', see the next exception for
+   details.::SQLSTATE: XJ001Java exception: ':
+   java.nio.channels.OverlappingFileLockException'.
+   
+   Products that use DE 1.3.x include TBSM versions 4.2 and 4.2.1.
+   
+   This issue only affects the Netcool/OMNIbus installer released
+   13 November 2009  for Linux on x86 systems. Other platforms are
+   not affected.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This problem can be avoided by running the Netcool/OMNIbus
+   installer twice: once to upgrade DE and once to installer
+   Netcool/OMNIbus. This can be carried out using either the GUI or
+   console modes. This is only required if an earlier version of DE
+   is installed.
+   
+   GUI Mode
+   
+   Start the Netcool/OMNIbus installer.
+   Proceed through the installer to the "Choose Install Set" panel
+   where you are asked to choose between "Typical" and "Custom".
+   Press "Cancel" at this point and confirm that you want to exit
+   the installer.
+   Restart the Netcool/OMNIbus installer.
+   Complete the installation as normal.
+   
+   Consol Mode
+   
+   Start the Netcool/OMNIbus installer in console mode.
+   Proceed through the installer to the "Select Installation
+   Directory" prompt.
+   Press Control-C.
+   Use "ls -ltrd /tmp/install.dir.*" to find the temporary files
+   created by the installer. Use "rm -rf /tmp/<directory name>" to
+   remove the files.
+   Restart the Netcool/OMNIbus installer
+   Complete the installation as normal.
+   
+   Fixing a failed install
+   
+   If you have run the installer through to the Netcool/OMNIbus
+   installation directly after the DE upgrade, the error described
+   above will be encountered. At this stage DE has been upgraded
+   but the Netcool/OMNIbus installation has failed. It will not be
+   possible to install Netcool/OMNIbus in the directory you first
+   specified. However you can re-run the installer and specify a
+   different location for Netcool/OMNIbus. There is no need to stop
+   and restart the installer.
+   
+   If you were upgrading from a pre 7.3.0 installation, the
+   original installation has already been moved (the directory name
+   will have had .1 or .2 etc, added to it). When asked whether you
+   want to migrate configuration from a previous installation
+   answer "Yes" and give the location of the moved installation.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users installing Netcool/OMNIbus 7.3.0 on Linux x86 when an
+   exising IBM product with Deploymnet Engine (DE) version 1.3.x is
+   installed.
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   When attempting to install Tivoli Netcool/OMNIbus on Linux x86,
+   the installation fails if Autonomic Deployment Engine (DE)
+   V1.3.x is installed. Products that use DE V1.3.x include IBM
+   Tivoli Business Service Manager (TBSM) versions 4.2 and 4.2.1.
+   
+   This issue affects only the Tivoli Netcool/OMNIbus installer
+   that was released 13 November 2009 for Linux on x86 systems.
+   Other operating systems are not affected.
+   ****************************************************************
+   RECOMMENDATION:
+   Obtain the refreshed installer described in the Problem
+   Conclusion or use the procedures described in Local Fix,
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is included in a product refresh for
+   Netcool/OMNIbus 7.3.0 on Linux x86 issued in March 2010. This
+   refresh can be identified in the following ways:
+   
+   Part number is CZEM7ML (e Image) or CB30TML (DVD)
+   A file called "IZ70296.txt" is present in the top level
+   directory.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ70296
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * REPORTED COMPONENT ID
+   5724O4800
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-12
+   
+   
+ * CLOSED DATE
+   2010-03-25
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-26
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/OMNIBUS
+   
+   
+ * FIXED COMPONENT ID
+   5724O4800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R730 PSY
+   UP

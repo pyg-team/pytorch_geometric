@@ -1,0 +1,113 @@
+Title: IBM AccessControlException when accessing the Rule Execution Server Console - United States
+
+Text:
+security; manager; access; denied; AccessControlException; PropertyPermission; permission; property TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Explains how to solve the error described below when logging in to the Rule Execution Server Console, properly set up on WAS 7 as indicated in the documentation. 
+
+SYMPTOM
+The Rule Execution Server Console fails to open and the log shows the following error: 
+
+com.ibm.ws.webcontainer.servlet.ServletWrapper service SRVE0068E: Uncaught exception created in one of the service methods of the servlet /login.jsp in application RES711. Exception created : com.ibm.websphere.servlet.error.ServletErrorReport: java.lang.ExceptionInInitializerError
+at org.apache.jasper.runtime.PageContextImpl.handlePageException(PageContextImpl.java:695)
+at com.ibm._jsp._login._jspService(_login.java:282)
+at com.ibm.ws.jsp.runtime.HttpJspBase.service(HttpJspBase.java:98)
+at javax.servlet.http.HttpServlet.service(HttpServlet.java:831)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1583)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1523)
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebAppFilterChain.java:104)
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain._doFilter(WebAppFilterChain.java:77)
+at com.ibm.ws.webcontainer.filter.WebAppFilterManager.doFilter(WebAppFilterManager.java:885)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrapper.java:865)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrapper.java:475)
+at com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.handleRequest(ServletWrapperImpl.java:175)
+at com.ibm.wsspi.webcontainer.servlet.GenericServletWrapper.handleRequest(GenericServletWrapper.java:121)
+at com.ibm.ws.jsp.webcontainerext.AbstractJSPExtensionServletWrapper.handleRequest(AbstractJSPExtensionServletWrapper.java:239)
+at com.ibm.ws.jsp.webcontainerext.AbstractJSPExtensionProcessor.handleRequest(AbstractJSPExtensionProcessor.java:340)
+at com.ibm.ws.webcontainer.webapp.WebAppRequestDispatcher.forward(WebAppRequestDispatcher.java:341)
+at org.apache.myfaces.context.servlet.ServletExternalContextImpl.dispatch(ServletExternalContextImpl.java:419)
+at org.apache.myfaces.application.jsp.JspViewHandlerImpl.renderView(JspViewHandlerImpl.java:211)
+at org.apache.myfaces.lifecycle.RenderResponseExecutor.execute(RenderResponseExecutor.java:41)
+at org.apache.myfaces.lifecycle.LifecycleImpl.render(LifecycleImpl.java:132)
+at javax.faces.webapp.FacesServlet.service(FacesServlet.java:140)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1583)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWrapper.java:1523)
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain.doFilter(WebAppFilterChain.java:104)
+at com.ibm.ws.webcontainer.filter.WebAppFilterChain._doFilter(WebAppFilterChain.java:77)
+at com.ibm.ws.webcontainer.filter.WebAppFilterManager.doFilter(WebAppFilterManager.java:885)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrapper.java:865)
+at com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(ServletWrapper.java:475)
+at com.ibm.ws.webcontainer.servlet.ServletWrapperImpl.handleRequest(ServletWrapperImpl.java:175)
+at com.ibm.ws.webcontainer.webapp.WebApp.handleRequest(WebApp.java:3799)
+at com.ibm.ws.webcontainer.webapp.WebGroup.handleRequest(WebGroup.java:276)
+at com.ibm.ws.webcontainer.WebContainer.handleRequest(WebContainer.java:930)
+at com.ibm.ws.webcontainer.WSWebContainer.handleRequest(WSWebContainer.java:1583)
+at com.ibm.ws.webcontainer.channel.WCChannelLink.ready(WCChannelLink.java:182)
+at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleDiscrimination(HttpInboundLink.java:455)
+at com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleNewInformation(HttpInboundLink.java:384)
+at com.ibm.ws.http.channel.inbound.impl.HttpICLReadCallback.complete(HttpICLReadCallback.java:83)
+at com.ibm.ws.tcp.channel.impl.AioReadCompletionListener.futureCompleted(AioReadCompletionListener.java:165)
+at com.ibm.io.async.AbstractAsyncFuture.invokeCallback(AbstractAsyncFuture.java:217)
+at com.ibm.io.async.AsyncChannelFuture.fireCompletionActions(AsyncChannelFuture.java:161)
+at com.ibm.io.async.AsyncFuture.completed(AsyncFuture.java:138)
+at com.ibm.io.async.ResultHandler.complete(ResultHandler.java:204)
+at com.ibm.io.async.ResultHandler.runEventProcessingLoop(ResultHandler.java:775)
+at com.ibm.io.async.ResultHandler$2.run(ResultHandler.java:905)
+at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1550)
+Caused by: java.lang.ExceptionInInitializerError
+at java.lang.J9VMInternals.initialize(J9VMInternals.java:222)
+at org.apache.myfaces.renderkit.html.HtmlRenderKitImpl.createResponseWriter(HtmlRenderKitImpl.java:129)
+at javax.faces.webapp.UIComponentTag.setupResponseWriter(UIComponentTag.java:940)
+at javax.faces.webapp.UIComponentTag.doStartTag(UIComponentTag.java:313)
+at org.apache.myfaces.taglib.core.ViewTag.doStartTag(ViewTag.java:73)
+at com.ibm._jsp._login._jspService(_login.java:153)
+... 43 more
+Caused by: java.security.AccessControlException: Access denied (java.util.PropertyPermission line.separator read)
+at java.security.AccessController.checkPermission(AccessController.java:108)
+at java.lang.SecurityManager.checkPermission(SecurityManager.java:532)
+at java.lang.SecurityManager.checkPropertyAccess(SecurityManager.java:1285)
+at java.lang.System.getProperty(System.java:378)
+at org.apache.myfaces.shared_impl.renderkit.html.HtmlRendererUtils.<clinit>(HtmlRendererUtils.java:51)
+at java.lang.J9VMInternals.initializeImpl(Native Method)
+at java.lang.J9VMInternals.initialize(J9VMInternals.java:200)
+... 48 more
+
+
+CAUSE
+The root cause in the stack trace is fairly explicit:
+
+
+java.security.AccessControlException: Access denied (java.util.PropertyPermission line.separator read) 
+
+ 
+
+This error indicates a lack of permission to access the system property 'line.separator' in read mode. The error is thrown by a MyFaces class, a third-party API used by the Rule Execution Server Console.
+
+This issue arises when a security manager other than the one provided by WebSphere Application Server is used. (The WAS security manager is activated when the "Java 2 security" option is selected in its administration console).
+
+For example, the error is raised if you set the default Java SE security manager with the -Djava.security.manager=java.lang.SecurityManager JVM argument in Servers > WebSphere application servers > <your server> > Java and Process Management > Process Definition > Java Virtual Machine > Generic JVM arguments.
+
+This security manager is not supported because it does not provide the basic permissions required to run a Java EE application in WebSphere Application Server (WAS). As indicated in the WAS documentation at Securing applications and their environment > Setting up, enabling and migrating security > Enabling security [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/topic/com.ibm.websphere.base.doc/info/aes/ae/tsec_csec2.html], the application server supports only its default Java security manager, and not any other custom or Java SE implementation.
+
+
+DIAGNOSING THE PROBLEM
+Check the WAS/JVM settings for any mention of security manager. 
+
+You can use the attached web application which simply retrieves and prints the active security manager. This web application reproduces the issue by accessing the 'line.separator' system property in a simple JavaServerPage outside of JRules.
+
+
+RESOLVING THE PROBLEM
+If applicable, use the only security manager supported by WebSphere Application Server, which is the one activated when the "Java 2 security" is selected in the WAS administration console. 
+
+To do so, follow the steps described in WebSphere ILOG JRules BRMS V7.1: Java EE add-ons > Installing on WebSphere Application Server > Installing Rule Execution Server [http://pic.dhe.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.install.doc/Content/Business_Rules/Documentation/_pubskel/JRules_Application_Servers/ps_Installing_JRules_IC15.html] > Installing Rule Execution Server on WebSphere Application Server Vx.y> Activating security on WebSphere Vx.y, or Operational Decision Manager V8.0.1 > Configuring > Configuring Operational Decision Manager on distributed platforms > Configuring Operational Decision Manager on WebSphere Application Server > Configuring Rule Execution Server on WebSphere Application Server > Configuring Rule Execution Server on WebSphere Application Server > Step 5: Activating security on WebSphere Application Server [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.family.config.was/config_ds_res_was8/tpc_was_activate_security.html] [http://publib.boulder.ibm.com/infocenter/brjrules/v7r1/topic/com.ibm.websphere.ilog.jrules.install.doc/Content/Business_Rules/Documentation/_pubskel/JRules_Application_Servers/ps_Installing_JRules_IC49.html].
+
+RELATED INFORMATION
+#Java 2 security in WebSphere AS V7 [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.base.doc/info/aes/ae/csec_rsecmgr2.html]
+Java 2 security in WebSphere AS V8 [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/topic/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/csec_rsecmgr2.html]
+
+
+testSecurity.war [/support/docview.wss?uid=swg21469143&aid=2] [/support/docview.wss?uid=swg21469143&aid=1]
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.5, 8.0, 7.5

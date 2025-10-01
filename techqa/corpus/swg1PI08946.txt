@@ -1,0 +1,209 @@
+Title: IBM PI08946: SYSTEMOUT O NOSUITABLE CHARSET CAN BE FOUND FOR CONSOLE ENCODIN - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.2: WebSphere Application Server V8.5.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037250]
+8.5.5.3: WebSphere Application Server V8.5.5 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038133]
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS NEW FUNCTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  dmgr SystemOut.log
+   
+   [8/21/13 9:58:44:900 EDT] 00000111 InstallSchedu I??
+   ADMA5016I: Installation of GasStationModule started.
+   [8/21/13 9:58:54:543 EDT] 00000111 SystemOut???? O No suitable
+   Charset can be found for console.encoding UTF-8
+   [8/21/13 9:58:54:553 EDT] 00000111 SystemOut???? O Available
+   Charset aliases are:
+   [8/21/13 9:58:54:553 EDT] 00000111 SystemOut???? O Charset Big5:
+   [8/21/13 9:58:54:553 EDT] 00000111 SystemOut???? O alias: csBig5
+   [8/21/13 9:58:54:554 EDT] 00000111 SystemOut???? O Charset
+   Big5-HKSCS:
+   [8/21/13 9:58:54:554 EDT] 00000111 SystemOut???? O alias:
+   Big5_HKSCS
+   [8/21/13 9:58:54:554 EDT] 00000111 SystemOut???? O alias:
+   big5-hkscs
+   [8/21/13 9:58:54:555 EDT] 00000111 SystemOut???? O alias: big5hk
+   [8/21/13 9:58:54:555 EDT] 00000111 SystemOut???? O alias:
+   big5hkscs
+   [8/21/13 9:58:54:555 EDT] 00000111 SystemOut???? O Charset
+   COMPOUND_TEXT:
+   [8/21/13 9:58:54:556 EDT] 00000111 SystemOut???? O Charset
+   EUC-JP:
+   [8/21/13 9:58:54:556 EDT] 00000111 SystemOut???? O alias: eucjis
+   [8/21/13 9:58:54:556 EDT] 00000111 SystemOut???? O alias:
+   Extended_UNIX_Code_Packed_Format_for_Japanese
+   [8/21/13 9:58:54:562 EDT] 00000111 SystemOut???? O alias:
+   x-eucjp
+   [8/21/13 9:58:54:562 EDT] 00000111 SystemOut???? O alias: eucjp
+   [8/21/13 9:58:54:563 EDT] 00000111 SystemOut???? O alias:
+   csEUCPkdFmtjapanese
+   [8/21/13 9:58:54:563 EDT] 00000111 SystemOut???? O alias: euc_jp
+   [8/21/13 9:58:54:563 EDT] 00000111 SystemOut???? O alias:
+   x-euc-jp
+   [8/21/13 9:58:54:564 EDT] 00000111 SystemOut???? O Charset
+   EUC-KR:
+   
+   < snip hundreds of similar lines>
+   
+   [8/21/13 9:58:55:253 EDT] 00000111 SystemOut???? O Charset
+   x-windows-950:
+   [8/21/13 9:58:55:253 EDT] 00000111 SystemOut???? O alias: ms950
+   [8/21/13 9:58:55:254 EDT] 00000111 SystemOut???? O alias:
+   windows-950
+   [8/21/13 9:58:55:254 EDT] 00000111 SystemOut???? O Charset
+   x-windows-iso2022jp:
+   [8/21/13 9:58:55:254 EDT] 00000111 SystemOut???? O alias:
+   windows-iso2022jp
+   [8/21/13 9:58:55:256 EDT] 00000117 DeployEJBTask I??
+   ADMA0158I: [EJBDeploy] Starting workbench.
+   [8/21/13 9:58:55:261 EDT] 00000117 DeployEJBTask I??
+   ADMA0158I: [EJBDeploy]?? @build@
+   [8/21/13 9:58:55:559 EDT] 00000117 DeployEJBTask I??
+   ADMA0158I: [EJBDeploy] EJB Deploy configuration directory:
+   /opt/Moonstone/WAS/profiles/dmgr/ejbdeploy/configuration/
+   [8/21/13 9:58:55:563 EDT] 00000117 DeployEJBTask I??
+   ADMA0158I: [EJBDeploy] framework search path:
+   /opt/Moonstone/WAS/deploytool/itp/plugins
+   [8/21/13 9:58:55:593 EDT] 00000117 DeployEJBTask I??
+   ADMA0158I: [EJBDeploy] build:RAD851-I20121103_1921
+   [8/21/13 9:59:08:509 EDT] 00000117 DeployEJBTask I??
+   ADMA0158I: [EJBDeploy] Creating the project.
+   [8/21/13 9:59:13:134 EDT] 00000117 DeployEJBTask I??
+   ADMA0158I: [EJBDeploy]?? Importing archive
+   '/var/tmp/app8997655825115342242.ear'. Opening
+   'app8997655825115342242'.
+   < snip>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of legacy EJB-based applications  *
+   *                  in IBM WebSphere Application Server V8.5    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A lot of messages saying that           *
+   *                      encoding is not valid may arise on      *
+   *                      Solaris operating systems.              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   SystemOut???? O No suitable Charset can be found for
+   console.encoding UTF-8
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code has been modified to avoid the problem.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.2.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI08946
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-01-07
+   
+   
+ * CLOSED DATE
+   2014-04-09
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE APP S
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

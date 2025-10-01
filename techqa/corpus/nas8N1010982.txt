@@ -1,0 +1,155 @@
+Title: IBM Message SQL7917 at R610 and Higher Releases - United States
+
+Text:
+MSGSQL7917 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document describes why jobs may be seeing message SQL7917. 
+
+RESOLVING THE PROBLEM
+This document describes why jobs may be seeing message SQL7917. 
+
+When a program has embedded SQL in the program, the access plan is stored within the program associated space. As PTFs get applied, files are changed, data is modified, and workload changes on the system. Because of this, the access plan may need to be updated. The job will attempt to save the new access plan in the program; however, if the save fails, message SQL7917 will be issued. This is an informational message only. It will not prevent the job from running and the job will continue as normal. 
+
+There are several reasons why the new access plan may not be able to be saved in the program. The most common reasons are due to the program reaching maximum size or other jobs holding locks that prevent the save from completing. 
+
+Changes made at R610 may result in message SQL7917 being issued more often. Prior to R610, if a job was using an access plan and a new job came in that wanted to replace the plan, the system would overlay the old plan with the new plan. Just overlaying the plan while being used could cause problems later on for the original job using the original plan. At R610, the system may now issue message SQL7917 and not overlay the original plan with the new plan. If you have many jobs using the same program, you could see more of these messages occurring with this change. 
+
+Latest PTFs
+
+As this change was rolled out, an attempt was made to reduce the length of time a job has an access plan locked in hopes of reducing the chance of a message SQL7917. There was also an issue found where the jobs were not deleting temporary space used on the new access plans and could cause a performance impact on the jobs using the program. As development continues to make changes in this space problems can arise, especially after performing PTF maintenance/upgrading your PTF levels.
+
+It is recommended that you apply all of the latest PTFs below. Some PTFs directly relate to the technical changes made and some address only the DBMON tracing tool. DBMON PTFs are listed as this is the main tracing tool used to get more information on the SQL7917 message. Please note some are listed as TEST PTFs. TEST PTFs require a PMR and authoriztion from IBM support. 
+
+o V6R1:
+- SI46910 / SI47884 / SI47883 / SI48368 
+(SI47292 is the latest DBMON PTF.)
+
+o V7R1:
+- SI47887 / SI47427 / SI48258 
+(SI47545, MF55943 , MF55944 , SI47455, SI47530 , and SI47540 are the latest DBMON PTFs.)
+
+
+Note: At R710, IBM strongly suggests you obtain the above PTFs by getting DB Group (SF99701) level 18. This group will require Technology Refresh 5.
+
+To reduce jobs from seeing SQL79I4753017, you can attempt the following; however, this may not reduce all SQL7917 messages:
+
+Avoid having one program for all environments. Users may call the same program; however, they must go after different files based on the library list of the job. This will increase the need to rebuild the plan as the different files are used. If you are able to have separate programs per environment, that would reduce the need to rebuild the access plan. 
+
+If one program is preferred, the access plan can be moved into thread-scoped storage by using EXECUTE IMMEDIATE or PREPARE/EXECUTE for the SQL statement, rather than embedding the SQL statement in a program or stored procedure.
+
+
+Removing SQL7917 from joblog
+
+Because message SQL7917 maybe normal and fill up joblogs, a data area can be created to stop message SQL7917 from being put to the joblog. A DBMON trace will still show the SQL7917 detail; however, with the data area in place, the joblog will not see it. You should create the following data area in the jobs library list to see this behavior:
+
+CRTDTAARA DTAARA(QSQNO7917) TYPE(*CHAR) LEN(1) 
+
+Note:
+* The data area can be created in QSYS library if its intended to be used globally. If you want to limit it to one job, you can create it in any library and add that library to the jobs library list. 
+
+* The jobs need to be restarted to pick up the change after the data area is created. We only check for the data area on the first SQL statement issued for a job. 
+
+
+
+. 
+
+Data to collect to get more information on SQL7917 
+
+If, after the above PTFs are applied and you would like to understand why the SQL7917 is occurring, a DBMON can be collected to get more detail. The DBMON should be started before the job runs the SQL. You can start the DBMON over all jobs or filter by job name. Below are a few examples of how to start a DBMON. For more detail on the DBMON, you should refer to Rochester Support Center Knowledgebase document New, DBMON FAQ: Database 'DCF Technotes (IBM i)', View 'Products', Document 'DBMON FAQ' [http://www-01.ibm.com/support/icons/doclink.gif] [</tt>http://www-01.ibm.com/support/docview.wss?uid=nas8N1012816]. 
+
+Start over all jobs:
+STRDBMON OUTFILE(QGPL/DBMON1) JOB(*ALL) TYPE(*DETAIL) 
+
+Start over just QZDASOINIT jobs:
+STRDBMON OUTFILE(QGPL/DBMON1) JOB(*ALL/*ALL/QZDASOINIT) TYPE(*DETAIL) 
+
+After the trace has been running and the job has received message SQL7917, you can end the trace by issuing the following commands:
+ENDDBMON JOB(*ALL) 
+ENDDBMON JOB(*ALL/*ALL/QZDASOINIT) 
+
+
+Why is the access plan being rebuilt
+
+The following SQL can be used to give detail on why the access plan was rebuilt:
+
+SELECT count(*), QQRCOD 
+FROM DBMON
+where qqrid = 3006
+GROUP BY QQRCOD
+ORDER BY 1 desc
+
+
+Example of output:
+
+COUNT ( * ) Reason
+Code
+21 AB
+1,270 A0
+12 B1
+30 A1
+161 A4
+4,067 A7 
+
+Reason codes:
+A0 - New access plan 
+A1 - A table or member is not the same object as the one referenced when the access plan was last built. 
+A2 - Access plan was built to use a reusable Open Data Path (ODP) and the optimizer chose to use a non-reusable ODP for this call. 
+A3 - Access plan was built to use a non-reusable Open Data Path (ODP) and the optimizer chose to use a reusable ODP for this call. 
+A4 - The number of rows in the table has changed by more than 10% since the access plan was last built.
+A5 - A new index exists over one of the tables in the query 
+A6 - An index that was used for this access plan no longer exists or is no longer valid. 
+A7 - OS/400 Query requires the access plan to be rebuilt because of system programming changes. 
+A8 - The CCSID of the current job is different than the CCSID of the job that last created the access plan.
+A9 - One or more job value is different for the current job than it was for the job that last created the access plan (date format/date separator/time format/time separator) 
+AA - The sort sequence table specified is different than the sort sequence table that was used when this access plan was created. 
+AB - Storage pool changed or DEGREE parameter of CHGQRYA command changed.
+AC - The system feature DB2 multisystem has been installed or removed. 
+AD - The value of the degree query attribute has changed. 
+AE - A view is either being opened by a high level language or a view is being materialized. 
+AF - A user-defined type or user-defined function is not the same object as the one referred to in the access plan or the SQL path is not the same as when the access plan was built.
+B0 - The options specified have changed as a result of the query options file. 
+
+
+Why is the access plan not being saved
+
+The following SQL can be used to give detail on why the access plan was rebuilt:
+
+SELECT count(*), Qvc24 
+FROM DBMON 
+where qqrid = 1000 and substr(qvc24, 1, 1) = 'A'
+group by qvc24 
+order by 1 desc
+
+Example of output:
+COUNT ( * ) QVC24
+3,655 AD
+437 AB
+15 AC
+1 AA
+
+Reason codes:
+A1 - Failed to get a LSUP lock on associated space of program or package
+A2 - Failed to get an immediate LEAR space location lock on first byte of associated space of program
+A3 - Failed to get an immediate LENR space location lock on first byte of associated space of program
+A5 - Failed to get an immediate LEAR space location lock on first byte of ILE associated space of a program
+A6- Error trying to extend space of an ILE program
+A7 - No room in program
+A8 - No room in PAS
+A9 - No room in PAS
+AA- No need to save. Save already done in another job
+AB - QQ couldn't lock the QDT.
+AD - New QDT/AP would have fit in place, but SQ couldn't get a lock
+
+To include the program name that is being used, you should use the following SQL statement:
+
+SELECT count(*), Qvc24, qqc104 as LIB, qqc103 as Program 
+FROM DBMON 
+where qqrid = 1000 and substr(qvc24, 1, 1) = 'A'
+group by qvc24, qqc104, qqc103
+order by 1 desc  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.2 Operating System IBM i 7.1 Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 634029786

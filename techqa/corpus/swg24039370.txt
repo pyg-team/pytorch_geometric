@@ -1,0 +1,72 @@
+Title: IBM User interface and functionality fixes - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ Interim fix PO04526 provides several fixes for IBM Intelligent Operations Center that relate to both user interface functionality and underlying component functionality. 
+
+DOWNLOAD DESCRIPTION
+Interim fix PO04526 is superseded by interim fix PO04782 [http://www-01.ibm.com/support/docview.wss?uid=swg24039858].
+
+
+
+
+Interim fix PO04526 resolves the following issues:
+
+1. Some updates to data items are not mapped to alerts correctly.
+
+2. For a new data source, updated data items from the data source are not displayed correctly on the timeline. The problem occurs if initially there are no data items to display and then, after the map is repositioned, data items should be displayed. In this case, the updated data items are not displayed on the timeline.
+
+3. Configure a data source that imports data from a CSV file. Route the data to IBM Intelligent Operations Center based on the value of a particular key property, and configure another key property to be used as an ID. The second time that you attempt to import a CSV file, anSqlIntegrityConstraintViolationException exception might occur and the CSV file might not be processed.
+
+4. In the Filter window, select a data source that returns more data items than the limit that is configured in the StatMaxAllowedFeaturesInResponse system property. A warning message is displayed that indicates that the selected filter criteria would return more data items than the configured limit. If you clear the data source selection in the filter panel, the message is still displayed even though it is no longer valid. You must refresh the browser to make the message disappear.
+
+5. When a data source is created, wpsadmin is automatically added as a read/write user of the data source.
+
+6. Data source polling errors occur, and error messages are displayed that are similar to the following example:
+
+
+ * 00000041 DataReceiverL I com.ibm.ioc.datareceiver.utils.DataReceiverUtil getMaxTimeStampFromSource com.microsoft.sqlserver.jdbc.SQLServerException: Invalid object name 'dbo.V_KIVA_BDLG_PERMIT_DETAIL'.
+
+
+7. If you delete a data source and then attempt to recreate it, it is not possible to assign a name to the data source. In the user interface, a long alphanumeric string is displayed as the data source's name. 
+
+8. If you create Esri XYZ map layers through the solution administration interface, an error can occur if a password is not defined. 
+
+9. In both Firefox and Chrome browsers, an error causes filter pane names not to be displayed correctly in the filter configuration tool in the Solution Administration view. Also, in some cases, data sources are not displayed correctly in either the filter configuration tool, or in the Filter window in the Operations view. 
+
+10. If you resize the columns of a chart on the List tab, and then close and reopen the chart, only the last column in the chart is visible. 
+
+11. If the preferred language setting is not configured in a user's user profile, when the user attempts to log on, an HTTP 404 error is displayed that indicates that no content is available. 
+
+12. If more than approximately three Common Alerting Protocol (CAP) messages are received per second, the messages are not processed correctly. Only the first two or three messages are processed correctly. In the Message Endpoint log file in the WebSphere Application Server console, errors that are similar to the following example are displayed: 
+
+[1/29/15 19:33:12:880 CET] 00000140 DataReceiverL Icom.ibm.ioc.datareceiver.utils.NonDBIOCDataIngestionUtils excuteTheTemporaryQuery com.ibm.db2.jcc.am.SqlException: [ jcc ][t4][10342][11669][4.11.69] Application must execute a rollback . 
+The unit of work has already been rolled back in the database but other resource managers involved in this unit of work might not. To ensure integrity of this application, all SQL requests will be rejected until the application issues a rollback . ERRORCODE=-4497, SQLSTATE=null 
+1/29/15 19:33:12:887 CET] 00000089 XATransaction E J2CA0027E: An exception occurred while invoking prepare on an XA Resource Adapter from DataSource jdbc / ioc , within transaction ID {XidImpl: formatId(57415344),gtrid_length(36), bqual_length(54), 
+data(0000014b36f7c92a000000015aefdb70b5f4a3f469722f027c57fceb13f31c94958 749150000014b36f7c92a000000015aefdb70b5f4a3f469722f027c57fceb13f31c94958 74915000000010000000000000000000000000002)} : 
+com.ibm.db2.jcc.am.XaException : [ jcc ][t4][2041][12326][4.11.69] Error executing XAResource.prepare(). Server returned XAER_NOTA. ERRORCODE=-4203, SQLSTATE=null 
+
+[1/29/15 19:33:12:921 CET] 00000089 MCWrapper E J2CA0081E: Method cleanup failed while trying to execute method cleanup on ManagedConnection WSRdbManagedConnectionImpl@4946fd97 from resource jdbc / ioc . Caught exception: com.ibm.ws.exception.WsException: DSRA0080E: 
+An exception was received by the Data Store Adapter. See original exception message: Cannot call 'cleanup' on a ManagedConnection while it is still in a transaction.. 
+
+[1/29/15 19:33:13:479 CET] 00000087 SibMessage W [:] CWWMQ0007W: The message endpoint ioc_portal_ear#ioc_data_receiver_cap_mdb.jar#DataReceiverMDB has been paused by the system. Message delivery failed to the endpoint more than 0 times. 
+The last attempted delivery failed with the following error: 
+
+javax.jms.TransactionRolledBackException : PREREQUISITES
+Interim fix PO03764
+
+URL LANGUAGE SIZE(Bytes) Interim fix PO03764 [http://www.ibm.com/support/docview.wss?uid=swg24038859] Language Independent 13300000000 
+INSTALLATION INSTRUCTIONS
+For installation instructions, refer to the readme document in the Fix Central download package. 
+
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] Interim fix PO04526 17 Apr 2015 Language Independent 195000000 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFix?product=ibm%2FOther+software%2FIntelligent+Operations+Center&fixids=1.6.0.3-Other-IBMIOC-Linux-PO04526&source=SAR&function=fixId&parent=Smarter%20Cities] [ ] 
+ [/support/docview.wss?uid=swg24039370&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24039370&aid=2]Problems (APARS) fixed
+PO04526

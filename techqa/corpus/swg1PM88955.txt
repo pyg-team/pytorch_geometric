@@ -1,0 +1,159 @@
+Title: IBM PM88955: WCM MULTILINGUAL SOLUTION COPY LIBRARY PORTLET FAILS WITH ERROR WHILE CALLING A FUNCTION UPDATEITEMS OF PLS DATA MANAGER - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fixes integrated in WebSphere Portal 8.0.0.1 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24034497]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  [4/19/13 6:48:53:170 EDT] 00000096 PUpdateNodeIm 3
+   PUpdateNodeImpl persistUpdatedContents Error while calling a
+   function updateItems of PLS data manager.
+   
+   com.ibm.icm.da.DBAccessException: [ErrorCode:7089] The length of
+   the input data is too long for the attriubute.
+   
+   or
+   
+   Caused by: com.ibm.icm.da.DBAccessException: [ErrorCode:10026]
+   Error, the reference property must be in the same workspace of
+   the node
+   itself UUID:
+   Opened for release 7002
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  None apply fix when available
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  WCM splits a multivalue properties string on comma.  The string
+   is path#uuid,path.... in some cases a customer path can include
+   a comma resulting in the incorrect splitting of the field's
+   value.  This code must handle this condition as some customer's
+   use export as a backup method.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  i-fix Name:      PM88955
+   
+   Problem Summary:
+   PM88955 WCM &#160;MULTILINGUAL &#160;SOLUTION &#160;COPY &#160;LIBRARY &#160;PORTLET &#160;FAI
+   H &#160;ERROR &#160;WHILE &#160;CALLING &#160;A &#160;FUNCTION &#160;UPDATEITEMS &#160;OF &#160;PLS &#160;DAT
+    &#160; &#160; &#160; &#160; &#160; &#160;
+   
+   Detailed Problem Description:
+   PM88955 WCM &#160;MULTILINGUAL &#160;SOLUTION &#160;COPY &#160;LIBRARY &#160;PORTLET &#160;FAI
+   H &#160;ERROR &#160;WHILE &#160;CALLING &#160;A &#160;FUNCTION &#160;UPDATEITEMS &#160;OF &#160;PLS &#160;DAT
+   .
+   
+   Problem Analysis:
+   WCM splits a multivalue properties string on comma.  The string
+   is path#uuid,path.... in some cases a customer path can include
+   a comma resulting in the incorrect splitting of the field's
+   value.  This code must handle this condition as some customer's
+   use export as a backup method.
+   
+   Problem Solution:
+   Updated code to handle comma in the path.
+   
+   Affected Users:
+   All users
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM88955
+   
+   
+ * REPORTED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * REPORTED COMPONENT ID
+   5724I2900
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-13
+   
+   
+ * CLOSED DATE
+   2013-05-20
+   
+   
+ * LAST MODIFIED DATE
+   2013-05-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LOTUS WEB CONT
+   
+   
+ * FIXED COMPONENT ID
+   5724I2900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

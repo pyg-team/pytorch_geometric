@@ -1,0 +1,19 @@
+Title: IBM Does Modeler support TLS 1.2 - United States
+
+Text:
+SSL tls 1.2 1.1 TLS transport layer security secure sockets layer secured socket layer tcp/ip communication modeler client modeler server collaboration and deployment services URL repository connection TECHNOTE (FAQ)
+
+QUESTION
+ Does Modeler support TLS 1.2? 
+
+ANSWER
+Modeler 18.0 Fix Pack 1 supports TLS 1.2 for connecting from the Modeler client to the Modeler Server and also for connecting to a C&DS application server configured to use TLS 1.2. Prior to Modeler 18.0 Fix Pack 1, TLS 1.2 was not supported. 
+
+However, Modeler 17.0 and higher does support TLS 1.1 for connections between Modeler client and Modeler Server. But not TLS 1.1 between Modeler client and C&DS with TLS 1.1 enabled. 
+
+In order to specifically enable TLS 1.1 connections within Modeler client, you need to launch the Modeler client along with the following Java parameter 
+
+"C:\Program Files\IBM\SPSS\Modeler\17\bin\modelerclient.exe"
+-J-Dcom.ibm.jsse2.overrideDefaultProtocol=TLSv11
+
+You can either do this from a command prompt, or update the Windows shortcut for Modeler client to contain that additional parameter: -J-Dcom.ibm.jsse2.overrideDefaultProtocol=TLSv11

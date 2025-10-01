@@ -1,0 +1,207 @@
+Title: IBM PI46789: TMRA VERSION 14.1.0 NEW FUNCTIONS - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problems addressed in APAR PI46643 for IMS TM Resource Adapter
+   version 14.1.0:
+   
+   1. Prior versions of the resource adapter could not receive a
+   confirmation from IMS that the synchronous callout response
+   message was received.
+   
+   2. With prior versions of the resource adapter, whenever a
+   callout response is sent, a new connection is created and
+   then discarded, causing overhead in opening and closing
+   connections.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All users of earlier versions of IMS TM                      *
+   * Resource Adapter, or new users who want to                   *
+   * use this resource adapter to access IMS                      *
+   * transactions from Java applications, Java                    *
+   * EE applications or web services, or call                     *
+   * out to external Java EE applications from                    *
+   * IMS applications.                                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Problems addressed in APAR PI46789 for IMS TM Resource       *
+   * Adapter                                                      *
+   * version 14.1.0:                                              *
+   *                                                              *
+   * 1. Prior versions of the resource adapter could not receive  *
+   * a                                                            *
+   * confirmation from IMS that the synchronous callout response  *
+   * message was received.                                        *
+   *                                                              *
+   * 2. With prior versions of the resource adapter, whenever a   *
+   * callout response is sent, a new connection is created and    *
+   * then discarded, causing overhead in opening and closing      *
+   * connections.                                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * INSTALL CORRECTIVE SERVICE FOR APAR/PTF                      *
+   ****************************************************************
+   Enhancements in APAR PI46789:
+   
+   1. The send-only with acknowledgement protocol for synchronous
+   callout is now supported. By setting the sendOnlyWithAck
+   property in the activation specification to true, you can enable
+   the resource adapter to receive an acknowledgement from IMS
+   that the response was received.
+   
+   2. For responses sent back to IMS, you can now enable
+   connection pooling. You can specify the maximum number of
+   connections to hold in the pool, the interval in minutes to
+   clean up idle connections, and how many minutes a connection
+   can remain idle.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  1. You can specify in the activationSpec whether to enable
+   the send-only with acknowledgement protocol by setting the
+   sendOnlyWithAck property to true (default is false).
+   
+   2. You can specify in the activationSpec the following
+   properties for synchronous callout response connection pooling:
+   
+   connectionPoolEnabled: Specifies if connection pooling is
+   	enabled.  The default is false.
+   maxConnections: Specifies the maximum number of connections
+   	the pool can hold. If the pool is full, all new
+   	connections is discarded. The default value is 1.
+   poolCleanupFrequency: Specifies the idle connection cleanup
+   	interval in minutes.  The default is 20.
+   durationOfIdleConnection: Specifies the number of minutes a
+   	connection can remain idle before it is cleaned up at
+   	the next cleanup interval.  The default is 0, which
+   	means an idle connection is cleaned up right away.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This Service contains the IMS TM Resource Adapter Version
+   14.1.0 runtime components. Applying this Service adds the
+   following file to your HFS/zFS and extracts their contents
+   into the following directory:
+   
+     /usr/lpp/ims/ico14/ico1410zos.tar
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI46789
+   
+   
+ * REPORTED COMPONENT NAME
+   IMS V14
+   
+   
+ * REPORTED COMPONENT ID
+   5635A0500
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-08-12
+   
+   
+ * CLOSED DATE
+   2015-08-26
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UI30559
+   
+   
+
+MODULES/MACROS
+ *  DFSICOT1
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IMS V14
+   
+   
+ * FIXED COMPONENT ID
+   5635A0500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R406 PSY UI30559 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI30559]
+   UP15/08/28 P F508
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

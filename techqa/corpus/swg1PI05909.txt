@@ -1,0 +1,234 @@
+Title: IBM PI05909: WSEJBDEPLOY ANT TASKDOES NOT ALLOW FOR PASSING IN <JVMARGS> - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.2: WebSphere Application Server V8.5.5 Fix Pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24037250]
+8.5.5.3: WebSphere Application Server V8.5.5 Fix Pack 3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038133]
+8.5.5.4: WebSphere Application Server V8.5.5 Fix Pack 4 [http://www-01.ibm.com/support/docview.wss?uid=swg24038539]
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The wsejbdeploy ant task shows no support for  <jvmargs>:
+   
+   Reference: - com.ibm.websphere.ant.tasks Class WsEjbDeploy
+   - WebSphere Application Server V7 Information Center:
+   http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=% [http://pic.dhe.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%]
+   2Fcom.ibm.websphere.javadoc.doc%2Fweb%2Fapidocs%2Fcom%2Fibm%2Fwe
+   bsphere%2Fant%2Ftasks%2FWsEjbDeploy.html
+   - WebSphere Application Server V8.5 Information Center:
+   http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/index.jsp?topic=% [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r5/index.jsp?topic=%]
+   2Fcom.ibm.websphere.javadoc.doc%2Fweb%2Fapidocs%2Fcom%2Fibm%2Fwe
+   bsphere%2Fant%2Ftasks%2FWsEjbDeploy.html
+   
+   It is necessary to be able to pass in a jvmarg for unique
+   problem scenarios, just as it is possible in the editable
+   command line ejbdeploy.{bat|sh} scripts.
+   There is no way to pass in jvmargs into wsejbdeploy similar to
+   system properties
+   
+   For example:
+   
+   <ejbDeploy
+   inputJar="${working.compile.dir}/${type}/${module.name}.input.ja
+   r"
+   wasHome="${was.home}"
+   
+   workingDirectory="${working.compile.dir}/${type}/${module.name}"
+   
+   outputJar="${working.archive.dir}/${type}/${module.name}.jar"
+   classpathref="compile.class.path"
+   codegen="${ejbdeploy.codegen}"
+   dbvendor="${ejbdeploy.dbvendor}"
+   keepGenerated="${ejbdeploy.keep.generated}"
+   quiet="${ejbdeploy.quiet}"
+   noValidate="${ejbdeploy.no.validate}"
+   failonerror="true"
+   trace="${ejbdeploy.trace}"
+   jvmMaxMemory="${ejbdeploy.jvm.max.memory}">
+   
+   <systemProperty value="osgi.clean=true"/>
+   <jvmarg value="-XX:DoEscapeAnalysis"/>            <<< -XX
+   or -D Not Supported
+   
+   </ejbDeploy>
+   
+   
+   Problem scenario ...
+   
+   A JVM Crash occurs in the wsejbdeploy ant task. After
+   analyzing the crash dumps, JVM support determined this may
+   well be an instance of Sunbug 7026700:
+   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7026700 [http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7026700]
+   
+   (This is the strongest competitor of a few options.)
+   There is a Java 6  Hotspot v21 fix -
+   except its not delivered in the released Java 6 stream (Sunbug
+   2209127).
+   This is typical when there is an established workaround also
+   available:
+   
+   The workaround is to pass in:
+   
+   1) -XX:DoEscapeAnalysis
+   2) -XX:+ReduceFieldZeroing
+   3)
+   -XX:CompileCommand=exclude,org/eclipse/jst/j2ee/model/internal/
+   validation/ValidationRuleUtility,getMethod
+   
+   
+   It is necessary to use jvmargs, since a .hotspotrc file can no
+   longer be used in a JDK 1.6 JVM
+   This just for WebSphere Application Server.
+   It is not anything to be fixed in RAD.
+   
+   Being able to pass in a jvmarg, just like for ejbdeploy.{bat|sh}
+   is essential for any useable wsant task like wsejbdeploy in
+   production environments.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  There is no known workaround at this time when using an ant
+   build script.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server V8.5                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The wsejbdeploy ant task shows no       *
+   *                      supporty for  <jvmargs>                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   When running the wsejbdeploy ant task a JVM Crash occurs. In
+   order to avoid such a crash, the following jvmargs have to be
+   passed to the jvm: -XX:DoEscapeAnalysis, -
+   XX:+ReduceFieldZeroing
+   ,-
+   XX:CompileCommand=exclude,org/eclipse/jst/j2ee/model/internal/
+   validation/ValidationRuleUtility,getMethod, but the
+   wsejbdeploy ant task does not support the passing of arguments
+   to the jvm. So in order to apply the workaround the
+   wsejbdeploy ant task needs to be enhanced to support the
+   passing of jvm args.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Enhanced the passing of arguments to the wsejbdeploy ant
+   task in order to be able to apply the workaround for
+   http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7026700. [http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=7026700.]
+   The fix for this APAR is currently targeted for
+   inclusion in fix pack 8.5.5.2.  Please refer to the
+   Recommended Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI05909
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-11
+   
+   
+ * CLOSED DATE
+   2014-01-22
+   
+   
+ * LAST MODIFIED DATE
+   2014-01-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

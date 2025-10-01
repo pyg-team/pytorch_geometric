@@ -1,0 +1,30 @@
+Title: IBM Output files (*.spv) created with OMS syntax on UNIX servers: lightweight pivot tables do not render when output is opened in client - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am working with IBM SPSS Statistics 19.0.0 installed on a UNIX Server platform (AIX, HP-UX or Solaris) and executed an OMS syntax that contains lightweight pivot tables. The creation of the tables went fine and I saved the output as SPV file. After that I copied the output file to a Statistics 19 Client (Windows, Macintosh or Linux platform). However, when I try to open the SPV file on the client the lightweight pivot tables do not render, they only show "Processing..", why is this? 
+
+RESOLVING THE PROBLEM
+This problem has been reported to IBM SPSS Development. This issue is resolved with the IBM SPSS Statistics 19 FixPack 1.
+
+As a workaround please download the IBM SPSS Statistics 19 FP1 and install it for your Client or Server operating system. The FixPack is available on IBM FixCentral [http://www.ibm.com/support/fixcentral/] for download. 
+
+Select "Information Management" as product group and SPSS Statistics as product. As installed version select 19.0.0.0 and select the operating system platform where you have installed the product. 
+
+For example if you select Windows 32 bit as operating system the relevant Fixpack would be: 
+
+19.0-IM-S19STATC-WIN32-FP001 (This is IBM SPSS Statistics Fix Pack 1 for Statistics Client 19.0.0.0. ). 
+
+Please read the installation instructions included in the download package.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+IBM FixCentral [http://www.ibm.com/support/fixcentral/]
+
+
+ 
+
+HISTORICAL NUMBER
+ 90998

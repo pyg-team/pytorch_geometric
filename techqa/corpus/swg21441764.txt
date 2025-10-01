@@ -1,0 +1,116 @@
+Title: IBM Reports Data warehouse FAQ - United States
+
+Text:
+Data Warehouse; snapshot; update; synchlonise; sync; report TECHNOTE (FAQ)
+
+QUESTION
+ Where can I find information about Reports Data warehouse for IBM Rational Team Concert? 
+
+ANSWER
+
+Q1. If all Data warehouse "Task delay" is the default value (86400) which corresponds to 24 hours, and "Data Warehouse Snapshot Time" is not set (value=none), when will Data Warehouse be updated? 
+
+A1: By default, it will be updated at midnight (12 AM). For example if you start the server at 08:00 (8 AM), the first update will occur at 00:00 (12 AM). (Not at the server start time)
+
+
+
+
+
+
+Q2. When setting "Task Delay" to "10800" which corresponds to 3 hours, "Data Warehouse snapshot Time" is not set, and the Jazz server is restarted at 00:00 (12 AM), will the snapshot be updated at 00:00 (12 AM), 03:00 (3 AM) or 06:00 (6 AM)....? 
+
+A2: The first snapshot will occur some time between midnight (12 AM) and 03:00 (3 AM). If it occurs at 1:47 (1:47 AM), for example, then after that, the next snapshot will run at 4:47 (4:47 AM), then 7:47 (7:47 AM). 
+
+
+
+
+Q3. If "Task delay" for a snapshot is set to "10800" which corresponds to 3 hours, and also "Data Warehouse snapshot Time" is set to "21", When the snapshot is updated? 
+
+A3. "Task delay" and "Data Warehouse snapshot Time" cannot be used together. If both of them are set, "Task delay" setting will be used. See answer to question 2. 
+
+
+
+
+Q4. When "Task Delay" and "Data Warehouse snapshot Time" are set to default (86400) and if Jazz server is stopped at midnight (12 AM) everyday for some reason, will the snapshot never be updated? 
+
+A4: Correct 
+
+
+
+
+Q5: Is there any way to reset the schedule so that the new task delay setting will be effective immediately? 
+
+A5: You can restart the server. 
+
+
+
+
+Q6. When each snapshot task is run, is there any data which will not be updated? 
+
+A6: When update occurs, all data in the tables will be updated. 
+
+
+
+
+Q7. In which order will the data be updated? (such as, from the oldest project area's data) 
+
+A7: The order of project area updating is not specified. 
+
+
+
+
+Q8. Other than the size of data warehouse which will be significantly increased, how will a snapshot affect Team Concert if it updates the data warehouse frequently (that is, the set "Task Delay" of all snapshot tasks is set to "3600 (every 1 hour)")? 
+
+A8: It is entirely possible that updating takes more than an hour to run. Regardless, while the data warehouse is running, database and server performance is degraded. How noticeable depends on many factors, such as system speed, memory, data size, and so on. The exact performance impact is being investigated in the work item 132682 [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.WorkItem/132682] on Jazz.net 
+
+
+
+
+Q9: How can I check when the snapshot was updated? 
+
+A9: The report has a section named: About This Report that shows the last snapshot time. 
+Enhancement request 122129 [https://jazz.net/jazz/resource/itemName/com.ibm.team.workitem.WorkItem/122129] has been opened for a report function that plots the last update time of each of the data warehouse tables. 
+
+
+
+
+Q10: Why do some report show "Last snapshot" time section (that is, Burndown, Burnup, Open vs Closed Work Items) but some reports do not have it (such as, Work Items by Owner, Estimate Changes). 
+
+A10: Live reports that do not use the data warehouse do not show the Last Snapshot time. 
+
+
+
+
+Q11: Why does Burndown report reflect the new change without updating the data warehouse? 
+
+A11: When you create a new project area, a new dimension value needs to be added to the PROJECT_AREA table in the data warehouse. This only happens during the nightly tasks by default. That is why the report did not show any data. Once the project area is added the Burnup/Burndown reports will start showing some data. The live repository data that is used only applies to work item data.  * - New work items that use dimensional data (project area, team area, category, iteration...) that are already in the data warehouse will show up right away without waiting for the nightly task. 
+ * - New work items that use dimensional data (project area, team area, category, iteration...) that are not already in the data warehouse will not show up right away. They will wait until the dimensional data gets collected by the nightly snapshot.
+
+
+
+
+
+Q12: Why does the automated snapshot task work AROUND midnight (12 AM) by default, not exactly at midnight (12 AM)? 
+
+A12: No two snapshots can run at the same time. So you can schedule all the tasks at midnight. But they will run one after the other. This is because of performance reasons. 
+
+
+
+
+Q13. There are 8 snapshot tasks in the [Advanced Properties]. What data is included in each snapshot? 
+- com.ibm.team.datawarehouse.service.apt.internal.AptSnapshotTask 
+- com.ibm.team.datawarehouse.service.build.internal.BuildSnapshotTask 
+- com.ibm.team.datawarehouse.service.internal.InternalDataWarehouseService 
+- com.ibm.team.datawarehouse.service.internal.common.CommonSnapshotTask 
+- com.ibm.team.datawarehouse.service.repository.internal.LicenseSnapshotTask 
+- com.ibm.team.datawarehouse.service.scm.internal.RepositorySnapshotTask 
+- com.ibm.team.datawarehouse.service.scm.internal.ScmSnapshotTask 
+- com.ibm.team.datawarehouse.service.workitem.internal.WorkItemsSnapshotTask 
+
+A13: See Data Warehouse Snapshot Schemas [https://jazz.net/wiki/bin/view/Main/DataWarehouseSnapshotSchemas20] 
+
+
+
+
+Leverage the Jazz Community Jazz and Rational Team Concert have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+Refer to technote 1319600 [http://ibm.com/support/docview.wss?uid=swg21319600] for details and links.

@@ -1,0 +1,221 @@
+Title: IBM PI24537: CLASSNOTFOUNDEXCEPTION AFTER RUNNING COMMAND DUMPNAMESPACE.SH - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.5: WebSphere Application Server V8.5.5 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24039425]
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ClassNotFoundException after running command dumpNameSpace.sh
+   
+   ./dumpNameSpace.sh -host localhost -port 10035 -user wpsadmin
+   -password xxxxxxx -format jndi -root cell
+   
+   [2/7/14 14:19:31:674 CET] 00000032 AbstractEJBRu E   WSVR0068E:
+   Attempt to start EnterpriseBean
+   wimwmm#wimwmmejb.jar#MemberService failed withe
+   xception: com.ibm.ejs.container.EJBConfigurationException: Bean
+   class could not be loaded
+       at
+   com.ibm.ws.metadata.ejb.EJBMDOrchestrator.loadCustomerProvidedCl
+   a sses(EJBMDOrchestrator.java:4785)
+       at
+   om.ibm.ws.metadata.ejb.EJBMDOrchestrator.finishBMDInitForReferen
+   ceContext(EJBMDOrchestrator.java:8354)
+       at
+   com.ibm.ws.ejbcontainer.runtime.AbstractEJBRuntime.finishBMDInit
+   F orRefere
+   nceContext(AbstractEJBRuntime.java:2572)
+   
+   ......etc.
+   
+   Caused by: java.lang.NoClassDefFoundError: javax.ejb.EJBObject
+       at java.lang.ClassLoader.defineClassImpl(Native Method)
+       at java.lang.ClassLoader.defineClass(ClassLoader.java:275)
+       ato
+   rg.eclipse.osgi.internal.baseadaptor.DefaultClassLoader.defineCl
+   ass(Defa
+   ultClassLoader.java:188)
+       ato
+   
+   ......etc.
+   
+   Caused by: java.lang.ClassNotFoundException: javax.ejb.EJBObject
+       ato
+   rg.eclipse.osgi.internal.loader.BundleLoader.findClassInternal(B
+   undleLoa
+   der.java:506)
+   rg.eclipse.osgi.internal.loader.BundleLoader.findClassInternal(B
+   undleLoa
+   der.java:506)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: ClassNotFoundException when the         *
+   *                      dumpNameSpace.sh command is run         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   ClassNotFoundException is thrown after running command
+   dumpNameSpace.sh from WAS_HOME/bin
+   [2/7/14 14:19:31:674 CET] 00000032 AbstractEJBRu E   WSVR0068E:
+   Attempt to start EnterpriseBean
+   wimwmm#wimwmmejb.jar#MemberService failed with exception:
+   com.ibm.ejs.container.EJBConfigurationException: Bean class
+   could not be loaded
+   at
+   com.ibm.ws.metadata.ejb.EJBMDOrchestrator.loadCustomerProvidedCl
+   a sses(EJBMDOrchestrator.java:4785)
+   ...
+   Caused by: java.lang.NoClassDefFoundError: javax.ejb.EJBObject
+   at java.lang.ClassLoader.defineClassImpl(Native Method)
+   at java.lang.ClassLoader.defineClass(ClassLoader.java:275)
+   at
+   org.eclipse.osgi.internal.baseadaptor.DefaultClassLoader.defineC
+   lass(DefaultClassLoader.java:188)
+   ......
+   Caused by: java.lang.ClassNotFoundException:
+   javax.ejb.EJBObject
+   at
+   org.eclipse.osgi.internal.loader.BundleLoader.findClassInternal(
+   BundleLoader.java:506)
+   at
+   org.eclipse.osgi.internal.loader.BundleLoader.findClassInternal(
+   BundleLoader.java:506)
+   ....
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix resolves ClassNotFoundException by using the correct
+   EJB version.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.0.0.11 and 8.5.5.5.  Please refer to the Recommended
+   Updates page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI24537
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-08-25
+   
+   
+ * CLOSED DATE
+   2014-12-02
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP
+   
+   
+ * R850 PSY
+   UP

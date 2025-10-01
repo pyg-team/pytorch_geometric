@@ -1,0 +1,144 @@
+Title: IBM IZ97235: STAT_DAEMON HANGS AFTER ADDING CPUS DYNAMICALLY - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring 6.2.2 Fix Pack 8 (6.2.2-TIV-ITM-FP0008) [http://www-01.ibm.com/support/docview.wss?uid=swg24031354]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 9 (6.2.2-TIV-ITM-FP0009) [http://www-01.ibm.com/support/docview.wss?uid=swg24032067]
+IBM Tivoli Monitoring 6.2.2 Fix Pack 6 (6.2.2-TIV-ITM-FP0006) [http://www-01.ibm.com/support/docview.wss?uid=swg24030135]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Approver: gdc
+   
+   Environment:
+   The Monitoring Agent for UNIX OS 6.2.2 on AIX
+   
+   Problem Description:
+   On AIX the Monitoring Agent for UNIX OS
+   stat_daemon process can hang after adding CPUs dynamically,
+   or it can report wrong metrics for all the CPUs
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The stat_daemon process hangs after adding CPUs dynamically.
+   
+   On AIX, the Monitoring Agent for UNIX OS stat_daemon process can
+   hang after adding CPUs dynamically, or it can report incorrect
+   metrics for all the CPUs.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem was due to a memory corruption that occurred when
+   buffer used to manage CPUs information is reallocated because
+   number of CPUs increases.  Memory management has been improved.
+   
+   
+   
+   The fix for this APAR is going to be included in the following
+   maintenance vehicle:
+       | fix pack | 6.2.2-TIV-ITM-FP0006
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Restart the UNIX OS Agent after adding CPUs dynamically.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ97235
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724C040U
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-03-24
+   
+   
+ * CLOSED DATE
+   2011-05-20
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM AGENT UNIX
+   
+   
+ * FIXED COMPONENT ID
+   5724C040U
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

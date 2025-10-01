@@ -1,0 +1,34 @@
+Title: IBM Newly created Console Integrations do not save in DASH for JazzSM - United States
+
+Text:
+DASHL2; DASHL2CONF; read-only; ERROR 25502; FEDERATIONS; console integration TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A newly created Console Integration in the Dashboard Application Service Hub (DASH) component of Jazz for Service Management (JazzSM) does not save. The Console Integration page is blank after clicking the "Save" button. 
+
+CAUSE
+File ownership of some of the restdb files was set to a user other than the OS user that was used to install DASH. For example, a non-root userID is used to install DASH, but some of the restdb files are owned by root
+
+DIAGNOSING THE PROBLEM
+With standard isc* traces enabled (see: https://www-304.ibm.com/support/docview.wss?uid=swg21632844 [https://www-304.ibm.com/support/docview.wss?uid=swg21632844]), the following exception is written:
+
+###
+[2/2/15 22:45:29:108 IST] 000000b6 FederationSer 1 Creating connection to Local database: jdbc:derby:/home/emdeon/IBM/JazzSM/ui/db/restdb;
+...
+[2/2/15 22:45:29:135 IST] 000000b6 FederationSer W com.ibm.isclite.service.datastore.federation.FederationServiceImpl createFederation Error occurred while updating: An SQL data change is not permitted for a read-only connection, user or database.
+java.sql.SQLException: An SQL data change is not permitted for a read-only connection, user or database.
+###
+
+If DASH traces are not enabled, the SystemOut log will still include the following error:
+###
+Caused by: ERROR 25502: An SQL data change is not permitted for a read-only connection, user or database.
+###
+
+Ensure ownership of the restdb files is set to the installation user. Execute:
+
+$ ls -latR <JazzSM Home>/ui/db/restdb
+
+Replace "<JazzSM Home> with the actual install path for JazzSM.
+
+RESOLVING THE PROBLEM
+Ensure file ownership for all files in the "ls -latR" command output are set to the OS user that was used to install JazzSM/DASH

@@ -1,0 +1,51 @@
+Title: IBM APMUI 7.7 Encoding password of user in apmui registry - United States
+
+Text:
+5724G70UITR; encrypt TECHNOTE (FAQ)
+
+QUESTION
+ How can I encode the password of a user if using basic user registry for Application Performance Management User Interface? 
+
+CAUSE
+It is possible to use plain text or encoded (encrypted) passwords when using basic user registry. It is a best practice to encode passwords. Similarly the bindPassword setting in ldapRegistry.xml can be in specified plain text, but it is recommended that it should be encoded.
+
+ANSWER
+Follow these steps to encode password of a user: 
+
+The APMUI_HOME refers to the installation directory of APMUI. 
+
+1) Encode the new password using securityUtility command included in the APMUI installation:
+On AIX, Linux, or UNIX systems use APMUI_HOME/bin/securityUtility script.
+On Windows systems, use APMUI_HOME\bin\securityUtility.bat script.
+For example: 
+
+APMUI_HOME/bin/securityUtility encode newpassword
+{xor}MTooLz4sLCgwLTs= 
+
+Alternatively you can use --encoding=aes option:
+APMUI_HOME/bin/securityUtility encode --encoding=aes newpassword
+or 
+APMUI_HOME/bin/securityUtility encode --encoding=aes --key=APMUI_KEY newpassword
+
+Note: If encoding with non-default key with --key option, the key can be provided to the server by defining the variable wlp.password.encryption.key whose value is the key. Refer to Liberty securityUtility command documentation for details.
+
+Note: If "--encoding=aes" option is used, the encoded output will be different each time the securityUtility is run. This is not a problem, you can use any one of the encoded outputs.
+
+
+2) Edit basicRegistry.xml definition in your environment to insert the encoded password for the user.
+
+For example, if the APMUI_HOME/usr/servers/apmui/server.xml has following basicRegistry setting, then basicRegistry.xml in APMUI_HOME/usr/shared/config directory contains the basic user registry:
+
+<include location="${shared.config.dir}/basicRegistry.xml" optional="false"/>
+
+You can edit the basicRegistry.xml to set the new user password. For example, for user1, set the password in the line as shown:
+<user id="user1" name="user1" password="{xor}MTooLz4sLCgwLTs="/>
+
+Save the changes and log into APMUI as user1 with new password.
+This change is effected immediately, there is no need to restart the APMUI servers.
+
+Similarly, change the bindPassword to the encoded one in ldapRegistry.xml. 
+
+
+RELATED INFORMATION
+ Liberty:securityUtility command [https://www-01.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.wlp.nd.doc/ae/rwlp_command_securityutil.html]

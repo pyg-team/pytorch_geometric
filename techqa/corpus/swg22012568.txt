@@ -1,0 +1,22 @@
+Title: IBM Unable to create a FileNet Content Platform Engine P8 domain - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User can not create P8 domain with the following exception:
+
+ERROR GCDinit: Error occurred checking/creating table: FNGCD, No statement. com.filenet.api.exception.EngineRuntimeException: FNRCD0009E: DB_ERROR: The database access failed with the following error: ErrorCode -4,203, Message '[jcc][t4][2041][11392][4.17.29] Error executing XAResource.start(). Server returned XAER_PROTO. ERRORCODE=-4203, SQLSTATE=null' SQL: ""SELECT 1 FROM FNGCD for update with RS"" 
+
+DIAGNOSING THE PROBLEM
+I found the following tech note that describes this issue: 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21963886 [http://www-01.ibm.com/support/docview.wss?uid=swg21963886]
+
+From the above tech note, we can see the DB2 JDBC driver version 4.17.28 are not supported with DB2 10.5 FP2, but in this environment, it's using DB2 10.5 FP3 and the JDBC driver version is 4.17.29 and still encounter the same error.
+
+What I think is: The driver version with 4.17.29 from DB2 10.5 FP3 has the exact same issue as driver version 4.17.28 from DB2 10.5 FP2. We'd better add it to compatibility report.
+
+
+RESOLVING THE PROBLEM
+After user downloads the JDBC driver with version 4.16.53 and put to DB2 JDBC Driver Path, then perform a recycle on CPE WAS JVM, they can create the domain successfully.

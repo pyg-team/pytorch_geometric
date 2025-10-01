@@ -1,0 +1,145 @@
+Title: IBM IO20826: USER ABLE TO VIEW CONTENT VIA LINK - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Download IBM Content Navigator Version 2.0.2 Fix Pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24038083]
+Download IBM Content Navigator Version 2.0.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24038160]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  User able to view content via link, can we remove "Email" and
+   "View
+   link" uner actions for users with the following privileges:
+            <privilege name="AllowConnectToLogon"/>
+           <privilege name="AllowTrustedLogon"/>
+           <privilege name="ItemSQLSelect"/>
+           <privilege name="ItemTypeQuery"/>
+           <privilege name="ItemQuery"/>
+           <privilege name="ItemGetWorkList"/>
+           <privilege name="SystemQueryUserPrivs"/>
+           <privilege name="ClientAdvancedSearch"/>
+   
+   .
+   
+   the privileges list below are for the specific Hanover Item
+   Type,
+   associated with the document. Not the Document item type created
+   by
+   Navigator. For the Document item type created by Navigator, we
+   are
+   using the default ClbDocumentACL and in that ACL the user has
+   the
+   clbReadOnly privilege set.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  fix is under development presently
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  fixed
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  fixed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IO20826
+   
+   
+ * REPORTED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * REPORTED COMPONENT ID
+   ISCONTNAV
+   
+   
+ * REPORTED RELEASE
+   202
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-03-12
+   
+   
+ * CLOSED DATE
+   2014-04-28
+   
+   
+ * LAST MODIFIED DATE
+   2014-04-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CONTENT NAVIGAT
+   
+   
+ * FIXED COMPONENT ID
+   ISCONTNAV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R202 PSY
+   UP

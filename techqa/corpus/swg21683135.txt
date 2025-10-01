@@ -1,0 +1,115 @@
+Title: IBM ITCAM  T6 RRT Agent will not run with GSKit 8 - United States
+
+Text:
+71RRT-TS; 71RRT-CONF; 71RRT-INS; GSKit; GSKit 8; agent framework; ITM 6.3 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When an ITCAM 7.4 agent and an ITM 6.3 component are installed on the same system, GSKit 8 is installed and the ITCAM agent does not start. 
+
+SYMPTOM
+Agent fails to start.
+
+
+CAUSE
+Installing ITM 6.3 OS Agent or other ITM components on the same system as the ITCAM T6 agent.
+ITM 6.3 installs GSKit 8, and the ITCAM T6 agent uses GSKit 7.
+
+By default the ITCAM agents use GSKit 7 and Tivoli Framework version 06.23.03.00.
+
+
+ENVIRONMENT
+64-bit Linux
+ITCAM 7.4 Robotic Response Time agent
+ITM 6.3
+
+DIAGNOSING THE PROBLEM
+Check the <hostname>_t6_*.log for errors related to loading libgsk7 libraries, similar to this:
+kt6agent: error while loading shared libraries: libgsk7sys.so: cannot open shared object file: No such file or directory
+
+
+RESOLVING THE PROBLEM
+- Before you start
+
+You will need this package from Passport Advantage:
+IBM Tivoli Monitoring V6.3.0.2 Agents , Multiplatform, Multilingual (CIQ3QML )
+
+GSKit 8 requires the following libraries:
+
+
+
+
+ libstdc++.so.6
+libXtst.so.6
+ld-linux.so.2
+
+The libs can be installed with commands similar to these:
+'yum install libstdc++.so.6'
+'yum install libXtst.x86_64'
+'yum install glibc-2.12-1.132.el6_5.3.i686'
+
+- Upgrade the Tivoli Framework
+
+NOTE: All agents and ITM components on the system will be restarted by the upgrade!
+
+The solution is to upgrade the Tivoli Framework version that is used by the agent.
+
+The Tivoli Framework used by the T6 agent as delivered is 'ax lx8263 Version: 06.23.03.00':
+ax IBM Tivoli Monitoring Shared Libraries
+lx8263 Version: 06.23.03.00
+lx8266 Version: 06.23.03.00
+
+To enable the T6 agent to use GSKit 8, we need to add 'ax li6263 06.30.02.00'.
+
+The generic command to upgrade the Tivoli Framework is:
+<MEDIA>/install.sh -h <CANDLEHOME> -q -p <MEDIA>/unix/tf<PLAT>.txt 
+
+Here is an example, where the install media is unpacked in /tmp/6.3.0-TIV-ITM-FP0002:
+/tmp/6.3.0-TIV-ITM-FP0002/install.sh -h /opt/IBM/ITM -q -p /tmp/6.3.0-TIV-ITM-FP0002/unix/tfli6263.txt 
+
+ 
+
+Check <ITM_HOME>/logs/candle_installation.log for errors, and verify that the upgrade was successful. 
+
+
+After the framework upgrade, the pertinent info is:
+[root@nc9053114194 bin]# cat /opt/IBM/ITM/config/gsKit.config
+GskitInstallDir=/opt/IBM/ITM/li6243/gs
+GskitInstallDir_64=/opt/IBM/ITM/lx8266/gs
+
+[root@nc9053114194 bin]# ./cinfo -i
+ax IBM Tivoli Monitoring Shared Libraries
+li6263 Version: 06.30.02.00
+lx8263 Version: 06.23.03.00
+lx8266 Version: 06.30.02.00
+
+gs IBM GSKit Security Interface
+li6243 Version: 08.00.50.05
+lx8266 Version: 08.00.50.05
+
+Then restart the T6 agent to utilize the new Tivoli Framework.
+
+Check the <hostname>_t6_*.log to ensure that the GSKit 8 libraries are loaded:
++53FDDF68.0030 /opt/IBM/ITM/li6243/gs/lib/libgsk8ssl.so
++53FDDF68.0030 /opt/IBM/ITM/tmaitm6/li6263/lib/libgsk8cms.so
++53FDDF68.0030 /usr/lib/libstdc++.so.6
++53FDDF68.0030 /opt/IBM/ITM/tmaitm6/li6263/lib/libgsk8sys.so
++53FDDF68.0030 /opt/IBM/ITM/tmaitm6/li6263/lib/kdebe
++53FDDF68.0030 /opt/IBM/ITM/li6243/gs/lib/libgsk8iccs.so
++53FDDF68.0030 /opt/IBM/ITM/li6243/gs/lib/libgsk8kicc.so
++53FDDF68.0030 /opt/IBM/ITM/li6243/gs/lib/N/icc/icclib/libicclib083.so
++53FDDF68.0030 /opt/IBM/ITM/li6243/gs/lib/C/icc/icclib/libicclib080.so
++53FDDF68.0030 /opt/IBM/ITM/li6243/gs/lib/C/icc/osslib/libcryptoIBM080.so.0.9.8
++53FDDF68.0030 /opt/IBM/ITM/li6243/gs/lib/N/icc/osslib/libcryptoIBM083.so.1.0.1
++53FDDF68.0030 /opt/IBM/ITM/li6243/gs/lib/libgsk8dbfl.so
++53FDDF68.0030 /opt/IBM/ITM/li6243/gs/lib/libgsk8valn.so
+
+
+RELATED INFORMATION
+ Upgrading Shared Components for IBM Tivoli Monitoring A [http://www.ibm.com/support/docview.wss?uid=swg21673490]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITCAM4T
+T7.4

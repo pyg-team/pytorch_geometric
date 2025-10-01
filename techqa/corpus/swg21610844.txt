@@ -1,0 +1,182 @@
+Title: IBM EventReader stops reading events, StateChange value too high - United States
+
+Text:
+netcool; impact; netcool/impact; nci; event; reader; eventreader; omnibus; omni; omnibuseventreader; state; change; statechange; date; time; datetime; value; future; high; stamp; timestamp; advanced; advance; forward; ahead; before; after; current; jrexec; jrexecaction; jrexecserver; jrexecaction()' server; action; function; command; line; interface; cli; commandlineinterface TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ How to deal with an EventReader that is using an inadvertently future dated StateChange value. 
+
+SYMPTOM
+The EventReader stops acquiring events that are pertinent for processing because it is using a StateChange value that is too high.
+
+
+CAUSE
+An event has had its StateChange value artificially increased by some unknown component (Probe, Trigger, etc) to reflect a future date. The EventReader captures the event and then uses the highest captured StateChange value in its outgoing SQL to capture pertinent events.
+
+DIAGNOSING THE PROBLEM
+Pertinent events are not being processed. Looking in the EventReader log file the number of events being captured in each Read is 0. Testing the SQL being used in an nco_sql session produces a 0 result too. Testing the SQL again in an nco_sql session without the "and StateChange >= 1234567890" clause returns all the unprocessed rows.
+
+RESOLVING THE PROBLEM
+Something has "future dated" the StateChange value of an event in the ObjectServer, the EventReader captured the event and, since the EventReader will use the highest StateChange value captured in the previous poll in the SQL of its next poll, this then future dated the value used in the EventReader. The EventReader will persist with this value (and will increment it by 1 every other poll) until such a time as it captures an event with a higher StateChange value.
+
+
+
+
+
+The simplest solution is to manually reset the EventReader StateChange value via the GUI. Stop the EventReader, open it for edit, click the "Clear State" button, exit the editor and restart the EventReader.
+
+An alternate solution is to perform this operation via the Command Line Interface:
+
+
+
+ * telnet [Hostname] [Port]
+
+
+where [Hostname] is the resolvable hostname of the ImpactServer host and [Port] is the CLI port number (2000, by default). You will need to supply a suitable username (admin, for example) and password. Then at the READY prompt enter the series of commands: 
+
+ * Update Service set Running=false where Name='[EventReaderName]';
+ * 
+ * Update Service set ClearState=true where Name='[EventReaderName]';
+ * 
+ * Update Service set Running=true where Name='[EventReaderName]';
+
+
+where [EventReaderName] is the name of the EventReader that requires this restart process. 
+
+In cases where the likelihood of StateChange being inappropriately incremented in this fashion is quite high, one might wish to automate this process and have a Policy hunt for such occurrences. Please find following an example of a "hunter" Policy to capture any reoccurrence of this issue: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * ANN="AcquireStateChange"; 
+   Log(2,ID+ANN); 
+   Script="/opt/IBM/netcool/impact/bin/CheckState.sh"; 
+   Parameter="password"; 
+   JRExecAction(Script, Parameter, false, 30); 
+   NumExecOutput=Length(ExecOutput); 
+   Log(3,ID+ANN+": NumExecOutput: "+NumExecOutput); 
+   
+   If(NumExecOutput >= 1) 
+   {  * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * Log(ID+ANN+": CurrentStateChange: "+HumanStateChange+" is greater than CurrentTime: "+HumanCurrentTime); 
+      Log(ID+ANN+": !!! Clearing EventReader State !!!"); 
+      Script="/opt/IBM/netcool/impact/bin/ClearState.sh"; 
+      Parameter="password"; 
+      JRExecAction(Script, Parameter, false, 30); 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * Log(1,ID+ANN+": CurrentStateChange: "+HumanStateChange+" is less than CurrentTime: "+HumanCurrentTime); 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * Log(ID+ANN+": !!! There is some freaky stuff happening here !!! - CurrentStateChange: "+HumanStateChange+" and CurrentTime: "+HumanCurrentTime+" !!! "); 
+    * 
+   
+   } 
+   Else 
+   {  * 
+   
+   } 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Log(3,ID+ANN+": No UnprocessedEvents"); 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+As you can see this is designed to be run by a PolicyActivator and checks for events that have been around in the ObjectServer for a while (a minute) and are pertinent for processing by Impact (ImpactFlag = 1), but have not. If it finds any it then acquires the StateChange value from the .state file via JRExecServer using the example script referred to in the above example Policy as CheckState.sh: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+If the Policy finds the string it extracts the StateChange value and compares it against the current time and, if StateChange exceeds the current time, it undertakes the stop, clear and restart of the EventReader to bring StateChange back into line. 
+
+This examples a simple script to use the Command Line Interface to stop the EventReader, clear the StateChange value and restart the EventReader and is referred to in the above exampled Policy as ClearState.sh: 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+Please note that the ClearState.sh script should not contain any spaces or special characters otherwise calling EOF will throw errors. Also, in latter versions of Impact, the username and password should be those of the tipadmin. Additionally, rather than have the password sitting clear case in a script one can pass it as a JRExecAction Parameter from the Policy - still clear case but the relevance of the variable can be made less obvious. 
+
+Both of these scripts are called by the JRExecAction() function in the example Policy and this in turn requires the JRExecServer to be running on the ImpactServer host(s *). 
+
+* - The JRExecServer will be used by the current Primary ImpactServer only, as all EventReaders and PolicyActivators are run on the current Primary only but, if and when failover occurs and the Secondary ImpactServer becomes Primary, this new Primary will require access to a running, local JRExecServer. So, JRExecServer has to be running on both Primary and Secondary ImpactServer hosts to ensure availability in case of failover. Some additional information about the JRExecAction() function is available from the TechNote "JRExecAction() function usage" [Link Below] 
+RELATED INFORMATION
+ JRExecAction() function usage [http://www-01.ibm.com/support/docview.wss?uid=swg21515756]

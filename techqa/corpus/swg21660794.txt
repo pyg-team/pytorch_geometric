@@ -1,0 +1,60 @@
+Title: IBM Starting Rational CCRC WAN server results in the errors "parser: handleLogEnd: Failed to open log file..." - United States
+
+Text:
+CCRC; WAN server; IHS; error.log; http_plugin.log; gsk TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to start IBM Rational ClearCase Remote Client (CCRC) WAN server results in the errors "parser: handleLogEnd: Failed to open log file: 'c:\\Program Files\\IBM\\WebSphere\\Plugins\\logs\\http_plugin.log', OS Err: 3". 
+
+SYMPTOM
+Start CCRC WAN server on your machine and you will see errors on IBM HTTP Server (IHS) error.log file under the following folder. 
+
+
+<IHS installed Directory>\logs\error.log
+
+
+
+The full error message is as follows:
+
+parser: handleLogEnd: Failed to open log file: 'c:\\Program Files\\IBM\\WebSphere\\Plugins\\logs\\http_plugin.log', OS Err: 3
+
+[error] lib_security: logSSLError: str_security (gsk error 408): GSK_ERROR_BAD_KEYFILE_PASSWORD
+[error] lib_security: initializeSecurity: Failed to initialize GSK environment
+[error] ws_transport: transportInitializeSecurity: Failed to initialize security
+[error] ws_server: serverAddTransport: Failed to initialize security
+[error] ws_server: serverAddTransport: HTTPS Transport is skipped
+
+
+
+CAUSE
+Cause 1: The http_plugin.log file doesn't exist in the specified directory or exits in the different directory.
+
+Cause 2: Secure Socket Layer (SSL) is not configured properly. The SSL errors are supposed to be written on http_plugin.log. Since the http_plugin.log file doesn't exist, the messages are recorded on the error.log.
+
+
+RESOLVING THE PROBLEM
+Apply one of the following solutions: 
+
+ 
+
+ * Solution to Cause 1:
+   
+   Chose one of the following options to resolve the error message about the http_plugin.log.
+
+ *  Create http_plugin.log file under the directory that is recorded in the message. In this example, create c:\\Program Files\\IBM\\WebSphere\\Plugins\\logs\\http_plugin.log.
+   
+   Change directory path in plugin-cfg.xml if the http_plugin.log file is already exist in another directory.
+   Open the plugin-cfg.xml file under the directory <RationalSDLC directory>\common\ccrcprofile\config\cells\ 
+   Change this line to your desired directory.
+   
+   Log LogLevel="Error" Name="c:\Program Files\IBM\WebSphere\Plugins\logs\http_plugin.log" 
+   
+   
+ * Solution to Cause 2:
+   
+   Configure SSL to resolve the SSL error messages
+   
+   Review Configuring secure connections with SSL communications [http://pic.dhe.ibm.com/infocenter/cchelp/v8r0m0/index.jsp?topic=%2Fcom.ibm.rational.clearcase.cc_ms_install.doc%2Ftopics%2Fwas_install%2Ft_config_ssl.htm] in Rational ClearCase Information Center 8.0.0 for mode details.
+
+RELATED INFORMATION
+#IHS tries to load GSK even when ssl in not enabled. [https://www.ibm.com/developerworks/community/forums/html/topic?id=77777777-0000-0000-0000-000014616712]

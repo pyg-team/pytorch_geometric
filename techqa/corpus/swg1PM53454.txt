@@ -1,0 +1,118 @@
+Title: IBM PM53454: Rhapsody's 'Replace' feature with the internal editor does not work properly - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When trying to edit some methods in my model.  I open the
+   features dialog box, implementation tab, and then highlight the
+   text I want to replace.  I right-click and chose 'replace'.
+   After filling in the dialog box inputs I click on 'replace all'
+   and find that the replace method doesn't work correctly. It
+   changed the previous text instead of the highlighted text.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Rhapsody's "Replace" feature with the internal editor does
+   not work properly
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Checked Rhapsody with the exact same case in the video, and
+   it replace worked as expected
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM53454
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC RHAPSODY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V74RP
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED UR5
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-12-02
+   
+   
+ * CLOSED DATE
+   2012-03-16
+   
+   
+ * LAST MODIFIED DATE
+   2012-03-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSN
+   UP

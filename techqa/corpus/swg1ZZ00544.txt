@@ -1,0 +1,237 @@
+Title: IBM ZZ00544: FIXPACK 6 FOR "KVM FOR ZSERIES 1.1.0" - United States
+
+Text:
+AIX SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This APAR addresses the below listed Common Vulnerabilities
+   and Exposures:
+   .
+   CVE-2013-7423 glibc: A function in resolv/res_send.c allows
+   remote attacks .
+   .
+   CVE-2015-1472 glibc: A macro in vfscanf.c allows context-
+   dependent attacks.
+   .
+   CVE-2015-1473 glibc: A macro in vfscanf.c allows context-
+   dependent attacks.
+   .
+   CVE-2015-1781 glibc: Buffer overflow allows context-dependant
+   attacks.
+   .
+   CVE-2015-5229 glibc: This candidate has been reserved.
+   .
+   CVE-2015-5277 glibc: A function allow local users to cause a
+   denial of service.
+   .
+   CVE-2015-7547 glibc: Multiple buffer overflows allow a denial
+   of service.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  CVE Detail List:
+   CVE-2013-7423 glibc: A function in resolv/res_send.c allows
+   remote attacks.
+     http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-7423 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2013-7423]
+   The send_dg function in resolv/res_send.c in GNU C Library
+   (aka glibc or libc6) before 2.20 does not properly reuse
+   file descriptors, which allows remote attackers to send DNS
+   queries to unintended locations via a large number of request
+   that trigger a call to the getaddrinfo function.
+   .
+   CVE-2015-1472 glibc: A macro in vfscanf.c allows context-
+   dependent attacks.
+     http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1472 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1472]
+   The ADDW macro in stdio-common/vfscanf.c in the GNU C Library
+   (aka glibc or libc6) before 2.21 does not properly consider
+   data-type size during memory allocation, which allows context-
+   dependent attackers to cause a denial of service (buffer
+   overflow) or possibly have unspecified other impact via a
+   long line containing wide characters that are improperly
+   handled in a wscanf call.
+   .
+   CVE-2015-1473 glibc: A macro in vfscanf.c allows context-
+   dependent attacks.
+     http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1473 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1473]
+   The ADDW macro in stdio-common/vfscanf.c in the GNU C Library
+   (aka glibc or libc6) before 2.21 does not properly consider
+   data-type size during a risk-management decision for use of the
+   alloca function, which might allow context-dependent attackers
+   to cause a denial of service (segmentation violation) or
+   overwrite memory locations beyond the stack boundary via a
+   long line containing wide characters that are improperly handled
+   in a wscanf call.
+   .
+   CVE-2015-1781 glibc: Buffer overflow allows context-dependent
+   attacks.
+     http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1781 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1781]
+   Buffer overflow in the gethostbyname_r and other unspecified NSS
+   functions in the GNU C Library (aka glibc or libc6) before 2.22
+   allows context-dependent attackers to cause a denial of service
+   (crash) or execute arbitrary code via a crafted DNS response,
+   which triggers a call with a misaligned buffer.
+   .
+   CVE-2015-5229 glibc: This candidate has been reserved.
+     http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-5229 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-5229]
+   ** RESERVED ** This candidate has been reserved by an
+   organization or individual that will use it when announcing a
+   new security problem.
+   When the candidate has been publicized, the details for this
+   candidate will be provided.
+   .
+   CVE-2015-5277 glibc: A function allow local users to cause a
+   denial of service.
+     http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-5277 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-5277]
+   The get_contents function in nss_files/files-XXX.c in the Name
+   Service Switch (NSS) in GNU C Library (aka glibc or libc6)
+   before 2.20 might allow local users to cause a denial of service
+   
+   (heap corruption) or gain privileges via a long line in the NSS
+   files database.
+   .
+   CVE-2015-7547 glibc: Multiple buffer overflows allow a denial of
+   service
+     http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7547 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-7547]
+   Multiple stack-based buffer overflows in the (1) send_dg and
+   (2)send_vc functions in the libresolv library in the GNU C
+   Library (aka glibc or libc6) before 2.23 allow remote attackers
+   to cause a denial of service (crash) or possibly execute
+   arbitrary code via a crafted DNS response that triggers a call
+   to the getaddrinfo function with the AF_UNSPEC or AF_INET6
+   address family, related to performing "dual A/AAAA DNS queries"
+   and the libnss_dns.so.2 NSS module.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  These issues were identified for "KVM for
+   Systems Z" 1.1.0.5 level.
+   .
+   Apply the mentioned temporary fixes to solve the described
+   deficiencies.
+   .
+   All kernel users are advised to upgrade to these updates
+   packages, which contain backported patches to correct these
+   issues.  The system must be rebooted for this update to take
+   effect.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  glibc-2.17-106.el7_0.4.kvmibm.1.s390x.rpm
+   glibc-common-2.17-106.el7_0.4.kvmibm.1.s390x.rpm
+   glibc-devel-2.17-106.el7_0.4.kvmibm.1.s390x.rpm
+   glibc-headers-2.17-106.el7_0.4.kvmibm.1.s390x.rpm
+   glibc-multilib-2.17-106.el7_0.4.kvmibm.1.s390x.rpm
+   glibc-utils-2.17-106.el7_0.4.kvmibm.1.s390x.rpm
+   nscd-2.17-106.el7_0.4.kvmibm.1.s390x.rpm
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   ZZ00544
+   
+   
+ * REPORTED COMPONENT NAME
+   KVM FOR Z SYSTE
+   
+   
+ * REPORTED COMPONENT ID
+   5648KVSKR
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-22
+   
+   
+ * CLOSED DATE
+   2016-04-04
+   
+   
+ * LAST MODIFIED DATE
+   2016-04-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   KVM FOR Z SYSTE
+   
+   
+ * FIXED COMPONENT ID
+   5648KVSKR
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSY
+   UP

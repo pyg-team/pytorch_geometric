@@ -1,0 +1,162 @@
+Title: IBM PJ45075: CASE CLIENT USER WITHOUT SUFFICIENT PERMISSION CAN CLICK TO START OR DISABLE "READY" TASK VIA THE CASE INFORMATION WIDGET - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When a user opens a case that contains a manually launched task
+   in the ready state the "Start" and "Disable" buttons are enabled
+   even when the user does not have permission to start or disable
+   the task.  If the user does not have permission to start or
+   disable the task, then Start and Disable should be disabled.
+   When the user clicks the Start to launch the task will result in
+   the following error:
+   
+   The following error occurred while processing a request on the
+   application server: The requester has insufficient access rights
+   to perform the requested operation.
+   --------------------------------------------------
+   An error occurred on the application server.
+   Additional information about the error is in the application
+   server log files.
+   FNRPA0628
+   
+   
+   Steps to reproduce:
+   1. Create solution with a manually launched task
+   2. Save and deploy solution
+   3. Add 2 users to solution role, e.g. User1 and User2
+   4. Change User2 to remove access permission to case folder for
+   solution
+   5. Login to case client as User1, create a case, save and logout
+   6. Login to case client as User2, open case with task in Ready
+   state
+   
+   Expected results:
+   The Start and Disable are both disabled, since User2 does not
+   have permission to start or disable the Ready task
+   
+   Actual results:
+   Start and Disable are both enable.  User encounters an error
+   attempting to start the Ready task
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Case client users without sufficient privileges to start or  *
+   * disable tasks.                                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to ICM 5.3.2 or later releases.                      *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in ICM 5.3.2.  With this fix, the Start and Disable
+   buttons are disabled when the current Case Client user does not
+   have sufficient privileges to start or disable the ready task.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PJ45075
+   
+   
+ * REPORTED COMPONENT NAME
+   CASE MGR CLIENT
+   
+   
+ * REPORTED COMPONENT ID
+   5725A1501
+   
+   
+ * REPORTED RELEASE
+   531
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-11-15
+   
+   
+ * CLOSED DATE
+   2017-12-12
+   
+   
+ * LAST MODIFIED DATE
+   2017-12-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PJ44931 [http://www-01.ibm.com/support/docview.wss?uid=swg1PJ44931]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   CASE MGR CLIENT
+   
+   
+ * FIXED COMPONENT ID
+   5725A1501
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R531 PSY
+   UP

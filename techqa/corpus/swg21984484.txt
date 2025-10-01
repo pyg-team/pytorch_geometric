@@ -1,0 +1,20 @@
+Title: IBM How to generate enum state variable in IBM Rational Rhapsody C with MICRO C. - United States
+
+Text:
+enum state variable; MISRA RULE 10.3; Rhapsody TECHNOTE (FAQ)
+
+QUESTION
+ How can I generate enum state variable in IBM Rational Rhapsody C with MICRO C? 
+
+CAUSE
+You might have not included the CG::Statechart::GenerateEnumStateVariables which controls the generation of enum state variable.
+
+ANSWER
+Steps to follow: 
+
+1: Include the CG::Statechart::GenerateEnumStateVariables in site.prp file check it (on a
+class/configuration/project/profile).
+
+Attached is a compressed site.prp file for your reference.
+
+site.zip [/support/docview.wss?uid=swg21984484&aid=2]site.zip [/support/docview.wss?uid=swg21984484&aid=1]

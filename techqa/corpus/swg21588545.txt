@@ -1,0 +1,30 @@
+Title: IBM Mustgather: Setup for hang or performance problem on z/OS - United States
+
+Text:
+z/OS hang performance setup; MustGatherDocument TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If your Java application experiences perceived hang or performance problem on a z/OS operating system, there are a number of diagnostic data files that are useful for diagnosing the problem. This mustgather document describes about the required settings to be in place in order to generate those diagnostic data files. 
+
+RESOLVING THE PROBLEM
+In order to collect the diagnostic data files required for diagnosing the hang or performance problem, check that the following specific settings are configured before running your application: 
+
+1. Enable Transaction dump(TDump) generation 
+
+ Please note that the transaction dump generation can be enabled using the below Xdump option: 
+
+-Xdump:system:events=user
+
+Please note that the z/OS system dumps can also be taken using the z/OS system administration tools. Please check that there is enough disk space available for the TDump file to be written and ensure that the RACF® permissions are configured so that the Java process can write to the HLQ.
+
+2. Enable verbose GC [http://www.ibm.com/support/docview.wss?uid=swg21222436] collection
+Please use -verbose:gc option for the same 
+
+
+3. Enable Health Center [http://www.ibm.com/developerworks/java/jdk/tools/healthcenter/] log collection. 
+
+For more details about enabling these settings, please see the related information links.
+
+RELATED INFORMATION
+ Verbose GC [http://www.ibm.com/support/docview.wss?uid=swg21222436]
+Health Center [http://www.ibm.com/developerworks/java/jdk/tools/healthcenter/]

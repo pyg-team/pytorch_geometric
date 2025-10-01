@@ -1,0 +1,167 @@
+Title: IBM IZ07590: FORMVALIDATIONSERVLET BAILS OUT IF "SUGGESTED VALUE" CONTAINS AMPERSAND CHARACTER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TITLE: FormValidationServlet bails out if "Suggested Value"
+   contains ampersand character
+   PROBLEM: FormValidationServlet bails out if "Suggested Value"
+   contains ampersand character
+   STEPS TO DUPLICATE:
+   Have a service (in my case WinAD, customer W2K)
+   Have a Provisioning Policy for this service:
+   Membership: all
+   Entitlement: Manual, Mandatory attribute "Display Name" =
+   "Display&Name"
+   Modify an existing account or create a new one with "Display
+   Name" = "Display Name"
+   Press Submit and get a Popup:
+   com.ibm.itim.webclient.formviewer.FormValidationServlet.ERROR_KE
+   Y
+   And two entries in trace.log:
+   -----------
+   ...
+   javax.xml.transform.TransformerException: The reference to
+   entity "Name" must end with the ';' delimiter.
+   ...
+    <Exception><|ﾎCDATAﾎcom.ibm.itim.webclient.util.WebUIException:
+   CTGIML009E An error occurred during XSL processing.
+   ...
+   -----------
+   On customers box the first of this error messages is a little
+   bit different as on my box (maybe because of FP55):
+   -----------
+   ...
+   javax.xml.transform.TransformerException: The entity name must
+   immediately follow the '&' in the entity reference.
+   ...
+   -----------
+   Anyway, interesting is that "Non-Compliant Value" field can
+   contain ampersand character without problem.
+   Problem seems to be only with ampersand character in "Suggested
+   Value" field.
+   DESIRED BEHAVIOR: Not to get this error
+   ENVIRONMENT: ITIM 4.6 FP55, recreated with ITIM 4.6 FP48
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do not use ampersand character, use "and" instead
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *   Users affected:
+   Customers using ampersand "&" in "Suggested value".
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *   This fix for this APAR is contained in the
+   following maintenance packages:
+   | Interim Fix | 4.6.0-TIV-TIM-IF0059
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ07590
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM TIV ID MGR
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3403
+   
+   
+ * REPORTED RELEASE
+   460
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-10-30
+   
+   
+ * CLOSED DATE
+   2007-11-16
+   
+   
+ * LAST MODIFIED DATE
+   2007-11-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     SERVER
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM TIV ID MGR
+   
+   
+ * FIXED COMPONENT ID
+   5724C3403
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R460 PSY
+   UP

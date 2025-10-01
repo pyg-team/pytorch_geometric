@@ -1,0 +1,51 @@
+Title: IBM How do you configure Atlas to notify attorneys when an employee gets terminated? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do you configure Atlas to notify attorneys when an employee gets terminated? 
+
+ANSWER
+Atlas does not automatically remove teminated employess from a notice. Normally a "PersonDelete Alert" is setup so that the legal assistant or the attorney receives an alert when a person on hold is terminated. The legal assistant can then remove the terminated employee from the notice.
+
+In order to set this up follow the steps below.
+
+Setting the Change Alert Rules:
+
+- Go to Admin tab.
+- Under the Configuration section click on Change Alert Rules.
+- Create a new RuleSet,or Edit an existing one (Example: AttorneyAlerts).
+- Scroll down to Person Change Alerts section.
+- Check Modify and Delete boxes for this RuleSet.
+- Check the box to choose the option for "The Person has been included in an active matter, and I am the attorney or paralegal for the matter".
+- Under the Organization Change Alerts choose the option for Modify and Delete if you want the legal assistant/attorney get notified when an employee changes organizations.
+- Once you're done click "Save".
+
+Setting the RuleSet for a particular Role:
+
+- Go to Admin tab.
+- Under the Administration section click on Roles.
+- Click on the role you want to apply the RuleSet to (i.e. Attorney or LegalAssistant).
+- Click Edit.
+- From the drop-down manu choose the RuleSet for Change Alert Rule parameter.
+
+By applying these settings, alerts will be sent to all legal assistants and attorneys when any of these changes occur. They will be able to see the alerts on their My Atlas dashboard when they login to Atlas. The attorney or legal assistant can also choose to receive an email notification.
+
+If you want to enable this option follow the steps below.
+- Go to Admin tab.
+- Under Components section click on Alert_Email_Settings.
+- Make sure parameter CC_ALERT_TO_EMAIL is set to TRUE.
+
+Individual attorney and legal assistant also needs to set their Preferences to allow for emails to get sent out for alerts.
+- Log in to Atlas as Attorney/ Legal Assistant.
+- Go to Admin tab.
+- Look for Preferences link on top right corner of the page, next to Log out.
+- Click on Prefernces.
+- Set the option for "Send copy of My Alerts to my e-mail address:" to YES.
+- Save.
+
+
+
+HISTORICAL NUMBER
+ 448

@@ -1,0 +1,130 @@
+Title: IBM IY88279: ALCATEL_5620_CORBA: POSSIBLE MULTIPLE INTERFACE PROBLEM - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Specific Binary:
+   Last-modified-by:
+   Product: Netcool/OMNIBUS
+   Component:
+   Priority: Med
+   Severity: High
+   Version N.n:
+   Product Group:
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users.                                   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Product: Alcatel 5620 Patch number: 3.1 *
+   *                      In Document: Probe for Alcatel 5620     *
+   *                      (CORBA) Document Version: 1.8           *
+   *                                                              *
+   *                      POSSIBLE MULTIPLE INTERFACE PROBLEM     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Change Required:
+   
+   Add a note in the Connecting to the CORBA Interface section.
+   
+   Text to be added:
+   
+   When the probe runs on a system configured with more than one
+   CORBA interface, the primary interface name should match the
+   hostname of the system.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The product documentation will be updated with the next release
+   of Tivoli Netcool/OMNIbus Probe for Alcatel 5620 (CORBA).
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY88279
+   
+   
+ * REPORTED COMPONENT NAME
+   ALCATEL 5620 CO
+   
+   
+ * REPORTED COMPONENT ID
+   5724P18AL
+   
+   
+ * REPORTED RELEASE
+   100
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-08-16
+   
+   
+ * CLOSED DATE
+   2007-01-11
+   
+   
+ * LAST MODIFIED DATE
+   2007-01-11
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

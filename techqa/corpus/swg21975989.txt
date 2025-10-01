@@ -1,0 +1,53 @@
+Title: IBM ICC Email Connector stops processing due to ICC Service user permissions in AD - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM Content Collector (ICC) Email Connector starts processing as expected and gathers the mailboxes in scope, however it then fails to collect from the defined user mailboxes. 
+
+SYMPTOM
+ From the ICC logs the Email Connector can be seen trying to access Exchange Managed Folders, however the following error then occurs: 
+
+SEVERE [33524] AFUP0012E An unrecoverable error occurred while crawling a document store for documents that are eligible for archiving. See the following message: 
+com.ibm.afu.mailinterface.MailException: javax.naming.NameNotFoundException: [LDAP: error code 32 - 0000208D: NameErr: DSID- 
+031522C9, problem 2001 (NO_OBJECT), data 0, best match of: 
+'CN=XYZ,CN=Microsoft Exchange,CN=Services,CN=Configuration,DC=domain,DC=com' 
+]; Remaining name: 'CN=Deleted Item Cleanup,CN=Mailbox Policies, CN=XYZ,CN=Microsoft Exchange,CN=Services,CN=Configuration,DC=domain, DC=com' [com.ibm.afu.mailconnector.collector.crawler.StoreCrawler run] [Crawler-1 25] Exception
+
+
+CAUSE
+ICC Email Connector service user requires permission to view managed folders at the root domain level.
+
+Managed folders were introduced by Microsoft from Exchange 2007. When ICC archives emails from a mailbox, it will check if the folder in the mailbox is a managed folder or not, and then take different actions for archiving. All the managed folder information is stored in the root domain, so the user which is configured to run the ICC Email Connector service must have read access to objects in the root domain. 
+
+
+DIAGNOSING THE PROBLEM
+When ICC opens a mailbox. it reads the managed folder settings for that mailbox from the Active Directory (AD). These settings are not in the child domain, but in the root domain. 
+e.g.
+CN=Corp,CN=Microsoft 
+Exchange,CN=Services,CN=Configuration,DC=i,DC=company,DC=com 
+
+This object lives in the root domain and the user used for accessing AD has no rights to read this object. As AD doesn't distinguish between "you have no access" and "something doesn't exist" the error is logged as: 
+
+DSID-031522C9, problem 2001 (NO_OBJECT) 
+
+As the managed folder settings for the shared mailbox cannot be obtained, ICC stops crawling that mailbox. 
+
+
+
+RESOLVING THE PROBLEM
+The solution is to grant the AD user for ICC full read access to all objects in the Active Directory (which includes the parent domain).
+The user could be set up as a view-only-admin by the AD administrator and once that is done ICC will be able to process emails. 
+
+
+Note:
+It may be possible to be more selective and provide the service user with access only to known containers where the user resides, so as not to crawl all possible managed folders in Exchange root domain.
+To attempt this, you could:
+1. Grant the running service user access to the known container.
+2. Use Apache directory studio to connect to the root domain with the user that is configured to run the service.
+3. Try to look up if they can find the object and attributes:
+CN=Deleted Item Cleanup,CN=ELC Mailbox Policies,CN=XYZ,CN=Microsoft 
+Exchange,CN=Services,CN=Configuration,DC=domain,DC=com'; attributes=(msExchELCFolderLink) 
+
+If the attribute can be found in Apache directory studio, then this access should be sufficient.

@@ -1,0 +1,128 @@
+Title: IBM About fix_prot - United States
+
+Text:
+fix_prot; fix_prot.exe; permission; ACLs; 1142606; unknown style protections; The data is invalid; fix protections; protections; permissions TECHNOTE (FAQ)
+
+QUESTION
+ How do I use the IBM® Rational® ClearCase® fix_prot utility to reprotect Microsoft® Windows® ACLs on VOB and view storage as well as adjust file and group ownership on VOB and view storage on UNIX® or Linux®? 
+
+ANSWER
+ 
+
+Note: The information in this technote has been incorporated into the 8.0 version of the IBM Rational ClearCase Information Center [http://www.ibm.com/support/docview.wss?uid=swg27010158]. 
+
+
+
+
+
+
+
+
+A video demonstration of the material contained in this technote is available on the IBM Rational Support channel on YouTube under the topic of Using fix_prot to repair broken VOB storage directory permissions [http://www.youtube.com/user/IBMRationalSupport?feature=mhum#p/a/u/0/B7VzXQQ2Mc4] . 
+
+
+
+
+
+
+
+Usage: fix_prot [-force] 
+{ -root [-r[ecurse]] 
+[{-recover | -chown login-name -chgrp group-name}] 
+| -replace[_server_process_group] 
+| [-r[ecurse] [-type { d | f }]] 
+[-chown login-name] [-chgrp group-name] [-chmod permissions] 
+} pname ...  
+
+For more information on fix_prot and its usage, refer to IBM Rational ClearCase Administrator's Guide under the topic of fix_prot [https://publib.boulder.ibm.com/infocenter/cchelp/v7r1m0/topic/com.ibm.rational.clearcase.cc_admin.doc/topics/r_tshoot_acls_fix_prot.htm]. 
+
+
+IMPORTANT: It is recommended that ClearCase services on Windows be shut down prior to running the fix_prot utility. This will ensure that no files are held open by ClearCase processes which otherwise could be skipped during the execution of the utility. 
+
+ 
+
+Note: When you run fix_prot, if there are any Additional Groups that were part of the VOBs group list, running this command will remove those groups. As a result you will need to run the protectvob [https://publib.boulder.ibm.com/infocenter/cchelp/v7r1m0/topic/com.ibm.rational.clearcase.cc_ref.doc/topics/ct_protectvob.htm?resultof=%22protectvob%22]command to add these additional groups back to the VOB. 
+
+ 
+
+The proper syntax and process for running fix_prot is as follows:
+
+
+ 1. Open a command prompt.
+    
+    
+ 2. Change directory to the <CCHOME>\etc\utils and issue the following commands in order indicating the appropriate pathnames for the operating system on which you are running the command.
+    
+    (Where: <CCHOME> is the home directory where ClearCase is installed. 
+    
+    UNIX and Linux: /usr/atria/ or /opt/rational/clearcase
+    
+    Windows: C:\Program Files\IBM\RationalSDLC\ClearCase
+    In ClearCase versions prior to 7.1.0.0 the default path is C:\Program Files\Rational\ClearCase
+
+
+Note: The fix_prot command will need to be executed twice if the -chmod option and the -root options need to be run. 
+
+
+ * %> fix_prot -r -chown <owner name> -chgrp <primary group> -chmod 775 <Path to VOB/View storage> 
+ * %> fix_prot -root -chown <owner name> -chgrp <primary group> <Path to VOB/View storage>
+
+
+Note: If not using the -chmod switch, run the fix_prot command with both the -r and -root options as indicated below: 
+
+ 
+
+ * %> fix_prot -r -root -chown <owner name> -chgrp <primary group> <Path to VOB/View storage>
+
+
+Note: Windows Only. If the ClearCase administrators group name has changed or you have moved a view to a new domain that has a different SID for this group, then the -replace_server_process_group switch is required. 
+
+
+Note: Windows Only. Fix_prot can be run on schema 53 and 54 VOBs with one exception. The -recover switch can only be used on schema 53 VOBs. The functionality of this Windows only switch restores correct file system ACLs in a VOB or view storage directory based on the information in the identity.sd and groups.sd files. It is not applicable to schema version 54 VOBs because vob_sidwalk –recover_filesystem performs this function. 
+
+ 
+
+ * %> fix_prot -replace <Path to VOB/View storage>
+
+
+Note: After running the two fix_prot commands the views may be usable but the existing checkouts fail with the 'permission denied' message. After running a 3rd fix_prot command with -recurse -chown -chgrp -chmod (no -root option) on the *parent* folder of the "view.stg" folder then the checkins will succeed. 
+
+ 
+
+Note: There are unknown problems that can occur when changing ACLs on a file system remotely, so it is recommended that you run the fix_prot utility directly from the VOB/View server itself and not through a remote connection. 
+
+ 
+
+Note: If you have implemented the local almd directory location as described in technote 1687360, then you will have to change the permissions and protections of the local almd files to match any change you have made with fix_prot. 
+
+
+
+
+
+
+ 
+
+TROUBLESHOOTING:
+
+If fix_prot returns an error message that begins with the following text: 
+
+fix_prot: Error: unknown style protections on foo: The data is invalid. 
+
+You must rerun the fix_prot command and specify all of the options (-chown, -chgrp, and -chmod) .
+
+For example: 
+
+fix_prot -chown <owner>-chgrp <group>-chmod <###> pname 
+
+
+
+RELATED INFORMATION
+ Summary of protection commands and utilities [http://www.ibm.com/support/docview.wss?uid=swg21211784]
+Changing the ownership of a view on UNIX and Linux [http://www.ibm.com/support/docview.wss?uid=swg21147171]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Software Development Rational ClearCase Utilities and Tools Software Development Rational ClearCase Permissions

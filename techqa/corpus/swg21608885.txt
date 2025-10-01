@@ -1,0 +1,86 @@
+Title: IBM CWSIS1519E error occur when Messaging Engine failed to obtain lock on failover in clustering environment - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your WebSphere Application Server Message Engine (ME1) did not release a data store lock when it failed. Now a new instance of the Message Engine (ME2) can not obtain the lock and issues message CWSIS1519E: Messaging engine MyCluster.000-MyBus cannot obtain the lock on its data store after fail over to other server in a clustering environment. 
+
+SYMPTOM
+The following error messages appear in SystemOut.log 
+
+CWSIS1538I: The messaging engine is attempting to obtain an exclusive lock on the data store.
+CWSIS1519E: Messaging engine MyCluster.000-MyBus cannot obtain the lock on its data store, which ensures it has exclusive access to the data.
+
+
+CAUSE
+A common reason for ME1’s lock to last longer than a messaging engine instance is the database waiting for a connection between ME1 and the database to timeout. For example, if the dropped connection timeout is set to five minutes in the database server but it only takes two minutes for ME2 to start after failover then this situation would leave a time period of three minutes in which ME2 cannot yet gain the lock on the database tables, even though ME1 no longer exists. This situation should correct itself because ME2 continues to try (up to 15 minutes by default) to gain the lock until the database releases the lock that ME1 held, and things can continue as normal. 
+
+If, however, the default timeout values in your database system are for a long period of time, this could easily become a major outage while ME2 is waiting for the lock to be released.
+
+
+RESOLVING THE PROBLEM
+The key is to somehow get the data store lock released so that the messaging engine ME2 can acquire a fresh lock in a timely manner. The old (orphaned) data store lock will not be released by the database until the socket connection to the database is first cleaned up. Once the socket is cleaned up the lock will be released by the database and the fail over messaging engine will be able to acquire a fresh lock and resume its messaging functions. 
+
+
+TCP KeepAlive is the solution to this problem. KeepAlive is a feature of TCP that has 2 main benefits. It can detect that a connection to a peer is no longer valid and it can prevent a network connection from being terminated due to inactivity.
+In WebSphere Application Server recovery scenarios KeepAlive can play an important role, In particular, it’s ability to detect invalid connections is useful during failover scenarios. Once an invalid connection is detected the socket for that connection will be cleaned up (destroyed) . This is vitally important in disconnection and failover situations where rapid recovery is important. KeepAlive will check for stale sockets at certain intervals. Keepalive cleans up the socket so the database is ready for the locking by the failover ME (ME2)
+
+The method of setting the TCP KeepAlive interval is different on each platform. 
+
+AIX: 
+get:
+no -a tcp_keepintvl
+no -a tcp_keepidle 
+set:
+no -o tcp_keepintvl=20
+no -o tcp_keepidle=120 
+
+The interval is in half-seconds 
+The parameter takes effect immediately. 
+If the machine is rebooted the parameter is reset to the default value. To make the change permanent, add the no commands to the /etc/rc.net script. 
+
+Solaris 
+get:
+ndd -get /dev/tcp tcp_keepalive_interval 
+set:
+ndd -set /dev/tcp tcp_keepalive_interval 60000 
+The interval is in milliseconds 
+The parameter takes effect immediately.
+If the machine is rebooted the parameter is reset to the default value. To make the change permanent, add the ndd command to the /etc/init.d/inetinit script. 
+
+HP-UX: 
+As Solaris. The permanent change has to be made to the /etc/rc.config.d/nddconf script. 
+Linux: 
+Create/amend file /proc/sys/net/ipv4/tcp_keepalive_time. Insert the interval in seconds. 
+The parameter takes effect immediately. 
+If the machine is rebooted the parameter is reset to the default value. To make the change permanent, add a command like:
+/#echo 60 >/proc/sys/net/ipv4/tcp_keepalive_time
+to the file /etc/rc.d/rc.local script.
+
+On Windows: 
+Change the Windows registry to enable KeepAlive: 
+The default value is 7200000 milliseconds (2 hours). You can change this 
+value in the Windows Registry here: 
+
+Run the registry editor 
+From the HKLM subtree, go to
+"\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters\"
+Add (or modify) DWORD value 'KeepAliveTime'
+Set the 'KeepAliveTime' value (specified in milliseconds) 
+The parameter takes effect immediately. 
+If the machine is rebooted the parameter is retained. 
+
+Note: For Windows KeepAlive setting please also check with your Windows administrator.
+
+RELATED INFORMATION
+ Data Store Connectivity Problems and Solutions [http://www-01.ibm.com/support/docview.wss?uid=swg27020333]
+Messaging Engine startup problems [http://www-304.ibm.com/support/docview.wss?uid=swg27013517]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere MQ AIX, HP-UX, HP Itanium, Linux 7.0 All Editions 
+PRODUCT ALIAS/SYNONYM
+ WebSphere Application Server WAS SIB SIBUS SI BUS

@@ -1,0 +1,172 @@
+Title: IBM IZ22413: IF-00001 BREAKS IMPACT 4.0.2 SERVICES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer install IF-00001 for Impact 4.0.2 and he was not able
+   to connect to object servers and on the gui display only 4
+   services show up.  The problem is that selfmonitoring has this
+   two properties set to true:
+   
+   impact.selfmonitoring.queuestatus.enable=true
+   impact.selfmonitoring.autostartup=true
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  L3 has provided the following work around:
+   
+   1) If you have the patch install and currently experience the
+   issue.  Do the following:
+    - Turn OFF impact server by doing $NCHOME/bin/wasce stop
+    - cd $NCHOME/impact/etc/vi
+   <Your_servername>_selfmonitoring.props
+    - set the following option to false:
+   
+    impact.selfmonitoring.queuestatus.enable=false
+    impact.selfmonitoring.autostartup=false
+   
+    - Turn ON impact server by doing $NCOME/bin/wasce start
+   
+   2) If you don't have the patch install, then do the following
+   before install this patch:
+    -- Turn OFF impact server by doing $NCHOME/bin/wasce stop
+    - cd $NCHOME/impact/etc/vi
+   <Your_servername>_selfmonitoring.props
+    - set the following option to false:
+   
+   
+    impact.selfmonitoring.autostartup=false
+   
+    - Turn ON impact server make sure everything is OK
+    - Then apply the patch
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: all Netcool/Impact 4.0.2 users               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Customer install IF-00001 for Impact    *
+   *                      4.0.2 and he was not able  to connect   *
+   *                      to object servers and on the gui        *
+   *                      display only 4 services show up.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Steps to replicate: 1) Start Impact 2) Configure Impact
+   SelfMonitoring Service to:  a) Monitor Queue  b) To AutoStartup
+   when server starts 3) Restart Impact 4) Impact will not fully
+   start, when you go the gui you will see only 3 Services in the
+   Services list. Note the exception in the log file
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  4.0.2.-TIV-NCI-IF0002
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ22413
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   400
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-05-15
+   
+   
+ * CLOSED DATE
+   2008-07-14
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R400 PSY
+   UP

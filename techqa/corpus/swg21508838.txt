@@ -1,0 +1,31 @@
+Title: IBM var://service/mpgw/backend-timeout may not work on WebSphere DataPower when streaming to backend - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why does the Multi-Protocol Gateway backside timeout get used even when setting the var://service/mpgw/backend-timeout variable and streaming to the backend on IBM WebSphere DataPower SOA Appliances? 
+
+CAUSE
+When the backside traffic is set to Stream Messages, the Multi-Protocol Gateway forwards messages before all processing is verified as complete. 
+
+This setting can potentially increase speed, but can cause the var://service/mpgw/backend-timeout setting to be missed in the processing policy.
+
+ANSWER
+To avoid the var://service/mpgw/backend-timeout from not being honored, considered these points:
+
+
+ * Change the "Stream Output to Back" setting to use Buffer Messages instead of Stream Messages. 
+ * If using a dynamic backend for the Multi-Protocol Gateway, Stream Messages may be used as long as the var://service/mpgw/backend-timeout is set prior to the backend routing destination is set.
+
+
+
+Following is an example Processing Policy that would allow the var://service/mpgw/backend-timeout variable to be set prior to the backend destination while using streaming: 
+
+
+Match ---> Set Variable Action: var://service/mpgw/backend-timeout=10 ---> Set Variable Action 
+var://service/routing-url=<backend destination> ----> Results 
+
+Note: The order of the service variables being set is important. 
+
+When using streaming and a dynamic backend, if the backend destination is set in the Processing Policy prior to the var://service/mpgw/backend-timeout variable, the transaction will default to use the Multi-Protocol Gateway backside timeout configured.

@@ -1,0 +1,35 @@
+Title: IBM Db2dart command appears to hang - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why does my db2dart command appear to hang for a period and then give an FYI or Error message about active connections to the database. 
+
+CAUSE
+The database the db2dart is being run against is currently active.
+
+ANSWER
+If db2dart is run against a database when that database is active (the database shows up in the output of a list active databases command) then, irrespective of the options specified, the db2dart command will pause for one minute while it tries to obtain a lock on the instance lock file for that particular database. This may appear like a hang of the command but it is only for the one minute retry period. Depending on the nature of the db2dart options used, the db2dart command may continue as normal or abort at this point. 
+
+If the db2dart option is not a write option then, after retrying to obtain a lock on the instance lock file for that particular database for one minute, you will see the following warning:
+
+FYI: An active connection to the database has been detected.
+False errors may be reported. 
+Deactivate all connections and re-run to verify.
+
+The particular db2dart operation will then complete as normal, but the results in the report file must be viewed in light of the stated warning - some errors may be due to the inconsistent state of the database and are not persistent errors that would still exist if the database were made consistent. A similar warning about false errors will be seen if the database is not active but still inconsistent (ie. crash recovery is needed).
+
+If, however, the db2dart option is a write option then, once again, after retrying to obtain a lock on the instance lock file for that particular database for one minute, you will see the following warning:
+
+Error: Active connection to the database detected."
+Deactivate all connections before running db2 dart.
+
+The db2dart operation will then halt.
+
+The following operations are classified as write operations:
+
+/ETS Extends the table limit in a 4K DMS table space, if possible.
+/MI Marks index object as invalid. 
+/CHST Change a state of the database. 
+/RHWM Reduces high water mark through empty SMP extents.

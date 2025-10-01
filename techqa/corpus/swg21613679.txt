@@ -1,0 +1,48 @@
+Title: IBM "Could not load" error after logging in to the product user interface - United States
+
+Text:
+WAS_PROFILE_HOME; profiles; AppSrv01; installedApps; nodes; cells; public_html; console; install_war.sh TECHNOTE (FAQ)
+
+QUESTION
+ I migrated to a newer version/fix pack of the product. After I log into the application using Internet Explorer browser, I get a "Could not load" error (full error in following section). Why am I getting this error and how can I fix it? 
+
+CAUSE
+The migration process of IBM InfoSphere Master Data Management Collaboration Server includes deploying the ccd.war file. This file contains the source code and determines what code will be executed when a user performs certain action. The ccd.war of the older version of the product will become unreachable and can lead to issues if Internet Explorer cache still contains reference to previous ccd.war file. The end user may get errors similar to the following after logging in:
+Web page error details: 
+User Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; InfoPath.1; MS-RTC LM 8)Timestamp: Sat, 6 Oct 2012 04:59:15 UTC 
+
+Message: Could not load 'dijit.MenuItem'; last tried '../dijit/MenuItem.js' 
+Line: 16 
+Char: 6218 
+Code: 0 
+URI: Product_Center_URL/js/dojo_toolkit/release/dojo/dojo/dojo.js 
+
+Message: Could not load 'ibm.ccd.util.PIMDojoFixes'; last tried '../ibm/ccd/util/PIMDojoFixes.js'
+Line: 16 
+Char: 6218 
+Code: 0 
+URI: Product_Center_URL/js/dojo_toolkit/release/dojo/dojo/dojo.js 
+
+Message: Could not load class 'dijit.MenuBar'. Did you spell the name correctly and use a full path, like 'dijit.form.Button'? 
+Line: 16 
+Char: 69269
+Code: 0 
+URI: Product_Center_URL/js/dojo_toolkit/release/dojo/dojo/mdmdojo-main.js
+
+
+ANSWER
+Go to "Tools" > "Internet Options" > "General" tab, navigate to "Browsing History" section and click "Delete." In the resultant screen, click delete again to clear the cache. 
+
+Important Note: When clearing the Internet Explorer cache, make sure that the browser does not retain any data. For example, if "Preserve Favorites website data" option is checked in Internet Explorer version 8, then JavaScript and CSS files may be preserved in the browser cache leading to unreachable file references from previous product level (before applying a patch). So please make sure this is not checked before clearing the cache.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WPC 
+MDMCS
+MDMPIM
+MDM Server for PIM
+WebSphere Product Center
+InfoSphere MDM Server for PIM
+Infosphere Master Data Management Collaboration Server
+InfoSphere Master Data Management Server for Product Information Management

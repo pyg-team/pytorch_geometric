@@ -1,0 +1,35 @@
+Title: IBM wp-query-attribute-config writes an empty availableAttributes.html - United States
+
+Text:
+wp-query-attribute-config; availableattributes.xml; vmm; nullpointerexception TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Running the wp-query-attribute-config task results in an empty availableAttributes.html due to a malformed wimconfig.xml. 
+
+SYMPTOM
+The wp-query-attribute-config task writes an empty availableAttributes.html. ConfigTrace.log contains:
+Command line arguments: ... wp-query-attribute-config
+...
+[wplc-query-attribute-config] java.lang.NullPointerException
+[wplc-query-attribute-config] at com.ibm.wplc.deploy.tasks.ldapvalidation.QueryAvailableAttributes.
+readLDAPAttributeConfiguration(QueryAvailableAttributes.java:36)
+...
+BUILD SUCCESSFUL
+
+
+CAUSE
+The Virtual Member Manager (VMM) configuration file, [profile]/config/cells/[cell name]/wim/config/wimconfig.xml is malformed. It lacks a config:attributeConfiguration stanza in one or more LDAP repository definitions.
+
+
+RESOLVING THE PROBLEM
+Backup wimconfig.xml. For each LDAP repository definition lacking a config:attributeConfiguration stanza, add an empty one as follows: 
+
+
+<config:repositories xsi:type="config:LdapRepositoryType" ...>
+...
+</config:groupConfiguration>
+<config:attributeConfiguration></config:attributeConfiguration>
+...
+</config:repositories>
+
+Distribute as needed, if clustered. Restart WebSphere_Portal to pick up the change. Run the wp-query-attribute-config task again.

@@ -1,0 +1,171 @@
+Title: IBM IV38400: ROUTE OF IV31213 - OOM AND PERFORMANCE PROBLEMS WHILE DOING UNFILTERED SEARCH FOR ACCOUNTS THROUGH "MANAGE SERVICE" PAGE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Title: OOM and performance problems while doing unfiltered
+   search for
+   accounts through "Manage Service" page.
+   
+   Description:  Customer has 50000+ accounts and each account is
+   
+   considerably large size. They have set
+   enrole.ui.maxSearchResults to
+   1,00,000 to display all their service accounts on unfiltered
+   search. But
+   when they execute unfiltered search for Accounts through "Manage
+   Service" page, OOM occurs and
+   javax.naming.directory.SearchResult was
+   shown as main leak suspect. However same scenario used to work
+   in their
+   ITIM 4.6. L3 provided a FIXTST to fix the OOM issue. After
+   resolving OOM
+   error, slow performance was observed while displaying
+   accounts in a table. L3 provided second FIXTST to fix the
+   performance issue and after apply FIXTST the total search
+   time required was reduced from approx 34 minutes to approx
+   8 minutes.
+   
+   Steps to duplicate:
+   1. Have 50,000+ accounts on a service and each account of
+   considerably
+   large size.
+   2. Set the enrole.ui.maxSearchResults to 100000 in
+   ui.properties.
+   3. Navigate to Manage Service-> Search-> Accounts(for a specific
+   service)-> Search for Account
+   Observe that OOM occurs and ITIM fails to return the results.
+   Further
+   observe the slow performance while displaying a large number of
+   accounts.
+   
+   Desired Behavior: OOM should not occur while searching accounts
+   through
+   Manage Service and performance should be improved for the same.
+   
+   Environment: ITIM 5.1-FP9, AIX 5.3, WAS 6.1-FP35, 2 node
+   cluster, ITDS
+   6.2.0.3
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users affected:
+   Customers getting OutOfMmeory OOM while doing unfiltered search.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This fix for this APAR is contained in the
+   following maintenance packages:
+   | Fixpack | 6.0.0.1-ISS-SIM-FP0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV38400
+   
+   
+ * REPORTED COMPONENT NAME
+   SEC IDENTITY MG
+   
+   
+ * REPORTED COMPONENT ID
+   5724C3406
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-03-20
+   
+   
+ * CLOSED DATE
+   2013-03-20
+   
+   
+ * LAST MODIFIED DATE
+   2013-03-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    IV31213 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV31213]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  SERVER
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SEC IDENTITY MG
+   
+   
+ * FIXED COMPONENT ID
+   5724C3406
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

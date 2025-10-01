@@ -1,0 +1,38 @@
+Title: IBM Why did I received message CSPA200E on first time connection to a remote NT node using Secure+? (SCI31142) - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ Why did I received message CSPA200E on first time connection to a remote NT node using Secure+? (SCI31142) 
+
+ANSWER
+
+
+Verify you have imported the key the remote sent. Check the Secure+ parmfile for the remote node involved. The Auth.Rmt Key and Sig Rmt Key fields should be filled in. If they are not, import the keys from the remote node and save the parmfile.
+
+ 
+
+HISTORICAL NUMBER
+ PRI9274 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact
+
+
+
+
+Connect:Direct for z/OS, All Releases 
+SCI31142 
+STS
+
+
+Goal
+
+
+
+
+FAQ: Why did I received message CSPA200E on first time connection to a 
+remote NT node using Secure+?

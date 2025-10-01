@@ -1,0 +1,149 @@
+Title: IBM How to configure and monitor memory usage for RTC and Eclipse - United States
+
+Text:
+eclipse; eclipse.ini; jvm; java virtual machine; memory usage; configure; monitor TECHNOTE (FAQ)
+
+QUESTION
+ How can you customize the memory usage in your IBM Rational Team Concert (RTC) and Eclipse environment to improve productivity and reduce downtime? 
+
+CAUSE
+ 
+
+The purpose of this technote is to help increase familiarity with eclipse.ini and possible configurations which can have a surprising impact on productivity and reduction of downtime.
+
+A common cause of "Why is Eclipse so slow?" and "Why does Eclipse crash so much?" is a failure to scale the JVM settings to meet the actual demands.
+
+Worth noting is that there is a significant difference in the runtime model between ClearCase and RTC. In ClearCase, even with the Eclipse integration, a great deal of the heavy lifting is done in a separate (native) process that does most of the client/server interaction and file management. In RTC the vast majority of client/server SCM operations are Java in the same process as the rest of Eclipse. Therefore you would expect a proportionally larger memory consumption in the Eclipse java runtime for the same project in RTC than ClearCase .
+
+
+ANSWER
+
+
+
+Default Settings for the JVM
+
+Configuring Eclipse
+
+Eclipse Heap status
+
+Other resources
+
+
+
+
+
+
+
+Default settings for the JVM (Java Virtual Machine) 
+
+A useful resource will be the JVM defaults listed in the IBM Java Diagnostic Guide under the topic of Default settings for the JVM [http://publib.boulder.ibm.com/infocenter/javasdk/v6r0/index.jsp?topic=%2Fcom.ibm.java.doc.diagnostics.60%2Fdiag%2Fappendixes%2Fdefaults.html]. 
+
+
+Note: The table below was copied from version 6 of the Java Diagnostic Guide [http://publib.boulder.ibm.com/infocenter/javasdk/v6r0/index.jsp?topic=%2Fcom.ibm.java.doc.diagnostics.60%2Fdiag%2Fappendixes%2Fdefaults.html] . [http://www.ibm.com/support/docview.wss?uid=swg27007948] 
+
+c
+The setting is controlled by a command-line parameter only. 
+
+e 
+
+The setting is controlled by an environment variable only.
+
+ec
+The setting is controlled by a command-line parameter or an environment variable. The command-line parameter always takes precedence.
+
+[/support/docview.wss?uid=swg21646297&aid=1] [/support/docview.wss?uid=swg21646297&aid=1]
+
+
+Note: On Linux by default a 32-bit JVM will have a maximum heap size of 512MB.
+
+Before changing memory settings for Rational Software Architect (RSA) or RTC it is important to consider available RAM, a general rule of thumb is that the total configured heap size of all java processes should not consume more than half of available RAM in order to allow sufficient RAM for the operating system itself as well as native memory allocation that may occur. For example, when using networking protocols, the operating system and Java are probably allocating byte-buffers (per socket connection in the case of HTTP and other TCP connections). This is especially important to consider when configuring a server as you will see significantly higher memory consumption at the operating system level than what has been configured in Java using -Xmx or other arguments.
+
+
+ Back to top 
+
+
+
+Configuring Eclipse 
+
+Since both RTC and IBM Rational Software Architect (RSA) are built on the Eclipse platform the configuration of the JVM is done from the eclipse.ini 
+
+A typical 4.0.3 eclipse client will contain the following configuration in the eclipse.ini file: 
+
+-vm
+C:\Users\work\usr\RTC_403_20130328\RTC\TeamConcert\jdk\jre\bin\javaw.exe
+--launcher.XXMaxPermSize
+256m
+-startup
+plugins/org.eclipse.equinox.launcher_1.1.1.R36x_v20101122_1400.jar
+-install
+C:\Users\work\usr\RTC_403_20130328\RTC\TeamConcert
+--launcher.library
+plugins/org.eclipse.equinox.launcher.win32.win32.x86_64_1.1.2.R36x_v20101222
+-vmargs 
+-Xms100m
+-Xmx512m 
+-Dosgi.requiredJavaVersion=1.5
+-Dosgi.bundlefile.limit=100 
+
+What is of particular interest are the vmargs that configure memory: -Xmx and -Xms. 
+
+-Xms [http://publib.boulder.ibm.com/infocenter/javasdk/v6r0/topic/com.ibm.java.doc.diagnostics.60/diag/appendixes/cmdline/xms.html] 
+Sets the initial Java heap size. 
+
+-Xmx [http://publib.boulder.ibm.com/infocenter/javasdk/v6r0/topic/com.ibm.java.doc.diagnostics.60/diag/appendixes/cmdline/xmx.html]
+Sets the maximum memory size for the application (-Xmx>=-Xms).
+
+As you can see the defaults are quite small, even if you only have a 32-bit machine with 3GB or 4GB of RAM, you can easily run up to 1.5GB. You will find however that if you are running a 32-bit Windows environment, that you are probably unable to set -Xmx much larger than 1580m (but you may find that you are pushing the host to its limits, if you actually use that much memory).
+
+It is typically recommended that the -Xmx configuration is set to 1GB to allow a maximum heap size of one gigabyte, but this depends on your environment. It is acceptable to increase this configuration to 1580MB to avoid running out of memory when resetting the plugin target to a new version of Eclipse.
+
+
+ Back to top 
+
+
+
+
+
+Eclipse Heap Status
+
+While running any Eclipse based IDE product you should have the Heap Status Monitor available. It can be enabled in General preferences by checking the "Show heap status" checkbox.
+
+[/support/docview.wss?uid=swg21646297&aid=2] [/support/docview.wss?uid=swg21646297&aid=2]
+
+With that setting enabled you can see the Java memory status (this is an almost empty workspace...).
+
+
+
+[/support/docview.wss?uid=swg21646297&amp;aid=3]
+Hovering the mouse over the widget gives you a tooltip with more information. Clicking the garbage can icon forces a System.gc(). More options are available with a context menu:
+
+[/support/docview.wss?uid=swg21646297&amp;aid=4]
+The 'Show Max Heap' option will display the maximum heap size configuration so you are able to effectively monitor the heap:
+
+
+
+[/support/docview.wss?uid=swg21646297&amp;aid=5]
+
+
+ Back to top 
+
+
+
+
+Other resources
+
+
+ * IBM Java 1.6 documentation of memory settings [http://publib.boulder.ibm.com/infocenter/javasdk/v6r0/index.jsp?topic=%2Fcom.ibm.java.doc.diagnostics.60%2Fdiag%2Fappendixes%2Fcmdline%2Fcommands_gc.html] 
+ * FAQ How do I run Eclipse? [http://wiki.eclipse.org/FAQ_How_do_I_run_Eclipse%3F] 
+ * Eclipse.ini [http://wiki.eclipse.org/Eclipse.ini] 
+ * Eclipse 3.6 (Helios) command line arguments [http://help.eclipse.org/helios/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Freference%2Fmisc%2Fruntime-options.html]
+   Any of the options listed here can be added to eclipse.ini
+
+
+
+ Back to top 
+
+
+Leverage the Jazz Community The Jazz based products have an active community that can provide you with additional resources. Browse and contribute to the User forums, contribute to the Team Blog and review the Team wiki.
+
+Review technote 1319600: Leveraging the Jazz Community on Jazz.net [http://www.ibm.com/support/docview.wss?uid=swg21319600] for details.

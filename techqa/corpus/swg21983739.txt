@@ -1,0 +1,44 @@
+Title: IBM Data Server Manager (DSM) showing SQLCODE=-206 "<name> is not valid in the context where it is used." - United States
+
+Text:
+SQLCODE 206 -206 SQL0206 SQL0206N DSM incompatible db2level fixpack fix pack db2iupdt TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Data Server Manager log files are full of SQLCODE=-206 "<name> is not valid in the context where it
+is used." error 
+
+SYMPTOM
+The symptoms can vary depending on each installation. 
+
+Most common scenario, DSM shows Data Pending status for the monitored database.
+
+
+CAUSE
+When you apply a new DB2 fixpack, the db2iupdt command is used to update an instance to a higher level within a release. 
+
+But that command does not necessarily update the database system catalog to support the new fix pack that you have installed.
+Meaning, just because the db2level shows a higher level, your database can still be using routines from an older DB2 level. 
+
+
+
+DIAGNOSING THE PROBLEM
+One way to verify what routine levels your database is using, you can run the following DB2 command on the monitored database: 
+
+db2 "select versionnumber from sysibm.sysversions order by 1 desc" 
+
+If the results is showing a lower level than the ones DSM supports, that means your environment
+is not supported, and you are getting the SQLCODE=-206 error.
+
+To verify what are the DB2 levels supported by DSM, please refer to the links below:
+- System requirements for IBM Data Server Manager, version 1.1.2 [http://www-01.ibm.com/support/docview.wss?uid=swg27045176]
+- System requirements for IBM Data Server Manager, version 2.1 [http://www-01.ibm.com/support/docview.wss?uid=swg27048115]
+
+
+
+RESOLVING THE PROBLEM
+Run the db2updvnn command according to the db2level of your monitored database: 
+
+- For DB2 V9.7 run db2updv97 [https://www.ibm.com/support/knowledgecenter/SSEPGG_9.7.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0054449.html] command
+- For DB2 V10.1 run db2updv10 [https://www.ibm.com/support/knowledgecenter/SSEPGG_11.1.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0054449.html] command
+- For DB2 V10.5 run db2updv105 [https://www.ibm.com/support/knowledgecenter/SSEPGG_11.1.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0054449.html] command
+- For DB2 V11.1 run db2updv111 [https://www.ibm.com/support/knowledgecenter/SSEPGG_11.1.0/com.ibm.db2.luw.admin.cmd.doc/doc/r0054449.html] command

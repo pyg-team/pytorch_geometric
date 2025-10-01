@@ -1,0 +1,51 @@
+Title: IBM LDAP server authenticates user - United States
+
+Text:
+TPAELDAP; LDAP; LoginUser; J2EE; Authentication; Security; Troubleshooting; Diagnose; username; Multipart; CN; Common Name; OU; Organizational Unit; DC; Domain Component; Active Directory; Users; maximouser; maximousers TECHNOTE (FAQ)
+
+QUESTION
+ LDAP Troubleshooting Multipart Document - Part 6 of 11 
+
+CAUSE
+Enhanced documentation
+
+ANSWER
+After:
+
+* The user enters a URL to Maximo
+* The JEE server is configured for J2EE server security
+* The requested resource is protected
+* The JEE server requests security authentication
+* The browser displays the authentication dialog
+
+What is the next step in the LDAP troubleshooting flow chart? 
+
+After the JEE server requests authentication from the client browser, the browser displays a login dialog box where the user enters their credentials. The user is then authenticated by the LDAP server. In order for the LDAP server to successfully authenticate a user, the username and password stored in the LDAP server must match the credentials entered by the user in the login dialog. 
+
+ 
+
+The screen below shows an Microsoft Active Directory 2012 system with a maximousers group and a wilson user. 
+
+Note: The full description of this user is CN=wilson, OU=Users, DC= litmaxsys, DC=maximo, DC=mro, DC=com 
+
+ 
+
+Attribute Name Value cn Common Name wilson ou Organizational Unit Users dc Domain Component Maximo dc Domain Component litmaxsys dc Domain Component maximo dc Domain Component mro dc Domain Component com 
+[/support/docview.wss?uid=swg21304204&aid=1] [/support/docview.wss?uid=swg21304204&aid=1] 
+
+If there are sub Organizational Units as shown below, they can be further described by additional OU definitions. In this example: 
+This user is CN=wilson, OU=Users, DC= litmaxsys, DC=maximo, DC=mro, DC=com  
+Note: All users who will be authenticated to use Maximo must be members of the group mapped to the maximouser role. In our example the group maximousers is mapped to the role maximouser.
+
+The screens below show the users in the maximousers group.
+[/support/docview.wss?uid=swg21304204&aid=2] [/support/docview.wss?uid=swg21304204&aid=2]
+
+
+
+
+
+
+[/support/docview.wss?uid=swg21304204&amp;aid=3] [/support/docview.wss?uid=swg21304204&amp;aid=4] [/support/docview.wss?uid=swg21304204&amp;aid=5] LDAP Troubleshooting Multipart Document 5 of 11 – Local client browser generates login dialog [http://www.ibm.com/support/docview.wss?rs=3214&context=SSLKT6&uid=swg21304206&loc=en_US&cs=utf-8&lang=en] [/support/docview.wss?uid=swg21304204&amp;aid=6] LDAP Troubleshooting Multipart Document 7 of 11 – JEE Server checks user role mapping for member of authorized group [http://www-1.ibm.com/support/docview.wss?rs=3214&context=SSLKT6&uid=swg21304205&loc=en_US&cs=utf-8&lang=en]  
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Asset Management for IT Systems and Asset Management Maximo Asset Management Essentials Systems and Asset Management Tivoli Change and Configuration Management Database Systems and Asset Management Tivoli Service Request Manager Systems and Asset Management Control Desk

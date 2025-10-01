@@ -1,0 +1,183 @@
+Title: IBM PK87458: Documentation: 6.1x information center steps to enable Organize Favorites are incorrect. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Affected URLs:
+   Enabling the Organize Favorites portlet in themes
+   http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?
+   topic=/com.ibm.wp.ent.doc/migrate/mig_theme_fav.html [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?topic=/com.ibm.wp.ent.doc/migrate/mig_theme_fav.html]
+   http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?
+   topic=/com.ibm.wp.ent.doc_v6101/migrate/mig_theme_fav.html [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?topic=/com.ibm.wp.ent.doc_v6101/migrate/mig_theme_fav.html]
+   
+   Enabling Organize Favorites functionality in custom themes
+   http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?
+   topic=/com.ibm.wp.ent.doc_v6101/dev/dgn_crthm.html [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?topic=/com.ibm.wp.ent.doc_v6101/dev/dgn_crthm.html]
+   
+   http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?
+   topic=/com.ibm.wp.ent.doc/dev/dgn_crthm.html [http://publib.boulder.ibm.com/infocenter/wpdoc/v6r1m0/index.jsp?topic=/com.ibm.wp.ent.doc/dev/dgn_crthm.html]
+   
+   TEXT READS:
+   After you create the custom theme, complete the steps below to
+   enable Organize Favorites in it through the Administration
+   interface:
+   
+      1. Click Administration > Portal User Interface > Manage
+   Pages.
+      2. Select the Content Root page title.
+      3. At the Content Root page, click New Label.
+      4. Create a label called My Favorites.
+      5. Assign privileged user access to all authenticated users
+   and then click OK.
+      6. Click Portal Settings and then Custom Unique Names.
+      7. Assign wps.Organize Favorites as a unique name to the My
+   Favorites label you just created and then click OK.
+      8. Click Administration > Portal User Interface > Manage
+   Pages.
+      9. Add a page parameter key of Favorites with a value of Yes.
+   
+   TEXT SHOULD READ:
+   After you create the custom theme, complete the steps below to
+   enable Organize Favorites in it through the Administration
+   interface:
+   
+      1. Click Administration > Portal User Interface > Manage
+   Pages.
+      2. Click the Content Root label title.
+      3. Under the Content Root label, click New Label.
+      4. Create a label called My Favorites.
+      5. Edit Page Properties for the new label, and add a page
+   parameter key of Favorites with a value of Yes
+      6. Click Set Page Permission for the new label, edit the
+   privileged user role, and add the user group "all authenticated
+   portal users" Then click OK.
+      7. Click Portal Settings and then Custom Unique Names.
+      8. Assign wps.My Favorites as a unique name to the My
+   Favorites label you just created and then click OK.
+   
+     Then, to create a link in your theme for users to access the
+   Organize Favorites portlet to create and edit their favorites:
+     1. Open the Default.jsp file for whatever theme(s) your portal
+   is using. This file should be located in
+   <wp_profile_root>installedApps/<cellname>/wps.ear/wps.war/themes
+   /html/<themeName>
+     2. add this stanza wherever you would like the link to appear:
+   
+   <portal-navigation:urlGeneration actionName="myAction"
+   contentNode="wps.Organize Favorites">
+    <a href="<%wpsURL.write(out);%>">Link to Organize Favorites</a>
+   </portal-navigation:urlGeneration>
+   
+   In the default portal theme, if you place the stanza after this
+   line, the link will appear right below the banner on the left:
+   <table id="wptheme-pageWrapper" class="wptheme-pageWrapper"
+   border="0" cellpadding="0" cellspacing="0"
+   width="100%"><tr><td><div class="wptheme-access"><a
+   href="#wpsMainContent"><portal-fmt:text key="link.skiptocontent"
+   bundle="nls.engine"/></a></div><div
+   class="wptheme-themeHeader"><%@ include file="./banner.jspf" %>
+   
+   Then restart portal to load the updated Default.jsp
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  See above.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The above information will be integrated into a future release
+   of the information center.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  See above
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK87458
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   61A
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-05-27
+   
+   
+ * CLOSED DATE
+   2009-06-04
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

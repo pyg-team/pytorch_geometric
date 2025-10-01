@@ -1,0 +1,156 @@
+Title: IBM PI82595: IMPF V8 ANALYTICS CONSOLE EXECUTOR THREADS LOCK IF SEVERAL ACTIVE USERS USE IMPF ANALYTICS CONSOLE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WebSphere Liberty (prior to 8.5.5.6 ) in IMPF V8 Analytics
+   software  install image is 8.5.5.5  had inherent issues where
+   in case executor threads
+   are occupied it can lead to a dead lock.
+   The default number of core threads in case of default settings
+   ( in versions prior to 8.5.5.6) is
+   the number of hardware threads.
+   As such, when executing on Liberty 8.5.5.5 on example low
+   number of very fast cores on either x86 or on z13 IFLs (ex. 2,
+   or 4,..).
+   https://developer.ibm.com/wasdev/docs/was-liberty-threading-and- [https://developer.ibm.com/wasdev/docs/was-liberty-threading-and-]
+   why-you-
+   probably-dont-need-to-tune-it/
+   Based on these findings, we modified the default Liberty
+   executor thread parameters to have more number of threads.
+   With this we are able to resolve problem.
+   This is the change we made to the IMPF V8 Analytics Websphere
+   Liberty server's  server.xml on WLP 8.5.5.5  at the end of
+   server.xml :
+   <connectionManager maxPoolSize="500"
+   numConnectionsPerThreadLocal="40"
+   purgePolicy="FailingConnectionOnly">
+   </connectionManager>
+           <applicationMonitor dropinsEnabled="false"
+   updateTrigger="disabled"/>
+           <config updateTrigger="disabled"/>
+           <httpOptions maxKeepAliveRequests="-1"></httpOptions>
+           <executor name="LargeThreadPool" id="default"
+   coreThreads="80" maxThreads="80" keepAlive="60s"
+   stealPolicy="STRICT"
+   rejectedWorkPolicy="CALLER_RUNS" />
+   https://www.ibm.com/support/knowledgecenter/SS7K4U_liberty/com.i [https://www.ibm.com/support/knowledgecenter/SS7K4U_liberty/com.i]
+   bm.websp
+   here.wlp.zseries.doc/ae/twlp_tun.html
+   These tuning settings are not required in case of Websphere
+   Liberty
+   8.5.5.6 and above as noted in this excerpt from the earlier
+   link:
+   "However, in V8.5.5.6, we modified the auto-tuning algorithm to
+   aggressively fight deadlocks. Now, it is essentially impossible
+   for the
+   executor to deadlock. So if you've manually set coreThreads in
+   the past
+   to avoid executor deadlocks, you might want to consider
+   reverting back
+   to the default once you move to V8.5.5.6."
+   Based on this we have tested (without the executor thread
+   tuning) on
+   Liberty 8.5.5.8 and do not see the issue. We are not able to
+   recreate
+   the executor thread hang on Liberty 8.5.5.8 (without any
+   changes) and
+   on version 8.5.5.5 we are not able to recreate the issue with
+   the additional
+   executor thread tuning in server.xml.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  If the customers use Mobile Analytics on 8555 or below, theyneed
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI82595
+   
+   
+ * REPORTED COMPONENT NAME
+   MOBILE1ST PLATF
+   
+   
+ * REPORTED COMPONENT ID
+   5725I4301
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-06-05
+   
+   
+ * CLOSED DATE
+   2017-09-12
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

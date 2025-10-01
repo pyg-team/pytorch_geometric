@@ -1,0 +1,130 @@
+Title: IBM IC91594: CONVERSATION SHARING DOES NOT NEGOTIATE FULL DUPLEX CHANNEL WHEN QMGR CHANNEL SHARING CONVERSATION IS SET AT 1 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix packs for DataPower B2B Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034956]
+Fix packs for DataPower Integration Appliance version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034957]
+Fix packs for DataPower Service Gateway version 6.0 [http://www-01.ibm.com/support/docview.wss?uid=swg24034959]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Conversation Sharing in an MQ Queue Manager object does not
+   negotiate
+   full duplex channel when the Queue Manager channel attribute of
+   Sharing Conversation is set at 1.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Users of the sharing conversation feature of MQ Queue Manager
+   are likely to see this problem.
+   
+   If the negotiated value of sharing conversation between
+   WebSphere MQ Queue Manager and WebSphere DataPower MQ Queue
+   Manager is 1, the MQ connection is established via the legacy
+   MQ protocol 'TSH' instead of the modern MQ protocol 'TSHM'.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix is available in 5.0.0.9.
+   
+   For a list of the latest fix packs available, please see:
+   http://www-01.ibm.com/support/docview.wss?uid=swg21237631 [http://www-01.ibm.com/support/docview.wss?uid=swg21237631]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC91594
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * REPORTED COMPONENT ID
+   DP1234567
+   
+   
+ * REPORTED RELEASE
+   500
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-17
+   
+   
+ * CLOSED DATE
+   2013-07-18
+   
+   
+ * LAST MODIFIED DATE
+   2013-09-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPOWER
+   
+   
+ * FIXED COMPONENT ID
+   DP1234567
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R500 PSY
+   UP

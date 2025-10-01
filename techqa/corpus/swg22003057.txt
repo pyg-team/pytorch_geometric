@@ -1,0 +1,42 @@
+Title: IBM Unpacking oracle database fails with "ERROR:  ORA-28003: password verification for the specified password failed" - United States
+
+Text:
+Oracle; Synergy; Password; Policy TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Due to the changes to Oracle Password policy, while creating new databases in IBM Rational Synergy with Oracle 11g, 12c or any supported versions, the commands ccmdb unpack|create|load fail with the error "ERROR: ORA-28003: password verification for the specified password failed" 
+
+SYMPTOM
+Unpacking oracle database fails with "ERROR: ORA-28003: password verification for the specified password failed
+
+
+CAUSE
+The Password policy on the Oracle database is changed. 
+
+IBM Rational Synergy creates new user (same as DB_LEAF_NAME) with internally generated password during database creation. When this password is dishonored by Password policy, it fails to create the database.
+
+
+
+ENVIRONMENT
+IBM Rational Synergy with Oracle 11g/12c or any supported versions
+
+
+
+DIAGNOSING THE PROBLEM
+Creation of database fails with the error:ERROR: ORA-28003: password verification for the specified password failed 
+
+ccmdb unpack|load|create commands report this error. 
+
+
+RESOLVING THE PROBLEM
+a. Before creating the database, relax the password policy 
+
+b. Create the new database (ccmdb load|unpack|create)
+c. Enforce the required password policy
+d. Change the password of new user (Same as DB_LEAF_NAME) to match the policy.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ IBM Rational Synergy
+Oracle

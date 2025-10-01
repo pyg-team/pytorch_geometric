@@ -1,0 +1,36 @@
+Title: IBM fn_setup fails and reports an error fn_util initnch returned with error [65280] in IBM FileNet Image Services - United States
+
+Text:
+fn_util initnch TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During a fresh install of IBM FileNetImage Services on an AIX server for the first time, fn_setup fails reporting ERROR 'fn_util initnch returned with error [65280]. 
+
+SYMPTOM
+Error reported in fn_setup: 
+
+
+fn_setup: Running "/fnsw/bin/fn_util initnch" 
+exec(): 0509-036 Cannot load program /fnsw/bin/fn_util because of the 
+following 
+errors: 
+0509-022 Cannot load module /fnsw/lib/shobj/SysV. 
+0509-150 Dependent module libptools_ptr.a(shr.o) could not be 
+loaded. 
+0509-022 Cannot load module libptools_ptr.a(shr.o). 
+0509-026 System error: A file or directory in the path name 
+does not exi 
+st. 
+0509-022 Cannot load module fn_util. 
+0509-150 Dependent module /fnsw/lib/shobj/SysV could not be 
+loaded. 
+0509-022 Cannot load module . 
+fn_setup: ERROR 'fn_util initnch returned with error [65280]. 
+
+
+CAUSE
+AIX Server missing APP-DEV filesets
+
+
+RESOLVING THE PROBLEM
+Install the AIX APP-DEV bundle set

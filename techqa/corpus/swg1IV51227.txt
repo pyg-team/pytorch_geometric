@@ -1,0 +1,149 @@
+Title: IBM IV51227: NESSUS SCAN IMPORTS ISSUE AN ERROR MESSAGE AND FAIL TO IMPORT AFTER AN UPGRADE TO NESSUS V5.2.2 OR V5.2.3. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Nessus scan imports fail and report an error message that a
+   handshake error occurred, which prevents the scan data from
+   being imported properly.
+   
+   This issue is due to the configured ciphers within the scanner
+   module when making the connection to the remote Nessus host
+   after an upgrade to Nessus V5.2.2 or V5.2.3.
+   
+   Administrators that use Nessus V5.2.2 or V5.2.3 can verify
+   /var/log/qradar.log for the following error message:
+   
+   vis.scanners.nessus.NessusXmlRpcConnector: [ERROR] [IP
+   address/- -] [-/- -]Error Connecting to URL [URL]::
+   Received fatal alert: handshake_failure
+   javax.net.ssl.SSLHandshakeException: Received fatal alert:
+   handshake_failure
+       at com.ibm.jsse2.j.a(j.java:9)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Nessus scan imports fail and report an error message that a
+   handshake error occurred, which prevents the scan data from
+   being imported properly.
+   
+   This issue is due to the configured ciphers within the scanner
+   module when making the connection to the remote Nessus host
+   after an upgrade to Nessus V5.2.2 or V5.2.3.
+   
+   Administrators that use Nessus V5.2.2 or V5.2.3 can verify
+   /var/log/qradar.log for the following error message:
+   
+   vis.scanners.nessus.NessusXmlRpcConnector: [ERROR] [IP
+   address/- -] [-/- -]Error Connecting to URL [URL]::
+   Received fatal alert: handshake_failure
+   javax.net.ssl.SSLHandshakeException: Received fatal alert:
+   handshake_failure
+       at com.ibm.jsse2.j.a(j.java:9)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A Scanner RPM update was released that resolves an issue to
+   properly set the requested SSL context to TLS instead of SSL.
+   This update ensures that the scanner supports both SSL and TLS
+   scan imports.
+   VIS-TenableNessus-7.1-675082.noarch.rpm
+   VIS-TenableNessus-7.2-675700.noarch.rpm
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV51227
+   
+   
+ * REPORTED COMPONENT NAME
+   QRADAR SOFTWARE
+   
+   
+ * REPORTED COMPONENT ID
+   5725QRDSW
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-10-23
+   
+   
+ * CLOSED DATE
+   2013-10-30
+   
+   
+ * LAST MODIFIED DATE
+   2013-10-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   QRADAR SOFTWARE
+   
+   
+ * FIXED COMPONENT ID
+   5725QRDSW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

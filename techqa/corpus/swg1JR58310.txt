@@ -1,0 +1,147 @@
+Title: IBM JR58310: THE NEW CLUSTER MEMBER ISN'T ADDED WHEN YOU USE THE BPMCONFIG -CREATE -DE COMMAND IF SOURCEINFO PROPERTIES EXIST - United States
+
+Text:
+  DIRECT LINK TO FIX
+bpm.8600.delta.repository [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FWebSphere%2FIBM+Business+Process+Manager+Standard&fixids=bpm.8600.delta.repository&source=SAR]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When you add a new cluster member by using the BPMConfig -create
+   -de  <DE-Configure-File> command, the new cluster member is not
+   added
+   if bpm.de.sourceInfo.* properties is specified in the
+   <DE-Configure-File>. You see the following exception:
+   
+   2017-08-09 23:08.43.740 com.ibm.bpm.config.BPMConfig.main():
+   null
+   com.ibm.bpm.config.util.ConfigException
+   at
+   com.ibm.bpm.config.capability.standard.ComponentProcessServer.co
+   pyAndReplace(ComponentProcessServer.java:1816)
+   at
+   om.ibm.bpm.config.capability.standard.ComponentProcessServer.cre
+   ateServrConfigurationFiles(ComponentProcessServer.java:1354)
+   at
+   com.ibm.bpm.config.capability.standard.ComponentProcessServer.co
+   nfigureServerSpecifics(ComponentProcessServer.java:2424)
+   at
+   com.ibm.bpm.config.capability.standard.ComponentProcessServer.co
+   nfigure(ComponentProcessServer.java:278)
+   at
+   com.ibm.bpm.config.capability.Capability.configureClusterMember(
+   Capability.java:246)
+   at
+   com.ibm.bpm.config.capability.CapabilityApplication.configureClu
+   sterMember(CapabilityApplication.java:162)
+   at
+   com.ibm.bpm.config.capability.ProvisionNode.provisionNode(Provis
+   ionNode.java:149)
+   at
+   com.ibm.bpm.config.BPMConfig.configureDeploymentEnvironment(BPMC
+   onfig.java:768)
+   at
+   com.ibm.bpm.config.BPMConfig$Actions.createDe(BPMConfig.java:430
+   8)
+   at
+   com.ibm.bpm.config.cli.CreateAction.runInner(CreateAction.java:1
+   38)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Remove the bpm.de.sourceInfo properties from DE properties file
+   or use the BPMConfig -create -clusterMembers command instead.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  No additional information is available.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR58310
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM STANDARD
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9500
+   
+   
+ * REPORTED RELEASE
+   856
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-16
+   
+   
+ * CLOSED DATE
+   2017-09-06
+   
+   
+ * LAST MODIFIED DATE
+   2017-09-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R857 PSY
+   UP

@@ -1,0 +1,46 @@
+Title: IBM Downloading IBM MQ Version 8.0 IFR1  (V8.0.0.2/3) - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ This document describes how to download IBM MQ Version 8.0 Interim Feature Release (IFR)1. This manufacturing level is equivalent to MQ Version 8.0.0.2/3, but excludes IBM MQ V8.0 
+
+DOWNLOAD DESCRIPTION
+
+
+
+TAB NAVIGATION
+ * Overview [http://www.ibm.com/support/docview.wss?uid=swg24037501]- selected tab,
+ * MQ V8.0.0.9 [http://www.ibm.com/support/docview.wss?uid=swg24044732]
+ * MQ V8.0.0.8 [http://www.ibm.com/support/docview.wss?uid=swg24044322]
+ * MQ V8.0.0.5 [http://www.ibm.com/support/docview.wss?uid=swg24042095]
+ * MQ V8.0.0.4 [http://www.ibm.com/support/docview.wss?uid=swg24040022]
+ * MQ V8.0 IFR1 (V8.0.0.2/3) [http://www.ibm.com/support/docview.wss?uid=swg24040040]
+ * MQ V8.0.0.2/3 [http://www.ibm.com/support/docview.wss?uid=swg24040027]
+ * MQ V8.0.0.0/1 [http://www.ibm.com/support/docview.wss?uid=swg24040028]
+
+Contents For IBM MQ Version 8.0 IFR1, this section provides the part number and description of each eAssembly, followed by a list of the installation images available in the eAssembly. This manufacturing level is equivalent to MQ Version 8.0.0.2/3. Note that the IBM MQ V8.0 Sterling for Multiplatform Multilingual eAssemblies are not included in MQ V8.0 IFR1. Note also that the only difference between V8.0.0.2 and V8.0.0.3 is that, for V8.0.0.3, an extra eImage is added for MQ Advanced V8.0.0.3 Virtual System Pattern Type for IBM PureApplication System Multilingual.
+
+Downloading the release Sign in to Passport Advantage [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]. For the full release, search for part number CRW5XML. If you don't need the full release, you can instead search for any of the eImages that make up the full release. The eImage part numbers are given in the following table.
+
+
+IBM MQ V8.0 IFR1 for Multiplatform Multilingual eAssembly
+
+Part Number Description CRW5XML MQ V8.0 IFR1 for Multiplatform Multilingual eAssembly CN2BYML MQ V8.0 Quick Start Guide Multiplatform Multilingual eImage CN5G6ML MQ for AIX V8.0 IFR1 Multilingual eImage CN5G7ML MQ for HP-UX on Itanium V8.0 IFR1 Multilingual eImage CN5G8ML MQ for IBMi V8.0 IFR1 Multilingual eImage CN5G9ML MQ for Linux on POWER V8.0 IFR1 Multilingual eImage CN5GPML MQ for Linux on LE Power V8.0 IFR1 Multilingual elmage CN5GAML MQ for Linux on System z 64bit V8.0 IFR1 Multilingual eImage CN5GBML MQ for Linux on x86 64 V8.0 IFR1 Multilingual eImage CN5GDML MQ for Solaris on SPARC V8.0 IFR1 Multilingual eImage CN5GEML MQ for Solaris on x86 64 V8.0 IFR1 Multilingual eImage CN5GCML MQ for Windows V8.0 IFR1 Multilingual eImage CN6UUML MQ Advanced V8.0.0.3 Virtual System Pattern Type for IBM PureApplication System Multilingual eImage CN5GFML MQ Client for AIX V8.0 IFR1 Multilingual eImage CN5GGML MQ Client for HP-UX on Itanium V8.0 IFR1 Multilingual eImage CN5GHML MQ Client for IBMi V8.0 IFR1 Multilingual eImage CN5GIML MQ Client for Linux on POWER V8.0 IFR1 Multilingual eImage CN5GQML MQ Client for Linux on LE Power V8.0 IFR1 Multilingual elmage CN5GJML MQ Client for Linux on System z 64 bit V8.0 IFR1 Multilingual eImage CN5GKML MQ Client for Linux on x86 32bit V8.0 IFR1 Multilingual eImage CN5GRML MQ Client for Linux on x86 64 V8.0 IFR1 Multilingual eImage CN5GMML MQ Client for Solaris on SPARC V8.0 IFR1 Multilingual eImage CN5GNML MQ Client for Solaris on x86 64 V8.0 IFR1 Multilingual eImage CN5GLML MQ Client for Windows 32-bit V8.0 IFR1 Multilingual eImage CN5GSML MQ Client for Windows 64-bit V8.0 IFR1 Multilingual eImage CN5PHML Managed File Transfer Agent V7.5 IFR2 for IBM 4690 Operating System Multilingual eImage 
+Other Fix Central resources A number of MQ V8.0.0.2/3 components are also made available on Fix Central for ease of download. Here are links to the available components:
+
+ * The IBM MQ V8.0.0.2 Resource Adapter [https://www.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/WebSphere/WebSphere+MQ&release=8.0.0.2&platform=All&function=fixId&fixids=8.0.0.2-WS-MQ-Java-InstallRA&useReleaseAsTarget=true&includeSupersedes=0] for use with any JEE 7.0 compliant application server
+ * The IBM MQ V8.0.0.3 Resource Adapter [https://www.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/WebSphere/WebSphere+MQ&release=8.0.0.3&platform=All&function=fixId&fixids=8.0.0.3-WS-MQ-Java-InstallRA&useReleaseAsTarget=true&includeSupersedes=0] for use with any JEE 7.0 compliant application server
+ * The IBM MQ V8.0.0.2 C clients [https://www.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/WebSphere/WebSphere+MQ&release=8.0.0.2&platform=All&function=fixId&fixids=8.0.0.2-WS-MQC-SolarisX64,8.0.0.2-WS-MQC-SolarisSparc64,8.0.0.2-WS-MQC-LinuxS390X,8.0.0.2-WS-MQC-AixPPC64,8.0.0.2-WS-MQC-HpuxIA64,8.0.0.2-WS-MQC-LinuxX64,8.0.0.2-WS-MQC-Win64,8.0.0.2-WS-MQC-IBM_i,8.0.0.2-WS-MQC-LinuxPPC64LE&useReleaseAsTarget=true&includeSupersedes=0]
+ * The IBM MQ V8.0.0.3 C clients [https://www.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/WebSphere/WebSphere+MQ&release=8.0.0.3&platform=All&function=fixId&fixids=8.0.0.3-WS-MQC-SolarisX64,8.0.0.3-WS-MQC-SolarisSparc64,8.0.0.3-WS-MQC-LinuxS390X,8.0.0.3-WS-MQC-AixPPC64,8.0.0.3-WS-MQC-HpuxIA64,8.0.0.3-WS-MQC-LinuxX64,8.0.0.3-WS-MQC-Win64,8.0.0.3-WS-MQC-IBM_i,8.0.0.3-WS-MQC-LinuxPPC64LE&useReleaseAsTarget=true&includeSupersedes=0]
+ * The IBM MQ V8.0.0.2 JMS and Java client [https://www.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/WebSphere/WebSphere+MQ&release=8.0.0.2&platform=All&function=fixId&fixids=8.0.0.2-WS-MQ-Install-Java-All&useReleaseAsTarget=true&includeSupersedes=0]
+ * The IBM MQ V8.0.0.3 JMS and Java client [https://www.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/WebSphere/WebSphere+MQ&release=8.0.0.3&platform=All&function=fixId&fixids=8.0.0.3-WS-MQ-Install-Java-All&useReleaseAsTarget=true&includeSupersedes=0]
+
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

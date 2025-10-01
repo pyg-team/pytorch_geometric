@@ -1,0 +1,182 @@
+Title: IBM SA91543: MQM400 DSPMQMQ + CHGMQMQ DISPLAY DIFFERENT EVENT VALUES SIMILAR TO SA83551 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ******* (Do NOT alter/erase this or next 3 lines) *******
+   * EQUIVALENT ABSTRACT:
+   MQM400 DSPMQMQ _ CHGMQMQ DISPLAY DIFFERENT EVENT VALUES SIMILAR
+   TO SA83551
+   The DSPMQMQ and CHGMQMQ do not show the same information.
+   Here's an example:
+   Queue Name = SYSTEM.DEFAULT.LOCAL.QUEUE
+   DSPMQMQ shows:
+                                  Display MQM Queue
+    Cluster name . . . . . . . . . :
+    Cluster namelist name  . . . . :
+    Usage  . . . . . . . . . . . . :   *NORMAL
+    Queue depth high threshold . . :   80
+    Queue depth low threshold  . . :   20
+    Default binding  . . . . . . . :   *OPEN
+    Queue full events enabled  . . :   *NO
+    Queue high events enabled  . . :   *NO
+    Queue low events enabled . . . :   *YES
+    Service interval . . . . . . . :   999999999
+    Service interval events  . . . :   *NONE
+     Distribution Lists enabled . . :   *NO
+     Definition type  . . . . . . . :   *PREDEF
+     Creation date  . . . . . . . . :   2000-11-10
+    and the CHGMQMQ shows:
+                               Change MQM Queue (CHGMQMQ)
+     Type choices, press Enter.
+    Usage  . . . . . . . . . . . . .   *NORMAL       *SAME, *NORMAL
+    Queue depth high threshold . . .   80            0-100, *SAME
+    Queue depth low threshold  . . .   20            0-100, *SAME
+    Queue full events enabled  . . .   *NO           *SAME, *NO, *Y
+    Queue high events enabled  . . .   *YES          *SAME, *NO, *Y
+    Queue low events enabled . . . .   *NO           *SAME, *NO, *Y
+    Service interval . . . . . . . .   999999999     0-999999999, *
+    Service interval events  . . . .   *NONE         *SAME, *HIGH,
+    Distribution list support  . . .   *NO           *SAME, *NO, *Y
+    Cluster Name . . . . . . . . . .   *NONE
+    Cluster Name List  . . . . . . .   *NONE
+    Default Binding  . . . . . . . .   *OPEN         *SAME, *OPEN,
+    F3=Exit   F4=Prompt   F5=Refresh   F12=Cancel   F13=How to use
+    F24=More keys
+   I'm most interested in the Queue Events Enabled fields.
+   -
+   Identical problem to R421 reported via SA83551
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The DSPMQMQ and CHGMQMQ do not show the same information.
+   Here's an example:
+   Queue Name = SYSTEM.DEFAULT.LOCAL.QUEUE
+   DSPMQMQ shows:
+                                  Display MQM Queue
+    Cluster name . . . . . . . . . :
+    Cluster namelist name . . . . :
+    Usage . . . . . . . . . . . . : *NORMAL
+    Queue depth high threshold . . : 80
+    Queue depth low threshold . . : 20
+    Default binding . . . . . . . : *OPEN
+    Queue full events enabled . . : *NO
+    Queue high events enabled . . : *NO
+    Queue low events enabled . . . : *YES
+    Service interval . . . . . . . : 999999999
+    Service interval events . . . : *NONE
+     Distribution Lists enabled . . : *NO
+     Definition type . . . . . . . : *PREDEF
+     Creation date . . . . . . . . : 2000-11-10
+    and the CHGMQMQ shows:
+                               Change MQM Queue (CHGMQMQ)
+     Type choices, press Enter.
+    Usage . . . . . . . . . . . . . *NORMAL *SAME, *NORMAL
+    Queue depth high threshold . . . 80 0-100, *SAME
+    Queue depth low threshold . . . 20 0-100, *SAME
+    Queue full events enabled . . . *NO *SAME, *NO, *Y
+    Queue high events enabled . . . *YES *SAME, *NO, *Y
+    Queue low events enabled . . . . *NO *SAME, *NO, *Y
+    Service interval . . . . . . . . 999999999 0-999999999, *
+    Service interval events . . . . *NONE *SAME, *HIGH,
+    Distribution list support . . . *NO *SAME, *NO, *Y
+    Cluster Name . . . . . . . . . . *NONE
+    Cluster Name List . . . . . . . *NONE
+    Default Binding . . . . . . . . *OPEN *SAME, *OPEN,
+    F3=Exit F4=Prompt F5=Refresh F12=Cancel F13=How to use
+    F24=More keys
+   I'm most interested in the Queue Events Enabled fields.
+   -
+   Identical problem to R421 reported via SA83551
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Problem fixed by SA92841 [http://www-01.ibm.com/support/docview.wss?uid=swg1SA92841] (shipped via SF65608).
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   SA91543
+   
+   
+ * REPORTED COMPONENT NAME
+   MQSERIES FOR AS
+   
+   
+ * REPORTED COMPONENT ID
+   5733A3800
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED DUA
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2000-12-05
+   
+   
+ * CLOSED DATE
+   2001-09-04
+   
+   
+ * LAST MODIFIED DATE
+   2001-09-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

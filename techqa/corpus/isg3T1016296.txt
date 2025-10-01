@@ -1,0 +1,26 @@
+Title: IBM mbatchd cannot start with the error: createThreadedChild: socketpair() failed, Too many open files. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ mbatchd cannot start with the error: createThreadedChild: socketpair() failed, Too many open files. 
+
+RESOLVING THE PROBLEM
+
+
+mbatchd cannot start up with the message "mbatchd: createThreadedChild: socketpair() failed, Too many open files." 
+
+ This occurs because mbatchd has reached the threashold of the open file limit and cannot open any new files.
+
+ To resolve this issue, increase the open file limit for the mbatchd process. Because mbatchd is started by sbatchd, this must be done for sbatchd as well.
+
+ 1. Run "badmin hshutdown" on the master machine to shutdown the sbatchd daemon.
+2. Run "badmin mbatchdrestart" to shutdown the mbatchd daemon.
+3. Change to the root user and check the limit. If the limit is too small, use the system command limit or ulimit to increase it first.
+4. Run "badmin hstartup" to start the sbatchd and mbatchd daemons again.
+5. Monitor the cluster and see whether the problem still happens.
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition IBM Spectrum Computing IBM Spectrum LSF

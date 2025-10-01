@@ -1,0 +1,34 @@
+Title: IBM FileNet Content Platform Engine subscription on a document class is skipped when a valid Filter Expression is specified - United States
+
+Text:
+filter; filter property; filtered expression; p8_server_trace TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM FileNet Content Platform Engine subscription on a document class is skipped when a valid Filter Expression is specified 
+
+SYMPTOM
+The subscription will fire successfully when no Filter Expression is specified but is skipped when a valid Filter Expression is specified.
+
+
+ENVIRONMENT
+IBM FileNet Content Platform Engine
+
+DIAGNOSING THE PROBLEM
+Enable Content Platform Engine trace logging [http://www-01.ibm.com/support/knowledgecenter/SSNW2F_5.2.1/com.ibm.p8.ce.admin.tasks.doc/p8pcc069.htm?cp=SSNW2F_5.2.1&lang=en] for the following tracing subsystems: API Trace Flags, Engine Trace Flags, Events trace Flags tracing subsystems. 
+
+Reproduce the issue and the p8_server_trace.log file will show the filtered expression being skipped.
+
+EVNT FNRCE0000D - DEBUG Handling filter, property is , expression is : property_name='123'
+API FNRCE0000D - DEBUG <getObjectsResponse...<property type="PropertyString" name="property_name" dirty="false" access="3" rid="78">\n <value>123</value>...</getObjectsResponse>
+EVNT FNRCE0000D - DEBUG Filter property '' doesn't exist.
+EVNT FNRCE0000D - DEBUG Skipping filtered expression: property_name='123'
+
+The reason that the subscription is being skipped is that at some point in time, a value for "Filter Property" was entered and is now an empty string. The p8_server_trace.log file will show the following:
+
+EVNT FNRCE0000D - DEBUG Filter property '' doesn't exist.
+
+The Content Platform Engine is checking for a property called '' which doesn't exist, so the subscription is skipped.
+
+
+RESOLVING THE PROBLEM
+To resolve this issue delete and recreate the subscription with the "Filter Expression" making sure not to add any value to the "Filter Property".

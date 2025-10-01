@@ -1,0 +1,159 @@
+Title: IBM PI67200: WMQ CLUSRCVR CHANNEL WITH CHLAUTH DOES NOT USE MCAUSER ID - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Messages arriving over a cluster receiver channel are put to
+   the dead letter queue with an MQRC 2035 as the USER ID used to
+   check authorization is defaulting to the CHIN task authority
+   instead of to the MCAUSER ID which was mapped by CHLAUTH rule.
+   Change Team finds that the CHLAUTH rule is matched as
+   pStatus.MCAUser is set based on the rule however,
+   CD.MCAUserIdentifier is blank. This results in MQPUT being
+   issued using the CHIN userid. The issue in rriCheckChlAuth
+   is that MCAUserIdentifier is not updated in the status entry.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ for z/OS Version 8 *
+   *                 Release 0 Modification 0.                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: When using CHLAUTH QMGRMAP              *
+   *                      authentication records to set MCAUSERID *
+   *                      to receiver channels, incoming          *
+   *                      messages are put to dead letter queue   *
+   *                      with MQRC 2035 MQRC_NOT_AUTHORIZED.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   DISPLAY CHSTATUS shows that the correct MCA userID has been set
+   to the channel but messages are discarded to dead letter queue.
+   The channel definition control blocks have two fields to set the
+   MCA userId: MCAUserID and MCAUserIdentifier. The CHLAUTH MCAUser
+   is only copied to MCAUserID and MCAUserIdentifier is left blanks
+   resulting in messages put to dead letter queue with MQRC 2035
+   MQRC_NOT_AUTHORIZED.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  CMQXRMSA (rriCheckChlAuth) has been changed to copy MCAUser to
+   MCAUserID and MCAUserIdentifier in the channel definition
+   control blocks.
+   000Y
+   CMQXRMSA
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI67200
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * REPORTED COMPONENT ID
+   5655W9700
+   
+   
+ * REPORTED RELEASE
+   000
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-09
+   
+   
+ * CLOSED DATE
+   2016-09-06
+   
+   
+ * LAST MODIFIED DATE
+   2016-10-03
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PI68196 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI68196] UI40650
+   
+   
+
+MODULES/MACROS
+ *  CMQXRMSA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS 8
+   
+   
+ * FIXED COMPONENT ID
+   5655W9700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R000 PSY UI40650 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UI40650]
+   UP16/09/20 P F609
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

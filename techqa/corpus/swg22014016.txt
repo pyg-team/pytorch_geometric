@@ -1,0 +1,30 @@
+Title: IBM Why are the certificate Subject and Issuer fields sometimes blank for Connect:Direct for z/OS statistics? - United States
+
+Text:
+CDZ TECHNOTE (FAQ)
+
+QUESTION
+ When IBM Sterling Connect:Direct for z/OS is the SNODE, statistics do not display the certificate Subject and Issuer. 
+
+CAUSE
+Connect:Direct for z/OS statistics show the Subject and issuer for a certificate.
+
+In this case, the PNODE shows the following:
+
+TLS V1.2 Enabled => Yes Encrypt.Data=Y 
+TLS Ciphersuite => TLS_RSA_WITH_3DES_EDE_CBC_SHA
+Subject => (SN=57:8d:58:a1:00:04:5f:1a/C=US/O=IBM/CN=cd52b/)
+Issuer => (C=US/O=IBM/CN=cd52b/) 
+
+On the SNODE those fields are blank:
+
+TLS V1.2 Enabled => Yes Encrypt.Data=Y 
+TLS Ciphersuite => TLS_RSA_WITH_3DES_EDE_CBC_SHA
+Subject => () 
+Issuer => () 
+
+
+ANSWER
+The certificate information on the SNODE is not displayed. This is working as designed. 
+
+Note that if you are performing optional Client Authentication, in which the Client's certificate is also exchanged, you will see the Client's (PNODE) certificate information when you are the SNODE.

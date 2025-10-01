@@ -1,0 +1,140 @@
+Title: IBM Collecting Data: Read first for the ITM Tivoli Enterprise Portal Server V6 (TEPS) - United States
+
+Text:
+MustGather TEPS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ For every problem, collecting data can aid in problem determination and save time resolving Problem Management Records (PMRs).
+
+Gathering this data before calling IBM® support will help you understand the problem and save time analyzing the data. 
+
+RESOLVING THE PROBLEM
+Collecting data early, even before opening the PMR, helps IBM® Support quickly determine whether:
+--Symptoms match known problems (rediscovery).
+--A non-defect problem can be identified and resolved.
+--A defect contains a workaround to enable reduction of severity.
+--root cause identification can speed the development of a code fix.
+
+Collecting Data: Readme first table of contents:
+[http://www.ibm.com/i/v14/rules/dotted_blue_rule_443.gif] 
+
+[/support/docview.wss?uid=swg21297524&amp;aid=1] Gathering general information [/support/docview.wss?uid=swg21297524&amp;aid=2] Gathering component specific information [/support/docview.wss?uid=swg21297524&amp;aid=3] ITM Collector Tool [/support/docview.wss?uid=swg21297524&amp;aid=4] Manually gathering data [/support/docview.wss?uid=swg21297524&amp;aid=5] Additional information to collect [/support/docview.wss?uid=swg21297524&amp;aid=6] Submitting information to IBM Support [http://www.ibm.com/i/v14/rules/dotted_blue_rule_443.gif] 
+
+Gathering general information 
+For the IBM Tivoli Monitoring V6 Tivoli Enterprise Portal Serve r (TEPS), you can use the IBM Support Assistant (ISA) [http://www.ibm.com/software/support/isa/] to capture general information. Alternatively you can manually collect general information from the environment. Entering general information into an electronically-opened PMR (ESR) [http://www-01.ibm.com/support/electronicsupport/] eliminates waiting on the phone to provide general information to Level 1 support. 
+
+The TEPS is enabled with default RAS (Reliability, Accessibility and Serviceability) settings. If you do not know what the problem is, then collecting the general TEPS logs and configuration files are helpful to IBM Support in further isolating the problem. For these instances see the section on manually collecting information and send the data with the default trace settings. 
+
+Gathering component specific information 
+Several components can be involved in a problem with the TEPS. This section will detail the common component areas and some trace settings that can be helpful in isolating issues related to the Tivoli Enterprise Portal Server. These trace settings are suggested but will not isolate every problem scenario. Logs with default trace settings can still be provided to IBM Support, and the logs can be reviewed to help suggest additional trace settings. 
+
+
+
+TEPS and TEP Client Related Components Tivoli Enterprise Portal Server (TEPS)  * Update the TEPS configuration file to set tracing:  * Windows - <install path>\CNPS\KFWENV 
+    * UNIX/Linux - <install path>/config/cq.ini
+   
+   
+ * Default tracing level:  * KBB_RAS1=ERROR
+   
+   
+ * The suggested minimum trace level for the TEPS is:  * KBB_RAS1=ERROR (UNIT:ctdatabus INPUT ERROR) (UNIT:ctsql INPUT ERROR) 
+   
+   
+ * Diagnosing data not displaying correctly:  * KBB_RAS1=ERROR (UNIT:ctdatabus INPUT,ERROR) (UNIT:ctcmw INPUT) (UNIT:kv4 INPUT) (UNIT:ctsql INPUT)
+   
+   
+ * Diagnosing client request problems:  * KBB_RAS1=ERROR (UNIT:ctsql IN ER) (UNIT:ctdata IN ER) 
+   
+   
+ * Diagnosing client or Tivoli Enterprise Monitoring Server interaction problems:  * KBB_RAS1=ERROR (UNIT:ctsql IN ER) (UNIT:ctdata IN ER) (UNIT:ctcmw IN ER) (UNIT:kv4 IN ER)
+   
+   
+ * Diagnosing SQL generation problems:  * KBB_RAS1=ERROR (UNIT:ctsql IN ER) (UNIT:ctdata IN ER) (UNIT:ctreport ALL)
+   
+   
+ * Diagnosing login problems:  * KBB_RAS1=ERROR (UNIT:ctsql IN ER) (UNIT:ctdata IN ER) (UNIT:ctauth ALL)
+   
+   
+ * Note that these traces will trace activity on the TEPS related to these components. 
+ * Restart the TEPS
+
+Tivoli Enterprise Portal client (TEP)
+ * If the Java Web Start version of the TEP is used [ITM 6.2 level and later releases], run the IBM Control Panel for Java (TM). Select the "Advanced" tab, expand the "Debugging" item, and select the "Enable Tracing" box to enable it.
+
+ * If the TEP Browser Client or TEP Desktop Client are used, the tracing is always on automatically. 
+   
+ * Start the portal client and prepare to reproduce the issue.
+   
+ * In the TEP client, select File-->Trace Options..., and enter the trace controls as requested by IBM Support. and then click OK. Here is one example: ERROR (UNIT:SGraphContext ALL)(UNIT:Navigator ALL) 
+
+ * Use the TEP to reproduce the issue.
+   
+ * After reproducing the issue, stop the portal client and gather the logs.
+   
+   For a TEP Java Web Start - the trace has the form javawsNNNNN.trace and is in the following directory
+   C:\Documents and Settings\Administrator\Application Data\IBM\Java\Deployment\log
+   
+   For a TEP Browser client - the trace has the form plugin150.trace and is in the same directory
+   C:\Documents and Settings\Administrator\Application Data\IBM\Java\Deployment\log
+   
+   For a TEP Desktop client - the traces are in
+   
+   <install_dir>\CNP\logs\kcjerror.log
+   <install_dir>\CNP\logs\kcjras1.log 
+
+ * At ITM 6.2 FP1, the TEPS can be configured to use the Sun Java RTE. In this case the Java Web Start and Browser client logs will be located under C:\Documents and Settings\Administrator\Application Data\Sun\Java\Deployment\log
+
+
+Once the component traces have been set and the components have been restarted, recreate the problem and collect the logs. In most cases it is best to collect both the TEP client and the TEPS logs. 
+
+Collector Tool 
+There is a new problem determination (PD) collector tool provided for ITM V6. This tool, pdcollect, is available for Linux, UNIX, Windows and z/OS and it provides the capability to collect the necessary logs and other PD information requested by IBM Support. 
+
+The pdcollect tool is shipped with ITM V6.2 and later. For ITM V6.1 environments, this tool can be downloaded from this technote [http://www-01.ibm.com/support/docview.wss?uid=swg21284703]. 
+
+Once collected the PD information should be uploaded to IBM using the steps provided in this URL Exchanging information with IBM Technical Support [http://www-306.ibm.com/software/support/exchangeinfo.html]. 
+
+Manually gathering general information 
+This section details how to manually collect information from a system running the 
+Tivoli Enterprise Portal Server: 
+ * From a command prompt on a Unix/Linux TEPS collect this:
+   # export CANDLEHOME=<install path>
+   # export PATH=$PATH:$CANDLEHOME/bin
+   # cinfo -i > /tmp/itm61_install.out
+
+ * From a command prompt on a Windows TEPS collect this:
+   $CANDLEHOME\InstallITM\kincinfo.exe -i > itm6_install.txt
+
+ * Collect the Tivoli Enterprise Portal Server data 
+ * $CANDLEHOME/logs/*cq* 
+ * $CANDLEHOME/config/*cq* (%CANDLE_HOME%\CNPS\KFWENV on Windows) 
+ * Collect the TEP client logs 
+ * $CANDLEHOME\CNP\logs\kcj.log 
+ * $CANDLEHOME\CNP\logs\kcjras1.log
+
+
+Additional information for the TEPS  * Operating system and level 
+ * /etc/suse-release 
+ * Hostname and IP address 
+ * netstat -a 
+ * Firewall configuration information (if applicable) 
+ * Operating system error log messages (if applicable) 
+ * /var/adm/messages (if applicable)
+
+Submitting information to IBM Support  * After a PMR is open, you can submit diagnostic data [http://www.ibm.com/de/support/ecurep/send.html] to IBM. 
+ * If using ESR [http://www.ibm.com/software/support/probsub.html], update the PMR to indicate that data has been sent. 
+ * If you use IBM Support Assistant (ISA) [http://www.ibm.com/software/support/isa/] then you can upload the data using the ISA tool.
+
+Related information 
+Troubleshooting information for supported versions of Tivoli Monitoring v6 is found in the Problem Determination Guides, available at the IBM Tivoli Monitoring v6 Information Center. [http://publib.boulder.ibm.com/infocenter/tivihelp/v15r1/index.jsp?topic=/com.ibm.itm.doc_6.1/rev/pdg_itm61.htm]  * IBM Tivoli Monitoring Troubleshooting Guide [http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ibm.itm.doc_6.3fp2/ic/landing_troubleshoot.htm?lang=en] 
+ * IBM Tivoli Monitoring Installation and Setup Guide [http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ibm.itm.doc_6.3fp2/plugin-gentopic1.htm?lang=en] 
+ * IBM Tivoli Monitoring Administrator's Guide [http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ibm.itm.doc_6.3fp2/adminuse/itm_admin.htm?lang=en] 
+ * IBM Tivoli Monitoring User's Guide [http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ibm.itm.doc_6.3fp2/plugin-gentopic3.htm?lang=en] 
+ * IBM Tivoli Monitoring Quick Start Guide [http://www.ibm.com/support/knowledgecenter/SSTFXA_6.3.0.2/com.ibm.itm.doc_6.3fp2/itm63fp2_qsg_en.htm?lang=en] 
+ * IBM Tivoli Monitoring Featured documents page [http://www.ibm.com/support/docview.wss?rs=2366&uid=swg27009503] 
+ * Exchanging information with IBM Technical Support [http://www.ibm.com/software/support/exchangeinfo.html]
+
+[http://www.ibm.com/i/v14/rules/dotted_blue_rule_443.gif] 
+
+Change History 
+07 March 2008 : Latest update of this page

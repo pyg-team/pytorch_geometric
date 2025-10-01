@@ -1,0 +1,30 @@
+Title: IBM Webtop/WebGUI install/upgrade may fail if iptables service is running - United States
+
+Text:
+deployment; engine; webtop; webgui; install; upgrade; failure; iptables; service; firewall TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Deployment Engine (DE) uses port # 4130 during install/upgrade of Webtop/WebGUI. If this port is blocked then upgrade may fail with below errors.
+TIPIN0024E Invalid User ID or password. Try again. 
+
+SYMPTOM
+The installation log may show below error messages:
+
+
+ADMU0509I: The Application Server "server1" cannot be reached. It appears to be stopped.(from 
+SEVERE : TIPIN0024E Invalid User ID or password. Try again. (from com.ibm.tivoli.tip.install.common.ia.WASCredentialValidationActionFP.install)
+FINER : RETURN com.zerog.ia.api.pub.InstallerProxy@4f6a4f6a (from com.ibm.tivoli.tip.install.common.ia.WASCredentialValidationActionFP.install)
+STDERR : SHUTDOWN REQUESTED
+
+
+CAUSE
+Linux provides iptables service for firewall solutions. It can potentially block a port which is used by the deployment engine and result in installation/upgrade failure.
+
+
+DIAGNOSING THE PROBLEM
+Review the installation logs and see if above errors are present in the log or the upgrade is not proceeding without any obvious reasons. 
+
+
+
+RESOLVING THE PROBLEM
+Check if iptables service is running. Stop this service and retry the upgrade.

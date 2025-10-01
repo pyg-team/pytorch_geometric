@@ -1,0 +1,69 @@
+Title: IBM Security Guardium S-TAP for Db2 on z/OS V9.1 PTF UI48571 changed S-TAP filtering behavior - United States
+
+Text:
+Security Guardium S-TAP for Db2 on z/OS V9.1 PTF UI48571 changed S-TAP filtering behavior TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ PTF UI48571 no longer filters the CREATE, ALTER, DROP, GRANT and REVOKE SQL Statements. 
+
+SYMPTOM
+PTF UI48571 no longer filters the CREATE, ALTER, DROP, GRANT and REVOKE SQL Statements at the S-TAP level.
+
+
+All CREATE, ALTER, DROP, GRANT, and REVOKE statements are streamed to Guardium collector.
+As a result, CREATE, ALTER, DROP, and GRANT and REVOKE SQL Statements events can be shown in Guardium reports regardless of the installed S-TAP policy for the audited Db2 Subsystem.
+
+
+
+CAUSE
+Working as designed.
+
+
+
+ENVIRONMENT
+V9.1
+
+
+
+
+RESOLVING THE PROBLEM
+Follow these steps to filter CREATE, ALTER, DROP, and GRANT and REVOKE SQL Statements events at the Guardium appliance level:
+
+1. In the installed policy, update the Command field to include/exclude the following event types: 
+
+· Failed Authorizations 
+
+· Failed Authid changes 
+
+· DB2 commands 
+
+· Grants and Revokes 
+
+· DB2 Utilities 
+
+· Set Current SQLID 
+
+2. On the Guardium appliance, create, update, then install a policy rule with an action of SKIP LOGGING to discard events that are received from the S-TAP Collector Agent.
+
+3. Update the Guardium appliance report to include/exclude the following types for specific objects/users/etc.: 
+
+· Failed Authorizations 
+
+· Failed Authid changes 
+
+· DB2 commands 
+
+· Grants and Revokes 
+
+· DB2 Utilities 
+
+· Set Current SQLID
+
+RELATED INFORMATION
+ PI81339: COMPATIBILITY APAR FOR STAP 10.1.3 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI81339]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ S-TAP For DB2

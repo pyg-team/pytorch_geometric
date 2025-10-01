@@ -1,0 +1,33 @@
+Title: IBM Business Process Manager V7.5 replaces Lombardi Teamworks and WebSphere Lombardi Edition - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ IBM Business Process Manager V7.5 is replacing Lombardi Teamworks and WebSphere Lombardi Edition. End of support dates for Lombardi Teamworks and WebSphere Lombardi Edition are included with this announcement and detailed by version in the table within this document. 
+
+CONTENT
+On April 5, 2011, IBM announced IBM Business Process Manager [http://www.ibm.com/software/integration/business-process-manager/], which is a single unified Business process Management (BPM) platform that is designed to support the entire range of business process improvement projects.
+IBM Business Process Manager is the replacement product for Lombardi Teamworks, which is a BPM platform that was formerly offered by Lombardi Software prior to its acquisition by IBM in January 2010. It is also the replacement for its successor, WebSphere Lombardi Edition, which is currently offered by IBM.
+
+You can replace your current Lombardi Teamworks or WebSphere Lombardi Edition product entitlements with corresponding IBM Business Process Manager licenses, beginning June 3, 2011. If you are interested, contact your IBM sales representative for assistance.
+
+IBM will continue to support the various Lombardi Teamworks and WebSphere Lombardi Edition releases according to the schedule that is shown in the following table. This schedule gives you time to plan and complete your migration to IBM Business Process Manager. The End Of Support dates specify when standard support will no longer be available for these product releases.
+
+Note: If you licensed WebSphere Lombardi Edition from IBM under the terms of the IBM International Program License Agreement, optional extended support is available beyond the standard support date. For information on the IBM Software Support Lifecycle for WebSphere Lombardi Edition, refer to the IBM Software Support Lifecycle Policy [http://www.ibm.com/software/support/lifecycle/]. If you are interested in extended support, contact your IBM sales representative for assistance.
+
+
+
+Replacement information 
+
+Product Versions End of Support Replacement parts WebSphere Lombardi Edition 7.2 30th Apr 2016 IBM Business Process Manager Standard v7.5:
+· IBM Process Center Standard v7.5
+· IBM Process Server Standard v7.5
+· IBM Process Designer v7.5 WebSphere Lombardi Edition 7.1 30th Sep 2013 Teamworks 7.0.x 30th Sep 2013 Teamworks 6.2.x, 6.1.x 30th Sep 2013 Teamworks 6.0.x, 5.x, 4.x, 3.x 30th Apr 2012 WebSphere Lomabrdi Edition for Microsoft Office 7.2 30th Apr 2016 IBM Business Process Manager for Microsoft 
+Office v7.5 Teamworks for Office 2007 1.0.x 30th Apr 2013 Teamworks for Office 2003 2.0.X 30th Apr 2012 Lombardi for Office 1.0.x 30th Apr 2012 WebSphere Lombardi Edition for Microsoft SharePoint 7.2 30th Apr 2016 IBM Business Process Manager for Microsoft SharePoint v7.5 Teamworks for SharePoint 1.2 30th Apr 2013 Teamworks for SharePoint 1.0.x 30th Apr 2012 
+
+Additional information 
+
+Refer to the overview of IBM Business Process Manager [http://www.ibm.com/software/integration/business-process-manager/]on the IBM web site. 
+
+For more information on IBM Business Process Manager V7.5, refer to Software Announcement 211-092 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS211-092], dated April 5, 2011.

@@ -1,0 +1,52 @@
+Title: IBM WARNING: DB2 is not found. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Tivoli Directory Server 6.3.0.21 or later can be installed without a supported version of DB2 present, but requires additional, manual steps to configure. 
+
+
+SYMPTOM
+The following message is displayed when installing Tivoli Directory Server 6.3.0.21 or later:
+
+
+ WARNING: DB2 is not found.
+ldapdb.properties file is ready with template. User need to fill in db2 information
+
+
+CAUSE
+Prior to version 6.3.0.21, Tivoli Directory Server (TDS) can only be installed if a supported version of DB2 is present. This requirement is relaxed in version 6.3.0.21 so that the TDS server can be installed before DB2, but doing so requires additional, manual configuration of the ldapdb.properties file before TDS can be used. 
+
+
+RESOLVING THE PROBLEM
+When the TDS server package is installed, it looks for a supported level of DB2 and stores the DB2 version and install path in the file <install path>/etc/ldapdb.properties. For example (on Linux): 
+
+ # cat /opt/ibm/ldap/V6.3/etc/ldapdb.properties
+currentDB2InstallPath=/opt/ibm/db2/V9.7
+currentDB2Version=9.7.0.6
+
+Originally (as of 6.3.0.0) TDS 6.3 server package could only be installed if DB2 9.5 or 9.7 was found. As of APAR IO18477, TDS 6.3.0.21 can also be installed with DB2 10.1. But more importantly, it relaxes the requirement so that if a supported version of DB2 is not found, a warning will be displayed but the server package will be installed anyway. For example (on Linux):
+
+# rpm -ivh idsldap-srv32bit63-6.3.0-17.i386.rpm
+Preparing... ######################## [100%]
+WARNING: DB2 is not found.
+1:idsldap-srv32bit63 ######################## [100%]
+WARNING: DB2 is not found.
+ldapdb.properties file is ready with template. User need to fill in db2 information
+
+# ls -l /opt/ibm/ldap/V6.3/etc/ldapdb.properties
+-rw-r--r-- 1 root root 43 Apr 15 09:32 /opt/ibm/ldap/V6.3/etc/ldapdb.properties
+# cat /opt/ibm/ldap/V6.3/etc/ldapdb.properties
+currentDB2InstallPath=
+currentDB2Version=
+
+Note that if TDS is installed without a supported version of DB2, the ldapdb.properties cannot be initialized with the correct DB2 install path and version. In this case, the user must edit the ldapdb.properties with this information before the server can be used.
+
+ 
+
+HISTORICAL NUMBER
+ IO18477 
+
+PRODUCT ALIAS/SYNONYM
+ LDAP SDS ISDS TDS ITDS IDS

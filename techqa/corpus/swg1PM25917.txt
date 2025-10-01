@@ -1,0 +1,164 @@
+Title: IBM PM25917: CR link does not change color when clicked - United States
+
+Text:
+  A FIX IS AVAILABLE
+Rational Change Fix Pack 2 (5.3.0.2) for 5.3 [http://www-01.ibm.com/support/docview.wss?uid=swg24030554]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Clicking on any CR link in home page or any CR's in a report,
+   the Cr open up fine, but the color of the links does not change.
+   It is observed that the product is forcing the link to stay the
+   same blue color.  This makes it difficult when he is viewing a
+   list of over a hundred CR's.
+   
+   Environment:
+   
+   Rational Change 5.2.0.4
+   
+   As per the customer the issue is noticed on the following
+   browsers:
+   
+   Internet Explorer 8
+   Firefox 3.6.10
+   Google Chrome
+   
+   Support:
+   
+   We have tested this issue in our test environment and are able
+   to reproduce the issue.
+   
+   We did test this behavior in my test environment and here are
+   our observations:
+   
+   1. On the home page 'The CR links' color does not change when
+   clicked on them, hence the issue is reproducible as observed by
+   the customer.
+   
+    2. Whereas, if we generate a report and access the CR's from
+   the report, the colors do change, but not dynamically.
+        If the page is refreshed or  if the report is accessed
+   again, the CR's link color would have changed.
+   
+   This has been tested on IE 6, 7 , 8 and on Firefox.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   CR link does not change color when clicked
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in IBM Rational Change Fix Pack 5.3.0.2.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Works fine in FF. In IE, the visited links change color after a
+   page refresh.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM25917
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC CHANGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724V87CG
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-11-04
+   
+   
+ * CLOSED DATE
+   2011-09-16
+   
+   
+ * LAST MODIFIED DATE
+   2011-09-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TLOGIC CHANGE
+   
+   
+ * FIXED COMPONENT ID
+   5724V87CG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSN
+   UP

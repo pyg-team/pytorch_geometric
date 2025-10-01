@@ -1,0 +1,156 @@
+Title: IBM JR58337: DATA MASKING STAGE IS MISSING LIBXERCES-C.A LIBRARY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running a job using Data Masking stage, the following
+   error is thrown:
+   
+   "Failed to load ODPP library. In case of ODPP version 9.1, add
+   the path to ODPP libraries to system path. In case of ODPP
+   version 1, make sure that ODPP libraries exist under
+   <Information_Server_home>/Server/DSComponents/bin
+   (CC_DMODPPLibrary::getInstance, file CC_DMODPPLibrary.cpp, line
+   99)"
+   
+   When trying to run the ODPPLibp command, the following error is
+   thrown:
+   
+   $ ./ODPPLicp OPTDIST ID=xxxxx KEY=xxxxx
+   
+   exec(): 0509-036 Cannot load program ./ODPPLicp because of the
+   following errors:
+   
+           0509-022 Cannot load module
+   /opt/IBM/InformationServer11/Server/odpp/aix/bin/libODPPLicl.9.1
+   .a(libODPPLicl.so.9.1).
+   
+           0509-150   Dependent module
+   libxerces-c.a(libxerces-c.so.0) could not be loaded.
+   
+           0509-022 Cannot load module
+   libxerces-c.a(libxerces-c.so.0).
+   
+           0509-026 System error: A file or directory in the path
+   name does not exist.
+   
+           0509-022 Cannot load module ODPPLicp.
+   
+           0509-150   Dependent module
+   /opt/IBM/InformationServer11/Server/odpp/aix/bin/libODPPLicl.9.1
+   .a(libODPPLicl.so.9.1) could not be loaded.
+   
+           0509-022 Cannot load module .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Install iFix 11 from Optim which contains the missing module.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users using Data Masking Stage on AIX
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   There  is missing AIX library.
+   ****************************************************************
+   RECOMMENDATION:
+   Install APAR JR58337.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  Add missing library to the ODPPLIBL path.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR58337
+   
+   
+ * REPORTED COMPONENT NAME
+   WIS DATASTAGE
+   
+   
+ * REPORTED COMPONENT ID
+   5724Q36DS
+   
+   
+ * REPORTED RELEASE
+   B50
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-08-23
+   
+   
+ * CLOSED DATE
+   2017-11-06
+   
+   
+ * LAST MODIFIED DATE
+   2017-11-06
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RB50 PSY
+   UP

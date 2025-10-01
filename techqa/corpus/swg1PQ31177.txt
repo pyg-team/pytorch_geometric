@@ -1,0 +1,148 @@
+Title: IBM PQ31177: SOME MODULES OF OPC WILL SHOW AN INCORRECT COMPILATION DATE AFTER 29/2/2000 - United States
+
+Text:
+AIX z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Some modules of OPC, if compiled in 2000 on February 29 or
+   in any day after that will show in the TXT card an incorrect
+   compile date
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: ALL OPC/ESA USERS.                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: This is an internal problem in the      *
+   *                      future.  Compiling in year 2000 after   *
+   *                      28 February the compilation date in the *
+   *                      TXT card will appear wrong by 1 day     *
+   *                      (the macros interpret the last 2 digits *
+   *                      of the year 00 as if were 1900, which   *
+   *                      was not a leap year, instead of as      *
+   *                      2000, which is a leap year).            *
+   ****************************************************************
+   * RECOMMENDATION: APPLY THE PTF FIXING THIS APAR               *
+   ****************************************************************
+   Compiling in 2000 after February 28, the compilation date
+   which appears in the TXT card, is wrong by 1 day, because
+   the last 2 characters of the year 00 are interpreted as 1900
+   instead of as 2000 (and 1900 was not a leap year).
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The error has been corrected and therefore the date in all the
+   modules compiled in 2000 will be correct.
+   100N
+   200N
+   DRKID
+   ZXAID
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ31177
+   
+   
+ * REPORTED COMPONENT NAME
+   TME 10 OPC V2 R
+   
+   
+ * REPORTED COMPONENT ID
+   5697OPC01
+   
+   
+ * REPORTED RELEASE
+   102
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   1999-10-04
+   
+   
+ * CLOSED DATE
+   1999-10-07
+   
+   
+ * LAST MODIFIED DATE
+   1999-10-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ35568 UQ35569 PQ31425 [http://www-01.ibm.com/support/docview.wss?uid=swg1PQ31425]
+   
+   
+
+MODULES/MACROS
+ *  DRKID    ZXAID
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TME 10 OPC V2 R
+   
+   
+ * FIXED COMPONENT ID
+   5697OPC01
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R100 PSN
+   UP
+   
+   
+ * R200 PSN
+   UP

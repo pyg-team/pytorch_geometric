@@ -1,0 +1,143 @@
+Title: IBM IC64588: ONSTAT AND MESSAGE LOG SHOW ON-LINE MODE WHEN USER CONNECTIONS  ARE NOT ACCEPTED PRIOR TO ER SYNC COMPLETION - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If the return value from onstat is used to determine when
+   applications can be started in a hardware failover, the
+   applications can be started prior to the engine allowing
+   connections if ER needs to sync at start up.  In this case ,the
+   application may hang requiring manual intervention in what
+   should be an automated process which will cause a greater amount
+   of downtime.  If the mode is not set until after ER has finished
+   syncing and connections are accepted or a new return value is
+   used to indicate that the instance is on-line and accepting
+   connections this would resolve the problem.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use onstat -g ntd , grep for sqlexec client type and when the
+   next column is "yes" the instance will be ready to accept
+   connections.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users with an HDR pair that is an ER participant             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * After failover, the primary shows online mode but the        *
+   * clients are not able to connect to the server.               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to 11.50.xC7 and above.                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem is first fixed in 11.50.xC7
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC64588
+   
+   
+ * REPORTED COMPONENT NAME
+   IBM IDS ENTRP E
+   
+   
+ * REPORTED COMPONENT ID
+   5724L2304
+   
+   
+ * REPORTED RELEASE
+   B15
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-11-16
+   
+   
+ * CLOSED DATE
+   2010-10-01
+   
+   
+ * LAST MODIFIED DATE
+   2010-10-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   IBM IDS ENTRP E
+   
+   
+ * FIXED COMPONENT ID
+   5724L2304
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RB15 PSY
+   UP

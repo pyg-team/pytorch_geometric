@@ -1,0 +1,197 @@
+Title: IBM IV96036: ISSUE WITH DATA CONNECT JOB WHERE SAME MODULE NAME EXISTS IN DIFFERENT BOS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When having 2 BOs with the same name in different modules, and
+   you click the validate box on Data Connect (DC) runs, this will
+   make an SQL statement built for receiving one single row (the
+   BO name) to fail, since the logic does not include the module
+   on the WHERE clause.
+   The following error is a sample of what it is printed out as an
+   error on the server.log (for DB2):
+   YYYY-MM-DD 09:53:48.626 UTC INFO
+   [com.tririga.custom.integration.Integration](WFA:127596777 -
+   127615943 triExecute:309965486 IE=309965486) [12586]
+   registering clientId: [127596777] for custom task.
+   "YYYY-MM-DD 09:53:48.754 UTC ERROR
+   [com.tririga.custom.integration.Metadata](WFA:127596777 -
+   127615943 triExecute:309965486 IE=309965486)
+   org.springframework.jdbc.BadSqlGrammarException:
+   PreparedStatementCallback; bad SQL grammar [SELECT ATR_NAME,
+   ATR_TYPE, ATR_SIZE, ANCHOR_FLAG, STAGE_TABLE_KEY,
+   CLASSIFICATION_ROOT, CLASSIFICATION_ROOT_NAME, LIST_ID FROM
+   IBS_SPEC_TEMPLATE_ATTRIBUTE  WHERE upper(ATR_NAME)=? AND
+   SPEC_TEMPLATE_ID= (SELECT SPEC_TEMPLATE_ID FROM IBS_SPEC_TYPE
+   WHERE NAME=?) AND (REF_SPEC_TEMPLATE_ID is null or
+   REF_SPEC_TEMPLATE_ID <= 0)]; nested exception is
+   com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: SQLCODE=-811,
+   SQLSTATE=21000, SQLERRMC=null, DRIVER=4.18.60"
+   "org.springframework.jdbc.BadSqlGrammarException:
+   PreparedStatementCallback; bad SQL grammar [SELECT ATR_NAME,
+   ATR_TYPE, ATR_SIZE, ANCHOR_FLAG, STAGE_TABLE_KEY,
+   CLASSIFICATION_ROOT, CLASSIFICATION_ROOT_NAME, LIST_ID FROM
+   IBS_SPEC_TEMPLATE_ATTRIBUTE  WHERE upper(ATR_NAME)=? AND
+   SPEC_TEMPLATE_ID= (SELECT SPEC_TEMPLATE_ID FROM IBS_SPEC_TYPE
+   WHERE NAME=?) AND (REF_SPEC_TEMPLATE_ID is null or
+   REF_SPEC_TEMPLATE_ID <= 0)]; nested exception is
+   com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: SQLCODE=-811,
+   SQLSTATE=21000, SQLERRMC=null, DRIVER=4.18.60"
+                   at
+   org.springframework.jdbc.support.SQLStateSQLExceptionTranslator.
+   doTranslate(SQLStateSQLExceptionTranslator.java:99)
+                   at
+   org.springframework.jdbc.support.AbstractFallbackSQLExceptionTra
+   nslator.translate(AbstractFallbackSQLExceptionTranslator.java:73
+   )
+                   at
+   org.springframework.jdbc.support.AbstractFallbackSQLExceptionTra
+   nslator.translate(AbstractFallbackSQLExceptionTranslator.java:81
+   )
+                   at
+   org.springframework.jdbc.support.AbstractFallbackSQLExceptionTra
+   nslator.translate(AbstractFallbackSQLExceptionTranslator.java:81
+   )
+                   at
+   org.springframework.jdbc.core.JdbcTemplate.execute(JdbcTemplate.
+   java:649)
+                   at
+   org.springframework.jdbc.core.JdbcTemplate.query(JdbcTemplate.ja
+   va:684)
+   (...)
+   Caused by:
+   "com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: SQLCODE=-811,
+   SQLSTATE=21000, SQLERRMC=null, DRIVER=4.18.60"
+                   at com.ibm.db2.jcc.am.kd.a(kd.java:752)
+                   at com.ibm.db2.jcc.am.kd.a(kd.java:66)
+                   at com.ibm.db2.jcc.am.kd.a(kd.java:135)
+                   at
+   com.ibm.db2.jcc.am.ResultSet.completeSqlca(ResultSet.java:4194)
+                   at
+   com.ibm.db2.jcc.am.ResultSet.earlyCloseComplete(ResultSet.java:4
+   176)
+   For Oracle, the error would be: ORA-01427: single-row subquery
+   returns more than one row.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Do no select the Validate box when running DCs or change the BO
+   name to be unique.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Issue with Data Connect job where same module name exists in
+   different BOs. The issue was File to DC validation logic had
+   sql that assumed bo names are unique, and did not account for
+   same named bos in different modules. This fix includes a module
+   name parameter to the logic, so the sql knows which module to
+   retrieve the bo from.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Resolved an Integration Object File to DC issue involving the
+   Validate checkbox. When the Validate checkbox was selected, the
+   validation process would fail if the Business Object being
+   validated had the same name as another Business Object in a
+   different Module.
+   This is targeted to the 1h2017 release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV96036
+   
+   
+ * REPORTED COMPONENT NAME
+   TRI APPLCATION
+   
+   
+ * REPORTED COMPONENT ID
+   5725F26AB
+   
+   
+ * REPORTED RELEASE
+   352
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-05-09
+   
+   
+ * CLOSED DATE
+   2017-05-09
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  999
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R352 PSY
+   UP

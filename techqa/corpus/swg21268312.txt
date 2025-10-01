@@ -1,0 +1,39 @@
+Title: IBM Crystal Reports Server fails to start with 1920 error - United States
+
+Text:
+1268312; 1203677; 7024263; CQ; ClearQuest; 1920; Crystal Repors; server; Report Application Server; failed to start; crystalras.exe; crystalras; exe; ceee; dep; Error 1920; Service 'Report Application Server' failed to start; Verify that you have sufficient privileges to start system services TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technotes describes a problem using Crystal Reports Server XI for reports execution with IBM® Rational® ClearQuest® Web on Microsoft® Windows 2003 Server. It is possible that the required service may not start after installation of Crystal Reports Server. 
+
+SYMPTOM
+After installing Crystal Reports XI for Rational Products onto the server of choice, trying to start the Report Application Server (crystalras.exe) may result in an application failure. When this behavior occurs, this error message appears in the Windows Event Viewer logs: 
+
+
+Error 1920. Service 'Report Application Server' failed to start. Verify that you have sufficient privileges to start system services.
+
+
+
+CAUSE
+Starting with Service Pack 1, Windows 2003 Server started enforcing Data Execution Prevention (DEP) security against services and applications. Some services cannot run correctly unless they are defined as an exception to the DEP feature.
+
+
+
+RESOLVING THE PROBLEM
+ If you are experiencing this behavior, crystalras.exe needs to be added as an exception to DEP. Here is an overview of this process:
+
+
+ 1. Right-click My Computer and click Properties.
+    
+ 2. Click the Advanced tab and click the Settings button in the Performances section.
+    
+ 3. Click the Data Execution Prevention tab (this tab will not appear unless SP1 is installed).
+    
+ 4. Select the radio button option "Turn on DEP for all programs except those I select".
+    
+ 5. Click the Add button to add the service EXEs and make sure the check mark is in the box. Do this for each service.
+
+
+Additional notes:  * The server computer might need to be rebooted for this change to take effect. 
+ * On some versions of Windows 2003, the DEP prevention tab is located in the main System properties window. 
+ * If the service is running as an account, that account must have full privileges to the Crystal Reports installation and files.

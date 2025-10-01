@@ -1,0 +1,182 @@
+Title: IBM PQ95770: CAPTURE FAILED ON COLD START WITH SQLCODE104. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  ASN0552E  "Capture" : "ASN" : The program encountered an SQL
+   error. The server name is "CHREI000SRZDB2U". The SQL request i
+    "PREPARE". The table name is "IBMSNAP_REGISTER". The SQLCODE i
+    "-104". The SQLSTATE is "42601". The SQLERRMC is "].< > = <> <
+    !< !> != ^< ^> ^= >= IN NOT". The SQLERRP is "DSNHPARS".
+   
+   ASN0552E  "Capture" : "ASN" : The program encountered an SQL
+    error. The server name is "CHREI000SRZDB2U". The SQL request i
+    "PREPARE". The table name is "IBMSNAP_REGISTER". The SQLCODE i
+    "-104". The SQLSTATE is "42601". The SQLERRMC is "].< > = <> <
+    !< !> != ^< ^> ^= >= IN NOT". The SQLERRP is "DSNHPARS".
+   
+   ASN0552E  "Capture" : "ASN" : The program encountered an SQL
+    error. The server name is "CHREI000SRZDB2U". The SQL request i
+    "PREPARE". The table name is "IBMSNAP_REGISTER". The SQLCODE i
+    "-104". The SQLSTATE is "42601". The SQLERRMC is "].< > = <> <
+    !< !> != ^< ^> ^= >= IN NOT". The SQLERRP is "DSNHPARS".
+   
+   ASN0552E  "Capture" : "ASN" : The program encountered an SQL
+    error. The server name is "CHREI000SRZDB2U". The SQL request i
+    "PREPARE". The table name is "IBMSNAP_REGISTER". The SQLCODE i
+    "-104". The SQLSTATE is "42601". The SQLERRMC is "].< > = <> <
+    !< !> != ^< ^> ^= >= IN NOT". The SQLERRP is "DSNHPARS".
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All DPropr z/OS users.                       *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: This APAR fixes problem listed in       *
+   *                       PQ95630, PQ96017, PQ88614, PQ91445,    *
+   *                       PQ93957, PQ95805, PQ94696 and PQ96770. *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   PQ96017 - Apply z/OS sqlcode -30090 on connect to UDB with
+             FEDERATED=Y.  With PTF UQ92847,  Apply program uses
+             the DB2 RRSAF attachment facility which provides
+             system-wide services for coordinateing two-phase
+             commit operations.  After applying PTF UQ92847
+             (APAR PQ92734 [http://www-01.ibm.com/support/docview.wss?uid=swg1PQ92734]), apply z/OS fails with sqlcode
+             -30090, when the source or target is non z/OS
+             (UDB with FEDERATED=Y) or Federated database.
+             With PTF UQ92847, Apply is defaulting to RRS connect
+             instead of CAF and that is cfausing the error.
+             This APAR will correct that problem by making SQL
+             Apply default to CAF connect (CAF=Y).  If customers
+             want RRS, they need to use a new Apply run time
+             parameter CAF=N.
+             If SQL Apply program runs on a z/OS system and either
+             its source, target, or control server is located on
+             different DB2 for z/OS subsystem, the VTAM APPL
+             definitions statements for each of the DB2
+             subsystems miust specify 'SYNCLVL=SYNCPT', If CAF=N.
+   PQ88614 - On z/OS, Capture should do a describe for the source
+             table instead of a select.
+   PQ91445 - Capture MIN_INFLIGJTSEQ is old.
+   PQ93957 - ASNLOAD incorrectly truncates the Apply path.
+   PQ95805 - Apply fails with -104 when selecting partner set info
+             forreplica.
+             Apply fails with sqlcode 100 when updating pruncntl
+             synchtime.
+   PQ94696 - Apply and Capture not retrieving dataclass from
+             model DD card.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  All problems listed are fixed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ95770
+   
+   
+ * REPORTED COMPONENT NAME
+   DATAPROP FOR Z/
+   
+   
+ * REPORTED COMPONENT ID
+   5655I6000
+   
+   
+ * REPORTED RELEASE
+   810
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-10-15
+   
+   
+ * CLOSED DATE
+   2004-11-04
+   
+   
+ * LAST MODIFIED DATE
+   2004-12-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PQ95817 UQ94738
+   
+   
+
+MODULES/MACROS
+ *     ASNAAPP  ASNACMD  ASNAMAN  ASNAPPLY ASNAPRS
+   ASNCAP   ASNCCMD  ASNCDINS ASNLOAD  ASNMON   ASNRBASE ASNSQLCF
+   ASNSQLCZ ASNUOW
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DATAPROP FOR Z/
+   
+   
+ * FIXED COMPONENT ID
+   5655I6000
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R810 PSY UQ94738
+   UP04/11/16 P F411

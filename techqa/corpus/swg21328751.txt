@@ -1,0 +1,18 @@
+Title: IBM About the new project deliver policy in ClearCase 7.0.1.x:  Do not allow deliver to proceed with checkouts in the selected activities. - United States
+
+Text:
+CC; Do not allow deliver to proceed with checkouts in the selected activities.; UCM project deliver policy; UCM TECHNOTE (FAQ)
+
+QUESTION
+ How does the IBM Rational ClearCase (CC) UCM delivery policy Do not allow deliver to proceed with checkouts in the selected activities.[ which was introduced in version 7.0.1 affect users? 
+
+ANSWER
+ 
+
+ClearCase 7.0.1.x introduced the following new UCM Project policy for delivery operations: 
+
+Do not allow deliver to proceed with checkouts in the selected activities.
+
+That policy did not exist in ClearCase version 7.0.0.x.
+
+After upgrading ClearCase from 7.0.0.x to 7.0.1.x, there is no feature level change in the PVOB (the VOB created by ClearCase 7.0.0.x will be of feature level 5 and the VOB created by ClearCase 7.0.1.x is still of feature level 5). To get this new policy, only ClearCase needs to be upgraded. The default value for that policy will be DISABLED. That is, users are still able to deliver when the activities they selected to deliver contain checkouts. There will be no behavior change.

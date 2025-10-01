@@ -1,0 +1,61 @@
+Title: IBM EAR Publish/Start Error java.lang.IllegalStateException: EMF2DOMAdapterImpl_ERROR_0 on META-INF/ejb-jar.xml - United States
+
+Text:
+RAD; EAR; WAS; publish; start; server; ejb-jar.xml; DeploymentDescriptorLoadException; IllegalStateException; EMF2DOMAdapterImpl_ERROR_0; webpshere; runtime; jars; com.ibm.ws.runtime.jar TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Publishing an EAR in IBM Rational Application Developer (RAD) v8.0.4.2-InterimFix001 on WebSphere Application Server (WAS) v7.0.0.25 fails consistently with "DeploymentDescriptorLoadException: META-INF/ejb-jar.xml and nested exception: java.lang.IllegalStateException: EMF2DOMAdapterImpl_ERROR_0" 
+
+SYMPTOM
+Publishing in RAD v8.0.4.2-Fix001 on WAS v7.0.0.25 fails consistently with the following error in the RAD server console and SystemOut.log:
+
+[5/13/13 17:39:41:128 EDT] 000000ad SystemErr R org.eclipse.jst.
+j2ee.commonarchivecore.internal.exception.
+DeploymentDescriptorLoadException: META-INF/ejb-jar.xml
+Stack trace of nested exception:
+java.lang.IllegalStateException: EMF2DOMAdapterImpl_ERROR_0
+
+The EAR archive does not contain any modules with ejb-jar.xml.
+Publishing directly through WAS admin console avoids the error.
+
+Another scenario used WAS v8 EJB Embeddable Container (EJB 3.1) in the RAD v8.0 IDE to do JUnit testing on a Stateless Session Bean in an EJB 3.0 module/jar without an ejb-jar.xml deployment descriptor. The JUnit tries to start but failed. 
+
+Encountered EJBException at runtime: 
+
+javax.ejb.EJBException: Failed to initialize embeddable EJB container; 
+nested exception is: org.eclipse.jst.j2ee.commonarchivecore.internal. 
+exception.DeploymentDescriptorLoadException: META-INF/ejb-jar.xml 
+org.eclipse.jst.j2ee.commonarchivecore.internal.exception. 
+DeploymentDescriptorLoadException: META-INF/ejb-jar.xml 
+Stack trace of nested exception: 
+java.lang.IllegalStateException: EMF2DOMAdapterImpl_ERROR_0 
+
+at org.eclipse.wst.common.internal.emf.resource.EMF2DOMAdapterImpl. 
+handleInvalidMultiNodes(EMF2DOMAdapterImpl.java:1381) 
+at ...
+
+
+CAUSE
+The EAR project/module had a WebSphere com.ibm.ws.runtime.jar with a malformed ejb-jar.xml as a utility jar. It was on the runtime classpath of other modules in the EAR.
+
+ENVIRONMENT
+Windows 7 Professional.
+
+DIAGNOSING THE PROBLEM
+Search for a com.ibm.ws.runtime.jar on the runtime classpath.
+
+RESOLVING THE PROBLEM
+The project/module included the WAS com.ibm.ws.runtime.jar on the classpath. For some unknown reason, this JAR contained a malformed ejb-jar.xml (deployment descriptor). This jar had to be removed JAR from the classpath to resolve the problem. In general, WebSphere runtime jars should not be in the EAR to be used on a member module's runtime classpath, as they are already provided in the server runtime and typically loaded as needed by the server. Such jars could also conflict with up to date similar jar(s) in the server runtime.
+
+
+
+
+
+As an aside, the java.class.path was very large and contained many unnecessary JARs which were removed. If this specific solution does not apply in your case, contact IBM Support for Rational Application Developer. 
+
+The Related Information section has items showing similar WebSphere runtime error message scenarios involving other deployment descriptors. 
+
+
+RELATED INFORMATION
+#Deployment fails with "WSWS7011E ...Store.war module [http://www.ibm.com/support/docview.wss?uid=swg21593903]
+WAS7 - PM25078: .... SIB RESOURCE ADAPTER [http://www.ibm.com/support/docview.wss?uid=swg1PM25078]

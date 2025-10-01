@@ -1,0 +1,242 @@
+Title: IBM IC63085: INSTANCE MAY GET SUSPENDED OR CRASH DURING CONCURRENT SQL AND/OR LOAD EXECUTION - United States
+
+Text:
+z/os  FIXES ARE AVAILABLE
+DB2 Version 9.5 Fix Pack 5 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24025421]
+DB2 Version 9.5 Fix Pack 6a for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24027747]
+DB2 Version 9.5 Fix Pack 7 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24028731]
+DB2 Version 9.5 Fix Pack 8 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24030302]
+DB2 Version 9.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24032087]
+DB2 Version 9.5 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24033308]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Instance may get suspended or crash during concurrent SQL and/or
+   LOAD execution.
+   Belows are example stack tracebacks in the trap files.
+   You may find sqlrr_load_activity_exe_start,
+   sqlrr_activity_exe_stop or
+   sqlrr_activity_exe_start at the top of stack tracebacks.
+   
+   
+   example 1:
+   <StackTrace>
+   -------Frame------ ------Function + Offset------
+   0x0900000004B208DC
+   sqlrr_load_activity_exe_start__FP8sqlrr_cbP20sqlu_...
+   0x0900000004B25630
+   iCreateSubAgent__16sqlusCBDSChannelFP13SQLO_MEM_PO...
+   0x0900000005ABF6C0 sqlusSubAgentRouter__FP8sqeAgenti + 0x890
+   0x0900000005AB55CC sqleSubRequestRouter__FP8sqeAgentPUiT2 +
+   0x1010
+   0x0900000005AB114C sqleProcessSubRequest__FP8sqeAgent + 0x120
+   0x0900000005201FFC RunEDU__8sqeAgentFv + 0x314
+   0x090000000530B060 EDUDriver__9sqzEDUObjFv + 0x78
+   0x09000000053D9128 sqloEDUEntry + 0x244
+   </StackTrace>
+   
+   example 2:
+   <StackTrace>
+   
+   -------Frame------ ------Function + Offset------
+   
+   0x090000000756DE58 sqlrr_activity_exe_stop__FP8sqlrr_cb + 0x58
+   
+   0x0900000008039D4C sqlrr_dss_router__FP8sqlrr_cb + 0x394
+   
+   0x09000000086E8540
+   sqlrr_subagent_router__FP8sqeAgentP12SQLE_DB2RA_T ...
+   0x09000000086E45CC sqleSubRequestRouter__FP8sqeAgentPUiT2 +
+   0x7E0
+   0x09000000086E09A4 sqleProcessSubRequest__FP8sqeAgent + 0x120
+   
+   0x0900000008663138 RunEDU__8sqeAgentFv + 0x300
+   
+   0x09000000077724A0 EDUDriver__9sqzEDUObjFv + 0x78
+   
+   0x09000000074F4C00 sqloEDUEntry + 0x57C
+   
+   </StackTrace>
+   
+   example 3:
+   <StackTrace>
+   
+   -------Frame------ ------Function + Offset------
+   
+   0x090000000953A334
+   sqlrr_activity_exe_start_common_noncoord__FP8sqlrr...
+   0x0900000007568DE0 sqlrr_activity_exe_start__FP8sqlrr_cbPi +
+   0x94
+   0x0900000008039B80 sqlrr_dss_router__FP8sqlrr_cb + 0x1C8
+   
+   0x09000000086E8540
+   sqlrr_subagent_router__FP8sqeAgentP12SQLE_DB2RA_T ...
+   0x09000000086E45CC sqleSubRequestRouter__FP8sqeAgentPUiT2 +
+   0x7E0
+   0x09000000086E09A4 sqleProcessSubRequest__FP8sqeAgent + 0x120
+   
+   0x0900000008663138 RunEDU__8sqeAgentFv + 0x300
+   
+   0x09000000077724A0 EDUDriver__9sqzEDUObjFv + 0x78
+   
+   0x09000000074F4C00 sqloEDUEntry + 0x57C
+   
+   </StackTrace>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * db2 v95 fp4                                                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Instance may get suspended due to Signal 11 at               *
+   *                                                              *
+   * sqlrr_load_activity_exe_start during concurrent load         *
+   * execution.                                                   *
+   *                                                              *
+   *                                                              *
+   * You may see the following callstack in the trapfile          *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   * <StackTrace>                                                 *
+   *                                                              *
+   * -------Frame------ ------Function + Offset------             *
+   *                                                              *
+   * 0x0900000004B208DC                                           *
+   *                                                              *
+   * sqlrr_load_activity_exe_start__FP8sqlrr_cbP20sqlu_loadapi_load
+   * b                                                            *
+   *                                                              *
+   * + 0x10FC                                                     *
+   *                                                              *
+   * 0x0900000004B25630                                           *
+   *                                                              *
+   * iCreateSubAgent__16sqlusCBDSChannelFP13SQLO_MEM_POOLP8sqeAgent
+   * P13sqluCSubAgent+                                            *
+   *                                                              *
+   * 0x3A0                                                        *
+   *                                                              *
+   * 0x0900000005ABF6C0 sqlusSubAgentRouter__FP8sqeAgenti + 0x890 *
+   *                                                              *
+   * 0x0900000005AB55CC sqleSubRequestRouter__FP8sqeAgentPUiT2 +  *
+   *                                                              *
+   * 0x1010                                                       *
+   *                                                              *
+   * 0x0900000005AB114C sqleProcessSubRequest__FP8sqeAgent +      *
+   * 0x120                                                        *
+   * 0x0900000005201FFC RunEDU__8sqeAgentFv + 0x314               *
+   *                                                              *
+   * 0x090000000530B060 EDUDriver__9sqzEDUObjFv + 0x78            *
+   *                                                              *
+   * 0x09000000053D9128 sqloEDUEntry + 0x244                      *
+   *                                                              *
+   * </StackTrace>                                                *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to V9.5 FP5                                          *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  DB2 V9.5 FP5 will contain the fix.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC63085
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   950
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-09
+   
+   
+ * CLOSED DATE
+   2010-02-17
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R950 PSN
+   UP

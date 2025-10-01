@@ -1,0 +1,150 @@
+Title: IBM PK59874: A STORAGE LEAK OCCURS IN SP1 KEY2 WHEN THE MQ JAVA/JMS INTERFACE IS RUNNING IN A SYSTEM THAT IS USING A 64 BIT JVM - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The following message appears in the WebSphere Application
+   Server (WAS) control region joblog:
+    CEE0814S Insufficient storage was available to extend the
+    stack.
+   .
+   There is high memory usage in SP1 KEY2. The LE heap below the
+   bar is full of allocated storage elements of size X'00001048' or
+   X'00001030', containing the data "/build/j600T/src". This
+   directory structure relates to the build of the MQ JMS
+   interface. The storage areas are being left around by the 64 bit
+   MQ library libwmqjrrs64.so.
+   .
+   In a WAS system running with a 64 bit JVM, when an MQGET request
+   from the WebSphere MQ Java code returns with MQCC_FAILED (for
+   example, when no message is available) the MQ native code does
+   not release storage allocated to hold the message. This results
+   in a build up of allocated storage, which eventually results in
+   the MQ Java code being unable to issue further requests to MQ.
+   Other symptoms related to shortage of available storage may also
+   be seen.
+   .
+   MDB listeners repeatedly issue MQGET requests on the queue being
+   monitored, and it is normal of many of these requests to return
+   with no message available.  Therefore, the problem is
+   particularly likely to be seen in the Control region where the
+   listeners are running.
+   .
+   The WAS joblog has these indicators of the addressing mode being
+   used:
+    BBOO0309I CONTROL PROCESS ... IS EXECUTING IN 64-BIT ADDRESSING
+    MODE.
+    .
+    com.ibm.vm.bitmode = 64
+   .
+   ADDITIONAL KEYWORDS:
+   subpool1 key2 subpool 1 key 2 64bit
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  Problem summary:
+   When running WebSphere Application Server on z/OS in a 64 bit
+   JVM, and using MQ JMS in bindings mode, a storage leak can
+   occur.
+   While processing MQGET requests, the MQ Java native code
+   (libwmqjrrs64.so) allocates buffer storage in 31 bit addressable
+   storage, for use in the MQGET call.
+   If the MQGET call fails, the code does not free the storage
+   before returning to Java, so it remains allocated in the LE
+   heap.
+   Over time these storage areas will accumulate, and can result in
+   errors relating to a shortage of available storage in the
+   address space.
+   
+   Problem resolution:
+   libwmqjrrs64.so has been changed to correctly free the allocated
+   storage before returning control to Java.
+   
+   This fix changes the Java component of MQ, and will be
+   included in FixPack 6.0.2.4 (PK58458 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK58458]).
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK59874
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V6
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8200
+   
+   
+ * REPORTED RELEASE
+   008
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-24
+   
+   
+ * CLOSED DATE
+   2008-02-21
+   
+   
+ * LAST MODIFIED DATE
+   2008-06-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

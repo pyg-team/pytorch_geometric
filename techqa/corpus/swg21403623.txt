@@ -1,0 +1,45 @@
+Title: IBM How to enable/disable the Floating license support for individual products - United States
+
+Text:
+flexlm TECHNOTE (FAQ)
+
+QUESTION
+ How do you enable or disable Floating license support for one of the Software Development Platform products, without affecting other installed products? 
+
+ANSWER
+You can selectively activate Floating license support in the "License Usage Summary" panel of the License Management wizard of Installation Manager. 
+
+From this panel, you can add or remove entries which corresponds to products installed on your machine that support Floating license enforcement. 
+
+Here are the steps that need to be followed from IBM Installation Manager -> Manage Licenses option:
+[/support/docview.wss?uid=swg21403623&aid=1] [/support/docview.wss?uid=swg21403623&aid=1]
+
+
+Once you have selected the radio button "Configure Floating license support" in the "Floating License Support" pane, you can enter the name(s) of your license server(s) by clicking on the green "+" sign on the top right.
+
+[/support/docview.wss?uid=swg21403623&aid=2] [/support/docview.wss?uid=swg21403623&aid=2] 
+
+ 
+
+You can press the "Test Connection" button if you wish to test if the server can be reached and if there is/are licence(s) available for the product you have installed (for example in IBM Rational Software Architect for WebSphere).
+
+[/support/docview.wss?uid=swg21403623&amp;aid=3]
+
+In the next pane called "License Usage Summary", you will see all the products that will be set to use floating licenses:
+
+[/support/docview.wss?uid=swg21403623&aid=4] [/support/docview.wss?uid=swg21403623&aid=4]
+
+Use the red cross to remove the product(s)/extension(s) for which you do not want to use floating licenses.
+
+For example, to have only IBM Rational Software Architect for WebSphere using Floating licenses:
+
+[/support/docview.wss?uid=swg21403623&aid=5] [/support/docview.wss?uid=swg21403623&aid=5]
+
+You will see the following in the last pane:
+
+[/support/docview.wss?uid=swg21403623&amp;aid=6]
+
+
+RELATED INFORMATION
+#Enabling Floating licenses [http://publib.boulder.ibm.com/infocenter/install/v1r2/index.jsp?topic=/com.ibm.cic.agent.ui.doc/topics/t_en_floating_lic.html]
+Software Delivery Platform Products v8 crash with RLS 7 [http://www.ibm.com/support/docview.wss?uid=swg21445652]

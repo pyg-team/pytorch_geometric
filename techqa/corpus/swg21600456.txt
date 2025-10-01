@@ -1,0 +1,20 @@
+Title: IBM Logging application changes do not take place - United States
+
+Text:
+logging properties; appenders; debug; logs TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Logging settings applied via the logging application do reflect in system out logs and appender logs are not created. 
+
+SYMPTOM
+After applying logging settings, no appender logs are created and no information is being written to the WebSphere system out logs as expected with the appender console
+
+
+CAUSE
+This is caused by a logging.properties existing in the maximo\applications\maximo\properties folder which is overriding any database changes
+
+RESOLVING THE PROBLEM
+If you use the logging.properties file instead of the logging application in Maximo you will need to enable all your loggers manually in the logging.properties file. This will require the maximo.ear file to be rebuilt and redeployed each time you make a logging change
+
+
+If you want the changes to be made on the fly via Maximo, you will need to remove the logging.properties from the maximo\applications\maximo\properties folder and rebuild and redeploy the maximo.ear file. Once done you can now make all your changes via the logging application.

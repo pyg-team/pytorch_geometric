@@ -1,0 +1,17 @@
+Title: IBM Financial Transaction Manager (FTM) v3.0.0.2 : Database creation script contains an unwanted schema prefix - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The trigger, "T_ERR_INS" has the prefix "FTM" on the target table which can affect FTM database installation and migration. 
+
+SYMPTOM
+The trigger "T_ERR_INS" will not install when creating or migrating to a FTM 3.0.0.2 database if the target schema is not "FTM". The error message ""FTM.ERROR" is an undefined name.. SQLCODE=-204, SQLSTATE=42704, DRIVER=4.16.53" will be displayed in the installation log.
+
+
+ENVIRONMENT
+DB2 Multiplatform.
+
+RESOLVING THE PROBLEM
+Edit the file <instdir>\ftm\v300\admin\scripts\db2\database\03-ObjTrig.sql at line 204 to remove the schema prefix. Line 204 should read "BEFORE INSERT ON ERROR" after the edit is made.

@@ -1,0 +1,26 @@
+Title: IBM WebSphere DataPower processing actions that can affect message counts in ITCAM SOA - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ The ITCAM for SOA data collector monitors DataPower services and the metrics collected are summarized in the Tivoli Enterprise Portal (TEP) in the Services Management Agent Environment workspace. 
+The DataPower Web Services Management (WSM) agent status shows the current state of the interface between DataPower and the ITCAM for SOA data collector. The status includes, Records Seen, the number of transactions for which metrics have been collected. 
+
+When a single transaction is processed in DataPower, the DataPower WSM agent status will reflect an increment in the Records Seen count. For example, if the Records Seen is 10,000 and a new transaction is processed, the Records Seen will increment to 10,001. 
+
+Information on that same transaction will eventually be displayed in TEP. In the TEP Navigator Physical View, beneath the Services Management Agent Environment node, is the Message Summary workspace. This workspace provides the details on message counts. 
+
+Why can the number of messages for a single DataPower transaction be higher than expected; that is, the Records Seen on DataPower will increment by one for a single transaction, why does the TEP Message Summary count increase by more than one for that same transaction? 
+
+ANSWER
+When a service processes a transaction in DataPower, the DataPower processing policy defines the actions that should occur to handle the client request, the backend response and errors. DataPower creates Web Services Management (WSM) data to record the request and response metrics and ITCAM SOA collects the WSM data. 
+
+Some actions in a processing policy can create additional WSM records, above and beyond the data recorded for the request and response. The additional WSM records are not reflected in the WSM agent status on DataPower; they are records associated with the one Record Seen for the transaction. These processing actions are: for-each, log, and asynchronous result processing actions: 
+
+ * For-each - A for-each action with an output context of NULL will result in an additional WSM record. If this effect is not intended, modify the for-each action output context to specify a variable (ex: var://dummy) rather than NULL. 
+ * Asynchronous result - One option to address a business requirement to record the full payload for incoming requests and backend responses received by a DataPower service would be to use an asynchronous result action on the request, response and error rules to send a record of those payloads somewhere off of the appliance (perhaps using a protocol such as WebSphere MQ). An asynchronous action that sends data off of the appliance will result in an additional WSM record for the transaction on DataPower and therefore, an extra message count in the TEP Message Summary. 
+ * Similarly a Log action, which can also write information during transaction processing to a destination off the appliance, will result in an additional WSM record in DataPower, and an increment to the message count in the TEP Message Summary.
+
+RELATED INFORMATION
+#ITCAM for SOA Users's Guide - Message summary workspace [http://publib.boulder.ibm.com/infocenter/tivihelp/v3r1/index.jsp?topic=%2Fcom.ibm.itcamsoa.doc%2Fkd4ugmst57.htm&path=15_2_7_5_0 ]

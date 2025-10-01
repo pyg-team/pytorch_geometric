@@ -1,0 +1,16 @@
+Title: IBM Adapter for Flat Files picks up incomplete files during inbound processing - United States
+
+Text:
+waffv602rnote; script file; file locking TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ During inbound processing, WebSphere Adapter for Flat Files polls files from the event directory. On Windows, if any of these files is in use by another application and being copied to the event directory, the file is not made available to the adapter for processing. 
+
+However, on UNIX platforms (for example, AIX),the file that is still being copied over to the event directory is made available to the adapter for processing, which leads to incorrect business data being sent to the downstream components. There is also no platform-independent way in Java™ to check whether a file is being written to. 
+
+SYMPTOM
+This problem occurs because in UNIX environments there is no locking mechanism for files that are being written to that prohibits other applications from accessing them. Therefore, during its poll cycle, the adapter picks up files that are not completely copied, causing erroneous results because incomplete files are processed.
+
+
+RESOLVING THE PROBLEM
+Use a staging directory where the event file can be copied first, and once it is copied completely, it can be moved to the event directory using the move command. Note that the staging directory and event directory should be on the same file system. Some sample UNIX scripts are provided for your use as part of the adapter. The script file named CheckIfFileIsOpen.sh is available in the Unix-script-file folder in the adapter installer.

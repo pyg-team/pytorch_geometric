@@ -1,0 +1,90 @@
+Title: IBM Understanding BWMRT0105E and BWMRT0113W messages - United States
+
+Text:
+BWMRT0113W; BWMRT0105E; RPT; profiles; T6; RRT; 71RRT-RPTPLAN; 71RRT-RPTUPLOAD; 71RRT-RPTTS; 71RRT-RPTDNLOAD; 71RRT-RPTPLAY; 71RRT-DNLOAD; 71RRT-PLAY; 71RRT-TS TECHNOTE (FAQ)
+
+QUESTION
+ How do you resolve these RPT errors: BWMRT0113W, BWMRT0105E? 
+
+ANSWER
+
+These messages can be observed in the Agent Messages workspace after you upload a new version of a Rational Performance Tester (RPT) script or after you make changes to profiles that run RPT scripts:
+
+BWMRT0105E -- Could not playback profile ...
+BWMRT0113W -- Script iteration skipped ...
+
+The workaround for both messages is:
+
+1) Stop the profile in the Application Management Console (AMC) editor before exporting a new version of a script from RPT workbench and before making profile changes.
+
+2) Export the script from RPT again or make profile changes.
+
+3) Wait a few seconds.
+
+4) Start the profile through the AMC editor.
+
+Here is what these messages mean:
+
+BWMRT0105E
+
+Most of the time, an occurrence of the message BWMRT0105E does not imply that an error occurred. This message sometimes displays when you make changes to a profile while scripts associated with that profile are actively playing back. 
+
+In the ITCAM application, the scripts play back in a Java Virtual Machine (JVM). When you submit a modified profile to the RPT playback engine, the engine tries to stop the scripts associated with the profile, load the new profile, and restart the scripts. 
+
+Sometimes running scripts do not get unloaded during this process. If a script is in the process of playing back, the JVM may not honor the request to stop the script -- for example, if a script is in the middle of a process like connecting to a socket, and that process is timing out. In cases like this, the RPT engine generates the BWMRT0105E message. The message says that the new script did not start at that time.
+
+Try stopping the script in the profile before exporting the script to the AMC.
+
+If this workaround does not resolve the issue, verify that the script runtime is supported. Open the <script-name>.zip archive in the ITM_HOME\kt1depot\T3\RPT directory on the T3 agent host. In the archive, open the <script-name>.properties file. The runtimeVersion property identifies the RPT runtime associated with the script. Example:
+
+#Mon May 09 15:55:49 CDT 2016
+runtimeLocation=RPTRUNTIMES/7.7.310.v20140912_1709_50559162.zip
+runtimeVersion=7.7.310.v20140912_1709_50559162
+appl_name=gsPlantsByWebSphere
+tests=gsPlantsByWebSphere,
+RPTTestType=http
+rpt.testClass=test.GsPlantsByWebSphere_Test_A1E5CF87F2851250DA28B36430386237
+
+The RPT runtime version normally depends on the RPT version. When you import existing scripts into a new version of RPT workbench, always run a test on the scripts. Inspect the RPT test log to verify that no errors are identified before exporting the script to the AMC. 
+
+An out-of-suport runtime package is associated with a script in the following scenario. You import a script from an out-of-support RPT workbench. Then, you forget to run a test on the script before exporting the script to the AMC. 
+
+ 
+
+RPT Version RPT Runtime Version RPT 8.2.1.2 7.5.412.v20111021_1438 RPT 8.3.0.0 pre-GA 7.6.100.v20120918_1430 RPT 8.3.0.0 GA 7.6.100.v20120928_1519 RPT 8.3.0.1 pre-GA 7.6.102.v20121105_1814 RPT 8.6 GA 7.7.300.v20140624_2212 RPT 8.6.0.2 7.7.310.v20140912_1709 RPT 9.0 GA 7.7.600.v20160122_0931 Additional Troubleshooting
+
+1) In Installation Manager, update the RPT installation and select the following option. Restart RPT workbench. 
+
+IBM Rational Performance Tester Extension for SOA Quality
+
+The absence of this option can create problems when you export scripts and runtime packages to the AMC. The current runtime package is not exported to the AMC.
+
+After you select this option and save your changes, run a test on a new script in RPT workbench and export the script to the AMC -- only if the RPT test log shows that no errors are encountered during the test. The RPT test log must show that there are no errors during a test before you export scripts to the AMC. 
+
+Then, open the script archive in the ITM_HOME/kt1depot/T3/RPT directory on the AMC host. Examine the <script-name>.properties file. Verify that the appropriate runtime package is associated with the script.
+
+2) For ITCAM for Transactions V7.4 FP01 (V7.4.0.1), install the latest Rational integration support package on the RPT host. For example, install Rational integration support from 7.4.0.1-TIV-CAMRT-IF0008.
+
+
+3) Also, verify that you have installed the 32-bit version of RPT workbench. ITCAM for Transactions does not support the 64-bit version of RPT.
+
+See Related URLs below for details.
+
+BWMRT0113W
+
+Message BWMRT0113W occurs after you export a new version of an existing script while the script is currently playing back. The T6 agent tries to start a script in a JVM. Using inter process communication, the agent tries to send the script properties through a socket channel to the JVM. If the agent cannot send the agent properties, it posts the message BWMRT0113W.
+
+RELATED INFORMATION
+ ITCAM RPT RFT Robot Support Matrix [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Composite%20Application%20Manager/page/ITCAM%20RPT%20RFT%20Robot%20Support%20Matrix]
+ITCAM for Transactions 7.4 - Interim Fixes and Fixpacks [http://www.ibm.com/support/docview.wss?uid=swg21663324]
+Export from RPT does not export the runtime - "runtime [http://www.ibm.com/support/docview.wss?uid=swg21650489]
+
+
+
+
+HISTORICAL NUMBER
+ 75654.7TD.000 
+
+PRODUCT ALIAS/SYNONYM
+ ITCAMfT
+T7.4

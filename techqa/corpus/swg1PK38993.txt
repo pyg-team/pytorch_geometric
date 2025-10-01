@@ -1,0 +1,257 @@
+Title: IBM PK38993: APPLICATION SERVER HANG WITH THREADS STUCK IN com.ibm.ejs.j2c.poolmanager.FreePool.returnToFreePool - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24020073]
+Java SDK 1.5 SR8 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24021203]
+Java SDK 1.5 SR10 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24024201]
+6.1.0.31: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24026453]
+6.1.0.33: Java SDK 1.5 SR12 FP1 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24027786]
+6.1.0.29: Java SDK 1.5 SR11 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24025191]
+6.1.0.35: Java SDK 1.5 SR12 FP2 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24028574]
+6.1.0.37: Java SDK 1.5 SR12 FP3 Cumulative Fix for WebSphere [http://www-01.ibm.com/support/docview.wss?uid=swg24029525]
+6.1.0.39: Java SDK 1.5 SR12 FP4 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24030426]
+6.1.0.41: Java SDK 1.5 SR12 FP5 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031035]
+6.1.0.43: Java SDK 1.5 SR13 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24031963]
+6.1.0.45: Java SDK 1.5 SR14 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24033270]
+6.1.0.47: WebSphere Application Server V6.1 Fix Pack 47 [http://www-01.ibm.com/support/docview.wss?uid=swg24035508]
+6.1.0.47: Java SDK 1.5 SR16 Cumulative Fix for WebSphere Application Server [http://www-01.ibm.com/support/docview.wss?uid=swg24035649]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In WebSphere Application Server V6, when a connection error
+   occurs, and the Purge Policy is set to EntirePool for a
+   connection pool, the connection manager locks the connection
+   pool to cleanup the connection.
+   .
+   Problem symptoms include the following:
+   .
+   - Threads that are stuck and appear to be hung in:
+   com.ibm.ejs.j2c.poolmanager.FreePool.returnToFreePool(FreePool.j
+   ava(Compiled Code))
+   and:
+   com.ibm.ejs.j2c.poolmanager.FreePool.createOrWaitForConnection(F
+   reePool.java(Compiled Code))
+   while the connection pool is locked.
+   .
+   These threads are waiting for a lock to be released by another
+   thread that is in:
+   com.ibm.ws.rsadapter.spi.WSRdbManagedConnectionImpl.preTestConne
+   ction(WSRdbManagedConnectionImpl.java(Compiled Code))
+   .
+   - J2CA0081E errors are seen in the SystemOut.log:
+   .
+   J2CA0081E: Method cleanup failed while trying to execute method
+   cleanup on ManagedConnection WSRdbManagedConnectionImpl@107c369d
+   from resource No longer available. Caught exception:
+   com.ibm.ws.exception.WsException: DSRA1130E: A fatal connection
+   error occurred on another connection while this connection was
+   active. This connection cannot be reset to a usable state.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The problem can be avoided by setting the connection pool's
+   Purge Policy to FailingConnectionOnly and using a valid SQL
+   query (one that can be successfully executed against the target
+   database) as the Pretest SQL string in the WebSphere Application
+   Server data source properties.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: IBM WebSphere Application Server users of    *
+   *                 JCA.                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A temporary deadlock can occur during   *
+   *                      entire pool clean up waiting for        *
+   *                      tcpip timeouts.                         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   While waiting for communication timeouts or for failures from
+   the backend,  the follow thread example may be found in a java
+   core dump.
+   
+   Threads that are stuck and appear to be hung in:
+   com.ibm.ejs.j2c.poolmanager.FreePool.returnToFreePool(FreePool.j
+   ava(Compiled Code))
+   and:
+   com.ibm.ejs.j2c.poolmanager.FreePool.createOrWaitForConnection(F
+   reePool.java(Compiled Code))
+   
+   This will remain in this state until all of the connections
+   are cleaned up and destroyed.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The cleanup and destroy of connections is now completed
+   outside of a main sychronized block.
+   
+   This will prevent the temporary dead lock from occurring.
+   
+   The fix for this APAR is currently targeted for inclusion
+   in cumulative fixes 5.1.1.15 and fixpack 6.0.2.21 and 6.1.0.9.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK38993
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-02-07
+   
+   
+ * CLOSED DATE
+   2007-05-09
+   
+   
+ * LAST MODIFIED DATE
+   2007-05-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    PK46666
+   
+   
+
+MODULES/MACROS
+ *  J2C
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP
+   
+   
+ * R61A PSY
+   UP
+   
+   
+ * R61H PSY
+   UP
+   
+   
+ * R61I PSY
+   UP
+   
+   
+ * R61P PSY
+   UP
+   
+   
+ * R61S PSY
+   UP
+   
+   
+ * R61W PSY
+   UP
+   
+   
+ * R61Z PSY
+   UP

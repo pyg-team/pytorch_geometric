@@ -1,0 +1,17 @@
+Title: IBM Is it possible to monitor Etherchannel bonds on Linux or AIX - United States
+
+Text:
+Etherchannel bonds link TECHNOTE (FAQ)
+
+QUESTION
+ Is it possible to monitor Etherchannel bonds on Linux or AIX using IBM Tivoli Monitoring Unix or Linux OS agents? 
+
+ANSWER
+No, it is not possible to monitor Ether channel bond interfaces using Tivoli Monitoring Unix OS or Linux OS agents. In the agent code, there is no link between parent and child network cards in the relation as per "Channel bonding". In specific, the metrics for bond0 could be sum of eth0 and eth1 metrics if configured on the system that way. The agent doesn't sum the values of eth0 and eth1 to obtain the values of bond0, rather the agent act on all the rows in the Network devices in the same manner. 
+These metrics are retrieved by OS via perfstat_netinterface Application Program Interface(API) on AIX and the status is retrieved with a call of ioctl API with the command SIOCGIFFLAGS to read the status of a network card, either eth0, eth1 or bond0. So, if eth0 or eth1 goes down, the status of bond0 is not affected by the status of eth0 or eth01.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ ITM Unix OS agent
+ITM Linux OS agent

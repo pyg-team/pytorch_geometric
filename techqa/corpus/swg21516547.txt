@@ -1,0 +1,125 @@
+Title: IBM Rational Change: Guidances on redirecting http traffic to https - United States
+
+Text:
+https; redirect TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ One common preoccupation of IBM Rational Change administrators is to make the access to the Change home page easy for users. To do so, they often want to make the Change URL as simple as possible. Here are a few tips when Change is configured to use https. 
+
+SYMPTOM
+The Change home page URL is formatted as follows: 
+
+
+https://changeserver:port/webapps/change
+
+
+(replace changeserver and port with your Rational Change server and port)
+
+
+CAUSE
+The web server underlying to Change is Jetty. This forces you to include the "Jetty context" (/webapps/change") in the URL, and to explicitly include the protocol "https" when you have configured Change that way.
+
+
+RESOLVING THE PROBLEM
+The question dealt with by this Technote is literally "how can I redirect the traffic from a port to another port in Jetty?", or "how can I redirect the traffic from https to http?". 
+
+The answer relies entirely on a customization of Jetty and/or OS administration. This question is not directly about Change.
+
+IMPORTANT NOTE: All tips below are only meant as leads, they are not definitive answers. Also, they have not been tested. To achieve these goals you require knowledge of Jetty and OS administration.
+Therefore, the contents of this Technote are not supported. Rational support provides help only with defects in Change.
+
+
+1. Lead 1: UNIX ipchains
+
+
+ * 
+ * http://wiki.eclipse.org/Jetty/Howto/Port80
+
+
+2. Lead 2: Using Jetty's "Connectors" 
+ * 
+ *  jetty:// Configuring SSL [http://www.eclipse.org/jetty/documentation/current/configuring-ssl.html] 
+   
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+   
+ * 
+ * http://changeserver:port/webapps/change/ 
+ * https://changeserver:port/webapps/change 
+ * https://changeserver:port/webapps/change/
+   
+ * 
+   The port in this example is 443. It has a value under 1024. This can cause issues on the UNIX systems, as only root can use those. However you don't want to run Change as root!
+   
+   
+   <Call name="addConnector">
+   <Arg>
+   <New class="org.mortbay.jetty.nio.SelectChannelConnector">
+   <Set name="port"><SystemProperty name="jetty.port"
+   default="80"/></Set>
+   <Set name="maxIdleTime">30000</Set>
+   <Set name="Acceptors">1</Set>
+   <Set name="statsOn">false</Set>
+   <Set name="confidentialPort">443</Set>
+   <Set name="lowResourcesConnections">1000</Set>
+   <Set name="lowResourcesMaxIdleTime">500</Set>
+   </New>
+   </Arg>
+   </Call>
+   
+   
+   
+   The section below describes the SSL connector:
+   
+   
+   
+   <Call name="addConnector">
+   <Arg>
+   <New class="org.mortbay.jetty.security.SslSocketConnector">
+   <Set name="Port">443</Set>
+   <Set name="maxIdleTime">30000</Set>
+   
+ * [THE KEYSTORE SETTINGS MUST BE INSERTED HERE] 
+ * 
+   </New>
+   </Arg>
+   </Call>
+   
+
+
+
+ * About the keystore settings
+ * 
+
+
+ * 
+ * ALL 
+ * 
+ * 
+ * 
+ * 
+   
+ * <security-constraint>
+   <web-resource-collection>
+   <web-resource-name>Secured area</web-resource-name>
+   <url-pattern>/*</url-pattern>
+   </web-resource-collection>
+   <user-data-constraint>
+   <transport-guarantee>
+ * CONFIDENTIAL
+ * </transport-guarantee>
+   </user-data-constraint>
+   </security-constraint>
+ * 
+   
+ * 
+   
+ * This solution relies on the fact that Change knows its own https port (see the "CONFIDENTIAL" bit above) from its configuration files.
+
+
+
+See also : Technote 1452679: "Configuring Rational Change 5.2 to allow the omission of the context from the login URL" [https://www.ibm.com/support/docview.wss?uid=swg21452679]

@@ -1,0 +1,168 @@
+Title: IBM JR41610: CONNECTION URL SETTING FOR ORACLE RAC ON BPM 751 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  There is no iinfo in current BPM 75 infocenter mentioned the
+   connection URL to Oracle RAC in a db source is different from
+   single Oracle node, especially for the db configuration during
+   creating Deployment Environment.
+   
+   Here are similar info for WAS, WPS & WLE.
+   
+   WAS -Inforcenter ->
+   http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?
+   topic=%2Fcom.ibm.websphere.express.doc%2Finfo%2Fexp%2Fae%2Ftdat_ [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=%2Fcom.ibm.websphere.express.doc%2Finfo%2Fexp%2Fae%2Ftdat_]
+   oracleracwithwas.html
+   WPS - Developer works ->
+   http://www.ibm.com/developerworks/websphere/techjournal/0706_ban
+   erjee/0706_banerjee.html [http://www.ibm.com/developerworks/websphere/techjournal/0706_banerjee/0706_banerjee.html]
+   WLE - wiki  ->
+   http://wiki.lombardi.com/display/commwiki/Oracle+RAC [http://wiki.lombardi.com/display/commwiki/Oracle+RAC]
+   
+   Here is the technote will be published, related to "Configure
+   Oracle RAC connection for Deployment Environment"
+   
+   Oracle Real Application Cluster (RAC) is a "share-everything"
+   database architecture that can provide high availability and
+   load balancing.
+   When you create a Deployment Enviroment (DE) on BPM 7.5
+   connecting to Oracle RAC, the steps and data source connection
+   configuration are different from the ones for Oracle single
+   node.
+   
+   1) Delay "create table" during creating DE.
+   2) While creating DE, use single Oracle node parameters for data
+   source configuration.
+   3) After DE creation, update the data source URL for the Oracle
+   database with the required configuration parameters.
+   The existing one:
+   jdbc:oracle:thin:@hostname:port:databasename
+   
+   For Oracle 11g R2 RAC,  change it to
+   jdbc:oracle:thin:@hostname:port/scan
+   
+   For former version, change it to
+   jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=
+   
+   (ADDRESS=(PROTOCOL=TCP)(HOST=rac-node1)(port=1521))
+   
+   (ADDRESS=(PROTOCOL=TCP)(HOST=rac-node2)(port=1521)))
+                     (FAILOVER=on)(LOAD_BALANCE=on)
+                     (CONNECT_DATA=(SERVER=DEDICATED)
+                     (SERVICE_NAME=<service_name>)))
+   
+   Be aware of these configuration options:
+   If you are not using Oracle services, then service_name will be
+   the database name in the example. If you are using Oracle
+   services, then service_name will be the name of the services.
+   The example has FAILOVER and LOAD_BALANCE turned on. To turn one
+   or both of these features off, change on to off in the above
+   example.
+   4) Test data source connection to verify the configuration.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Current BPM 7.5.x information center is missing steps for
+   configuring Business Process Manager with Oracle RAC.
+   Incorporate the specific steps  in infocenter to successfully
+   configure Oracle RAC with BPM.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Doc APAR created in RTC. Doc Team working on updating
+   information center with missing information.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR41610
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-01-05
+   
+   
+ * CLOSED DATE
+   2012-02-16
+   
+   
+ * LAST MODIFIED DATE
+   2012-02-16
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

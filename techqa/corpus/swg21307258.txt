@@ -1,0 +1,92 @@
+Title: IBM MustGather Collecting data:  WebSphere DataPower SOA Appliances: Ethernet port test - United States
+
+Text:
+wsdpcru; MustGatherDocument TECHNOTE (FAQ)
+
+QUESTION
+ Collect the following MustGather information for IBM Support to use in troubleshooting problems when an Ethernet port on the DataPower appliance is not operating as expected. 
+
+ANSWER
+The following information describes the basic test needed to troubleshoot questions or problems related to a DataPower Ethernet port: 
+
+Follow all safety precautions listed in this document:
+Removing and Replacing Parts provided by IBM Level 2 for IBM WebSphere DataPower SOA Appliances: 9003/7993 and 9004/9235. [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21313112]
+
+Section 1. Resolving or Collecting information on this problem 
+
+ 
+
+You will need: 
+
+ *  A personal computer 
+ * A standard known good working ethernet cable (not a cross over cable) 
+ * Physical access to the appliance 
+ * Authorization to take the appliance out of your network and change the IP address.
+
+
+
+ 1. 
+ 2. Define your Microsoft Windows operating system to use an IP on the same subnet. For example, if the failing port is 9.3.4.5/24, use 9.3.4.6 use a netmask of 255.255.255.0 to match.
+    [/support/docview.wss?uid=swg21307258&aid=1] [/support/docview.wss?uid=swg21307258&aid=1]
+    
+    [/support/docview.wss?uid=swg21307258&amp;aid=2]
+    
+    [/support/docview.wss?uid=swg21307258&amp;aid=3]
+    
+    
+    
+ 3. Define an IP address of 9.3.4.7/24 on the DataPower appliance. Using the webGUI, select Network, Interface, Ethernet Interface.
+    
+    
+    [/support/docview.wss?uid=swg21307258&aid=4] [/support/docview.wss?uid=swg21307258&aid=4]
+    
+    
+    
+ 4. Click on the interface, for example eth1.
+    
+    [/support/docview.wss?uid=swg21307258&aid=5] [/support/docview.wss?uid=swg21307258&aid=5]
+    
+    
+ 5. Click Apply and save the config.
+    
+ 6. Ping the DataPower interface from your laptop several times.
+    
+ 7. Check the LEDs on the failing port on the appliance. The link LED should go solid and green and the activity LED should show amber/green flash to indicate traffic.
+    
+ 8. Issue the show int mode command to see if traffic is flowing, or use the Ethernet Interfaces selection from the webGUI. 
+    
+
+
+
+If you are able to successfully ping the interface and can see traffic flowing (via 'show int mode' command), 
+this verifies the DataPower ethernet port is functioning properly. 
+
+If it is not successful, contact IBM support (as outlined below) for further investigation. 
+
+
+Section 2. Preparing to contact IBM Support 
+ 1. Obtain the serial number of the appliance which experienced the problem. This is need for IBM entitlement processing, before a PMR can be created. Using the WebGUI, select Status > System > Version Information, locate tag on the case of the appliance, or from the CLI use Show System. 
+ 2. Locate the firmware version of the appliance. Using the WebGUI, select Status > System > Version Information or from the CLI use Show Version. 
+ 3. Have your IBM customer number ready. 
+ 4. Determine the severity of your problem based on the Severity Levels table found in the following technote: "WebSphere DataPower Extended Maintenance and Support Services". [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21254180#severity.] 
+ 5. Prepare to describe how the problem affects your business operations. 
+ 6. Determine which telephone number IBM should use to contact you to run these test..
+
+
+
+Section 3. Contacting IBM Support and sending your MustGather information to IBM support 
+ 1. Reference our technote for information on Contacting IBM WebSphere DataPower SOA Appliance Support [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21236322]. 
+ 2. After you have contacted IBM Support, a PMR number will be assigned. Create a zip file of the MustGather information:
+
+ * A text file which contains: the questions and answers to any of the MustGather steps, elaboration on the problem, list of steps to recreate, notation on specific errors, and description external events noted at the time of the error. 
+ * WebGui Screen Captures 
+ * CLI command output results 
+ * An error report at the time of the error, from either the WebGui [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21235587] or CLI [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21242396]. 
+   1. Rename the zip file and send to IBM as noted in Exchanging information with IBM WebSphere DataPower Technical Support for problem determination [http://www-1.ibm.com/support/docview.wss?rs=2362&uid=swg21267385]. 
+   2. Do not send any proprietary or confidential information from your company.
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration WebSphere DataPower Integration Appliance XI50 Not Applicable Firmware 3.8.2, 3.8.1, 3.8, 3.7.3 Edition Independent Business Integration WebSphere DataPower XML Accelerator XA35 Not Applicable Firmware 3.8.2, 3.8.1, 3.8, 3.7.3 Edition Independent Business Integration WebSphere DataPower XML Security Gateway XS40 Not Applicable Firmware 3.8.2, 3.8.1, 3.8 Edition Independent

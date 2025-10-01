@@ -1,0 +1,145 @@
+Title: IBM IV55299: WINCOLLECT SYSLOG PAYLOADS TERMINATED DIFFERENTLY - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WinCollect sends syslog payloads terminated with ASCII
+   character 13 (0x0D - \cr).  QRadar sends syslog payloads to an
+   off-site flow source using ASCII character 10 (0x0A -\lf).
+   This inconsistency is causing issues with proxy syslog servers
+   and offsite flow sources.  If using syslog-ng server as a
+   master record of events and WinCollect is configured to send
+   syslog-ng which sends to us the \0x0D character which causes
+   issues.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Define the syslog-ng as an offsite event target because
+   syslog-ng accepts the 0x0A character as a syslog payload
+   terminator.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  WinCollect sends syslog payloads terminated with ASCII
+   character 13 (0x0D - \cr).  QRadar sends syslog payloads to an
+   off-site flow source using ASCII character 10 (0x0A -\lf).
+   This inconsistency is causing issues with proxy syslog servers
+   and offsite flow sources.  If using syslog-ng server as a
+   master record of events and WinCollect is configured to send
+   syslog-ng which sends to us the \0x0D character which causes
+   issues.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  An updated WinCollect agent executable was released that changed
+    the TCP message terminator from a CR (0D) to a LF (0A).
+   AGENT_x64_WinCollect-7.2.0.799013-setup.exe
+   AGENT_i386_WinCollect-7.2.0.798992-setup.exe
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  Define the syslog-ng as an offsite event target because
+   syslog-ng accepts the 0x0A character as a syslog payload
+   terminator.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV55299
+   
+   
+ * REPORTED COMPONENT NAME
+   QRADAR SOFTWARE
+   
+   
+ * REPORTED COMPONENT ID
+   5725QRDSW
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-02-10
+   
+   
+ * CLOSED DATE
+   2014-06-17
+   
+   
+ * LAST MODIFIED DATE
+   2014-06-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   QRADAR SOFTWARE
+   
+   
+ * FIXED COMPONENT ID
+   5725QRDSW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R720 PSY
+   UP

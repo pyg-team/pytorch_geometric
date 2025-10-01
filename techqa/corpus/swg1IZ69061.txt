@@ -1,0 +1,135 @@
+Title: IBM IZ69061: WRONG INFORMATION ABOUT BAROC FILE IN README FOR 6.2.0-TIV-ITM_SYB-IF0006/5/4/3 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description:
+   Follow 6.1 section In README while install
+   6.2.0-TIV-ITM_SYB-IF0006/5/4/3
+   but cannot find the baroc file that is mentioned in README.
+   
+   Detailed Recreation Procedure:
+   Read 6.2.0-TIV-ITM_SYB-IF0006/5/4/3.README 6.1 section
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ***************************************************************
+   
+   * USERS AFFECTED:
+   ITM for Database: Sybase Agent 6.2.0-TIV-ITM_SYB-IF0003/4/5/6
+   ***************************************************************
+   * PROBLEM DESCRIPTION:
+   wrong information about baroc file in readme
+   ***************************************************************
+   * RECOMMENDATION:
+   The readme files has been corrected and re-published, download
+   new readme files.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  6.2.0-TIV-ITM_SYB-IF0003.README /
+   6.2.0-TIV-ITM_SYB-IF0004.README /
+   6.2.0-TIV-ITM_SYB-IF0005.README /
+   6.2.0-TIV-ITM_SYB-IF0006.README has been refreshed.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ69061
+   
+   
+ * REPORTED COMPONENT NAME
+   TIV MON SYBASE
+   
+   
+ * REPORTED COMPONENT ID
+   5724B96SO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-02-01
+   
+   
+ * CLOSED DATE
+   2010-03-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TIV MON SYBASE
+   
+   
+ * FIXED COMPONENT ID
+   5724B96SO
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP
+   
+   
+ * R610 PSN
+   UP

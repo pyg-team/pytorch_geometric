@@ -1,0 +1,95 @@
+Title: IBM Rational products not subject to CVE-2014-0160 Heartbleed vulnerability - United States
+
+Text:
+CVE-2014-0160; heartbleed; vulnerability FLASH (ALERT)
+
+ABSTRACT
+ This alert contains an interim list of IBM Rational products determined not to be vulnerable to CVE-2014-0160 Heartbleed vulnerability. 
+
+CONTENT
+IBM is analyzing its products to determine which ones may be affected by the OpenSSL Heartbleed vulnerability (CVE-2014-0160 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0160]).
+
+IBM products that require fixes will be communicated through the IBM Support Portal.
+
+Please actively monitor the IBM Rational Support Portal [http://www.ibm.com/support/entry/portal/alerts/rational/rational_brand_support_%28general%29?productContext=352453367] for available fixes.
+
+The OpenSSL Heartbleed vulnerability (CVE-2014-0160 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-0160]) does NOT affect the following IBM Rational products at any level or on any platform:
+
+
+
+ * IBM Mobile Quality Assurance 
+ * IBM Rational Jazz Team Server 
+ * IBM Rational Logiscope 
+ * IBM Rational Reporting for Development Intelligence 
+ * IBM Rational Insight 
+ * IBM Rational Lifecycle Integration Adapters Tasktop Edition 
+ * IBM Rational OSLC Adapter for HP ALM 
+ * IBM Rational OSLC Adapter for Git 
+ * IBM Rational OSLC Adapter for Atlassian Jira 
+ * IBM Rational Connector for SAP Solution Manager 
+ * IBM Rational Publishing Engine 
+ * IBM Rational Engineering Lifecycle Manager 
+ * IBM Rational Software Architect Design Manager 
+ * IBM Rational Rhapsody 
+ * IBM Rational Rhapsody Design Manager 
+ * IBM Rational DOORS 
+ * IBM Rational DOORS Web Access 
+ * IBM Rational Statemate 
+ * IBM Rational Functional Tester 
+ * IBM Rational Service Tester for SOA Quality 
+ * IBM Rational Performance Tester 
+ * IBM Rational Test RealTime 
+ * IBM Rational Integration Tester 
+ * IBM Rational Programming Patterns (RPPz) 
+ * IBM Rational Developer for AIX and Linux 
+ * IBM Rational Developer for i 
+ * IBM Rational Developer for System z 
+ * IBM Rational Application Developer for WebSphere Software 
+ * IBM Rational Development and Test Environment for System z 
+ * IBM Rational Quality Manager 
+ * IBM Rational Requirements Composer 
+ * IBM XL C/C++ compilers (all variations) 
+ * IBM PL/1 and PL/X compilers (all variations) 
+ * IBM COBOL compilers (all variations) 
+ * IBM XL Fortran compilers (all variations) 
+ * IBM Eclipse SDK (IES) 
+ * IBM Rational Asset Analyzer 
+ * IBM Personal Communications 
+ * IBM Rational PurifyPlus 
+ * IBM Rational Change 
+ * IBM Rational Synergy 
+ * IBM Rational Host On-Demand 
+ * IBM Rational Host Access Transformation Services 
+ * IBM Rational Rose RealTime 
+ * IBM Rational TTCN Suite 
+ * IBM Rational Tau 
+ * IBM Rational Rose 
+ * IBM Rational Systems Tester 
+ * IBM Rational Software Architect RealTime Edition 
+ * IBM Rational Asset Manager 
+ * IBM Rational Software Architect 
+ * IBM Rational Business Developer 
+ * IBM Rational Method Composer 
+ * IBM Rational System Architect 
+ * IBM Rational System Architect XT 
+ * IBM Rational Focal Point 
+ * IBM Rational Directory Server 
+ * IBM Rational Common Licensing 
+ * IBM UrbanCode Deploy 
+ * IBM UrbanCode Release 
+ * IBM Rational Automation Framework 
+
+
+Remediation: No action required. 
+
+Change History 
+ *  18 November 2016: Removed broken link to PSIRT blog 23 July 2014: Removed Requisite Pro (see this bulletin for details [https://www.ibm.com/support/docview.wss?uid=swg21671130]) 24 April 2014: Added Rational Development and Test Environment for System z 14 April 2014: Added Rational Asset Analyzer 11 April 2014: Added Rational Functional Tester 10 April 2014: original document published 
+
+
+
+ Back to top 
+
+RELATED INFORMATION
+ IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering]
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT]
+Rational Jazz Team Server not affected by CVE-2014-0160 [http://www.ibm.com/support/docview.wss?uid=swg21670487]

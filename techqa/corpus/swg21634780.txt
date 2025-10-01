@@ -1,0 +1,41 @@
+Title: IBM RDz drag and copy of members from remote systems is disabled - United States
+
+Text:
+rdz; drag; copy; members; remote systems; disabled; datasets; PDS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ IBM Rational Developer for System z (RDz) v8.5.1 clients are unable to drag or copy MVS data sets 
+
+CAUSE
+A new feature, Altering Client Functions, was added to RDz 8.5.1 clients that will check the host for the configuration of the access authorization to SAF security profiles. Based on the result, it enables or disables the related function for the user. 
+The functions that are affected are copy, drag, save-as, and work-offline.
+
+
+ENVIRONMENT
+The RDz client must be at 8.5.1 or higher for this feature to exist. The RDz host can be at either 8.0 or higher.
+
+
+
+DIAGNOSING THE PROBLEM
+To diagnose this problem, check your RACF profile for this type of FACILITY configuration: 
+
+
+FEK.USR.OFF.REMOTECOPY.MVS.sysname
+
+If any users have READ access to such a profile, then the drag and copy functions for that client will be disabled.
+
+
+RESOLVING THE PROBLEM
+The setting for the SAF profile is done on the HOST by the security administrator. See the RDz Host Configuration Reference Guide (SC14-7290-3) in Security Chapter under the section titled, "Altering Client Functions" for more information on how to configure the RACF profile. 
+
+If you use a different type of security system such as ACF2 then try to write a rule such as the one below where xxxxxxx = sysname: 
+
+
+$KEY(FEK.USR.OFF.REMOTECOPY.MVS.xxxxxxx) TYPE(FAC) ROLESET
+ROLE(PGRS) PREVENT
+
+
+Below is another example of coding an ACF rule to allow all users : 
+
+
+$KEY TYPE(FAC)FEK.USR.OFF.REMOTECOPY.MVS.- UID(*) PREVENT

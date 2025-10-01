@@ -1,0 +1,16 @@
+Title: IBM How to configure LDAP BINDDN containing spaces in PureData System for Analytics - United States
+
+Text:
+netezza; pda; ldap; binddn TECHNOTE (FAQ)
+
+QUESTION
+ My BINDDN contains space characters. What syntax should I use to configure LDAP authentication on my IBM PureData System for Analytics appliance? 
+
+CAUSE
+Spaces can cause issues with openldap if they are not escaped properly.
+
+ANSWER
+To avoid issues, enclose the entire BINDDN with single quotes, and enclose the Common Name (CN), Organizational Unit (OU) or Domain Component (DC) containing a space character with double quotes. 
+
+Example:
+BINDDN 'cn=commonname,ou="space test",DC=adroot,DC=company,DC=com'

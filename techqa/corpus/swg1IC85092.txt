@@ -1,0 +1,167 @@
+Title: IBM IC85092: TPC INSTALLATION FAILS DURING TIP PORTION. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+Fix Pack 5.1.1.0 (December 2012) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24034073]
+Fix Pack 5.1.1.2 (September 2013) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24035798]
+Fix Pack 5.1.1.5 (July 2014) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24038061]
+4.2.2 Fix Pack 7 (July 2014) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24038062]
+4.2.2 Interim Fix 2 (December 2012) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24033993]
+Fix Pack 5.1.1.6 (March 2015) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24039585]
+4.2.2 Fix Pack 8 (March 2015) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24039590]
+4.2.2 Fix Pack 9 (May 2015) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24039932]
+4.2.2 Fix Pack 10 (August 2015) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24040623]
+Fix Pack 5.1.1.9 (October 2015) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24041064]
+Fix Pack 5.1.1.10 (April 2016) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24042386]
+Fix Pack 5.1.1.12 (October 2016) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24042864]
+4.2.2 Fix Pack 3 (October 2012) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24033674]
+Fix Pack 5.1.1.13 (February 2017) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24043314]
+Fix Pack 5.1.1.14 (June 2017) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24043763]
+Fix Pack 5.1.1.15 (Sept 2017) for Tivoli Storage Productivity Center [http://www-01.ibm.com/support/docview.wss?uid=swg24043949]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  TPC installation fails during TIP portion when TIP install
+   location specified as: /opt/IBM/TPC/tip or C:\program
+   files\IBM\TPC\tip.
+   The TIP install location must be different than
+   TPC_Install_Location/tip since the installer uses the
+   TPC_install_location/tip to copy some files and scripts that are
+   needed by the installer to install TIP and those might be
+   overridden by the TIP installer which leads to problems.
+   
+   
+   RECREATE STEPS:
+   Use /opt/IBM/TPC/tip or C:\program files\IBM\TPC\tip for TIP
+   install location.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Those installing or upgrading with TPC 4.x.  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Invalid directory location chosen for   *
+   *                      the TIP install causes it to fail.      *
+   *                      See ERROR DESCRIPTION.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   -
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The TPC installation program now checks to make sure those
+   directory paths are not being used and will block the
+   installation with a message that an invalid directory has been
+   chosen.  The TIP installation path should not be under the TPC
+   directory structure as those directories have a different use.
+   
+   The fix for this APAR is targeted for the following
+   maintenance package:
+   
+   | fix pack | 4.2.2-TIV-TPC-FP0003 - target October 2012
+   
+   http://www-01.ibm.com/support/docview.wss?&uid=swg21320822 [http://www-01.ibm.com/support/docview.wss?&uid=swg21320822]
+   
+   The target dates for future fix packs do not represent a formal
+   commitment by IBM. The dates are subject to change without
+   notice.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC85092
+   
+   
+ * REPORTED COMPONENT NAME
+   TPC FOR DATA
+   
+   
+ * REPORTED COMPONENT ID
+   5608TPCD0
+   
+   
+ * REPORTED RELEASE
+   422
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2012-07-03
+   
+   
+ * CLOSED DATE
+   2012-07-12
+   
+   
+ * LAST MODIFIED DATE
+   2012-07-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TPC FOR DATA
+   
+   
+ * FIXED COMPONENT ID
+   5608TPCD0
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R422 PSY
+   UP

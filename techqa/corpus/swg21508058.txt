@@ -1,0 +1,30 @@
+Title: IBM BMXAA4102E Language code EN not used - United States
+
+Text:
+TPAESCCD; omnibus; netcool; language; en; english TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Getting above error when you try to create ticket in Netcool/Omnibus Gateway for TSRM 
+
+SYMPTOM
+You are not able to create ticket in SCCD using Netcool/Omnibus Gateway for TSRM
+
+
+RESOLVING THE PROBLEM
+In later version of Netcool/Omnibus Gateway for TSRM (e.g. 7.3), Netcool/Omnibus Gateway for TSRM does not use TDI to integrate with SCCD. By default, it is using language code EN. If you have other language code, e.g ZH (Chinese Simplified), you have to configure as followed :-
+1. Stop all the OMNIBUS processes using the commands: 
+/etc/init.d/nco stop and /etc/init.d/webgui stop.
+2. Stop all the IMPACT processes using the command: /etc/init.d/impact stop.
+3. Backup your /IBM/tivoli/netcool/omnibus/etc/GAT_TSRM.props 
+(a) Edit GAT_TSRM.props and add/uncomment following line (e.g) :- 
+Gate.TSRM.Language : 'ZH' 
+4. Backup your /IBM/tivoli/netcool/omnibus/gates/tsrm/query.xml.template
+(a) Edit query.xml.template (e.g) :-
+baseLanguage="ZH" 
+transLanguage="ZH"
+5. Restart all the OMNIBUS processes using the commands:
+/etc/init.d/nco start and /etc/init.d/webgui start. 
+6. Restart all the IMPACT process using the command:
+/etc/init.d/impact start. 
+
+After this, you will not get error 'BMXAA4102E Language code EN not used' and able to create ticket in SCCD using Netcool/Omnibus Gateway for TSRM

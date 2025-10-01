@@ -1,0 +1,16 @@
+Title: IBM All events through Tivoli EIF probe are UNKNOWN - United States
+
+Text:
+tivoli_eif.rules UNKNOWN ITM TEMS Severity TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ All events are set to UNKNOWN, no other severities used, source sending to the EIF probe is commonly ITM. 
+
+CAUSE
+Standard eif probe install, maybe upgraded so that later code is used, This has included a standard tivoli_eif.rules not suited for dealing with ITM events.
+
+DIAGNOSING THE PROBLEM
+All events go through as UNKNOWN.
+
+RESOLVING THE PROBLEM
+Make sure the appropriate rules file is provided with the ITM pack in use - or for whatever application the events are sourced from, nearly all applications should be providing eif rules to enable their events to pass into Omnibus with appropriate fields of interest.

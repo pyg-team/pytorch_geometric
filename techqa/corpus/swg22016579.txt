@@ -1,0 +1,31 @@
+Title: IBM Security Bulletin: Release of GDPR ready IBM Data Science Experience Local - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ IBM Data Science Experience Local new release is GDPR ready. 
+
+VULNERABILITY DETAILS
+For more information on GDPR and Data Science Experience Local, see IBM Data Science Experience Local considerations for GDPR readiness [https://content-dsxlocal.mybluemix.net/docs/content/local/gdpr.html]
+
+AFFECTED PRODUCTS AND VERSIONS
+ 
+
+Principal Product and Version(s) IBM Data Science Experience Local: 1.1.0, 1.1.1, 1.1.2, 1.1.3, 1.2 REMEDIATION/FIXES
+Upgrade to the latest Data Science Experience Local 1.2.0.3 release to be GDPR ready. 
+
+You can download the latest release from Passport Advantage [https://www-01.ibm.com/software/passportadvantage/pao_customer.html]. 
+
+Part Name Part number IBM Data Science Experience Local Enterprise Edition V1.2 Memo to Users English Only CNJE9EN.pdf GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

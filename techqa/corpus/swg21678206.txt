@@ -1,0 +1,95 @@
+Title: IBM Multiple classloader errors when trying to migrate Portal - United States
+
+Text:
+classloader; migration TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+Portal startup during the upgrade-profile task during a migration shows numerous Classloader issues
+
+SYMPTOM
+The upgrade-profile task will fail and the ConfigTrace.log shows this error...
+
+change-workdir-permission-iseries:
+Target finished: change-workdir-permission-iseries
+[xmlaccess] EJPXB0006I: Connecting to URL
+http:/ /localhost:10040/wps/config/
+[xmlaccess] EJPXB0004I: Writing output file
+/websphere/websphere8/wp_profile/ConfigEngine/config/work/deployedWebApp
+XmlAccess-PTF/preExistingWebApps.xml
+[xmlaccess] EJPXB0002I: Reading input file
+/websphere/websphere8/PortalServer/installer/wp.migration.core/migration
+/components/wp.migration.core/exportWebApps.xml
+[xmlaccess] EJPXB0019E: Server response indicates an error. For status
+and details of the XmlAccess error look at file
+/websphere/websphere8/wp_profile/ConfigEngine/config/work/deployedWebApp
+XmlAccess-PTF/preExistingWebApps.xml.
+[xmlaccess] EJPXB0019E: Server response indicates an error. For status
+and details of the XmlAccess error look at file
+/websphere/websphere8/wp_profile/ConfigEngine/config/work/deployedWebApp
+XmlAccess-PTF/preExistingWebApps.xml.
+--- Exception Thrown ---
+/websphere/websphere8/ConfigEngine/config/includes/upgrade_cfg.xml:104:
+EJPXB0019E: Server response indicates an error. For status and details
+of the XmlAccess error look at file
+/websphere/websphere8/wp_profile/ConfigEngine/config/work/deployedWebApp
+XmlAccess-PTF/preExistingWebApps.xml.
+at com.ibm.wps.xmlaccess.XmlAccessTask.fail(Unknown Source)
+
+This failure indicates a problem with Portal startup during the migration task. Review of the SystemOut.log shows the following...
+
+[6/2/14 17:31:14:461 CDT] 0000002c WSServerImpl E WSWS1002E: An
+error occurred while processing the Web services deployment descriptor
+for module: wps.war with error: java.lang.ClassNotFoundException:
+oasis.names.tc.wsrp.v1.bind.WSRP_v1_Markup_Binding_SOAPImpl
+at java.net.URLClassLoader.findClass(URLClassLoader.java:434)
+at
+com.ibm.ws.bootstrap.ExtClassLoader.findClass(ExtClassLoader.java:214)
+
+...
+
+[6/2/14 17:31:14:497 CDT] 0000002c annotation W
+com.ibm.ws.webcontainer.annotation.WASAnnotationHelper collectClasses
+SRVE8000W: Skipped class that failed to initialize for annotation
+scanning.
+java.lang.ClassNotFoundException:
+com.ibm.wps.resolver.servlet.ContentHandlerGzip
+at java.lang.Class.forNameImpl(Native Method)
+
+
+
+
+CAUSE
+In this case the problem was caused by the customer previously running the following task with incorrect syntax...
+
+ConfigEngine.bat -install -offeringRoot
+/websphere/websphere8/PortalServer/ -installPath
+/websphere/websphere8/PortalServer/ -expandBinaries false
+
+Notice the trailing '/' after PortalServer
+
+ENVIRONMENT
+Portal 8.0x
+Linux
+
+DIAGNOSING THE PROBLEM
+Open the MANIFEST.MF file in the <PortalServer root>/shared/app/shared.app.jar you can see the
+problem. Notice the double slashes....
+
+Class-Path:
+../..//base/wp.resolver/wp.resolver.http.xml.api/shared/app/wp.resolver.
+http.xml.api.jar
+
+RESOLVING THE PROBLEM
+Run these commands...with no trailing slashes....
+
+ConfigEngine.bat -uninstall -offeringList PortalServer -unregisterOnly
+
+ConfigEngine.bat -install -offeringRoot
+/websphere/websphere8/PortalServer -installPath
+/websphere/websphere8/PortalServer -expandBinaries false
+
+ConfigEngine.bat gather-shared-objects
+
+Then simply re-run the upgrade-profile task
+
+This will rebuild the MANIFEST.MF file with the correct paths.

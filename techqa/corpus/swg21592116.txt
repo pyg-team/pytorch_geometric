@@ -1,0 +1,57 @@
+Title: IBM About the Client Connect Program - United States
+
+Text:
+Client Connect Program;RLKC;License Key Center;Passport Advantage Online;PAO;Support Portal;Service Request;SR NEWS
+
+ABSTRACT
+The Client Connect Program is a new client care program, which will be initiated by Rational Client Resource Center team to assist clients who are new to Rational Support self-assist tools.
+
+CONTENT
+Overview & Objectives: 
+
+ * Deliver a personalized online session with demo on IBM Self-Assist tools.
+ * Deliver Client Connect (CC) Information Pack (PDF format - attached below)
+ * Provide useful links to online resources through e-mail.
+ * Help Primary Site Contact (PSC) or Site Technical Contact (STC) of clients new to Rational Support to have a good start.
+
+Contents of Client Connect Session: 
+
+Rational License Key Centre(LKC) : 
+
+ * How to register with LKC account
+ * How to generate and manage licenses
+   
+
+
+Passport Advantage Online (PAO) : 
+
+ * How to register with PAO
+ * How to check Proof of Entitlement (PoE)
+ * How to download software and order media
+   
+
+
+My Support : 
+
+ * Manage Notifications
+ * Create, review cases
+   
+
+
+Service Request (SR) : 
+
+ * How to register with SR
+ * Submit, search PMRs
+   
+   
+
+How to enroll: Please have your IBM Customer Number (ICN, can be found on Proof of Entitlement) handy and call us toll free at your local numbers:
+
+http://www.ibm.com/planetwide/ [http://www.ibm.com/planetwide/]
+
+RELATED INFORMATION
+About My notification [http://www.ibm.com/support/docview.wss?uid=swg21460904] 
+How to obtain your Rational license [http://www.ibm.com/support/docview.wss?uid=swg21250403] 
+Service Request: how to open a problem online with IBM [http://www.ibm.com/support/docview.wss?uid=swg27048150] 
+
+Disclaimer All source code and/or binaries attached to this document are referred to here as "the Program". IBM is not providing program services of any kind for the Program. IBM is providing the Program on an "AS IS" basis without warranty of any kind. IBM WILL NOT BE LIABLE FOR ANY ACTUAL, DIRECT, SPECIAL, INCIDENTAL, OR INDIRECT DAMAGES OR FOR ANY ECONOMIC CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFITS OR SAVINGS), EVEN IF IBM, OR ITS RESELLER, HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.

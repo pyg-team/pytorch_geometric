@@ -1,0 +1,155 @@
+Title: IBM IT00100: SERVICES ON NON-ACTIVE PURESYSTEMS MANAGER NODE START SLOWLY OR PRODUCE ERRORS AFTER FORCED POWEROFF. - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM PureApplication System Version 1.1.0.2 [http://www-01.ibm.com/support/docview.wss?uid=swg24036620]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When the active PureSystems Manager node is powered off by
+   holding in the power button, an IBM Support Representative uses
+   the shell to poweroff the node instead of a shutting the
+   operating system down gracefully, or has a hardware failure;
+   the PureSystems Manager High Availability component sometimes
+   takes longer than normal to start all of the services on the
+   other PureSystems Manager node.  In some cases, the High
+   Availability health status might change to 'Error' after a
+   failure has occurred.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Always use the System console to power off compute nodes or
+   management nodes.
+   After a forceful power down or a hardware failure on the active
+   management node, if the services take over 30 minutes start on
+   the remaining node, observe the High Availability status on the
+   System Console > Troubleshooting page. If the overall status is
+   'Error' and one or more of the services listed are marked as
+   'Failed offline' or 'Stuck online', then reboot or apply an
+   intentional failover to fully recover the management software.
+   If the PureSystems Manager node that had the failure can be
+   powered back on and is healthy, do this first so that node can
+   become the active node again.
+   After the other manager node is powered back on, power off the
+   active node on the System Console > Hardware > Management Nodes
+   page. If the other PureSystems Manager node cannot be powered
+   back on, contact IBM Support to determine the best course of
+   action, which will depend on which High Availability services
+   are marked as 'Error'.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The database manager on the PureSystems manager will attempt to
+   recover and activate any management database that was active at
+   the time of the database failure due to unexpected power off.
+   If the database attempts to recover the databases before the
+   database volumes are mounted the database will crash again
+   during failover.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The management database auto restart feature is disabled and
+   each management database is explicitly restarted after its
+   volumes are mounted, allowing crash recovery if needed, then
+   activated.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT00100
+   
+   
+ * REPORTED COMPONENT NAME
+   PUREAPP SYS W15
+   
+   
+ * REPORTED COMPONENT ID
+   5725G3200
+   
+   
+ * REPORTED RELEASE
+   110
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-11-15
+   
+   
+ * CLOSED DATE
+   2013-11-19
+   
+   
+ * LAST MODIFIED DATE
+   2013-11-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   PUREAPP SYS W15
+   
+   
+ * FIXED COMPONENT ID
+   5725G3200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R110 PSY
+   UP

@@ -1,0 +1,170 @@
+Title: IBM PI37248: A PROPERTY FILE BASED CONFIGURATION (PFBC) FILE MIGHT FAIL TO AP PLY. - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.6: WebSphere Application Server V8.5.5 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24040035]
+8.0.0.11: WebSphere Application Server V8.0 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24040425]
+8.5.5.7: WebSphere Application Server V8.5.5 Fix Pack 7 [http://www-01.ibm.com/support/docview.wss?uid=swg24040533]
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.0.0.12: WebSphere Application Server V8.0 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24041590]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.0.0.13: WebSphere Application Server V8.0 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24042746]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.0.0.14: WebSphere Application Server V8.0 Fix Pack 14 [http://www-01.ibm.com/support/docview.wss?uid=swg24044096]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+8.0.0.15: WebSphere Application Server V8.0 Fix Pack 15 [http://www-01.ibm.com/support/docview.wss?uid=swg24044734]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  A PFBC file might fail to apply. Wsadmin will show an error
+   similar to this:
+   
+   java.lang.Exception: java.lang.Exception: ADMG0660E:
+   Properties File Validation during command
+   applyConfigProperties failed.  See Report file for details.
+   
+   The report file will contain an error similar to this:
+   Error=java.lang.NullPointerException
+    at
+   com.ibm.websphere.management.configservice.ConfigServiceHelper.g
+   etConfigDataType(ConfigServiceHelper.java:235)
+    at
+   com.ibm.ws.management.configservice.WorkspaceHelper.getType(Work
+   spaceHelper.java:563)
+    at
+   com.ibm.ws.management.configservice.WorkspaceHelper.getDelegator
+   (WorkspaceHelper.java:584)
+    at
+   com.ibm.ws.management.configservice.ConfigServiceImpl.getAttribu
+   tes(ConfigServiceImpl.java:2102)
+    at
+   com.ibm.ws.management.commands.properties.resources.common.Apply
+   Properties.setProperties(ApplyProperties.java:240)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Property File Based Configuration    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: A Property File Based Configuration     *
+   *                      (PFBC) file might fail to apply.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   A recent (8.5.5.5) parser change introduced a problem where
+   types that have default values noted in the file and are not
+   Strings can be incorrectly processed.  For example:
+   isolatedClassLoader=false #boolean,default(false)
+   might be incorrectly processed, and as a result, the file
+   might not apply.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The parsing code is updated so the problem no longer occurs.
+   
+   The fix for this APAR is currently targeted for inclusion in
+   fix pack 8.5.5.6.  Please refer to the Recommended Updates
+   page for delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI37248
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   850
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-03-18
+   
+   
+ * CLOSED DATE
+   2015-03-20
+   
+   
+ * LAST MODIFIED DATE
+   2015-03-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R850 PSY
+   UP

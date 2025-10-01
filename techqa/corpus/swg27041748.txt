@@ -1,0 +1,25 @@
+Title: IBM Domino template enablement fails during the initial configuration - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ Sometimes, during the installation of IBM Content Collector, when the IBM Domino template is being enabled during the initial configuration, the IBM Domino template cannot be enabled because the Notes ID file on the Content Collector server cannot be accessed. 
+
+CONTENT
+Sometimes, during the installation of IBM Content Collector, when the IBM Domino template is being enabled during the initial configuration, the following error message might occur: 
+
+2014-01-24T07:27:05.381Z SEVERE [233]
+Domino template deployment with error: Could not open the ID file
+com.ibm.afu.initialconfig.jobs.CASDominoTemplateJob executeTemplateDeploy]
+[Worker-0 1]Exception [java.lang.Exception]: Could not open the ID file com.ibm.afu.initialconfig.domino.dominoutils.CASDominoSession.
+<init>(CASDominoSession.java:92) com.ibm.afu.initialconfig.domino.dominoutils.CASDominoSessionManager.createPrivateSession(CASDominoSessionManager.java:111) com.ibm.afu.initialconfig.domino.CASDeployEngine.initSession(CASDeployEngine.java:471) com.ibm.afu.initialconfig.domino.CASDeployEngine.deploy(CASDeployEngine.java:122) com.ibm.afu.initialconfig.domino.CASTemplDeploy.deploy(CASTemplDeploy.java:59)
+
+Causes:
+The IBM Domino template cannot be enabled because the Notes ID file on the Content Collector server cannot be accessed.
+
+Resolving the problem:
+
+To resolve this problem, perform the following steps to enable the IBM Domino template on your local machine: 
+1. Copy the Notes ID file from the Domino/data directory on your IBM Domino server to the Domino/data directory on the Content Collector server. 
+2. Copy the KeyFileName entries in the notes.ini file on your Domino server to the notes.ini file in the Domino/data directory on the Content Collector server.

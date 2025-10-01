@@ -1,0 +1,67 @@
+Title: IBM Manual steps equivalent to 'db2haicu -delete' for DB2 9.5 or 9.7 - United States
+
+Text:
+TSA; TSAMP; db2haicu; delete; -delete; recfgct; CLUSTER_MGR; db2ha.sys TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to run 'db2haicu -delete' fails when trying to remove the integration between DB2 and TSAMP. How can this be done manually for an automation policy consisting of a single DB2 instance pair ? 
+
+ENVIRONMENT
+*** For an automation policy with a single instance pair only (one DB2 instance resource per node) ***
+*** Only applicable to a DB2 v9.5 and v9.7 environment ***
+
+The db2haicu utility is attempting to delete the automation policy, that is, all resources, resource groups, equivalencies, and relationships. After it has deleted all automation policy elements, it will attempt to delete the domain. Its last task is to set the CLUSTER_MGR variable to null within the DB2 DBM configuration, and remove the db2ha.sys file.
+
+
+
+RESOLVING THE PROBLEM
+1) Update the DBM configuration; unset CLUSTER_MGR (nullify) by running the following DB2 command as the instance owner : 
+
+
+db2 "update dbm cfg using CLUSTER_MGR '' "
+
+To verify the DBM configuration was updated, use the following syntax :
+
+db2 get dbm cfg | grep -i CLUSTER
+
+Results should be the same as the following, showing CLUSTER_MGR not set :
+
+Cluster manager (CLUSTER_MGR) =
+
+Note: Repeat this step on the other node.
+
+
+2) Delete the db2ha.sys file :
+
+rm $INSTHOME/sqllib/cfg/db2ha.sys
+
+eg. 'rm /home/db2inst1/sqllib/cfg/db2ha.sys'
+
+Note: Repeat this step on the other node.
+
+
+3) Remove/delete the domain (all managed resources will be left in their current running state) : 
+
+rmrpdomain -f <domain_name> 
+
+Verify the domain no longer exists : 
+
+lsrpdomain 
+
+
+4) If you intend re-running 'db2haicu' to create a new domain and automation policy, you will need to first remove the alias/virtual IP(s) associated with your HADR database(s) from the NIC on whatever node it is currently assigned. [this assumes you are using virtual IPs as a means for the DB2 client apps to connect to the primary HADR database].
+Refer to the following technote for information on how to remove an alias IP using the ifconfig command:
+http://www.ibm.com/support/docview.wss?uid=swg21294045 [http://www.ibm.com/support/docview.wss?uid=swg21294045]
+
+
+
+Optional cleanup/reset steps:
+
+A) Completely clear all cluster configuration information on the local node by running the following RSCT command as root : 
+
+/usr/sbin/rsct/install/bin/recfgct 
+
+Note: Repeat this step on the other node.
+
+
+B) Run the appropriate preprpnode command, per DB2 instructions, on each node prior to running db2haicu in the future.

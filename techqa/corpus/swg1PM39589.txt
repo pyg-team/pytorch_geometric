@@ -1,0 +1,201 @@
+Title: IBM PM39589: INSTALLATION MANAGER'S DATA DE-SYNCHRONIZES WITH WEBSPHERE APPLICATION SERVER V7.0 IF IT IS UNINSTALLED AND REINSTALLED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Summary:  Uninstalling and reinstalling WebSphere Application
+   Server V7.0 after it is imported into Installation Manager will
+   cause Installation Manager to be unable to properly install or
+   uninstall Feature Packs on the WebSphere Application Server
+   product.  The product will need to be reinstalled to recover
+   from this problem.
+   
+   Details:
+   Several feature packs are available for WebSphere Application
+   Server V7.0.  These feature packs are installed using the
+   IBM Installation Manager utility.
+   
+   In order for Installation Manager to work with the
+   WebSphere Application Server V7.0 product, it is necessary to
+   use Installation Manager's "Import" function on the product.
+   This registers the WebSphere Application Server V7.0
+   instance with Installation Manager.  The "Import" process also
+   injects several files into the product installation which are
+   critical to the Feature Pack installation process.
+   
+   Once WebSphere Application Server V7.0 is processed with the
+   Import function, it should never be uninstalled using the
+   "uninstall.exe" program in the product's "uninstall" directory.
+   If the product is uninstalled using uninstall.exe, Installation
+   Manager is unaware that the product is missing, and Installation
+   Manager will no longer function properly.
+   
+   If WebSphere Application Server is uninstalled using
+   "uninstall.exe", but then it is later re-installed to the same
+   product directory, then Installation Manager will appear to
+   recognize the re-installed product instance.  However, there are
+   actually significant problems with this scenario.  The problems
+   are not immediately apparent, because some Installation Manager
+   functions will appear to be successful.
+   
+   Installation Manager will report errors when attempting to
+   perform certain installation and uninstallation operations.
+   Typically, it will fail to install a feature pack, then report
+   the following error:
+   
+   Unable to find custom install operation
+   com.ibm.ws.exec.command.Exec java.lang.ClassNotFoundException:
+   com.ibm.ws.exec.command.Exec
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If WebSphere Application Server V7.0 is installed and then
+   imported into Installation Manager, do not uninstall the
+   WebSphere Application Server product using the "uninstall.exe"
+   program.  Instead, use Installation Manager's "Uninstall"
+   function to uninstall the product.
+   
+   If WebSphere Application Server V7.0 was uninstalled using the
+   "uninstall.exe" program, and then it was reinstalled, the
+   product cannot be used with Installation Manager.  It will not
+   be possible to install or uninstall Feature Packs or fix packs
+   using Installation Manager.  In order to resolve this, the
+   product must be uninstalled again using Installation Manager.
+   
+   Once the product is uninstalled using Installation Manager and
+   Installation Manager no longer indicates that any products are
+   installed in the product's directory, it can be reinstalled and
+   then imported into Installation Manager.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  Users of IBM WebSphere Application Server   *
+   *                  v7 who need to re-import the re-installed   *
+   *                  WebSphere Application Server v7 instance.   *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: IBM Installation Manager does not       *
+   *                      re-import a WebSphere Application       *
+   *                      Server v7 instance that has been        *
+   *                      uninstalled and re-installed by         *
+   *                      legacy technology                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Previously imported WebSphere Application Server v7 instance
+   was manually uninstalled not using IBM Installation Manager
+   (IIM) but by legacy ISMP-based install technology and Update
+   Installer.
+   Then, another WebSphere Application Server v7 instance was
+   re-installed to the same location using legacy installers.
+   IIM's import capability would not re-import the re-installed
+   WebSphere Application Server v7 instance into IIM and
+   re-synchronized its inventory.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue will be addressed in IBM Installation Manager 1.4.4.
+   
+   IIM's import capability will detect such a situation and
+   attempt to re-import the re-installed WebSphere Application
+   Server v7 instance and re-synchronizes its inventory.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM39589
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-05-19
+   
+   
+ * CLOSED DATE
+   2011-07-27
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * FIXED COMPONENT ID
+   5724H8800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

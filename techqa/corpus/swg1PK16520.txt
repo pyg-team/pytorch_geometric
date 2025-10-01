@@ -1,0 +1,180 @@
+Title: IBM PK16520: ERRORS WHEN CREATING THE EXTENSION HELPER DATABASE HELPER. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  1) J2CA0024E: Method commit, within transaction branch ID
+   <null>  of resource pool jdbc/WPSDB, caught
+   com.ibm.ws.exception.WsException: DSRA0040E: .....  Action =
+   LT_COMMIT  is not allowed for the current transaction state =
+   NO_TRANSACTION_ACTIVE
+   -or-
+   2) Resource reference settings are ignore when creating
+   ExtensionHelpers database helper.
+   -or-
+   3) java.lang.ClassCastException: java.lang.Integer when creating
+   ExtensionHelpers database helper.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All WebSphere Application Server users of    *
+   *                 Asynch Beans Extension Helper's database     *
+   *                 helper.                                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Exceptions may occurr when creating     *
+   *                      the ExtHelper's database Helper.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   1) J2CA0024E: Method commit, within transaction branch ID
+   <null>  of resource pool jdbc/WPSDB, caught
+   com.ibm.ws.exception.WsException: DSRA0040E: .....  Action =
+   LT_COMMIT  is not allowed for the current transaction state =
+   NO_TRANSACTION_ACTIVE
+   -or-
+   2) Resource reference settings are ignore when creating
+   ExtensionHelpers database helper.
+   -or-
+   3) java.lang.ClassCastException: java.lang.Integer when
+   creating ExtensionHelpers database helper.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  All the three problems have been addressed.
+   
+   The fix for this APAR is currently targeted for inclusion
+   in fixpack 6.0.2.7.
+   Please refer to the recommended updates page for delivery
+   information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK16520
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0800
+   
+   
+ * REPORTED RELEASE
+   60A
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2005-12-09
+   
+   
+ * CLOSED DATE
+   2005-12-13
+   
+   
+ * LAST MODIFIED DATE
+   2005-12-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  EXTHELPR
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPH APP SERV
+   
+   
+ * FIXED COMPONENT ID
+   5724J0800
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60A PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60I PSY
+   UP
+   
+   
+ * R60P PSY
+   UP
+   
+   
+ * R60S PSY
+   UP
+   
+   
+ * R60W PSY
+   UP
+   
+   
+ * R60Z PSY
+   UP

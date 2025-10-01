@@ -1,0 +1,163 @@
+Title: IBM IY85806: XC034071 DURING OR SHORTLY AFTER CALL TO MQLPGILD - United States
+
+Text:
+AIX  FIXES ARE AVAILABLE
+WebSphere MQ V5.3 and WebSphere MQ Express V5.3 - Fix Pack 14 (CSD14) [http://www-01.ibm.com/support/docview.wss?uid=swg24017668]
+WebSphere MQ V5.3 for iSeries - Fix Pack 14 (CSD14) [http://www-01.ibm.com/support/docview.wss?uid=swg24017684]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The problem here is the XC034071 (spurious semaphore post). This
+   occurs while the queue manager is waiting for a response from
+   the logger and the task receiving the response exits relatively
+   abruptly.
+   This problem might also manifest itself as an XC034070, or an
+   XC307050 FDC.
+   
+   Once the spurious semaphore post has occurred then the task
+   receiving the exception is likely to terminate abruptly and it
+   is possible that this will cause the queue manager to terminate
+   abruptly.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   This problem is most likely to occur in an environment where
+   there is high contention for the MQ recovery log, and very slow
+   I/O times. Thus this problem could be exacerbated by slow I/O
+   times for the MQ recovery log.
+   
+   Platforms affected:
+   AIX
+   
+   ****************************************************************
+   PROBLEM SUMMARY:
+   When we wait for access to the logger I/O task then we
+   establish a timer so that we can health check the system if the
+   IO does not complete in a timely manner. This timeout is set to
+   10 seconds. On a system where the timeout coincides with the
+   semaphore being made ready by the previous owner of this lock
+   then the semaphore can be multiply posted.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The FIFO mutex code (only exploited by mqlpgild) has been
+   updated to expect this multiple post to occur.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v5.3
+   Platform           Fix Pack 14
+   --------           --------------------
+   AIX                U808477
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY85806
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB MQ FOR AIX
+   
+   
+ * REPORTED COMPONENT ID
+   5724B4101
+   
+   
+ * REPORTED RELEASE
+   530
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-06-06
+   
+   
+ * CLOSED DATE
+   2006-07-29
+   
+   
+ * LAST MODIFIED DATE
+   2007-07-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB MQ FOR AIX
+   
+   
+ * FIXED COMPONENT ID
+   5724B4101
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R530 PSY
+   UP

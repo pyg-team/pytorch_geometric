@@ -1,0 +1,233 @@
+Title: IBM IV40170: ERRORS WHILE INSTALLING UX AGENT USING NON-ROOT USER - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring 6.2.3 Fix Pack 5 (6.2.3-TIV-ITM-FP0005) [http://www-01.ibm.com/support/docview.wss?uid=swg24035801]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Errors while installing Unix OS agent using non-root user.
+   
+   Recreate Steps:
+   
+   1. Installed, configured and started ITM 623 GA Unix OS agent
+      on Solaris using non-root user.
+   2. While upgrading Unix OS agent to 623 FP2 using non-root user,
+      upgrade failed with the following error:
+   install.sh warning: The userid associated with the "ux" product
+    code and "411" process id does not match the current user,
+   continuing ...
+   install.sh failure: KCI0245E A running process(s) was detected
+   whose associated userid does not match the current userid. The
+   install will be aborted.
+   
+   3. After stopping the Unix OS agent first, the upgrade
+      using non-root user failed with the following error, even
+      when the correct root password is supplied:
+   Root-owned files have been found. Before continuing with this
+   installation, the owner of these files should be changed to
+   "itmuser". This change will be done automatically if you type
+   the root password below:
+    KCIIN2363E ERROR - the password is incorrect.
+    Do you want to try another password [ 1=Yes, 2=No ; default is
+   "1" ] ? 1
+    KCIIN2363E ERROR - the password is incorrect.
+    Do you want to try another password [ 1=Yes, 2=No ; default is
+   "1" ] ?
+    KCIIN2363E ERROR - the password is incorrect.
+    Do you want to try another password [ 1=Yes, 2=No ; default is
+   "1" ] ? 2
+   
+   4. After fixing the file onwership first, the upgrade was
+      successful.
+   5. When configuring the Unis OS agent using non-root user, at
+      the end of the configuration, the following error is
+      displayed:
+   KCIIN2569E ERROR: You are not running as root, and rexec is not
+   enabled on this machine, so your machine boot scripts cannot be
+   updated automatically for you. Please re-run this configuration
+   session as root, or please manually run
+   /ash_623fp2_nonroot/bin/UpdateAutoRun.sh
+   as root Agent configuration completed...
+   Would you like to restart the component to allow new
+   configuration to take effect? [1=Yes, 2=No] (Default is: 1): 1
+   Component can not be managed due to insufficient privileges
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  1) Attempting to upgrade as a nonroot user on a Solaris system
+   after "SetPerm -a" or "secureMain lock" have been executed and
+   the OS agent is running fails with messages similar to the
+   following:
+   
+   install.sh warning: The userid associated with the "ux" product
+   code and "411" process id does not match the current user,
+   continuing ...
+   install.sh failure: KCI0245E A running process(s) was detected
+   whose associated userid does not match the current userid. The
+   install will be aborted.
+   
+   2) Attempting to upgrade as a nonroot user on a UNIX system
+   after "SetPerm -a" or "secureMain lock" have been executed and
+   the OS agent is not running and the REXEC service is not running
+   fails with messages similar to the following for any password
+   entered, even the correct password:
+   
+   Root-owned files have been found. Before continuing with this
+   installation, the owner of these files should be changed to
+   "itmuser".
+   This change will be done automatically if you type the root
+   password below:
+   KCIIN2363E ERROR - the password is incorrect.
+   Do you want to try another password [ 1=Yes, 2=No ; default is
+   "1" ] ? 1
+   
+   3) After configuring the OS agent as a nonroot user on a UNIX
+   system after "SetPerm -a" or "secureMain lock" have been
+   executed displays a message similar to the following:
+   
+   KCIIN2569E ERROR: You are not running as root, and rexec is not
+   enabled on this machine, so your machine boot scripts cannot be
+   updated automatically for you. Please re-run this configuration
+   session as root, or please manually run
+   /opt/IBM/ITM/bin/UpdateAutoRun.sh as root Agent configuration
+   completed...
+   
+   4) After configuring the OS agent as a nonroot user on a UNIX
+   system after "SetPerm -a" or "secureMain lock" have been
+   executed and the OS agent is running displays a message similar
+   to the following:
+   
+   Would you like to restart the component to allow new
+   configuration to take effect? [1=Yes, 2=No] (Default is: 1): 1
+   Component can not be managed due to insufficient privileges
+   
+   5) When running "cinfo -r" on a Solaris or Linux system with the
+   UNIX Logs agent installed user after "SetPerm -a" or "secureMain
+   lock" have been executed shows the process as started by root
+   instead of the nonroot user.
+   
+   6) When running "itmcmd manage" as a nonroot user and attempting
+   to stop the OS agent after it has been started by the same
+   nonroot user after "SetPerm -a" or "secureMain lock" have been
+   executed displays a popup message similar to the following:
+   
+   Component can not be managed due to insufficient privileges
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  1) The code has been modified to always use the 'real' user
+   instead of the 'effective' user when determining whether an
+   agent can be stopped.
+   2) The code has been modified to attempt the SSH and RSH
+   connection protocols in addition to the REXEC connection
+   protocol for root subshell processing. This allows greater
+   chance of success since one of the protocols is enabled to allow
+   remote access to the endpoint.
+   3) The code has been modified to always use the 'real' user
+   instead of the 'effective' user when displaying the status of
+   running processes.
+   
+   The fix for this APAR is contained in the following maintenance
+   packages:
+   | fix pack | 6.2.3-TIV-ITM-FP0005
+   | fix pack | 6.3.0-TIV-ITM-FP0003
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV40170
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   623
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-04-18
+   
+   
+ * CLOSED DATE
+   2014-05-05
+   
+   
+ * LAST MODIFIED DATE
+   2014-05-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * FIXED COMPONENT ID
+   5608A41CI
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R623 PSY
+   UP

@@ -1,0 +1,154 @@
+Title: IBM PI32587: SYNERGY FOR ECLIPSE INTEGRATION DOES NOT WORK WITH ORACLE JRE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The IBM Rational Synergy for Eclipse Interface version 7.2.0.3
+   readmeIBM Rational Synergy for Eclipse Interface version 7.2.0.3
+   readme file lists under Compatible products 'Java? Runtime
+   version 1.6.0 or higher. Only 32-bit Java runtime environments
+   are supported at this time.' This does not specify the publisher
+   of the JRE.
+   
+   When using Oracle JRE 1.6, 1.7, and 1.8, the connection from
+   Eclipse to Synergy fails with the message
+   
+    Failed to start connection [CONNECTION NAME].
+   com.telelogic.synergy.integration.util.common.ConnectionExceptio
+   n:
+    Verify that server address, username, and password are correct.
+   If the engine host is an Windows machine, then also check if
+   ccm_ess is running.
+   
+   Using the IBM JRE that ships with IBM Rational Synergy works.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * ALL Platform users                                           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * The IBM Rational Synergy for Eclipse Interface version       *
+   * 7.2.0.3                                                      *
+   * readmeIBM Rational Synergy for Eclipse Interface version     *
+   * 7.2.0.3                                                      *
+   * readme file lists under Compatible products 'Java? Runtime   *
+   * version 1.6.0 or higher. Only 32-bit Java runtime            *
+   * environments                                                 *
+   * are supported at this time.' This does not specify the       *
+   * publisher                                                    *
+   * of the JRE.                                                  *
+   *                                                              *
+   * When using Oracle JRE 1.6, 1.7, and 1.8, the connection from *
+   * Eclipse to Synergy fails with the message                    *
+   *                                                              *
+   *  Failed to start connection [CONNECTION NAME].               *
+   * com.telelogic.synergy.integration.util.common.ConnectionExce *
+   * ptio                                                         *
+   * n:                                                           *
+   *  Verify that server address, username, and password are      *
+   * correct.                                                     *
+   * If the engine host is an Windows machine, then also check if *
+   * ccm_ess is running.                                          *
+   *                                                              *
+   * Using the IBM JRE that ships with IBM Rational Synergy       *
+   * works.                                                       *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Documentation has been updated with Synergy RTC Bridge 1.2 ifix
+   01 release, this is bundled with Rational Synergy 7.2.1.4
+   Fixpack. For more information refer Rational Synergy 7.2.1.4
+   Documentation.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI32587
+   
+   
+ * REPORTED COMPONENT NAME
+   TLOGIC SYNERGY
+   
+   
+ * REPORTED COMPONENT ID
+   5724V66SN
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-01-12
+   
+   
+ * CLOSED DATE
+   2015-09-28
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

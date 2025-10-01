@@ -1,0 +1,15 @@
+Title: IBM After Applying 9.1 Fix Pack 6, the format of the MEMFILE cache file name has changed. - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why has the format of the MEMFILE cache file name changed after applying 9.1 Fix Pack 6? 
+
+CAUSE
+A fix was included in 9.1 Fix Pack 6 that changes the MEMFILE cache file name. This is to be consistent with version 11.3
+
+ANSWER
+Prior to 9.1 Fix Pack 6, the MEMFILE cache file name uses the format lkp##########, where ########## is an integer value. 
+
+After applying 9.1 Fix Pack 6, the MEMFILE cache file name uses the format ODPP.Pxxxxxxxx.Tyyyyyyyy.lkp where xxxxxxxx and yyyyyyyy are hex values.

@@ -1,0 +1,49 @@
+Title: IBM Security Bulletin: Tivoli Endpoint Manager for Remote Control affected by a security Vulnerability in WebSphere Application Server (CVE-2015-1920) - United States
+
+Text:
+PSIRT; CVE-2015-1920 SECURITY BULLETIN
+
+SUMMARY
+ WebSphere Application Server could allow a remote attacker to execute arbitrary code by connecting to a management port and executing a specific sequence of instructions. Embedded WebSphere Application Server is included in Tivoli Endpoint Manager for Remote Control. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2015-1920 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-1920]
+
+DESCRIPTION: WebSphere Application Server could allow a remote attacker to execute arbitrary code by connecting to a management port and executing a specific sequence of instructions.
+CVSS Base Score: 9.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/102404 [https://exchange.xforce.ibmcloud.com/vulnerabilities/102404] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:C/I:C/A:C) 
+
+AFFECTED PRODUCTS AND VERSIONS
+Tivoli Endpoint Manager for Remote Control 8.2.1
+
+REMEDIATION/FIXES
+To specifically address this issue, upgrade your server component. The fix pack can be downloaded from Fix Central.
+
+
+
+Product VRMF APAR Remediation/First Fix Tivoli Endpoint Manager for Remote Control 8.2.1 IV73534 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV73534] Tivoli Endpoint Manager for Remote Control Interim Fix pack 8.2.1-TIV-TEMRC821-IF0012. 
+For more information about 8.2.1-TIV-TEMRC821-IF0012, see http://www-01.ibm.com/support/docview.wss?uid=swg24040017 [http://www-01.ibm.com/support/docview.wss?uid=swg24040017]
+
+Fix pack 8.2.1-TIV-TEMRC821-IF0012 will be released 4th June 2015. WORKAROUNDS AND MITIGATIONS
+None
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 04 June 2015: Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

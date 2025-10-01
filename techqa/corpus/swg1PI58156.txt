@@ -1,0 +1,124 @@
+Title: IBM PI58156: CALCULATING TUPLES IN A CROSSTAB REPORT WILL THROW AN ERROR WHENUSING PREVIEW MODE IN COGNOS WORKSPACE ADVANCED - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Calculating tuples in a crosstab report will throw an error when
+   using Preview mode in Cognos Workspace Advanced.  This happens
+   with Dynamic Cubes and/or TM1 cubes in V 10.2.2 FP4 with DQM.
+   
+   Error: XQE-PLN-0093 The argument at position 2 of 'rolevalue'
+   from the data item '(Central Europe, (E-mail)) + Central Europe,
+   Telephone' is a 'tuple' expression, which cannot be coerced into
+   a 'set' expression.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  create the calculation manually with a query calculation and the
+   tuple function; i.e. tuple ([Products],[Americas])
+   +tuple([Products],[Europe])
+   or
+   creating the report in "Design Mode"  instead of  "Preview Mode"
+   or
+   creating the report in Report Studio (which is the "same" as
+   running the report in CWA in Design Mode)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI58156
+   
+   
+ * REPORTED COMPONENT NAME
+   COG WRKSPC ADV
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12BA
+   
+   
+ * REPORTED RELEASE
+   A21
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-02-26
+   
+   
+ * CLOSED DATE
+   2017-06-13
+   
+   
+ * LAST MODIFIED DATE
+   2017-06-13
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

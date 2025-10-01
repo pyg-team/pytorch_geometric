@@ -1,0 +1,208 @@
+Title: IBM PI40529: SOME CUSTOMERS IN JAPAN DO NOT GET THE INSTALLER DIALOGS FOR SPSS STATISTICS RELEASE 23 FOR MACINTOSH IN JAPANESE LANGUAGE - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You would like to install IBM SPSS Statistics 23 on Macintosh
+   operating systems OSX 10.9.x or 10.10.x. Your macintosh computer
+   interface use Japanese language. When you open Terminal.app on
+   these computers and run the command Locale
+   you see the system locale is Japanese as well:
+   
+   LANG="ja_JP.UTF-8"
+   
+   You downloaded the installer file for release 23
+   SPSSSC_23.0_MAC_OS_ML.dmg on the Mac desktop and start the
+   installer. However, on some Macintosh computer the installer
+   does not start in Japanese language, whereas on other Macintosh
+   computer the installer launch with Japanese language.
+   
+   This issue does not happen on each Macintosh computer 10.9 or
+   10.10. The installer for Macintosh is created by a third party
+   vendor.
+   
+   As a workaround to make sure to have the installation in
+   Japanese language and
+   to have release 23 launch in Japanese user interface language
+   after installation you can perform a silent installation
+   instead.
+   1. Download:
+       IBM SPSS Statistics Client 23.0 Mac OS Silent Multilingual
+   (CN3ELML) 752 MB which is for example part of package: IBM SPSS
+   Statistics Desktop 23.0 for Base and all Modules Mac OS
+   Multilingual eAssembly (CRUM5ML)
+   2. The silent installer file name is then:
+   SPSSSC_23.0_MAC_OS_SILENT_ML.dmg
+   3. Unpack this dmg file on a Macintosh desktop to obtain the bin
+   file: SPSS_Statistics_Installer.bin
+   4. See the documentation for silent installation on
+   Authorized_User_License_Administrator_Guide.pdf
+   
+   ftp://public.dhe.ibm.com/software/analytics/spss/documentation/s
+   tatistics/23.0/en/client/InstallationDocuments/MacOS/Authorized_
+   User_License_Administrator_Guide.pdf
+   5. Edit installer.properties file in a text editor with your
+   companies parameter and authorization code, installation
+   directory etc. Put both files on a location on a Macintosh
+   harddrive. It is important that this file is placed in the same
+   folder as the installer file SPSS_Statistics_Installer.bin
+   6. Open a Terminal.app, cd to the location where you placed the
+   installer files and run the command below with sudo permission:
+   ./SPSS_Statistics_Installer.bin -f ./installer.properties
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  This issue will be addressed in the next Fix Pack. Please refer
+   to the Fix Pack schedule at
+   http://www-01.ibm.com/support/docview.wss?uid=swg21599157 for
+   information on upcoming Fix Packs.
+   If you encounter the issue described above please open a Service
+   Request with IBM SPSS Technical Support.
+   An Interim Fix was developed for customers who need the fix
+   prior to the next upcoming Fix Pack.
+   Please contact Technical Support with reference to APAR PI40529
+   and technote 1959408 about about Interim Fix 013
+   for IBM SPSS Statistics 23.
+   
+   Note: Interim fixes are limited corrections to specific issues
+   reported by one or more customers.
+   They are normally sent only to customers who have reported one
+   of the corrected problems, and who require
+   an immediate correction. Interim Fixes do not address customer
+   enhancement requests, and not all defect
+   corrections can be delivered as Interim Fixes. Due to their
+   urgency Interim Fixes undergo only targeted
+   testing of specific fixes, not full regression testing. If the
+   fix is not urgently required, you may prefer
+   to wait for a scheduled Fix Pack Release, which will be fully
+   regression tested. Interim Fix
+   corrections, once fully regression tested, are automatically
+   included in a future Fix Pack.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * see APAR text                                                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * This issue has been addressed in IBM SPSS Statistics Fix     *
+   * Pack 2 (23.0.0.2)                                            *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * This issue has been addressed in IBM SPSS Statistics Fix     *
+   * Pack 2 (23.0.0.2)                                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This issue has been addressed in IBM SPSS Statistics Fix Pack 2
+   (23.0.0.2)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI40529
+   
+   
+ * REPORTED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * REPORTED COMPONENT ID
+   5725A54ST
+   
+   
+ * REPORTED RELEASE
+   N00
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-05-06
+   
+   
+ * CLOSED DATE
+   2015-09-18
+   
+   
+ * LAST MODIFIED DATE
+   2015-09-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SPSS STATISTICS
+   
+   
+ * FIXED COMPONENT ID
+   5725A54ST
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RN00 PSN
+   UP
+   
+   
+ * RN00 PSY
+   UP

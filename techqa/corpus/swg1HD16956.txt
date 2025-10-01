@@ -1,0 +1,238 @@
+Title: IBM HD16956: LOGON TO LCA IS LATE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS UNREPRODUCIBLE IN NEXT RELEASE.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Please refer to PPT.
+   << Scenario >>
+   1) R12 has logon slower than R10.
+   It is progress until it logs on.
+   It takes 336 seconds until a main panel is
+   displayed.
+   .
+   LCA Level : R10SP2Drop3MP1
+   Pop-up (*1) : 31 seconds
+   Get Roll (*2) : 86 seconds
+   Main Panel (*3) : 111 seconds
+   .
+   LCA Level : R12SP2
+   Pop-up (*1) : 65 seconds
+   Get Roll (*2) : 291 seconds
+   Main Panel (*3) : 336 seconds
+   .
+   (*1) After starting LCA until a logon panel is
+   displayed
+   (*2) Until a role is got
+   (*3) Until a main panel is displayed
+   .
+   <>
+   .
+   Machine : AIX(44p-170)
+   Processor : POWER3-II 1way
+   Memory : 1GB
+   OS : AIX 4.3.3
+   UDB : BD2 v7.2Fixpack10
+   .
+   Machine : AIX(44p-170)
+   Processor : POWER3-II 1way
+   Memory : 1GB
+   OS : AIX 4.3.3
+   UDB : BD2 v7.2Fixpack10
+   .
+   Remark
+   -This defect occurs by "LCA V5R12SP2" +"CATIA
+   V5R12SP2"
+   -This defect occurs in a Customer customize
+   environment.
+   -This defect is regression from LCA
+   V5R10SP2Drop3MP1.
+   -This defect occurred, after carrying out R12 Data
+   Migration.
+   If there is many data, it may be that this defect
+   occurs. ???
+   .
+   Today We founded the fact ;
+   With only one USER ID("ev5r8jap"), performance is
+   bad.
+   The other user ID including
+   .
+   - New ID which was created after data migration of
+   R12
+   - Customer existing IDs which was created with lower
+   level
+   which were migrated from R10 to R12.
+   .
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Logon to LCA is late
+   Please refer to PPT.
+   << Scenario >>
+   1) R12 has logon slower than R10.
+   It is progress until it logs on.
+   It takes 336 seconds until a main panel is
+   displayed.
+   .
+   LCA Level : R10SP2Drop3MP1
+   Pop-up (*1) : 31 seconds
+   Get Roll (*2) : 86 seconds
+   Main Panel (*3) : 111 seconds
+   .
+   LCA Level : R12SP2
+   Pop-up (*1) : 65 seconds
+   Get Roll (*2) : 291 seconds
+   Main Panel (*3) : 336 seconds
+   .
+   (*1) After starting LCA until a logon panel is
+   displayed
+   (*2) Until a role is got
+   (*3) Until a main panel is displayed
+   .
+   <>
+   .
+   Machine : AIX(44p-170)
+   Processor : POWER3-II 1way
+   Memory : 1GB
+   OS : AIX 4.3.3
+   UDB : BD2 v7.2Fixpack10
+   .
+   Machine : AIX(44p-170)
+   Processor : POWER3-II 1way
+   Memory : 1GB
+   OS : AIX 4.3.3
+   UDB : BD2 v7.2Fixpack10
+   .
+   Remark
+   -This defect occurs by "LCA V5R12SP2" +"CATIA
+   V5R12SP2"
+   -This defect occurs in a Customer customize
+   environment.
+   -This defect is regression from LCA
+   V5R10SP2Drop3MP1.
+   -This defect occurred, after carrying out R12 Data
+   Migration.
+   If there is many data, it may be that this defect
+   occurs. ???
+   .
+   Today We founded the fact ;
+   With only one USER ID("ev5r8jap"), performance is
+   bad.
+   The other user ID including
+   .
+   - New ID which was created after data migration of
+   R12
+   - Customer existing IDs which was created with lower
+   level
+   which were migrated from R10 to R12.
+   .
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  THE PROBLEM WAS SUBMITTED ON :
+   ENOVIA VERSION 5 RELEASE 12.
+   THIS PROBLEM IS NOT REPRODUCIBLE ON :
+   ENOVIA VERSION 5 RELEASE 14 GA level AND ON
+   V5R13SP02 and V5R12SP06.
+   .
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   HD16956
+   
+   
+ * REPORTED COMPONENT NAME
+   ENOVIA LCA NT/2
+   
+   
+ * REPORTED COMPONENT ID
+   569151700
+   
+   
+ * REPORTED RELEASE
+   512
+   
+   
+ * STATUS
+   CLOSED UR1
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-01-28
+   
+   
+ * CLOSED DATE
+   2004-02-27
+   
+   
+ * LAST MODIFIED DATE
+   2009-06-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ENOVIA LCA NT/2
+   
+   
+ * FIXED COMPONENT ID
+   569151700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R512 PSN SP51206
+   UP04/03/31 I 1000
+   
+   
+ * R513 PSN SP51302
+   UP04/03/22 N 1000

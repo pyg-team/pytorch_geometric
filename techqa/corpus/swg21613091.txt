@@ -1,0 +1,24 @@
+Title: IBM TPMfOSD large WinPE deployment engine causes failures - United States
+
+Text:
+kernel firmwire TECHNOTE (FAQ)
+
+QUESTION
+ After adding a very large number of device drivers to the WinPE deployment engine, my deployments are failing with the errors:
+
+fatal error at MEM:406: ExtMalloc failed at RAM:72 (902MB) System locked 
+
+[2012/09/20 17:19:36] W <ERR> Error raised by appendToLogFile in sequencer.rbc, line 1502 [GF:183]
+[2012/09/20 17:19:36] W <ERR> No space left on device (EXT2: Not enough free blocks
+
+What is causing these problems? 
+
+ANSWER
+The deployment failures were the result of adding too many device drivers to the WinPE deployment engine.
+
+The "average" size of a WinPE deployment engine is around 200 MB.
+While it is a normal practice possible to add device drivers to the deployment engine, if you add too many, it can result in deployment failures.
+
+An example of "too many device drivers" is an increased in size from 200 MB to 900 MB. In a case like this, we recommend that you create multiple deployment engines, each bound to a subset of target systems types. By doing this, you can ensure that the deployment engine stays a manageable size, less than 500 MB.
+
+The deployment engine is a file in the C:\TPMfOS Files\global\engines directory with the file extension ramd.

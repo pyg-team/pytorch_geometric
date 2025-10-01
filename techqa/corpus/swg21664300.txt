@@ -1,0 +1,60 @@
+Title: IBM The Deployment Environment page in the WebSphere Integrated Solutions Console for IBM Business Process Manager (BPM) is blank and a NullPointerException message is thrown - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You migrate from WebSphere Process Server V7.0.0 Fix Pack 5 to IBM Business Process Manager (BPM) 8.0.1 Fix Pack 1 running with a DB2 database. When you click the Deployment Environment overview page in the WebSphere Integrated Solutions Console, the page is blank. In addition, a NullPointerException message is seen in the SystemOut.log of the Deployment Manager. 
+
+SYMPTOM
+You see a NullPointerException message in the SystemOut.log file of the Deployment Manager that is similar to the following text: 
+
+[1/8/14 15:03:56:401 EET] 00000045 servlet E com.ibm.ws.webcontainer.servlet.ServletWrapper service SRVE0068E: An exception was thrown by one of the service methods of the servlet [action] in application [isclite]. Exception created :
+[java.lang.NullPointerException
+at com.ibm.wbiserver.db.forms.impl.DbProviderFormImpl.getImplementationType(DbProviderFormImpl.java:207)
+at com.ibm.wbiserver.db.forms.impl.FactoryHelper.updateProviderDbType(FactoryHelper.java:137)
+at com.ibm.wbiserver.nd.topology.forms.WBIDataSourceHelper.create(WBIDataSourceHelper.java:376)
+at com.ibm.wbiserver.nd.topology.forms.WBIDataSourceHelper.create(WBIDataSourceHelper.java:341)
+at com.ibm.wbiserver.nd.topology.forms.WBIDataSourceHelper.getAllDataSrcs(WBIDataSourceHelper.java:326)
+at
+com.ibm.ws.console.wbi.dbconfig.DBCDataSourceRTHelper.hasDatasourceCreateTableInstructions(DBCDataSourceRTHelper.java:1139)
+at com.ibm.ws.console.wbi.ndtopology.config.TopologyConfigDetailController.perform(TopologyConfigDetailController.java:90)
+at
+org.apache.struts.tiles.TilesRequestProcessor.processTilesDefinition(Unknown Source)
+...
+] 
+
+
+CAUSE
+This issue has been identified as a product defect under APAR JR49156.
+
+
+RESOLVING THE PROBLEM
+The APAR needs to be installed prior to the migration. However, complete the following steps to resolve the problem if you have already migrated the product and are encountering this issue:
+
+
+ 1. Stop the whole environment.
+    
+    
+ 2. Open the deployment_manager_profile/config/cells/cell_name/wbi-topologies.xml file. The deployment_manager_profile and cell_namevariables refer to their locations within your environment.
+    
+    
+ 3. Change the databaseType attribute in all <provider> elements from "DB2_UNIVERSAL" to "DB2_DATASERVER". For example:
+    
+    <provider xmi:id="WBIDBProvider_1297261191072" scope="Cell=Cell02"
+    databaseType="DB2_DATASERVER"providerType="DB2 Universal JDBC Driver
+    Provider" implementationType="XA data source"
+    dbcomponent="WBI_BPCEventCollector"/>
+    
+    
+ 4. Save the file and start the environment again.
+
+
+Note: Only edit XML and configuration files if explicitly documented or instructed by IBM.
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Migration Linux, Windows 8.0.1.2, 8.0.1.1, 8.0.1 Business Integration IBM Business Process Manager Standard AIX, Linux, Solaris, Windows 8.0.1.2, 8.0.1.1, 8.0.1 
+PRODUCT ALIAS/SYNONYM
+ BPM

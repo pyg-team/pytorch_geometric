@@ -1,0 +1,146 @@
+Title: IBM IY93045: POLICY USING SCHEDULE REPORTS UNEXPECTED ON CALL STATUS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An Impact policy making use of a Schedule with several
+   TimeRangeGroups is reporting incorrect on call statuses for some
+   of these groups.  Certain groups seem to be always on call,
+   while others are always off.  This is often at variance with the
+   configuration of the TimeRangeGroups being used and also with
+   the on call status reported for the TimeRangeGroup when viewed
+   through the Schedule configuration in the Impact GUI.  A full
+   export including TimeRangeGroups, Schedule and Policy have been
+   provided to Impact development for analysis.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No known fix.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All impact users                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The GetScheduleMember(...) function in  *
+   *                      a policy would not get the correct on   *
+   *                      call status for a Schedule member.      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   The time set value in the GetScheduleMember(...) function was
+   too large for the variable in which it was stored; it was
+   stored in an int instead of a long.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  fixed in v3.1 fix pack 4
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY93045
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-12-21
+   
+   
+ * CLOSED DATE
+   2007-04-02
+   
+   
+ * LAST MODIFIED DATE
+   2007-04-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     IMPACT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY
+   UP

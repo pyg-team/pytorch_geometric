@@ -1,0 +1,101 @@
+Title: IBM VMWare VI Agent Distributed Virtual Switch shows no data - United States
+
+Text:
+VI Agent; Distributed Virtual Switch; 5724L92VI; DistributedVirtualPortgroup; NOUPLINK; dvportgroup; ITM TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ VMware VI Agent is not showing any data for the Distributed Virtual Switch. 
+
+SYMPTOM
+The attribute group Distributed Virtual Switches does not return any data and a Severe error is seen in the data provider log. A sample error looks like: 
+SEVERE: Inventory.processUpdate: [New] Error: Encountered a relative 
+of type DistributedVirtualPortgroup mapped to DistributedVirtualPortgroup for property network 
+(com.vmware.vim.ArrayOfManagedObjectReference@123456) concerning (Datacenter) datacenter-1 : TesDataCenter 
+
+In the data provider logs there are entries stating a count of distributed virtual switches as 
+INFO: Inventory.processUpdate: Inventory contains 2 items of type DistributedVirtualSwitchInventoryItem 
+but no data on the TEP for the Distributed Virtual Switch. 
+
+
+CAUSE
+This has been identified as a product defect under APAR IV73046
+
+
+ENVIRONMENT
+Windows Server 2008 R2 6.1 build 7601 Service Pack 1 (amd64)
+VMWare VI Agent 720 FP2 IF3 (Comp ID 5724L92VI)
+
+
+
+DIAGNOSING THE PROBLEM
+Set agent log traces to 
+
+KBB_RAS1=ERROR (UNIT:cps_socket ALL) (UNIT:custom ALL) 
+
+Set Data provider log trace level top FINE 
+
+KVM agent log shows: 
+Starting IRA agent for attribute group Distributed_Virtual_Switches <KVM> 
+("collectData") Requested attribute group 'Distributed_Virtual_Switches' does not exist
+
+Within the kvm_data_provider_xxx.log, we see errors regarding DistributedVirtualPortgroup , but not DistributedVirtualSwitch - for example : 
+
+SEVERE: Inventory.processUpdate: [New] Error: Encountered a relative of type DistributedVirtualPortgroup mapped to DistributedVirtualPortgroup for property network (com.vmware. 
+vim.ArrayOfManagedObjectReference@58145814) concerning (Datacenter) datacenter-31 : Blackthorn 
+
+Later in the log we can see data for DistributedVirtualSwitch, however nothing appears under the agents within TEPS. 
+
+(Folder) group-n112826 : Blackthorn 
+(Folder) group-n285077 : vDS 
+(DistributedVirtualSwitch) dvs-292342 : sb01swvds01 
+(DistributedVirtualPortgroup) dvportgroup-292361 : vnet-10-247-41 
+(DistributedVirtualPortgroup) dvportgroup-292364 : vnet-10-247-64 
+(DistributedVirtualPortgroup) dvportgroup-292363 : vnet-10-247-52 
+(DistributedVirtualPortgroup) dvportgroup-292369 : vnet-10-247-8 
+(DistributedVirtualPortgroup) dvportgroup-292352 : vnet-10-247-16 
+(DistributedVirtualPortgroup) dvportgroup-292353 : vnet-10-247-160
+(DistributedVirtualPortgroup) dvportgroup-292350 : vnet-10-247-104
+(DistributedVirtualPortgroup) dvportgroup-292351 : vnet-10-247-150
+(DistributedVirtualPortgroup) dvportgroup-292356 : vnet-10-247-237
+(DistributedVirtualPortgroup) dvportgroup-292357 : vnet-10-247-238
+(DistributedVirtualPortgroup) dvportgroup-292354 : vnet-10-247-176
+(DistributedVirtualPortgroup) dvportgroup-292355 : vnet-10-247-212
+(DistributedVirtualPortgroup) dvportgroup-292358 : vnet-10-247-25 
+(DistributedVirtualPortgroup) dvportgroup-292359 : vnet-10-247-30 
+(DistributedVirtualPortgroup) dvportgroup-292343 : sb01swvds01-DVUplinks 
+(DistributedVirtualPortgroup) dvportgroup-292347 : vnet-10-247-101
+(DistributedVirtualPortgroup) dvportgroup-292346 : vnet-10-247-100
+(DistributedVirtualPortgroup) dvportgroup-292345 : vmk1-vmot-10-247-99 
+(DistributedVirtualPortgroup) dvportgroup-292344 : vmk0-mgmt-10-247-96 
+(DistributedVirtualPortgroup) dvportgroup-292349 : vnet-10-247-103
+(DistributedVirtualPortgroup) dvportgroup-292348 : vnet-10-247-102
+(DistributedVirtualPortgroup) dvportgroup-292371 : vnet-10-247-95 
+(DistributedVirtualPortgroup) dvportgroup-292360 : vnet-10-247-36 
+(DistributedVirtualPortgroup) dvportgroup-292372 : vnet-10-247-97 
+(DistributedVirtualPortgroup) dvportgroup-292373 : vnet-10-247-98 
+(DistributedVirtualPortgroup) dvportgroup-292366 : vnet-10-247-73 
+(DistributedVirtualPortgroup) dvportgroup-292379 : NOUPLINK 
+(DistributedVirtualPortgroup) dvportgroup-292365 : vnet-10-247-66 
+(DistributedVirtualPortgroup) dvportgroup-292368 : vnet-10-247-76 
+(DistributedVirtualPortgroup) dvportgroup-292367 : vnet-10-247-74 
+(DistributedVirtualPortgroup) dvportgroup-292362 : vnet-10-247-50 
+(DistributedVirtualSwitch) dvs-315575 : sb01swvds-dmz1 
+(DistributedVirtualPortgroup) dvportgroup-315577 : dmz-vnet-10-240-195 
+(DistributedVirtualPortgroup) dvportgroup-315576 : sb01swvds-dmz1-DVUplinks 
+(DistributedVirtualPortgroup) dvportgroup-315579 : dmz-vnet-NOUPLINK 
+(DistributedVirtualPortgroup) dvportgroup-315578 : dmz-vnet-10-240-192 
+
+
+RESOLVING THE PROBLEM
+There is no workaround for this problem. 
+
+The issue is fixed via APAR IV73046:
+http://www-01.ibm.com/support/docview.wss?uid=swg1IV73046 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV73046]
+
+APAR IV73046 is available in 7.2.0-TIV-ITM_VMWVI-FP0003 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Monitoring+for+Virtual+Servers&fixids=7.2.0-TIV-ITM_VMWVI-FP0003&source=SAR]: 
+http://www-01.ibm.com/support/docview.wss?uid=swg24040186 [http://www-01.ibm.com/support/docview.wss?uid=swg24040186]
+
+
+
+PRODUCT ALIAS/SYNONYM
+ 5724L92VI

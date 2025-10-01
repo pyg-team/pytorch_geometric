@@ -1,0 +1,121 @@
+Title: IBM Fix pack 8001 installation fails to validate credentials - ClassNotFoundException during Portal startup - United States
+
+Text:
+Portal 8 8001 fix pack install installation upgrade fail fails failed error validate credentials WRONG_PORTAL_SERVER_CREDENTIAL EJPFD0016E EJPEI0117E PortletStateManagerServiceInitException ClassNotFoundException DeviceClassAccessorFactory TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+During the installation of fix pack 8001, Installation Manager (IM) may fail to validate the credentials due to the Portal server not starting correctly. The validation process starts the Portal server and then runs XMLAccess to verify the credentials. However, this depends on the Portal server being able to start cleanly. 
+
+SYMPTOM
+In the IM GUI, the user would see that IM failed to validate the credentials. In ConfigTrace, the following error is seen: 
+
+===================================
+Target started: action-health-check-validate-was-and-wps-passwords
+
+action-health-check-validate-was-and-wps-passwords:
+[echo] WRONG_PORTAL_SERVER_CREDENTIAL
+Target finished: action-health-check-validate-was-and-wps-passwords
+Target finished: action-health-check-wps-and-was-password
+Thu Jun 13 19:52:09 EDT 2013 
+
+=================================== 
+
+ 
+
+At the corresponding startup in the SystemOut logs, the following startup error is seen: 
+
+ 
+
+===================================
+[6/13/13 19:48:04:120 EDT] 0000001b Servlet E com.ibm.wps.engine.Servlet init EJPFD0016E: Initialization of service failed.
+com.ibm.wps.state.services.exceptions.PortletStateManagerServiceInitException: EJPEI0117E: The portlet state manager cannot be initialized from the following preferences: [System Preference Node: /].
+at com.ibm.wps.services.state.WPPortletStateManagerService.init(WPPortletStateManagerService.java:227)
+at com.ibm.wps.services.portletserviceregistry.StandardServiceSupport.createService(StandardServiceSupport.java:154)
+at com.ibm.wps.services.portletserviceregistry.StandardServiceSupport.getService(StandardServiceSupport.java:124)
+
+Caused by: com.ibm.portal.state.exceptions.StateManagerException:EJPEI0063E: An error occurred in the state manager.
+at com.ibm.wps.state.services.PortletStateManagerServiceImpl.internalInit(PortletStateManagerServiceImpl.java:359)
+at com.ibm.wps.services.state.WPPortletStateManagerService.init(WPPortletStateManagerService.java:224)
+... 42 more
+Caused by: java.lang.ClassNotFoundException: com.ibm.portal.state.accessors.deviceclass.DeviceClassAccessorFactory
+at java.lang.Class.forNameImpl(Native Method)
+at java.lang.Class.forName(Class.java:179)
+at com.ibm.wps.state.services.PortletStateManagerServiceImpl.getAllowedAccessorFactories(PortletStateManagerServiceImpl.java:219)
+at com.ibm.wps.state.services.PortletStateManagerServiceImpl.internalInit(PortletStateManagerServiceImpl.java:346)
+... 43 more 
+
+===================================
+
+CAUSE
+A property that is added during the fix pack install exists prior to starting the upgrade. This can happen after a failed upgrade performs an incomplete rollback, or if a secondary node is synced after the Primary node has been upgraded.
+
+
+
+RESOLVING THE PROBLEM
+If standalone: 
+
+1. Log into the WAS admin console
+2. Navigate to Resources -> Resource Environment Providers
+3. Find the WP PortletServiceRegistryService link and click it
+4. Go to 'Custom Properties'
+5. Delete this property:
+
+com.ibm.wps.services.state.WPPortletStateManagerService.accessorFactory.11
+
+6. Save the changes
+7. Re-attempt the upgrade.
+
+
+If clustered and failing on Primary node:
+1. Log into the Dmgr
+2. Navigate to System Administration -> Node Agents
+3. Uncheck "automatic synchronization" for each node
+4. Navigate to Resources -> Resource Environment Providers
+5. Find the WP PortletServiceRegistryService link and click it
+6. Go to 'Custom Properties'
+7. Delete this property:
+
+com.ibm.wps.services.state.WPPortletStateManagerService.accessorFactory.11
+
+8. Save and sync the changes to the Primary node
+9. Re-attempt the upgrade
+
+
+If clustered and failing on secondary node:
+1. Log into the Dmgr
+2. Navigate to System Administration -> Node Agents
+3. Uncheck "automatic synchronization" for each node
+4. Navigate to Resources -> Resource Environment Providers
+5. Find the WP PortletServiceRegistryService link and click it
+6. Go to 'Custom Properties'
+7. Delete this property:
+
+com.ibm.wps.services.state.WPPortletStateManagerService.accessorFactory.11
+
+8. Save and sync the changes to the secondary node
+9. Add the property back
+10. Save and sync the changes to the Primary node
+11. Re-attempt the upgrade
+
+
+
+If the Dmgr or WAS admin console is unavailable:
+The line below can be removed in place of the above steps to delete the property through the Dmgr or WAS admin console. Then follow the remaining steps above (to sync the changes if clustered, etc.)
+
+<resourceProperties xmi:id="J2EEResourceProperty_1359393390020"
+name="com.ibm.wps.services.state.WPPortletStateManagerService.accessorFactory.11"
+value="com.ibm.portal.state.accessors.deviceclass.DeviceClassAccessorFactory" description="" required="false"/>
+
+from resources.xml in the following locations:
+
+Standalone only:
+<wp_profile root>/config/cells/<cell_name>/nodes/<node_name>/servers/<server_name>/resources.xml
+
+Cluster only:
+<dmgr_profile root>/config/cells/<cell_name>/clusters/<cluster_name>/resources.xml
+
+
+
+
+ * 
+ *

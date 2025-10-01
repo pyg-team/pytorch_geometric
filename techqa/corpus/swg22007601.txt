@@ -1,0 +1,104 @@
+Title: IBM SAP agent does not detect a system down alert - United States
+
+Text:
+rfc sdk transport sap system down crash terminate TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When the SAP system goes down, this is not alerted by the SAP agent 
+
+SYMPTOM
+SAP agent is crashing as soon as the SAP system is going down, and the SAP agent can no longer connect to it
+
+
+CAUSE
+Incorrect SAP RFC library installed on the SAP agent
+
+ENVIRONMENT
+SAP agent on Windows
+
+DIAGNOSING THE PROBLEM
+* in the Windows application and system event logs, crashes are reported for ksaagent_ins.exe:
+Event [35766]:
+Log Name: Application
+Source: Application Error
+Date: 2017-06-30T21: 13: 02.000
+Event ID: 1000
+Task: Application crash event
+Level: Error
+Opcode: information
+Keyword: Classic
+User: N / A
+User Name: N / A
+Computer: hostname.domain
+Description:
+Name of the application in which the problem occurred:
+ksaagent_ins.exe, Version: 7.10.2.0, Time stamp: 0x57870b95
+Name of the failing module: unknown, version: 0.0.0.0, timestamp: 0x00000000
+Exception code: 0xc0000005
+Fault Offset: 0x0000000000000000
+Failing process ID: 0x2c64
+Start time of failed application: 0x01d2efa687fa532f
+Failing application path: C:\IBM\ITM\TMAITM~1\ksaagent_ins.exe
+Failing module path: unknown
+Report ID: 760b7d1d-5d8d-11e7-80da-0050568a6bcc
+The complete name of the failing package:
+Application ID associated with the failing package:
+
+RESOLVING THE PROBLEM
+Download and install the supported RFC library from the SAP Marketplace:
+Please follow the steps to set up the SAP rfc library and make the SAP Agent work
+
+
+
+
+1. Login to service marketplace of SAP http://service.sap.com [http://service.sap.com/]
+2. Select SAP Support portal, login use S-user id
+3. Select Software downloads tab at top
+4. On the left hand panel browse to SAP Software Download Center-> Support Packages and Patches->Browse Our Download Catalog
+5. Click on the Addition Component
+6. Click on the SAP RFC SDK
+7. Depending upon the version of RFC you require, click on either SAP RFC SDK 7.10, 7.11 or 7.20
+
+The supported RFC libraries are:
+
+
+
+RFC SDK Version v620 
+(Nov 2007) v620 IF13 
+(Apr 2011) v620 IF14 
+(Oct 2011) v620 IF15 
+(Aug 2012) v620 IF16 
+(Aug 2013) v710 
+(July 2012) v710 IF1 
+(Nov 2012) v710 FP1 
+(Mar 2013) v710 FP1 IF1 
+(Oct 2013) v710 FP2 
+(Oct 2014) v711 
+(Oct 2013) v711 IF1 
+(Feb 2014) v711 FP1 
+(Jul 2014) v711 FP1 IF1 
+(Jan 2015) v711 FP1 IF2 
+(Aug 2015) v711 FP2 
+(Mar 2016) v7.1.0FP2IF1 
+(Jul 2016) v12 FP6 
+(Nov 2014) v12 FP7 
+(Dec 2014) v12 FP8 
+(Mar 2015) v12 FP9 
+v8.1.1 
+(Jun 2015) v12 FP10 
+v8.1.2 
+(Oct 2015) v711 FP2 
+(Mar 2016) v12 FP11 
+v8.1.3 
+(Apr 2016) v12 FP12 
+v8.1.3.1 
+(Sep 2016) RFC SDK 
+Release Date End of Support SAP Classic RFC SDK 6.20 SAP Classic RFC SDK 6.40 X X X X X SAP Classic RFC SDK 7.00 SAP Classic RFC SDK 7.10 X X X X X X X X X X X X X SAP Classic RFC SDK 7.11 X X X X X X X X SAP Classic RFC SDK 7.20 X X X X X X SAP NW RFC SDK 7.10 SAP NW RFC SDK 7.11 SAP NW RFC SDK 7.20 X X X X X X X X X X X X 
+8. Save the SDK file on your local desktop, extract the files from the download zip files 
+9. Copy SDK library file to agent RFC library folder inside CANDLE_HOME  * For Windows: copy librfc32.dll into %CANDLE_HOME%/TMAITM6 (32bit) or %CANDLE_HOME%/TMAITM6_x64 (64bit) 
+ * For UNIX/Linux: copy librfccm.o, librfcccm.so or librfccm.sl into $CANDLEHOME/{interp}/sa/lib, and add the executable permission (x) for the user that will start the SAP agent
+
+
+
+PRODUCT ALIAS/SYNONYM
+ itcam sap

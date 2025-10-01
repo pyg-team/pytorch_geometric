@@ -1,0 +1,78 @@
+Title: IBM How to Use Configuration Deployment Tool CDT to merge configurations > Append only service flows - United States
+
+Text:
+STERLINGPRI TECHNOTE (FAQ)
+
+QUESTION
+ How to Use Configuration Deployment Tool CDT to merge configurations > Append only service flows 
+
+ANSWER
+1. We figured that as document type is a driver entity we can move all POM related changes into COM assuming COM is our master. Is this fine?
+
+Answer 1. There is no problem with this assumption and that's why we made document type a driver entity. However, this depends a lot on how your system is configured. The data that is moved as part of `a document type will have components (like one you've already found - flows/services etc.) and possibly others like pipeline determination conditions (which are organization specific and moved with an Organization). In this case, if you run Flows as append only and do not modify pipeline determination conditions, you will be OK. However, this is not an exhaustive list - the idea is to find all such things and make sure they don't change in your scenario. My only advice would be to test this out more than anything else in your system because this will be directly touching data. This way you will find almost all such potential problems/scenarios that could result at your site. In contrast to Yantra APIs where the behavior is relatively well defined, this is more of a toolkit that will behave differently for each scenario so will require more due diligence.
+
+2. However there are changes in services and Business rules which if deployed will result in records deleted in COM project. We figured if we use the 'Append Only' feature we can avoid deletion of records on COM. So for e.g. we can specify the 'YFS_SERVICE', 'YFS_FLOW' tables as Append Only and it does not show any deletion records. Is this fine? 
+
+Will it cause duplication of records? 
+
+Also is the Append Only mode cascading or do we need to specify each table/dependent tables i.e for e.g YFS_FLOW, YFS_SUB_FLOW etc...?
+
+Answer 2. As far as business rules/services go, this data should not be shared right down to the row/record level i.e. the same rule or service/flow record should not be updated in both environments. If that is the case, this will not work. If the two environments work off mutually exclusive lists within the same table, you will be OK with append mode. It will not cause duplication of records. Our primary key generation algorithm for each record is the "current date-time" + a unique sequence number. Since these are 2 different databases there is a very-very slim chance that we may generate the same key for records in the same table (i.e. something like 20040129160000143 if the key is generated at the same time instant for records in the same table and the sequence number on both the databases matches at that instant in time) - that is a problem but the probability of that happening for the same table is so low, it can be ignored. It will not cause duplicate records or any such thing. It is important to know that the Append-only mode is really an append and update mode (i.e. if a record has changed in the source, the changes will be applied in the target) - no deletions will be carried out. It will never try to insert duplicate records, if some record is already present in the target db (based on primary key match), it will be updated. There is a down side of append-only - if you legitimately deleted a service/or some other data for your PO document type, it will never get deleted from your COM environment.
+Also, append only is technically not cascaded - it may appear that way because if a parent record is not being deleted, the child record will not be deleted either. But if the parent is being updated/left unchanged, records in the child table may get deleted if not marked as append-only. For example, let's say you have marked Organization as append-only but *did not* mark ShipNode (a dependent table) as append-only. Let's say your starting configuration (in both source and target databases) is 
+Org1 --->ShipNode1, ShipNode2
+Org2 ---> ShipNode3, ShipNode4
+
+Now let's say you deleted Org1 completely and deleted ShipNode4 from Org2 in your source. So your final configuration for the SOURCE database is
+Org2 --->ShipNode3.
+
+When you deploy this data to target, Org1 will not be deleted (because it's marked as append-only) - additionally, all dependents of Org1 (ShipNode1,ShipNode2) will be left intact to preserve integrity of the entity (Organization in this case). The tool cannot decide what the correct configuration for Org1 is so it will leave all dependent things as they were. For Organization2, however, the correct state is known from the Source and it only contains ShipNode3 and no longer contains ShipNode4. So ShipNode4 will be deleted in this case unless it's marked as append-only. So your end configuration in the Target will be
+Org1 --->ShipNode1, ShipNode2
+Org2 ---> ShipNode3
+
+3. Are there any areas we need to take care of if we take this approach to merge?
+
+Answer 3. As I said, the areas that you need to take care of depend on your specific configuration - there is no magic here. My advice is Test,Test and Test - do not assume that this tool will handle everything because it can't.
+
+Thanks.
+
+Addl Notes from Case 25274
+We split their configuration into two sets and now were trying to merge them. and work off a merged database. It was advised that they delete the overlapping entities from one system and then merge the configurations.
+
+For the Org Org Role Org_ShipNode cases. They need to have ORG DEPLOY in APPEND mode,
+but hangoff tables like Org Role and ShipNode should not be deployed in append mode.
+Append mode will not be a direct append, but will work in the context of the parent table.
+
+In a related issue, Yantra also has an open Enh request 
+Case 25378
+------------------
+It is possible in some cases that the users delete some config data and then recreate the same.
+When such an entry is recreated it will get a new primary Key
+Example in ORG_ROLE. where primaryKey is timestampbased and UniqueKey is OrganizationKey+Role
+
+
+Env A Env B
+PrimaryKey UniqueKey PrimaryKey UniqueKey 
+1234 DEFAULT+BUYER 1234 DEFAULT+BUYER 
+
+Uncheck the Buyer Role and Recheck it in Env B.
+the data will become
+Env A Env B
+PrimaryKey UniqueKey PrimaryKey UniqueKey 
+1234 DEFAULT+BUYER 9876 DEFAULT+BUYER 
+
+Now if A is deployed to B in append mode.
+CDT will interpret the record to be an INSERT since it doesnt kind PrimaryKey 1234 in Env B.
+But this Insert will fail because of UniqueKey violation.
+
+The CDT needs to be conscious of this and use the UniqueKey to match records and treat them as Updates instead of Inserts.
+-------------------------------------------------------------------- ------------------------
+
+
+
+HISTORICAL NUMBER
+ PRI49391 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Fact

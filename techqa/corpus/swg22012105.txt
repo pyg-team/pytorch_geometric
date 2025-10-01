@@ -1,0 +1,80 @@
+Title: IBM ECM Starter-Kit MicroTV series - United States
+
+Text:
+microTV; video; YouTube NEWS
+
+ABSTRACT
+ ECM "Starter-Kit" MicroTV (video) series on YouTube -- Five-minutes short videos for new users of FileNet, IBM Content Navigator, and IBM Case Manager! 
+
+CONTENT
+1. ECM Product Naming
+https://www.youtube.com/watch?v=uEOOPz6tbto [https://www.youtube.com/watch?v=uEOOPz6tbto]
+
+2. IBM FileNet at a Glimpse(Content Operation) Part 1 Content Navigator
+https://www.youtube.com/watch?v=buJjfUuyKbo [https://www.youtube.com/watch?v=buJjfUuyKbo]
+
+3. IBM FileNet at a Glimpse(Content Operation) Part 2 WorkplaceXT
+https://www.youtube.com/watch?v=D7WkJYyzBH8 [https://www.youtube.com/watch?v=D7WkJYyzBH8]
+
+4. IBM FileNet at a Glimpse(Content Operation) Part 3 ACCE
+https://www.youtube.com/watch?v=gqUBACHoqUg [https://www.youtube.com/watch?v=gqUBACHoqUg]
+
+5. How IBM FileNet Workflow system works
+https://www.youtube.com/watch?v=5uR6n6fqvFE [https://www.youtube.com/watch?v=5uR6n6fqvFE]
+
+6. Case Manager at a Glimpse
+https://www.youtube.com/watch?v=uf2XqQZxBbY [https://www.youtube.com/watch?v=uf2XqQZxBbY]
+
+7. Data model in FileNet P8
+https://www.youtube.com/watch?v=drA-YCz64Qs [https://www.youtube.com/watch?v=drA-YCz64Qs]
+
+8. FileNet P8 Search--Metadata and Content search
+https://www.youtube.com/watch?v=3JsLRAO7m54 [https://www.youtube.com/watch?v=3JsLRAO7m54]
+
+9. LDAP Configuration in FileNet CPE
+https://www.youtube.com/watch?v=t5moHJ89BGs [https://www.youtube.com/watch?v=t5moHJ89BGs]
+
+10. FileNet P8 Object Security
+https://www.youtube.com/watch?v=SvsevZ-2vNM [https://www.youtube.com/watch?v=SvsevZ-2vNM]
+
+11. Understanding CPE 5.2.1 File Storage Area
+https://www.youtube.com/watch?v=LjuUOhEnci8 [https://www.youtube.com/watch?v=LjuUOhEnci8]
+
+12. Case Manager 5.3.1 installation and configuration for Linux Part 1
+https://www.youtube.com/watch?v=UMwfTR7djGI [https://www.youtube.com/watch?v=UMwfTR7djGI]
+
+13. Case Manager 5.3.1 installation and configuration for Linux Part 2
+https://www.youtube.com/watch?v=oNF9Cg9g_FQ [https://www.youtube.com/watch?v=oNF9Cg9g_FQ]
+
+14. Auditing
+https://www.youtube.com/watch?v=qJhzs4Z4X-M [https://www.youtube.com/watch?v=qJhzs4Z4X-M]
+
+15. IBM ECM Content Engine Sweep feature
+https://www.youtube.com/watch?v=hANIearRPns [https://www.youtube.com/watch?v=hANIearRPns]
+
+16. ECM MustGather walk-through
+https://www.youtube.com/watch?v=HFboSZQfH0g [https://www.youtube.com/watch?v=HFboSZQfH0g]
+
+17. IBM Content Navigator installation high level walk through 1
+https://www.youtube.com/watch?v=tXAXO3_N96A [https://www.youtube.com/watch?v=tXAXO3_N96A]
+
+18. IBM Content Navigator installation high level walk through 2
+https://www.youtube.com/watch?v=W8EGTZ4cD_E [https://www.youtube.com/watch?v=W8EGTZ4cD_E]
+
+19. IBM Content Navigator installation high level walk through 3
+https://www.youtube.com/watch?v=tnPVXSulS3s [https://www.youtube.com/watch?v=tnPVXSulS3s]
+
+20. IBM ECM CPE Installation High level Walk through 1
+https://www.youtube.com/watch?v=buC-3RorV5A [https://www.youtube.com/watch?v=buC-3RorV5A]
+
+21. IBM ECM CPE Installation High level Walk through 2
+https://www.youtube.com/watch?v=8-NbUBBYT-w [https://www.youtube.com/watch?v=8-NbUBBYT-w]
+
+22. IBM ECM CPE Installation High level Walk through 3
+https://www.youtube.com/watch?v=vUvYcGvqPzk [https://www.youtube.com/watch?v=vUvYcGvqPzk]
+
+23. IBM ECM CPE Infrastructure domain site and object stores creation 1
+https://www.youtube.com/watch?v=chrYvDzMw70 [https://www.youtube.com/watch?v=chrYvDzMw70]
+
+24. IBM ECM CPE Infrastructure domain site and object stores creation 2
+https://www.youtube.com/watch?v=kRFNfItKUew [https://www.youtube.com/watch?v=kRFNfItKUew]

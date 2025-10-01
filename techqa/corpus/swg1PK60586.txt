@@ -1,0 +1,174 @@
+Title: IBM PK60586: ClearCase project explorer cannot show Properties for CQ integra tion - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PERMANENT RESTRICTION.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   - Operating System: Unix
+    - Product name: ClearQuest
+    - Product Version: 7.0.1
+   Description of problem:
+   ClearCase Project explorer throws an error when trying to check
+   the properties for the CQ integration.
+   Error message: Can't get the ClearQuest database or connection
+   name.
+   Step to reproduce:
+   - Create three ClearQuest connections that contains a CQ
+   database with the same logical name. The CQ Databases have to
+   been UCM enabled and used in a UCM project
+   Example: Connection1 contains db SAMPL, Connection2 contains a
+   db called SAMPL and Connection3 contains a db called SAMPL.
+   - Make sure that all CQ registry information is readable like:
+   drwxr-xr-x 2 ccadmin seu 7 2007-09-21 11:51 Connection1
+   drwxr-xr-x 2 ccadmin seu 5 2007-12-05 14:29 Connection2
+   drwxr-xr-x 2 ccadmin seu 5 2007-11-08 12:32 Connection3
+   - Make one of the connection "active" with crmregister as
+   follows:
+   1)  Ensure there are no cached credentials to both connections -
+   
+   "crmregister remove -all"
+   
+   2)  To use SAMPL  in Connection1, use the command: "crmregister
+   add
+   -database SAMPL -connection Connection1 -username <user>
+   -password <pass>"
+   
+   3)  Switch  to SAMPL in Connection2, use the command:
+   "crmregister
+   replace -database SAMPL -connection Connection2"
+   
+   - Check with crmregister list the "active" connection
+   - Open ClearCase project Explorer and try to show the project
+   properties for the CQ integration. Error will occure
+   
+   Workaround:
+   1)  Run crmregister list
+   or
+   2) chmod the schema repository directories to 000 expect the
+   "active":
+   d--------- 2 ccadmin seu 7 2007-09-21 11:51 Connection1
+   d--------- 2 ccadmin seu 5 2007-12-05 14:29 Connection3
+   drwxr-xr-x 2 ccadmin seu 5 2007-11-08 12:32 Connection2
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ************************************************************
+   * USERS AFFECTED: ClearCase/ClearQuest integration users
+   ************************************************************
+   * PROBLEM DESCRIPTION: CQ properties dialog gives the error
+   * 'Can't get the ClearQuest database or connection name'
+   * when multiple dbsets are registered that contain the same
+   * user database name.
+   ************************************************************
+   * RECOMMENDATION: Use workaround
+   ************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  We have no plans to change the current behavior.
+   
+   Having multiple dbsets that each contain a user database
+   with the same name is an unsupported configuration.  This is
+   due to a limitation with the current UCM/CQ architecture.
+   
+   Using the 'crmregister replace' command to ensure that only
+   one dbset has cached credentials at a time is a workaround
+   for this issue.  Unfortunately, the problem described in
+   this defect is one limitation that still exists, and cannot
+   be easily addressed due to the same architectural
+   limitations.
+   
+   The recommended workaround is to use the 'crmregister list'
+   command to check which dbset is in use. To find out the CQ
+   user database name that is CQ-enabled, use the 'cleartool
+   lsproject -long' command. To adjust the project policies,
+   right-click the project in Project Explorer and select
+   'policies'.  Or go directly through the ClearQuest client.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK60586
+   
+   
+ * REPORTED COMPONENT NAME
+   CLEARQUEST WIN
+   
+   
+ * REPORTED COMPONENT ID
+   5724G3600
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PRS
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-02-06
+   
+   
+ * CLOSED DATE
+   2008-02-12
+   
+   
+ * LAST MODIFIED DATE
+   2008-02-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

@@ -1,0 +1,23 @@
+Title: IBM What commands can I run to find users or the administrator on my system? - United States
+
+Text:
+curl linux DSXl user admin administrator HOW TO
+
+SUMMARY
+What commands can I run to find users or the administrator on my system? 
+
+OBJECTIVE
+I need to find who is the administrator of my system?
+
+STEPS
+Run the follwoing curl commands on Linux 
+
+'curl -k -X GET https://<URL GOES HERE>/v1/preauth/validateAuth -u <USERNAME>:<PASSWORD>' 
+
+You would use your username and password. 
+
+This will return an `accessToken` 
+
+Then use it to find list of users 
+
+`curl https://<URL>/api/v1/usermgmt/v1/usermgmt/users [https://<URL>/api/v1/usermgmt/v1/usermgmt/users] -H "Authorization: Bearer <ACCESS TOKEN>" -k`

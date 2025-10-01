@@ -1,0 +1,23 @@
+Title: IBM How to use the DotEdit Review, Rescan, and Delete buttons in IBM Datacap Taskmaster Capture - United States
+
+Text:
+DotEdit; DotScan; dotscanfixup; review; rescan; delete; dotedit TECHNOTE (FAQ)
+
+QUESTION
+ In DotEdit, how do I use the Review, Rescan, and Delete buttons in IBM Datacap Taskmaster Capture? 
+
+CAUSE
+DotEdit does not manage page Review, Rescan, or Delete. It sets the status to 79, 70, and 74 respectively. Additional configuration is needed in an application to add functionality for these buttons.
+
+ANSWER
+For Review and Rescan, configure the job to route the batch to a Fixup task where an operator can perform the desired functions. After adding the task in Taskmaster Web Administrator, configure it as follows: 
+
+ 1. In the settings, copy the dotscanfixup.exe.set.xml from the \Datacap\ProgramSet folder to the dco folder of the application. Rename it as needed to match the name of the task (ex: Fixup.set.xml). Selecting DotScan as the Program in Taskmaster Web Administrator does not provide all the options needed for this feature. 
+ 2. With the set.xml file in place, go into the task Setup in Taskmaster Web Administrator. 
+ 3. Under Page Statuses for Fixup, click the plus sign to add a new status. Set the name to: Review and set the value to: 79. 
+ 4. Click the plus sign again to add another new status. Set the name to: Rescan and set the value to: 70. 
+ 5. Under Navigation for Done Page Statuses, remove 70 and 79 from the list. 
+ 6. In the DotScan section, enable Enforce Batch Structure. This adds the Next Low Confidence (LC) button to the window.
+
+
+When a batch appears in DotScan Fixup, a page also appears. This page states that this is an invalid image with a status of Review or Rescan. Additionally, the Next LC button can be used to locate and cycle through the problem pages.

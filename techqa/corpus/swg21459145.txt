@@ -1,0 +1,31 @@
+Title: IBM Rule Studio Plugin to repair a Rule Project - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ This plugin provides action to perform bulk operations on a rule project. Migrate all Decision Tables and Ruleflows from JRules 6.7 format to JRules 7 format, and remove all checkings on decision tables so that building is much faster. Finally if you have members that are defined in the B2X code that do not exist in the BOM an action is provided to remove them automatically. 
+
+ANSWER
+The plugin provides the following actions: 
+
+ * Migrate Ruleflows : force migration of all the ruleflows from format JRules 6.X to JRules 7. 
+ * Migrate DT : force migration of all the decision table from JRules 6.X to JRules 7. 
+ * Repair B2X : will remove all b2x members that are no longer in the BOM for each selected project 
+ * Remove DT Checks : remove the check gap, overlap and cell for all Decision Tables in the selected projects. 
+ * Refactor Ruleflows : fix the rule references in ruleflows copied from a project. This comandwill use the original project to find the missing references and use the name to update UUIDs. The rules referenced in the original project must also be foun in the destination project or one of its dependencies. 
+
+Those actions are active on rule projects selected from a list. In Eclipse they appear in the Menu JRules Add-on. 
+
+To install copy the jar below in the folder <jrules_home>\eclipse\dropins and restart 
+
+JRulesAddOns_2.2.0.jar [/support/docview.wss?uid=swg21459145&aid=2]JRulesAddOns_2.2.0.jar [/support/docview.wss?uid=swg21459145&aid=1] 
+
+The source code is included. It is based on JRules documented API and can be reused to change the current behavior and create your own actions. 
+
+Note: 
+If you have numerous and large Decision Tables or Ruleflows, before performing a migration action disable the option " build automatically" to prevent a peak of memory and CPU usage. 
+Once the migration is completed you can restore the build option.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 7.5 Enterprise

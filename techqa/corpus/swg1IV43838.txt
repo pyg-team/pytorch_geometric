@@ -1,0 +1,198 @@
+Title: IBM IV43838: CANNOT MAKE DESCRIPTION FIELD MANDATORY IN LABOUR REPORTING FOR INVOICE CREATION - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:
+   IBM WebSphere Application Server 7.0.0.15
+   IBM Maximo Asset Management 7.5.0.3
+   Tivoli's process automation engine 7.5.0.3
+   Server OS: Windows Server 2008 R2 6.1 build 7601 Service Pack 1
+   
+   Concerns/Problem:
+   On creation of labour contract entries in labour reporting, when
+   creating an invoice from these labour transactions, the "Create
+   Invoice" dialog box is displayed listing the invoice number and
+   description.
+   Is it possible to make the Description field mandatory when
+   creating invoice from Labor Report application select action
+   menu "Create Invoice" dialog box?
+   
+   
+   When creating an invoice from Labor Report application, Maximo
+   uses the object (CREATEINVOICE) which is a non-persistent
+   object.
+   
+   I have tested this on Maximo demo,
+   1. I tried to set the non-persistent object, CREATEINVOICE, the
+   description field to be required field in Application Designer
+   application, it does not work for me
+   2. I tried to change the CREATEINVOICE description field to
+   required in Database Configuration application, it does not work
+   for me. After set the description be a required field in
+   database, I still can create invoice from Labor Report
+   application select action menu without to enter any data in the
+   invoice description field.
+   3. I have tried to make the invoice table/object description
+   field as required in Application Designer application, but this
+   still not work for the Labor Report create invoice dialog box.
+   4. It works only I changed the Invoice description to required
+   in database configuration application.
+   
+   It seems if you want to make the invoice description to be
+   mandatory, you need to do this from Database Configuration for
+   invoice object.
+   
+   But this causes another issue.
+   When testing, at the point you click the "OK" button when the
+   description is blank you get a message stating the field is
+   mandatory, then you enter a description and click the "OK"
+   button again and the following message appears:
+   "BMXAA4129E - Record already exists for Site=LYB,
+   Invoice=INV-59092. Ensure that the key value for the given
+   record is unique."
+   
+   Maximo neither creates the invoice or lets you save the record
+   and you must cancel the "Create Invoice" dialog box.
+   When reopen the "Create Invoice" dialog box, and enter the
+   description in the field, the invoice is created.
+   But the problem is one invoice number is lost. That is, if at
+   the first time the user does not enter data in the Description
+   field and click "OK" button, Maximo shows error message (field
+   is mandatory), then user has to close the "Create Invoice"
+   dialog box and reopen it again,  it increments to the next
+   invoice number, and one invoice number lost.
+   The client does not want to lose an invoice number as this is a
+   big problem for auditors.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Maximo users who use the Create Invoice functionality in the *
+   * Labor Reporting application.                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * Description made required in Create Invoice dialog was not   *
+   * validated - user could click OK without being prompted with  *
+   * an error saying required field description is blank.         *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to REL 7.5.0.5 or request hotfixes.           *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This is fixed in code.
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   	 | release\fix pack | Interim Fix for Release 7.5.0.5 Product
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV43838
+   
+   
+ * REPORTED COMPONENT NAME
+   WORK & MTRL APP
+   
+   
+ * REPORTED COMPONENT ID
+   TIVOWRKMM
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2013-06-05
+   
+   
+ * CLOSED DATE
+   2013-06-07
+   
+   
+ * LAST MODIFIED DATE
+   2013-06-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WORK & MTRL APP
+   
+   
+ * FIXED COMPONENT ID
+   TIVOWRKMM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

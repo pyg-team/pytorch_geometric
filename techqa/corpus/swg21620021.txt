@@ -1,0 +1,66 @@
+Title: IBM The upgrade6x command hangs when migrating your database from Lombardi Teamworks V6.1 to IBM Business Process Manager (BPM) V7.5.1 - United States
+
+Text:
+migration; upgrade6x ; hang; performace TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you migrate a Lombardi Teamworks V6.x Microsoft SQL database to IBM Business Process Manager V7.5.1, the upgrade6x command might hang after a large number of instances are processed. 
+
+SYMPTOM
+You will notice that there is no CPU consumption for the command and no activity after the following message is added to the upgrade6x log files:
+
+Dec 4, 2012 4:29:56 PM FINE: com.microsoft.sqlserver.jdbc.SQLServerPreparedStatement - SQLServerPreparedStatement:862022: calling sp_prepexec: PreparedHandle:0, SQL:
+INSERT INTO LSW_UPGRADE_PROBLEM (
+PROBLEM_ID,
+PROBLEM_LEVEL,
+DETAILS,
+IS_COMMITTED
+) VALUES (
+@P0,
+@P1,
+@P2,
+@P3
+)
+
+
+CAUSE
+The problem occurs because a large number of records are being updated in the LSW_UPGRADE_PROBLEM table.
+
+RESOLVING THE PROBLEM
+The problem is resolved using APAR JR42957, which is included in IBM Business Process Manager V7.5.1 Fix Pack 1 and Version 8.0.1. 
+
+
+To resolve the problem, complete the following steps: 
+
+ 1. Restore the Lombardi Teamworks V6.1 database.
+    
+    
+ 2. Apply the appropriate version of the Fix Pack to IBM Business Process Manager using the Installation Manager. If you cannot use Installation Manager, see the links that follow these steps.
+    
+    
+ 3. Rerun the upgrade6x command.
+
+
+
+You can also avoid the problem by cleaning up some of the problems like orphan data in the Lombardi Teamworks V6.1 environment. You can check the LSW_UPGRADE_PROBLEM table to identify the problems seen during the database upgrade process. 
+
+APAR JR42957 is available in Fix Central through the following links: 
+
+ * IBM Business Process Manager Standard [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Standard&release=7.5.1.0&platform=All&function=aparId&apars=JR42957&source=fc] 
+ * IBM Business Process Manager Express [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Express&release=7.5.1.0&platform=All&function=aparId&apars=JR42957&source=fc] 
+ * IBM Business Process Manager Advanced [http://www-933.ibm.com/support/fixcentral/swg/quickorder?parent=ibm~WebSphere&product=ibm/WebSphere/IBM+Business+Process+Manager+Advanced&release=7.5.1.0&platform=All&function=aparId&apars=JR42957&source=fc]
+
+
+You can access the previously mentioned Fix Packs at the following URLs:  * IBM Business Process Manager Version 7.5.1 Fix Pack 1 products [http://www.ibm.com/support/docview.wss?uid=swg24033036] 
+ * IBM Business Process Manager Version 8.0.1 products [http://www.ibm.com/support/docview.wss?uid=swg24033777]
+
+RELATED INFORMATION
+#JR42957: UPGRADE FROM 6.1 to 7.5.x FAILS WHEN A SQL CON [http://www.ibm.com/support/docview.wss?uid=swg1JR42957]
+JR42228: PERF: REDUCE DURATION OF TASKS MIGRATION FROM [http://www.ibm.com/support/docview.wss?uid=swg1JR42228]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Express Migration Linux, Windows 8.0.1, 8.0, 7.5.1 Business Integration IBM Business Process Manager Advanced Migration AIX, Linux, Windows 8.0.1, 8.0, 7.5.1 
+PRODUCT ALIAS/SYNONYM
+ BPM

@@ -1,0 +1,221 @@
+Title: IBM IC69973: SENDING MESSAGE FROM WMQ V7 TO WMQ V7 USING A SERVER-REQUESTER  CHANNEL RESULTS IN AMQ6047 AND PROBE ID ZT372000 - United States
+
+Text:
+  FIXES ARE AVAILABLE
+WebSphere MQ V7.0 Fix Pack 7.0.1.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24028106]
+WebSphere MQ V7.0.1 for i5/OS Fix Pack 7.0.1.4 [http://www-01.ibm.com/support/docview.wss?uid=swg24028109]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Using a Server-Requester channel to send a message from one
+   WebSphere MQ v7 queue manager to another v7 queue manager fails
+   with the following error:
+   AMQ6047: Conversion not supported.
+   Explanation:
+   WebSphere MQ is unable to convert string data tagged in
+   CCSID 819 to data in CCSID 932.
+   
+   These are supported CCSID's according to the WebSphere MQ
+   v7 Application Programming Reference Manual.
+   
+   The following FDC's are generated:
+   Probe Id          :- JD514000
+   Component         :- DmQueueManager.onError
+   Process Name      :- D:\IBM\MQ\java\jre\bin\javaw.exe
+   UserApp           :- TRUE
+   Major Errorcode   :- MQRCCF_CCSID_ERROR
+   .
+   Probe Id          :- XC006001
+   Component         :- xcsFreeMemFn
+   Process Name      :- D:\IBM\MQ\java\jre\bin\javaw.exe
+   UserApp           :- TRUE
+   Major Errorcode   :- xecS_I_PRIVATE_MEMORY_ERROR
+   Probe Description :- AMQ6091
+   Arith1            :- 655711848 27155e68
+   Comment1          :- invalid tail tag
+   .
+   Probe Id          :- ZT372000
+   Component         :- zrfPrepareMsgForBackLevel
+   Process Name      :- D:\IBM\MQ\bin\amqrmppa.exe
+   UserApp           :- FALSE
+   Major Errorcode   :- xecX_E_CONV_NOT_SUP
+   Probe Type        :- MSGAMQ6047
+   
+   The third FDC, ZT372000 / zrfPrepareMsgForBackLevel, shows
+   that WebSphere MQ is trying to prepare a message for sending to
+   a pre-v7 queue manager. In this case however, both queue
+   managers are v7.
+   
+   Additional keywords:
+   CCSID codepage conversion
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Use a SENDER-REVEIVER channel to ensure the WMQ v7-v7
+   communication is as efficient as possible.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of Server-Requester channels talking from a V7.0.*
+   queue manager to another V7.0.* queue manager.
+   
+   Platforms affected:
+   All Distributed (iSeries, all Unix and Windows)
+   ****************************************************************
+   PROBLEM SUMMARY:
+   During the initial negotiation of a channel, parameters are
+   agreed by both ends on what attributes the channel will have.
+   
+   When the channel which initiated the connection did not also
+   initiate the negotiation phase (which is the case in a server
+   to receiver setup) then a particular attribute was not being
+   set correctly. This attribute controls whether the channel
+   supports the new V7 message properties, and because it did not
+   get set then when the message tried to flow it is incorrectly
+   converted into a format understandable by pre-MQ v7.0 releases.
+   
+   In the normal case, for example sender to receiver, then the
+   initiator of the channel also initiates the negotiation and
+   this problem does not occur.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere MQ has been modified to correctly negotiate the
+   attribute in question, meaning a v7 server to v7 receiver setup
+   no longer converts into pre-v7 format when transferring a
+   message.
+   
+   Note this change also prevents the need for conversion to
+   occur, however the conversion error itself is addressed under
+   APAR IC64545 [http://www-01.ibm.com/support/docview.wss?uid=swg1IC64545].
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+                      v7.0
+   Platform           Fix Pack 7.0.1.4
+   --------           --------------------
+   Windows            U200323
+   AIX                U835793
+   HP-UX (PA-RISC)    U836458
+   HP-UX (Itanium)    U836463
+   Solaris (SPARC)    U836459
+   Solaris (x86-64)   U836465
+   iSeries            tbc_p700_0_1_4
+   Linux (x86)        U836460
+   Linux (x86-64)     U836464
+   Linux (zSeries)    U836461
+   Linux (Power)      U836462
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC69973
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7220
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-15
+   
+   
+ * CLOSED DATE
+   2010-08-31
+   
+   
+ * LAST MODIFIED DATE
+   2010-08-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ WINDOWS V7
+   
+   
+ * FIXED COMPONENT ID
+   5724H7220
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

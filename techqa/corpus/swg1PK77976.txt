@@ -1,0 +1,125 @@
+Title: IBM PK77976: Job suspending with Job error before finding any links - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS DUPLICATE OF ANOTHER APAR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I have been debugging this escalation through RATLC00571291 as t
+   he symptoms (failure in PageUniqueness) and work around (remove
+   manual explore URLs) are similar. And I can reproduce the proble
+   m with RATLC00571291 here.
+   
+   The following events must happen before inserting a Page into th
+   e Page_JII_ table:
+   1) Insert the Documents contained in the Page into the Doc_JII_
+   table
+   2) Insert the Requests contained with the Page into the Request_
+   JII_ table
+   3) Insert the Page into the Page_JII_ table.
+   
+   The page inserted in the last step contains a reference to the R
+   ootDocId. In order for the Page insert to be successful, this Ro
+   otDocId must already be present in the Doc_JII_ table. If this I
+   d is not present in the Doc_JII_ table, the insert will fail wit
+   h the error 'FOREIGN KEY constraint FK_Doc_Page...', which occur
+   s in both cases.
+   
+   The log entries for foreign key constraint error contain the Roo
+   tDocId as a base64 encoded ID:
+   'RootDocId = w9cync1gWCRtATYfxTVu/g==' 'Batch Accessor'
+   
+   I decoded the value and determined that the ID was not written t
+   o the Doc_JII_ table. However, the ID was written to the Request
+   _JII_ table (the DocId and RequestId are the same). In addition,
+    records for the DocId were not written to the tables DocDirecto
+   ryRef_JII_, DocMessage_JII_ and DocRequestRef_JII_. This narrows
+    the problem down to a specific block of code.
+   
+   I have reproduced the problem on one of my development machines
+   in an install environment. I am now working to reproduce it in a
+    debug environment.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+ *  This APAR is a duplicate of PK77466 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK77466]
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK77976
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL APPSCAN EE
+   
+   
+ * REPORTED COMPONENT ID
+   5724T5200
+   
+   
+ * REPORTED RELEASE
+   540
+   
+   
+ * STATUS
+   CLOSED DUB
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-12-29
+   
+   
+ * CLOSED DATE
+   2009-01-21
+   
+   
+ * LAST MODIFIED DATE
+   2009-01-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

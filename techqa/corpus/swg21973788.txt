@@ -1,0 +1,41 @@
+Title: IBM Puredata System for Analytics  - replacespu script fails to authenticate. - United States
+
+Text:
+puredata password TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ At times the replacespu script will fail when the default password has been changed and not exported to root.
+
+[root@nztest ~]# /nz/kit/bin/adm/tools/replacespu -id 1597
+Logging to file /nz/var/log/replacespu/replacespu20141217174424.log
+
+Logfile: /nz/var/log/replacespu/replacespu20141217174424.log.gz
+ERROR: Unable to read spu information from nzhw
+error connecting to database system
+Password authentication failed for user 'ADMIN'
+
+
+Check the password in bashrc as nz user:
+
+vi ~/.bashrc
+
+
+# -*-shell-script-*-
+# Standard NPS .bashrc for linux
+#
+
+# Source global definitions
+[ 1 -eq "$SHLVL" -a -f /etc/bashrc ] && . /etc/bashrc
+
+# For NPS
+export NZ_USER=admin # Default NZ username
+export NZ_PASSWORD=XxXxXxXx # Default NZ password
+export NZ_DATABASE=system # Default NZ database
+
+
+Copy the user and password lines to clipboard and issue as root user:
+
+export NZ_USER=admin 
+export NZ_PASSWORD=XxXxXxXx
+
+The replace spu should run after this has been done.

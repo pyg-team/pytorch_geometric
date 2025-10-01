@@ -1,0 +1,46 @@
+Title: IBM Extracting a CA Root Certificate from a Digital Certificate - United States
+
+Text:
+CERT; DIGCERT; SSL TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This document provides information about resolving a problem when the error "issuer is not in the certificate database or is not trusted" is received when importing a digital certificate into Digital Certificate Manager. 
+
+RESOLVING THE PROBLEM
+When importing a digital certificate into Digital Certificate Manager (DCM), it may fail with an error message that the issuer is not in the certificate store or is not trusted. The following process shows how to extract the CA certificate from the server certificate. After importing the CA root certificate (and any intermediate CA certificates), the server certificate can be imported. 
+
+Extracting the Root CA Certificate from a Digital Certificate
+
+If the certificate file on your Microsoft Windows PC has an extension of .cer or .crt, it can be opened with the Windows certificate viewer. Do the following: 
+
+1. Double click on the file and you will see a window similar to the following:
+
+In the Certificate window, click on the Certification Path tab. [/support/docview.wss?uid=nas8N1014239&amp;aid=1] 2. Click on the Certification Path tab:
+
+In the Certificate window, highlight the certificate. [/support/docview.wss?uid=nas8N1014239&amp;aid=2] 3. You will see the certificate and the issuing certificate(s). Highlight the top level certificate (or the one you want to generate); this enables the View Certificate button. Click on View Certificate.
+
+In the Certificate window, click View Certificate. [/support/docview.wss?uid=nas8N1014239&amp;aid=3]
+
+A new window will open up and display the certificate that was highlighted:
+
+In the Certificate window, click on the Details tab. [/support/docview.wss?uid=nas8N1014239&amp;aid=4] 4. Click on the Details tab.
+
+In the Certificate window, press the  [/support/docview.wss?uid=nas8N1014239&amp;aid=5] 5. Click on the Copy to File button. This opens a wizard:
+
+Click Next on the Certificate Wizard window. [/support/docview.wss?uid=nas8N1014239&aid=6] [/support/docview.wss?uid=nas8N1014239&aid=6] 6. Click Next. 7. Select Base-64 encoded X.509 (.CER):
+
+Select Base-64 encoded X.509 (.CER) [/support/docview.wss?uid=nas8N1014239&aid=7] [/support/docview.wss?uid=nas8N1014239&aid=7] 8. Specify a file name. You can click on Browse to select the path:
+
+In the Certificate Export Wizard window, specify the file name. [/support/docview.wss?uid=nas8N1014239&aid=8] [/support/docview.wss?uid=nas8N1014239&aid=8] 9. Click Next. 10. Click on Finish:
+
+In the Certificate Export Wizard window, click Finish. [/support/docview.wss?uid=nas8N1014239&aid=9] [/support/docview.wss?uid=nas8N1014239&aid=9]
+
+The file with the name and path you specified will be created and you will get a Success message:
+
+An  [/support/docview.wss?uid=nas8N1014239&amp;aid=10] 11. Move this file to the Integrated File System (IFS) on the IBM System i, and import it as a CA certificate using the following instructions:
+How to Import a CA Certificate into Digital Certificate Manager [http://www-01.ibm.com/support/docview.wss?uid=nas8N1012543] 12. Repeat this process for each intermediate CA certificate in the certification path. 13. Import the server certificate.  
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 6.1 
+HISTORICAL NUMBER
+ 457540658

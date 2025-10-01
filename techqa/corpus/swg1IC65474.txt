@@ -1,0 +1,154 @@
+Title: IBM IC65474: DEPLOY FAILURE MAY CAUSE MULTI-INSTANCE BROKER TO HANG - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  DEPLOY FAILURE MAY CAUSE MULTI-INSTANCE BROKER TO HANG
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Deployment failures may cause a multi-instance broker to hang.
+   This would require the deletion and recreation of the broker.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   All users of WebSphere Message Broker who use multi-instance
+   Brokers.
+   
+   Platforms Affected:
+   All Platforms
+   ****************************************************************
+   PROBLEM SUMMARY:
+   A WebSphere Message Broker user who is using multi-instance
+   Brokers may experience problems during execution.
+   If the multi-instance Queue Manager stops then the Broker's
+   execution groups are not shutdown and the multi-instance Broker
+   may hang and need to be deleted and re-created if an error
+   occurs during the deploy of a message flow.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere Message Broker has been modified so that the
+   execution groups are shutdown when a multi-instance Queue
+   Manager is stopped.
+   WebSphere Message Broker has been modified so that errors
+   occurring during a message flow deploy are correctly handled
+   and will not lead to a multi-instance broker needing to be
+   deleted and re-created.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   V7.0 - Maintenance Level 7.0.0.1
+   
+   The latest available maintenance can be obtained from
+   'WebSphere Message Broker Recommended Fixes'
+   http://www.ibm.com/support/docview.wss?rs=849&uid=swg27006041 [http://www.ibm.com/support/docview.wss?rs=849&uid=swg27006041]
+   
+   If the maintenance level is not yet available, information on
+   its planned availability can be found in 'WebSphere Message
+   Broker Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308 [http://www-1.ibm.com/support/docview.wss?rs=849&uid=swg27006308]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC65474
+   
+   
+ * REPORTED COMPONENT NAME
+   WEB MESSAGE BRO
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0510
+   
+   
+ * REPORTED RELEASE
+   700
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-08
+   
+   
+ * CLOSED DATE
+   2010-03-29
+   
+   
+ * LAST MODIFIED DATE
+   2010-03-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEB MESSAGE BRO
+   
+   
+ * FIXED COMPONENT ID
+   5724J0510
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R700 PSY
+   UP

@@ -1,0 +1,19 @@
+Title: IBM Web Page in DASH Web Widget Does Not Load - United States
+
+Text:
+DASHL2; DASHL2FAQ; web widget; blank; page; open TECHNOTE (FAQ)
+
+QUESTION
+ How can I open a web page successfully using the Web widget in the Dashboard Application Service Hub (DASH) ? 
+
+CAUSE
+Using the Web widget in DASH, trying to open a web page like:
+
+http://www.ibm.com [http://www.ibm.com]
+
+might result in a blank page being displayed.
+
+ANSWER
+Newer version of browsers started being more particular how pages are being called within a page. If the parent page (DASH) is loaded as https:// it won't let you load just http:// in the iframe.
+
+Try using https://www.ibm.com [https://www.ibm.com] instead.

@@ -1,0 +1,54 @@
+Title: IBM Cannot find the specified class com.ibm.websphere.ssl.protocol.SSLSocketFactory - United States
+
+Text:
+RAD; JRE; JDK; SSL; https; classnotfoundexception; 7014264; SocketException TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In IBM Rational Application Developer (RAD) v8.0.x and WebSphere Application Server Developer Toolkit for Eclipse (WDT) v8.0.x, using the Eclipse plugin for Microsoft Visual Studio Team Explorer Everywhere (TEE) 2010 with SP1 (v10.1), you encounter a socket exception when trying to connect to a Microsoft Team Foundation Server (TFS) server via HTTPS with an error. 
+
+SYMPTOM
+The full error message is:
+
+java.net.SocketException: java.lang.ClassNotFoundException: Cannot find the specified class com.ibm.websphere.ssl.protocol.SSLSocketFactory
+
+
+
+RESOLVING THE PROBLEM
+The key point is that Java only allows one default SSL connection factory class for a JVM. While it is possible to have more than one SSL socket factory, only one default SSL socket factory can be set. Once the default SSL socket factory is set and initialized, it cannot be changed to another SSL socket factory. In the above error the WebSphere SSL socket factory could not be found.
+
+
+There is a limited workaround explained at the Rational Application Developer Information Centers (IC): 
+v7.5: Problems working with a secured server using SSL connections [http://publib.boulder.ibm.com/infocenter/radhelp/v7r5/index.jsp?topic=%2Fcom.ibm.ws.ast.st.v6.ui.doc%2Ftopics%2Frssl_isUseIBMSSLSocketFactory.html] 
+v8.0: Problems working with a secured server using SSL connections [http://publib.boulder.ibm.com/infocenter/radhelp/v8/index.jsp?topic=/com.ibm.servertools.doc/topics/rssl_isUseIBMSSLSocketFactory.html] 
+v8.5: Problems working with a secured server using SSL connections [http://publib.boulder.ibm.com/infocenter/radhelp/v8r5/index.jsp?topic=/com.ibm.servertools.doc/topics/rssl_isUseIBMSSLSocketFactory.html] 
+
+This error is not limited to the Microsoft Team Foundation Server (TFS) server. As mentioned in the above Information Center items there are a variety of tools where this SSLSocketFactory error message is displayed when involving an SSL/HTTPS enabled server.
+
+The workaround involves changing the "isUseIBMSSLSocketFactory={true|false}" property, as described in the above Information Center item(s). This option only works in RAD 7.5.5.x and previous versions due to a change in behavior that affected RAD 8.0.x and WDT 8.0.x and later versions under this APAR:
+PK87906: JSSEPROVIDERFACTORY RETURNS INCORRECT JSSE PROVIDER [http://www.ibm.com/support/docview.wss?uid=swg1PK87906] .
+
+Another workaround if using RAD or WDT versions 8.0.x or later is to close the Servers view, exit RAD, then launch RAD again. Once RAD is restarted, retry the action that was failing previously. This workaround prevents the WAS SSL connection from being initialized first which should prevent the WAS SSL socket factory from being set as the default. Other SSL connections will attempt to use the RAD JDK's default socket factory unless otherwise specified.
+Note: After using this workaround the server state may not be detected correctly until RAD is exited and launched again with the Servers view open since the WAS SSL socket factory is currently required for secure server communication using RAD.
+
+The above Information Center item addresses what is a limitation / requirement in Rational Application Developer for WAS server tools. WebSphere Application Server v6x/7x/8x and the corresponding server tools in Rational Application Developer require using the IBM-specific class from WebSphere Application Server: 
+
+"com.ibm.websphere.ssl.protocol.SSLSocketFactory" 
+
+ for secure/ssl operations in which Rational Application Developer is an HTTPS/SSL client to a WAS server. Rational Application Developer attempts to use
+"com.ibm.websphere.ssl.protocol.SSLSocketFactory", as the "default" SSL connection factory class to be used with its JVM when communicating with a secure WAS server.
+
+Currently, WAS will always set the "default" SSL socket factory to the WebSphere SSL socket factory when RAD tries to establish a secure connection to WAS server no matter whether isUseIBMSSLSocketFactory is set to true or false due to the change in behaviour caused by APAR PK87906 as mentioned above. Once a WAS server configuration exists and the Servers view is open in RAD's workspace on startup, this problem will be present. A non-WAS client such as (M)TFS using the RAD JRE will encounter the reported error in most cases due to the WAS server connection being initialized before other SSL connections are attempted. 
+
+ 
+
+Background:
+
+In the past, the WebSphere Application Server (WAS) federated profile creation required using the WebSphere SSL socket factory. Fortunately this problem does not exist anymore. However, in certain areas WAS will just use the default SSL socket factory, and in their environment, their WAS java environment always defaults the SSL socket factory to the WebSphere SSL socket factory.
+
+There is work in progress to find out the limitations of using non-WebSphere SSL socket factories to connect to the WAS server. Specifically, the use of RAD's default SSL socket factory is being investigated to discover any problems when RAD tries to establish a secure connection to WAS servers. This investigation will ultimately depend on WAS security limitation requirements. 
+
+ 
+
+ 
+
+Note: IBM Rational Application Developer "Server Tools for WebSphere Application Server" require using the IBM JDK shipped with the product. This is documented in the System Requirements for Rational Application Developer for WebSphere Software [http://ibm.com/support/docview.wss?uid=swg27014264].

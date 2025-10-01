@@ -1,0 +1,26 @@
+Title: IBM How can I find roles assigned to a user directly or thru user groups in TIP - United States
+
+Text:
+TIPL2; TIPL2SEC; check user rols script TECHNOTE (FAQ)
+
+QUESTION
+ In Tivoli Integrated Portal how can I find roles assigned to a user either directly or through user groups? 
+
+ANSWER
+You can login to Tivoli Integrated Portal console and check roles assigned to a user from the GUI:
+1. Roles assigned to a user from:
+Users and Groups --> User Roles
+2. Check if a user is member of some user group(s). You may have to drill down if those groups are member of other groups etc. Then check what Roles are assigned to those groups. It can be done from:
+Users and Groups --> Manage Users 
+Users and Groups --> Group Roles
+
+You can use above method or you can use attached script to achieve the same. The script will check roles assigned to the user directly and through user groups by drilling down group memberships.
+
+To use this script copy the attached script to below dir. Make it executable (chmod +x getAllUserRoles.sh). 
+<TIP_HOME>/profiles/TIPProfile/bin
+
+Run the script as follows. In below command tipadmin is the user who has administrator roles and password is the password for this user. UserId is the id of the user for which you want to check the assigned roles.
+cd <TIP_HOME>/profiles/TIPProfile/bin
+./getAllUserRoles.sh tipadmin password UserId
+
+getAllUserRoles.sh [/support/docview.wss?uid=swg21973674&aid=2]getAllUserRoles.sh [/support/docview.wss?uid=swg21973674&aid=1]

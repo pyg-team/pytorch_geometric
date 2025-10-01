@@ -1,0 +1,20 @@
+Title: IBM Datacap 9.0.1 Performance Scalability, Tuning and Best Practices - United States
+
+Text:
+ WHITE PAPER
+
+ABSTRACT
+ This white paper demonstrates the excellent scalability of Datacap ingestion, along with performance tuning and monitoring recommendations. 
+
+CONTENT
+IBM® Datacap is a complete solution for document and data capture. Datacap scans, classifies, recognizes, validates, verifies, and exports data and document images quickly, accurately and cost effectively. Datacap provides libraries of hundreds of script-based and code-based (.NET) actions to combine the common recognition engines for OCR, ICR, OMR, and bar codes. Datacap accurately captures data from any type of structured, highly variable, or unstructured documents. Datacap can capture typeset text, typewriter and computer print, hand print, bar codes, and check box data. By using the Datacap rules engine, data capture can be tailored to fit the most demanding business requirements and can be changed quickly when business needs change. For indexing applications, Datacap streamlines the manual data entry of index entries by using recognition to automatically identify the index values on each document and to automate the document identification process.
+
+
+This white paper presents the excellent vertical and horizontal scalability demonstrated for three Datacap usage scenarios: 
+
+ * Non-interactive ingestion, by using Rulerunner 
+ * Interactive ingestion, by using Datacap Navigator 
+ * REST API ingestion, by using Datacap Web Services Transactional Endpoint
+
+The white paper also provides performance tuning and monitoring recommendations based on specific settings such as document size, batch size, and numbers of threads. 
+DataCap901PerformanceScalabilityWhitepaper.pdf [/support/docview.wss?uid=swg27048073&aid=2]DataCap901PerformanceScalabilityWhitepaper.pdf [/support/docview.wss?uid=swg27048073&aid=1]

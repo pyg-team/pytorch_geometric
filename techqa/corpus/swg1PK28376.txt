@@ -1,0 +1,255 @@
+Title: IBM PK28376: SHIP INTERNAL DEFECT FIXES FOR WEBSPHERE BUSINESS INTEGRATION SERVER FOUNDATION V5.1.0 FOR Z/OS - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Ship internal defect fixes for WebSphere Business Integration
+   Server Foundation V5.1.0 for z/OS
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere Business Integration  *
+   *                 Server Foundation V5.1.0 for z/OS.           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: APAR PK28376 addresses various defects  *
+   *                      in WebSphere Business Integration       *
+   *                      Server Foundation V5.1.0 for z/OS.      *
+   *                      Application of APAR PK28376 brings      *
+   *                      WebSphere Business Integration          *
+   *                      Server Foundation V5.1.0 for z/OS to    *
+   *                      functional equivalence to WebSphere     *
+   *                      Business Integration Server Foundation  *
+   *                      Version 5.1.1 (Cumulative Fix 5) on the *
+   *                      distributed platform.                   *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   APAR PK28376 addresses various defects in WebSphere Business
+   Integration Server Foundation V5.1.0 for z/OS.  Application of
+   APAR PK28376 brings WebSphere Business Integration Server
+   Foundation V5.1.0 for z/OS to functional equivalence to
+   WebSphere Business Integration Server Foundation Version
+   5.1.1 (Cumulative Fix 5) on the distributed platform.
+   
+   This APAR includes the following WebSphere Business Integration
+   Server Foundation Version 5.1.1 (Cumulative Fix 5) distributed
+   Platform fixes:
+   
+   APAR   Description
+   IY80823 Performance Improvement For Asynchronous JMS Activity
+           Invocations.
+   IY81213 Wrong Jms Binding Generated For Two-Way Long-Running
+           Processes.
+   IY81602 Wsdlexception Resolving Refernece With Relative Path
+   IY82498 CBE For Activity Started Event With Large Potential
+           Owners List Can Exceed The 1024 Character CEI Limit.
+   IY83897 Starting Application Automatically On A Clustered
+           Environment After Deployment With Deploybpel.Jacl
+           Fails.
+   IY84322 Incorrect Cycle Detection For Ldap Groups.
+   IY84422 Older Process Versions Fail With Com.Ibm.Bpe.Api.
+           EngineWrongMessageTypeException.
+   IY84824 PROBLEM RESOLVING XSD FILES WHEN UPGRADING FROM SP1 TO
+           SP4 AND HIGHER.
+   IY84826 Nullpointerexception When Emitting Variable_Updated
+           Events With Code 21090.
+   IY85210 Apostrophe In Userid Not Correctly Handled When
+           Generating Sql For Queryworkitem Call.
+   IY85215 Staffquery Calls May Result In An Ora-00001 Error
+           Due To A Duplicate Internal Calculation & Update In
+           Database.
+   IY85527 Bpel Activity Fails To Stay In Waiting State.
+   IY85532 Supporting Hextoraw When Filling In Raw Column Type
+           Data For Joins And Comparisons In Sql Statements
+           To Improve The Performan.
+   
+   IY85538 The Tomconcurrencyexception Should Lead To Arollback,
+           Followed By A Retry.
+   IY85637 No Exeption Printed Out In Systemout.Log When A Database
+           Update Operation Fails.
+   IY85714 An Error Has Occurred In Staff Resolution.
+   PK19063 Websphere Nodeagent Consumes High CPU.
+   PK20155 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK20155] Deployment Manager Deadlock In Wlm Notifications (Hang).
+   PK21972 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK21972] Getting Corba Unknown Errors. Need To Increase The Size
+           Of The Recovery Logs.
+   PK22177 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK22177] Jspbatchcompiler On Adminconsole.Ear With Pme Support
+           Throws Cannot Resolve Symbol: Variable Readonly.
+   PK24294 Prerequisite Check Fails When Installing Wbisf Cumulativ
+           Fix 5.1.1.4 On Websphere 5.1.1.10.
+   
+   IY76465 The Cei Message Created Due To Process Completed Event
+           (21004) Is Formatted Incorrectly. A Aiid Is Set As
+           'Ecscurrentid'.
+   IY76525 Fdml Process Choreographer Web Service Invocations Fail
+           When The System Doesn't Have Access To The Internet.
+   IY76537 Pick Activity In A Loop Doesn't Clean Up After Itself Wh
+           It Reaches Its Timeout.
+   IY77549 Avoid Discrepency Between The Audit Log And The CEI Data
+   IY77552 Bpc Engine Is Always Trying To Load The Plugin(SOP).
+   IY78536 [http://www-01.ibm.com/support/docview.wss?uid=swg1IY78536] 17058 - Unprintable Characters Are Not Translated Correc
+           By RACF Agent.
+   IY79329 Variable Event Doesn't Carry Over Either Ecsparentid Or
+           Ecscurrentid.
+   IY79765 Deleteauditlog.Jacl Using -Cluster Fails.
+   IY79813 Subprocess In Loop Causing To Many Work Items.
+   IY79814 Process Early Binding Not Working Corretly For Messages
+           From A Hand Written Jms Client.
+   IY79917 Deadlock using the sendEvent() API with process instance
+   IY79930 Trace Enhancements To Allow A Higher Resolution Of Datab
+           Access Statements.
+   IY80334 Wrong Error Message Regarding Null Pointer Exception.
+   PK14291 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK14291] WLM Fix for JTS Interface Changes from 5.0 -> 5.1
+   PK14638 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK14638] After Applying Cumulative 5.1.1.5 And Above, Dyanmicquer
+           Will Not Longer Start.
+   PK15353 Users Affected: 5.0.2.X Pme And 5.1.1.X Wbi Users Who Ar
+           Running With Security And Client Certificates Disabled.
+   
+   For APAR details please see the WebSphere Business
+   Integration Server Foundation Version 5.1.1 defect
+   list at URL:
+   
+   http://www-1.ibm.com/support/docview.wss?rs=1079&uid=swg27005358 [http://www-1.ibm.com/support/docview.wss?rs=1079&uid=swg27005358]
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  WebSphere Business Integration Server Foundation V5.1.0 for z/OS
+   is modified to be functionally equivalent to WebSphere Business
+   Integration Server Foundation Version 5.1.1 (Cumulative Fix 5)
+   on the distributed platform.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK28376
+   
+   
+ * REPORTED COMPONENT NAME
+   WBI FNDTN SVR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655L8500
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2006-07-19
+   
+   
+ * CLOSED DATE
+   2006-07-20
+   
+   
+ * LAST MODIFIED DATE
+   2008-07-17
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  BBZDRMAK BBZMKDIR BBZ00001 BBZ00026 BBZ00027
+   BBZ00028 BBZ00029 BBZ00030 BBZ00031 BBZ00032 BBZ00033 BBZ00034
+   BBZ00035 BBZ00036 BBZ00037 BBZ00038 BBZ00039 BBZ00040 BBZ00041
+   BBZ00042 BBZ00043 BBZ00044 BBZ00045 BBZ00046 BBZ00047 BBZ00048
+   BBZ00049 BBZ00050 BBZ02480 BBZ02481 BBZ02482 BBZ02483 BBZ02484
+   BBZ02497 BBZ02499 BBZ02512 BBZ02515 BBZ02516 BBZ02519 BBZ02521
+   BBZ02534 BBZ02536 BBZ03152 BBZ03154 BBZ03157 BBZ03166 BBZ03189
+   BBZ03190 BBZ03191 BBZ03192 BBZ03193 BBZ03216 BBZ03217 BBZ03218
+   BBZ03219 BBZ03220 BBZ03221 BBZ03222 BBZ03237 BBZ03239 BBZ03240
+   BBZ03241 BBZ03242 BBZ03243 BBZ03244 BBZ03245 BBZ03247 BBZ03248
+   BBZ03249 BBZ03251 BBZ04486 BBZ04516 BBZ04518 BBZ04530 BBZ04531
+   BBZ04539 BBZ04540 BBZ04541 BBZ04549 BBZ04562 BBZ04564 BBZ04566
+   BBZ04568 BBZ04593 BBZ04620 BBZ04931 BBZ05065 BBZ05067 BBZ05078
+   BBZ05079 BBZ05219 BBZ05230 BBZ05231 BBZ05587 BBZ05589 BBZ05592
+   BBZ05603 BBZ05606 BBZ05732 BBZ05747 BBZ05771 BBZ05941 BBZ06004
+   BBZ06005 BBZ06007 BBZ06009 BBZ06010 BBZ06060 BBZ06295 BBZ06297
+   BBZ06298 BBZ06299 BBZ06302 BBZ06313 BBZ06314 BBZ06429 BBZ06440
+   BBZ06441 BBZ06442 BBZ06940 BBZ07000 BBZ07002 BBZ07013 BBZ07014
+   BBZ07107 BBZ07154 BBZ07155 BBZ07156 BBZ07167 BBZ07168 BBZ07286
+   BBZ07297 BBZ07298 BBZ07310 BBZ07311 BBZ07312 BBZ07316 BBZ07336
+   BBZ07337 BBZ07338 BBZ07341 BBZ07343 BBZ07345 BBZ07358 BBZ07360
+   BBZ07372 BBZ07373 BBZ07374 BBZ07375 BBZ07376 BBZ07377 BBZ07378
+   BBZ07379 BBZ07380 BBZ07381 BBZ07382 BBZ07383 BBZ07434 BBZ07453
+   BBZ07454 BBZ07455 BBZ07457 BBZ07479 BBZ07480 BBZ07486 BBZ07498
+   BBZ07499 BBZ07500 BBZ07501 BBZ07502 BBZ07503 BBZ07504 BBZ07505
+   BBZ07506 BBZ07507 BBZ07558 BBZ07576 BBZ07598 BBZ07599 BBZ07604
+   BBZ07622 BBZ07635 BBZ07648 BBZ07650 BBZ07652 BBZ07654 BBZ07656
+   BBZ07658 BBZ07660 BBZ07661 BBZ07662 BBZ07664 BBZ07665 BBZ07666
+   BBZ07696 BBZ07697 BBZ07701 BBZ07703 BBZ07705 BBZ11085 BBZ12294
+   BBZ12295 BBZ12297 BBZ12298 BBZ12311 BBZ12314 BBZ12315 BBZ12316
+   BBZ12317 BBZ12318 BBZ12319 BBZ12320 BBZ12321
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WBI FNDTN SVR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655L8500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY UK16462
+   UP06/08/04 P F608

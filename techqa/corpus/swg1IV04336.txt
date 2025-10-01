@@ -1,0 +1,156 @@
+Title: IBM IV04336: CEC AGENT IS NOT DELETING REMOVED LPARS FROM THE CEC AGENT LPAR METRICS VIEW - United States
+
+Text:
+  FIXES ARE AVAILABLE
+IBM Tivoli Monitoring: CEC Base Agent 6.2.2.1-TIV-ITM_CEC_BASE-IF0004 [http://www-01.ibm.com/support/docview.wss?uid=swg24030966]
+IBM Tivoli Monitoring: CEC Base Agent 6.2.2.2-TIV-ITM_CEC_BASE-IF0005 [http://www-01.ibm.com/support/docview.wss?uid=swg24038249]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  APAR Type:            Field
+   Approver Initials:    sn
+   Severity:             1
+   Reported Release:     624
+   Compid:               5724C04CB
+   
+   Problem description
+   CEC agent shows the removed LPARS in LPAR Metrics view. cec
+   agent does not support the LPM operations on the cec.
+   
+   RECREATE INSTRUCTIONS: once CEC agent shows all the LPARs,
+   remove one of them and you can see that the CEC agent never
+   removed its entry
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  restart the CEC agent
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   *****
+   * USERS AFFECTED: All users.
+   ****************************************************************
+   *****
+   * PROBLEM DESCRIPTION: If an LPAR is removed after the agent has
+   * discovered it, then the LPAR remains in the LPAR metrics
+   * workspace view.
+   ****************************************************************
+   *****
+   * RECOMMENDATION: Apply 6.2.2.1-TIV-ITM_CEC_BASE-IF0003 or
+   * 6.2.2.2-TIV-ITM_CEC_BASE-IF0001.
+   ****************************************************************
+   *****
+   Interim Fix 6.2.2.1-TIV-ITM_CEC_BASE-IF0003 and
+   6.2.2.2-TIV-ITM_CEC_BASE-IF0001 resolves the problem by
+   correctly
+   handling removed LPARs.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   package:
+   
+      | interim fix | 6.2.2.1-TIV-ITM_CEC_BASE-IF0003
+      | interim fix | 6.2.2.2-TIV-ITM_CEC_BASE-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV04336
+   
+   
+ * REPORTED COMPONENT NAME
+   ITM SE SYSP CEC
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04CB
+   
+   
+ * REPORTED RELEASE
+   622
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-08-03
+   
+   
+ * CLOSED DATE
+   2011-09-12
+   
+   
+ * LAST MODIFIED DATE
+   2011-09-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITM SE SYSP CEC
+   
+   
+ * FIXED COMPONENT ID
+   5724C04CB
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R622 PSY
+   UP

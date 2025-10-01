@@ -1,0 +1,49 @@
+Title: IBM Fix download method for IBM DataPower Gateways - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Fix download enhancements for IBM DataPower Gateways beginning with firmware version 6.0.0 fix packs improved the user experience and enhanced ease-of-use. Firmware packages are now sorted into groups pertaining to the platform and hardware model. 
+
+RESOLVING THE PROBLEM
+Firmware fix packs are available on the Fix Central download site. Follow these steps to access DataPower firmware fix packs: 
+
+
+
+ 1. 
+ 2. Go to the Fix Central web site. [http://www.ibm.com/support/fixcentral]
+    
+ 3. From the Product Group drop-down list, select WebSphere. 
+    
+ 4. From the Product drop-down list, select IBM DataPower Gateways.
+    
+    [/support/docview.wss?uid=swg21376557&aid=1] [/support/docview.wss?uid=swg21376557&aid=1]
+    
+ 5. From the Installed Version drop-down list, select any version or ALL.
+    
+ 6. From the Platform drop-down list, select All and press Continue.
+    
+ 7. From the Identify Fixes page, you can browse all the fixes, or enter a search term such as XI, XS, XA, or your model number such as 9235. Press Continue
+    
+    
+ 8. From the Select fixes page, choose the fix pack you wish to download. 
+    
+    
+    [/support/docview.wss?uid=swg21376557&aid=2] [/support/docview.wss?uid=swg21376557&aid=2]
+    
+    You can then select the fix pack category of interest and view and download the firmware package and related components of your choice. 
+    
+    
+
+
+
+The benefits of using Fix Central include:
+
+
+ * Less error prone sorting of firmware packages by platform and hardware platform. Firmware fix packs can be searched by platform and or model. Soon you will also be able to search via APAR or SPR. 
+ * Faster downloading. You have the option of downloading one or more fixes at the same time using Download Director.
+
+If you have questions about the site, click the Help link in the left navigation bar to view frequently asked questions. If you still have questions, problems, or suggestions, use the Feedback link to post a question to Fix Central support, or contact the IBM help desk as you normally would for IBM DataPower Gateways technical support [http://www.ibm.com/support/docview.wss?rs=2362&uid=swg21236322]. 
+
+Note: Use this knowledge collection [https://www.ibm.com/support/docview.wss?uid=swg27015333] for reference when preparing to upgrade your WebSphere DataPower appliance firmware.

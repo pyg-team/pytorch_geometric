@@ -1,0 +1,54 @@
+Title: IBM Rational Software Architect Crashes with OutofMemoryError, RAM memory allocation, Link Indexer Exception - United States
+
+Text:
+disable; link; memory; indexer; indexing; java; lang; outofmemory; error; out of memory; ram; allocation TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to build a project results in java.lang.OutofMemoryError with IBM Rational Software Architect. 
+
+SYMPTOM
+A specific workspace or project is open in Rational Software Architect. You open Task manager and notice the javaw.exe process growing in size while nothing is done in Rational Software Architect. 
+
+javacoredump files are created inside installation directory as a result of multiple crashes.
+
+This screen capture was taken from Rational Software Architect in another language. 
+
+[/support/docview.wss?uid=swg21638442&aid=1] [/support/docview.wss?uid=swg21638442&aid=1]
+
+
+CAUSE
+There is a memory leak in Rational Software Architect 8.5 caused by the Rational Application Developer package com.ibm.etools.references.
+
+
+DIAGNOSING THE PROBLEM
+The issue description shows that you are facing a memory leak here caused by Link Indexer. To understand if link indexer has anything to do with this problem, see if setting the following environment variable stops the crash: 
+
+
+com.ibm.etools.references.suspendAll=true 
+
+[/support/docview.wss?uid=swg21638442&amp;aid=2]
+
+
+RESOLVING THE PROBLEM
+It should be noted that when projects are setup using the project wizards to add dojo to a project, the dojo libraries are excluded from Link Indexer processing. When you add dojo libraries to a project by copying them in, then you have to exclude the libraries from Link Indexer processing as they should not be used in link indexer. This can be done through Rational Software Architect preferences page: 
+
+
+Configure link preferences [http://www.ibm.com/support/knowledgecenter/SSRTLW_8.5.1/com.ibm.etools.webtoolscore.doc/topics/tconfiglinkprefs.html]
+
+
+You need to take this action through Rational Software Architect preferences page under the menu option Window > Preferences > Web > Links. 
+
+In this page you can exclude specific folder and its contents existing in your project. Take a look at the section "Link indexer rules for ignored resources" on the same Online Help Page of the above link to understand you may exclude specific folder and its contents from being indexed. 
+
+You must click on New and specify the path to folder that contains dojo artifacts. For example: 
+
+path\ 
+path 
+path\*
+
+You can also enter in multiple paths to be sure.
+
+Note: As referenced by the Rational Software Architect and Rational Application Developer component system requirements, the recommended memory is 4 GB. For High End Configuration such as large workspaces, the recommended memory is 6 GB. 
+
+RELATED INFORMATION
+#Rational Application Developer System Requirements [http://www.ibm.com/software/products/en/application#tab_othertab1]

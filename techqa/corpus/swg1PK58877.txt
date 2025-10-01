@@ -1,0 +1,179 @@
+Title: IBM PK58877: ERROR WHEN PUBLISH ENTERPRISE APPLICATION - United States
+
+Text:
+  A FIX IS AVAILABLE
+6.1.1.6: WebSphere Application Server Toolkit Version 6.1.1 Fix Pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24018784]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  when a Enterprise Application is added and published to WAS test
+   environment, there is a error: "publish failed EJB Bean could
+   not be deployed". while there is no ejb beans itself in
+   application.
+   
+   in the .metadata/.log, you may see following error:
+   
+   !ENTRY org.eclipse.wst.server.core 4 0 2008-01-03 11:05:20.565
+   !MESSAGE Publishing failed
+   !SUBENTRY 1 com.ibm.etools.server.task.ejbdeploy 4 0 2008-01-03
+   11:05:20.565
+   !MESSAGE EJB beans could not be deployed
+   !SUBENTRY 1 com.ibm.ws.ast.st.common.core 4 4 2008-01-03
+   11:05:20.565
+   !MESSAGE WebSphere Server Error
+   !SUBENTRY 2 com.ibm.ws.ast.st.v61.core 4 4 2008-01-03
+   11:05:20.565
+   !MESSAGE WebSphere Server Error
+   
+   in the SystemOut.log file in Websphere TE, you may find
+   following.
+   
+   "IWAE0006E Archive is not a valid EAR File because the
+   deployment
+   descriptor can not be found (case sensitive):
+   META-INF/application.xml"
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  change classloader policy to Application and back to Module.
+   when you save, 3 files generated in
+   META-INF/../applications/../defaultAPP/
+   deployment.xml
+   resources.xml
+   variables.xml
+   
+   
+   then the publish works without any error.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of the JAX-WS webservice           *
+   *                 creation tools                               *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Publishing of a JAX-WS application      *
+   *                      fails if the module contains a binary   *
+   *                      archive containing an annotated         *
+   *                      webservice                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The following error occurs during publishing of a JAX-WS
+   application if the module contains a binary archive file
+   containing an annotated webservice:
+   
+   "publish failed EJB Bean could not be deployed"
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The error is happening because the classpath for the module
+   being publish is incorrectly constructed.  Binary archives are
+   added to the classpath with a path relative to the module
+   rather than using the absolute path.  The fix for this APAR is
+   currently scheduled for inclusion in the Rational Application
+   Developer v7.0.0.6 and WebSphere Application Server Toolkit
+   v6.1.1.6 fixpacks.  Please refer to the Recommended Updates
+   page for WebSphere Application Server Toolkit delivery
+   information:
+   http://www.ibm.com/support/docview.wss?uid=swg27004980 [http://www.ibm.com/support/docview.wss?uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK58877
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBAPP SERVER A
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0820
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-01-07
+   
+   
+ * CLOSED DATE
+   2008-01-09
+   
+   
+ * LAST MODIFIED DATE
+   2008-01-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBAPP SERVER A
+   
+   
+ * FIXED COMPONENT ID
+   5724J0820
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

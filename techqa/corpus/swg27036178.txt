@@ -1,0 +1,21 @@
+Title: IBM How to Obtain the IBM PureData System for Analytics Documentation - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ This document describes how to obtain the product documentation for the IBM PureData System for Analytics family of data warehouse appliances. 
+
+CONTENT
+If you have purchased an IBM PureData System for Analytics data warehouse appliance, you can obtain the documentation as a compressed archive file included with each Netezza Platform Software (NPS) software release and service pack. The software releases are available from the IBM Passport Advantage [http://www-01.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm] and IBM Fix Central [http://www-933.ibm.com/support/fixcentral/] support sites. You must have an IBM Web Identity linked to an IBM Customer Number (ICN) to access the Netezza software releases and documentation download packages. 
+
+
+The IBM PureData System for Analytics documentation for NPS release v7.0.3 and NPS release v7.1 is available to the public as part of the IBM Knowledge Center [http://www.ibm.com/support/knowledgecenter/]. In the Table of Contents navigation frame, navigate to the Products > PureSystems > PureData Systems > PureData System for Analytics area to access the documentation. 
+
+The IBM PureData System for Analytics v7.0.3 information center is also available at http://pic.dhe.ibm.com/infocenter/ntz/v7r0m3/index.jsp [http://pic.dhe.ibm.com/infocenter/ntz/v7r0m3/index.jsp]. The product information centers are migrating to the IBM Knowledge Center. Refer to the Knowledge Center for the latest available content.
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ Netezza

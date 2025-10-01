@@ -1,0 +1,167 @@
+Title: IBM IC42600: acro definition changed between CC 4.2 and 6.0 causes Makefile t o fail - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer has noticed a differenc in the definition of a Macro
+   between versions 4.2 and 6.0 when using omake.
+   I managed to reproduce the problem on version 6.0
+   This difference is causing their Makefiles to fail .
+   
+   I also confirm the behavior difference using this Makefile:
+   ----------------------------------------------------
+   all: ""
+           @echo hello all
+   
+   "" :
+           @echo hello empty
+   ----------------------------------------------------
+   
+   
+   I used CC 4.1J instead of CC 4.2. omake in 4.1J works fine.
+   Also,
+   CC 6.0 omake with "-EN" and Microsoft NMAKE Version 6 work. Only
+   CC 6.0 omake with no compat specified reports an error.
+   
+   I didn't find any switch to control the behavior, either.
+   
+   
+   The following is the result of my test using CC 4.1J:
+   ----------------------------------------------------
+   C:\Temp>omake
+   hello empty
+   hello all
+   ----------------------------------------------------
+   
+   
+   The following is the results of my test using CC 6.0 and NMAKE:
+   ----------------------------------------------------
+   C:\Temp>omake
+   omake: Don't know how to make '""'. Stop.
+   
+   C:\Temp>omake -EN
+   hello empty
+   hello all
+   
+   C:\Temp>nmake
+   
+   Microsoft (R) Program Maintenance Utility   Version 6.00.8168.0
+   Copyright (C) Microsoft Corp 1988-1998. All rights reserved.
+   
+   hello empty
+   hello all
+   
+   C:\Temp>
+   ----------------------------------------------------
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  none .
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Omake will now properly process a "" target.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in current release.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC42600
+   
+   
+ * REPORTED COMPONENT NAME
+   RATL CLEARCASE
+   
+   
+ * REPORTED COMPONENT ID
+   5724F1400
+   
+   
+ * REPORTED RELEASE
+   ALL
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2004-09-03
+   
+   
+ * CLOSED DATE
+   2005-08-31
+   
+   
+ * LAST MODIFIED DATE
+   2005-08-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   RATL CLEARCASE
+   
+   
+ * FIXED COMPONENT ID
+   5724F1400
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RALL PSY
+   UP

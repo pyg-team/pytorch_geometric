@@ -1,0 +1,249 @@
+Title: IBM OA30442: NETVIEW RECEIVES MESSAGE AAU059I - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Netview log had many instances of message AAU059I indicating an
+   error in NLDM PIU trace buffer processing.  The problem was
+   complete PIU tracing (CPIU) had resulted in PIUs larger than the
+   default transport buffer size of 4K. VTAM sends as much data as
+   the buffer will hold, truncating any remainder. NLDM uses the TH
+   DCF value to determine length; because the PIU was longer than
+   the available data, the AAU059I was issued.  The message help
+   does not indicate this possibility.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Increase NLDM PIU buffer size in CNMSTYLE to accommodate buffers
+   sent by VTAM; maximum PIU size is 32K.
+   Parm as shipped:  NLDM.PIUTSIZE = 4K
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  PROBLEM CONCLUSION:
+   TEMPORARY FIX:
+   COMMENTS:
+   MODULES/MACROS:
+   SRLS:
+   RTN CODES:
+   APPLICABLE COMPONENT LEVEL/SU:
+   CIRCUMVENTION:
+   MESSAGE TO SUBMITTER:
+   *                      that the PIU received is not valid.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Message AAU059I is sent by NLDM when the PIU length field is
+   larger than the PIU buffer size.  While this may indicate an
+   error in the PIU data, it may also indicate that the PIU is
+   truncated because the PIU buffer is not big enough to hold the
+   complete PIU.  The PIU buffer size defaults to 4K and may be
+   changed by coding a NLDM.PIUTSIZE statement in CNMSTYLE.
+   The message help for AAU059I does not indicate that the PIU
+   buffer may be too small to hold the complete PIU.  There are
+   also too many AAU059I messages issued.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The following are being changed:
+   1.  AAUDPIUA is being changed to only issue AAU059I once every
+       hour if the PIU in question is a complete PIU.  The PIU
+       buffer header and the first 64 bytes of the PIU data are
+       also logged in the NetView log after AAU059I.  This extra
+       information will aid debugging.  The PIU data helps to
+       determine the size of the complete PIU.  An appropriate
+       buffer size can be coded on the NLDM.PIUTSIZE statement to
+       avoid the complete PIU being truncated.
+   2.  New fields are being added to AAUTGLOB so AAU059I will not
+       be issued more than once in an hour when a complete PIU is
+       received and is truncated.
+   3.  AAU05 is being changed so the help for AAU059I will explain
+       what may cause the AAU059I message and what should be done
+       about the situation.
+   4.  In CNMSTYLE, the NLDM.PIUTSIZE is being changed from 4K
+       to 12K to minimize the chance of a complete PIU being
+       truncated.
+   
+   
+   In addition, message help for AAU059I should be changed in the
+   following publications.
+   1.  IBM Tivoli NetView for z/OS V5R2 MESSAGES AND CODES
+       VOLUME 1 (AAU-DSI) SC31696500
+   2.  IBM Tivoli NetView for z/OS V5R3 MESSAGES AND CODES
+       VOLUME 1 (AAU-DSI) SC31696503
+   3.  IBM Tivoli NetView for z/OS V5R4 MESSAGES AND CODES
+       VOLUME 1 (AAU-DSI) SC31696504
+   
+   AAU059I  ERROR WHILE PROCESSING PIU TRACE BUFFER. SOME DATA MAY
+            BE LOST
+   
+   Explanation: The trace buffer processor has detected an error
+   condition.  This indicates that the buffer contains a path
+   information unit (PIU) which is not valid or a complete PIU
+   which is too large for the specified buffer size.  The PIU
+   buffer header (48 bytes) and the first 64 bytes of the PIU data
+   are logged in the NetView Log following this message.  To
+   prevent filling the NetView log with the same message, AAU059I
+   is only sent about once in an hour should the complete PIU
+   truncation problem occur repeatedly.
+   
+   System Action: Detection of an invalid PIU results in
+   termination of further processing of this trace buffer.  A
+   complete PIU which exceeds the buffer size is truncated and
+   retained normally for display.
+   
+   Operator Response: Notify the system programmer.
+   
+   System Programmer Response: If tracing complete PIU (CPIU),
+   increase the NLDM PIU buffer size (NLDM.PIUTSIZE in CNMSTYLE) to
+   accept complete PIUs in their entirety (maximum allowable PIU
+   size is 32K).  You can find the PIU size by locating the string
+   '64 BYTES of PIU DATA' after the AAU059I message.  The PIU size
+   is at offset X'20' into the PIU data.  If not tracing complete
+   PIUs, contact IBM Software Support, providing IBM Software
+   Support with the PIU BUFFER HEADER DATA and the PIU DATA.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   OA30442
+   
+   
+ * REPORTED COMPONENT NAME
+   NETVIEW FOR Z/O
+   
+   
+ * REPORTED COMPONENT ID
+   5697ENV00
+   
+   
+ * REPORTED RELEASE
+   520
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-11
+   
+   
+ * CLOSED DATE
+   2009-10-27
+   
+   
+ * LAST MODIFIED DATE
+   2010-01-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UA50815 UA50816 UA50817 UA50818 UA50819 UA50820 UA50821 UA50822
+   
+   
+
+MODULES/MACROS
+ *  AAUDPIUA AAUTGLOB AAU05    CNMSTYLE
+   
+   
+    
+   
+   
+
+Publications Referenced SC31696504 SC31696503 SC31696500 FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETVIEW FOR Z/O
+   
+   
+ * FIXED COMPONENT ID
+   5697ENV00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R520 PSY UA50815 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA50815]
+   UP09/12/05 P F912
+   
+   
+ * R521 PSY UA50818 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA50818]
+   UP09/12/05 P F912
+   
+   
+ * R522 PSY UA50819 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA50819]
+   UP09/12/05 P F912
+   
+   
+ * R53B PSY UA50816 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA50816]
+   UP09/12/10 P F912
+   
+   
+ * R53E PSY UA50820 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA50820]
+   UP09/12/10 P F912
+   
+   
+ * R53J PSY UA50821 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA50821]
+   UP09/12/10 P F912
+   
+   
+ * R54B PSY UA50817 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA50817]
+   UP09/12/12 P F912
+   
+   
+ * R54E PSY UA50822 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UA50822]
+   UP09/12/12 P F912
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

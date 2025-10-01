@@ -1,0 +1,60 @@
+Title: IBM MQ's support position on Virtualization, low-level hardware, file systems on networks and high availability - United States
+
+Text:
+support position virtualization virtualisation virtualize virtualise file systems high availability failoved fail over backup back-up PRODUCT LIFECYCLE
+
+ABSTRACT
+ You want to know what IBM MQ's support position is on Virtualization, low-level hardware, file systems on networks and high availability. 
+
+CONTENT
+Virtualization Environments 
+
+Defect support is available for Virtualization environments where they relate to releases of the operating system supported by IBM MQ. For IBM MQ for Linux on zSeries, this applies regardless of whether Linux is running natively in an LPAR or within a z/VM. 
+
+Unless stated otherwise, IBM MQ has not been specifically tested in Virtualization environments. IBM MQ Support is therefore unable to assist in issues related to configuration and setup, or issues that are directly related to the Virtualization environment itself. 
+
+If issues arise that are related to the Virtualization environment, you might need to contact the Virtualization environment vendor for support. This statement also applies to shared root configurations, such as AIX LPARs and Solaris Zones. IBM MQ has not been adapted to exploit shared root Virtualization, so some configurations might not be achievable. 
+
+Virtualization environments must also meet the disk requirements for IBM MQ data integrity. See the Disk Virtualization section below. 
+
+Hardware Specifics 
+
+Low-level hardware functionality that is intended to be transparent to applications, such as zSeries Integrated Facility for Linux (IFLs), POWER Simultaneous Multi-Threading (SMT), Micro-Partioning, or specific processor models, are typically not documented in the IBM MQ system requirements. Because these features are intended to be transparent to applications including IBM MQ, then unless documented otherwise they have no impact on the IBM MQ support position. In the event that issues arise that are specific to those environments, the support organization for those environments might need to be involved in problem diagnosis, and might require the issue to be recreated outside of those environments in order to progress the investigation. This is a standard problem diagnosis technique for narrowing down the root cause, and applies to all environments. 
+
+File Systems on the Network and Disk Virtualization 
+
+This statement refers to what IBM Support will investigate, and provide fixes for where possible. IBM has found most file system problems that prevent IBM MQ from working as expected are due to shortcomings in the file system itself, and require fixes from the file system and/or operating system vendor to resolve. For information on what IBM has tested, and known issues with specific file system configurations, see the testing statement for IBM MQ multi-instance queue managers [http://www-01.ibm.com/support/docview.wss?uid=swg21433474]. 
+
+IBM MQ has only been tested in an extremely limited set of NAS/SAN scenarios so it is not possible to confirm whether a specific NAS/SAN environment meets IBM MQ's requirements, and IBM MQ Support is therefore unable to assist in issues related to configuration and setup. 
+
+For its data integrity, IBM MQ is critically dependent on the file system meeting certain requirements, so that the disk 'appears' local. The core requirements are: 
+
+ * When IBM MQ forces a disk write, the data must be committed to disk before the call returns. 
+ * The file system must support file-locking. 
+ * Two or more copies of the same queue manager must not be started using the same queue manager data at the same time, or irrecoverable corruption can result. IBM MQ does not protect against multiple instances of a queue manager being started on multiple operating system (OS) images. IBM MQ does protect against multiple instances of the queue manager being started on the same OS image. 
+ * If a queue manager fails, or if there is a communication failure with the file system, files locked by the queue manager need to be unlocked and made available to other processes without waiting for the queue manager to be reconnected to the file system.
+
+
+Note: some Virtualization environments also virtualize the disk I/O, which can have the effect of caching file writes despite IBM MQ issuing forced disk write calls. Any such environment would not meet the criteria stated above and is therefore explicitly not supported. It is recommended that users check with their Virtualization vendors to understand whether their Virtualization environments meet IBM MQ's disk requirements. IBM MQ can sometimes detect that an environment does not meet its requirements and in such cases IBM MQ will not run and message AMQ7001 is issued. However, this should not be relied upon for all environments. Testing of IBM MQ with IBM's General Parallel File System (GPFS) has been more extensive and no problems have been reported to date. 
+
+If issues arise that are not related to the file system, then IBM MQ defect support will be offered, as per the standard support guidelines. If issues arise that are related to the file system, then potentially the vendor might need to be contacted for support or the issue might need to be recreated outside of that file system environment in order to receive IBM MQ defect support. 
+
+High Availability (HA) 
+
+There are situations where products such as HACMP, Veritas and ServiceGuard are used to control "failover". HA configurations have not been tested by IBM, so code that is needed for configuring, monitoring and starting/stopping queue managers in HA clusters is not supported. 
+
+Support is offered for: 
+1. Queue managers that run in an HA cluster, provided that the queue managers operate in a way similar to a standard one-machine usage. IBM MQ queue managers, channels and application processes must not be able to access IBM MQ data on the shared disk simultaneously from more than one machine at a time unless they are multi-instance. In other words, the shared disk must only be accessed by a single HA node at any one time. The same support position applies, regardless of whether failovers are automatically or manually driven, provided that the IBM MQ code experiences an environment that mimics the one-machine environment. 
+
+Support requests are not rejected simply because HA is mentioned. Standard problem determination procedures are followed to determine where the problem lies. If the problem is found to be with IBM MQ itself and it is not specific to the HA environment then defect support is offered, as per the standard support guidelines. If the problem is found to be specific to the HA configuration or an HA product, then this is beyond the scope of IBM MQ defect support and the HA vendor might need to be contacted by the user.
+
+2. Queue managers running under Microsoft Cluster Server (MSCS) in a Windows environment. This has been supported since IBM MQ 5.3. 
+
+3. Support is offered for IBM MQ issues in a UNIX, Windows, and Linux environment where Symantec Veritas Cluster Server (VCS) is running alongside IBM MQ. If the problem is found to be within IBM MQ itself and is not specific to VCS then defect support is offered, as per the standard support guidelines. If the problem is found to be specific to the VCS environment then MQ support might request that VCS is temporarily shutdown to rule out this possibility, or that the vendor is contacted to assist with problem resolution if this is not possible. If the problem is simple to recreate, customers are encouraged to shut down VCS prior to engaging IBM support to determine which component is at fault, this will help engage the appropriate support team and reach problem resolution more quickly. If the problem persists, restart VCS and contact IBM support. If the problem no longer occurs, restart VCS and contact your VCS vendor for support.
+
+Keywords: support position virtualization virtualisation virtualize virtualise file systems high availability failoved fail over backup back-up
+
+
+
+PRODUCT ALIAS/SYNONYM
+ WMQ MQ

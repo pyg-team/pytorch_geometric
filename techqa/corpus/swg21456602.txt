@@ -1,0 +1,77 @@
+Title: IBM How to update Microsoft SharePoint links after upgrading from Content Collector V2.1.1 to Content Collector V2.2 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ After upgrading from Content Collector V2.1.1 to V2.2, what steps are required to ensure successful resolution of SharePoint links to migrated documents within IBM Content Manager and IBM FileNet P8? 
+
+ANSWER
+To maintain existing SharePoint links to files archived to Content Manager or FileNet P8, you can run a link management task route to update link formats. This action also removes links to moved or deleted migrated content.
+Link Auditing
+Configure and execute respective SP Audit Links task route template (SP Audit CM Links.ctms or SP Audit P8 Links.ctms). 
+
+This task route identifies and reports broken links from your SharePoint server to migrated documents in your Content Manager or FileNet P8 repository. It does not modify the existing links in any way.
+
+Using this task route, you can confirm the existence of links within respective Microsoft SharePoint libraries. The data obtained provides validation of the source and target configurations to be used to execute the SP Manage Links task route.
+
+To create a new task route using the task route template for auditing:
+
+
+ 1. Map the P8 4.x Connection dependency to one of your existing Content Manager or FileNet P8 connections. The task route uses this connection to search within the respective Content Manager or FileNet P8 repository and validate the existence of migrated documents.
+    
+ 2. Map the SP Connection dependency to one of your existing SharePoint Connections. The task route uses this connection to search the respective source locations for existing links.
+    
+ 3. Navigate to the collector's Collection Sources tab. Edit the existing collection source.  1. Within the Libraries configuration, select either specific libraries or the entire site collection to search and collect links. 
+     2. Within the Content Types configuration, select only the Migrated Document Link content type.
+        If IBM FileNet Connectors for Microsoft SharePoint Document Libraries links exist and need to be updated, select the FnDocumentLink content type.
+        
+    
+    
+ 4. Save the task route.
+    
+ 5. Execute the task route by starting the Task Routing Engine. To do so through the Microsoft Windows Start menu, select:
+    Start -> Programs -> IBM Content Collector -> Start Services -> Start Task Routing Engine
+    
+ 6. Analyze the audit log output to validate successful audit processing:  1. Navigate to the created audit log in the location specified in Tools -> Task Route Service Configuration. 
+     2. The audit log contains each link found, collected and processed within the Confirm Document task. Each link is represented by a row entry in the log file.
+        Default configured audit log column data is as follows:
+        Column name Value description CM 8.x/P8 4.x Confirm Document.Document Confirmed True indicates that the target repository contains the document;
+        False indicates that the target repository does not contain the document CM 8.x/P8 4.x Confirm Document.Shortcut URL Content retrieval URL Re-collection.Repository ID ID of target repository of target document Re-collection.Repository Name Name of target repository of target document SP Collection.ID ID of link document within SharePoint SP Collection.Library Name of library containing link document within SharePoint SP Collection.Name Name of link document within SharePoint SP Collection.Site Name of site containing link document within SharePoint 
+     3. Possible outcomes include:  * If the log contains zero or fewer than the expected number of entries, you might need to review and modify the collection configuration to include the locations of the expected links. Then rerun the task route. 
+         * If the log contains the expected number of entries but the CM8.x/P8 4.x Confirm Document.Document Confirmed values are unexpectedly False in most or all instances, the target repository connection configured for the task route might be incorrect. Verify the connection and then rerun the task route. 
+         * If the log contains the expected number of entries and expected CM8.x/P8 4.x Confirm Document.Document Confirmed values, you have verified the expected document links, and can now configure and run the SP Manage Links task route.
+           
+        
+        
+    
+    
+
+Link Management To identify and resolve broken links from your SharePoint server to migrated documents in your IBM Content Manager or FileNet P8 repository, configure and execute the appropriate SP Manage Links task route template (SP Manage CM Links.ctms or SP Manage P8 Links.ctms). This task route deletes unresolvable links and links to missing content, and can update resolvable links.
+The task route uses the latest format to recreate any resolvable links found. It deletes any unresolvable links from the SharePoint library location.
+
+To clean up and update links: 
+
+ 1. Create a new task route using the task route template for managing links.  1. Map the P8 4.x Connection dependency to one of your existing Content Manager or FileNet P8 connections. The task route uses this connection to search within the respective Content Manager or FileNet P8 repository and validate the existence of migrated documents. 
+     2. Map the SP Connection dependency to one of your existing SharePoint connections. The task route uses this connection to search the respective source locations for existing links. 
+     3. Navigate to the collector's Collection Sources tab. Edit the existing collection source. 
+     4. Under Libraries, select either specific libraries or the entire site collection to search and collect links. 
+     5. Under Content Types, select only the Migrated Document Link content type.
+        If IBM FileNet Connectors for Microsoft SharePoint Document Libraries links exist and need to be updated, select the FnDocumentLink content type. 
+     6. Save the task route.
+    
+    
+ 2. Execute the task route by starting the Task Routing Engine. To do so through the Microsoft Windows Start menu, select:
+    Start -> Programs -> IBM Content Collector -> Start Services -> Start Task Routing Engine 
+ 3. Analyze the audit log output to validate successful link management processing.  1. Navigate to the created audit log in the location specified in Tools -> Task Route Service Configuration.
+        The audit log lists each link found, collected, and processed within the Confirm Document task. 
+     2. Possible outcomes include:  * If the log contains zero or fewer than the expected number of entries, you might need to review and modify the collection configuration to include the locations of the expected links. Then rerun the task route. 
+         * If the log contains the expected number of entries but the CM8.x/P8 4.x Confirm Document.Document Confirmed values are unexpectedly False in most or all instances, the task route has deleted the False links from their SharePoint library locations. 
+         * If the log contains the expected number of entries and expected CM8.x/P8 4.x Confirm Document.Document Confirmed values, you have successfully executed the link management processing. You might also want to verify that the updated links resolve. For example, navigate to one of the locations containing an updated link within SharePoint and confirm that the link resolves and returns the expected document content. Or in the case of a deleted link, navigate to one of the locations containing a deleted link within SharePoint and confirm its deletion.
+        
+        
+    
+    
+
+RELATED INFORMATION
+ SharePoint-to-P8 links do not resolve after upgrade [http://www.ibm.com/support/docview.wss?rs=0&uid=swg21456603]

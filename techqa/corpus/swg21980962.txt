@@ -1,0 +1,22 @@
+Title: IBM Single sign-on for IBM Content Navigator Task Manager using CA Siteminder - United States
+
+Text:
+SSO; single sign-on; CA; siteminder; content navigator; ICN; navigator TECHNOTE (FAQ)
+
+QUESTION
+ Is Single sign-on (SSO) for IBM Content Navigator Task Manager component supported using CA Siteminder? 
+
+ANSWER
+CA Siteminder SSO is not supported for Task Manager. The following is a full list of IBM Content Navigator (ICN) components that are not supported for single sign-on when using CA Siteminder: 
+
+
+- IBM Content Navigator for Microsoft Office desktop integration
+- File Sync desktop integration
+- Content Navigator Task Manager 
+
+ 
+
+For more information, refer to the Software Product Compatibility Report [http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/html/prereqsForProduct?deliverableId=A1A66F50BDF311E5843895D6F7A6FCC6&osPlatforms=AIX%7CLinux%7CMac%20OS%7CWindows&duComponentIds=D004%7CD011%7CD008%7CS005%7CS001%7CS002%7CS003%7CS010%7CS007%7CS006%7CS012%7CS013%7CS009&mandatoryCapIds=30%7C126%7C9%7C140%7C61%7C26&optionalCapIds=12%7C125%7C63%7C35%7C221%7C140] for Content Navigator v2.0.3 and its fix packs, in the tab 'Supported Software', section 'Identity Management'. 
+
+RELATED INFORMATION
+ Software Product Compatibility Reports (Related Softwar [http://www-969.ibm.com/software/reports/compatibility/clarity/prereqsForProduct.html]

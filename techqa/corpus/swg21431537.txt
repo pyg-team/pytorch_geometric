@@ -1,0 +1,64 @@
+Title: IBM Installing DB2 Connect Personal Edition only shows product IBM Data Server Client in the selection list of products to install. - United States
+
+Text:
+DB2 Connect Personal Edition; IBM Data Server Client; installing; installation TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ You start the installation of DB2 Connect Personal Edition. The product selection list is presented. You expect to see DB2 Connect Personal Edition as an option but the only option presented is the IBM Data Server Client. 
+
+SYMPTOM
+Launching the installation of DB2 Connect Personal Edition opens the product selection list but only the IBM Data Server Client is in the list. The DB2 Connect Personal Edition product is not presented as an option.
+
+
+CAUSE
+IBM Data Server Client and DB2 Connect Personal Edition are the same product and use the same installer. A trial license is automatically installed which gives you 90 days to evaluate the DB2 Connect Personal Edition capabilities.
+
+RESOLVING THE PROBLEM
+To permanently activate the DB2 Connect Personal Edition capabilities, you must apply the purchased license after install. 
+
+To install DB2 Connect Personal Edition:
+
+
+ 1. Launch the installation for DB2 Connect Personal Edition and select to install the IBM Data Server Client. 
+    
+ 2. Once the installation completes, find and apply the DB2 Connect Personal Edition license. 
+    
+    To apply the license you can use the command:
+    
+    db2licm -a <path to the license file>
+    
+    for example, if license file is on /tmp/db2conpe.lic:
+    
+    db2licm -a /tmp/db2conpe.lic
+    
+    For details on how to find the DB2 Connect Personal Edition license see document How do I download my DB2 license from Passport Advantage in the Related URL section.
+    
+    
+ 3. You can confirm if the license was applied with command:
+    
+    db2licm -l
+    
+    The output must show:
+    Product name: "DB2 Connect Personal Edition" 
+    and
+    Expiry date: "Permanent" 
+    
+    Example of output:
+    db2licm -l 
+    Product name: "DB2 Connect Personal Edition" 
+    License type: "Client Device" 
+    Expiry date: "Permanent" 
+    Product identifier: "db2conpe" 
+    Version information: "9.7" 
+    
+    
+
+RELATED INFORMATION
+#How do I download my DB2 license from Passport Advantag [http://www.ibm.com/support/docview.wss?uid=swg21305417]
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Information Management DB2 for Linux- UNIX and Windows Installation - Licensing 9.7, 10.1

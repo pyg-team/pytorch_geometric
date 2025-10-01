@@ -1,0 +1,229 @@
+Title: IBM Launch the TDWC to directly display the results of a query - United States
+
+Text:
+TDWC; Direct Query; Create URL TECHNOTE (FAQ)
+
+QUESTION
+ How can you create a bookmark in a web browser for specific queries on the Tivoli Workload Scheduler (TWS) Engine using Tivoli Dynamic Workload Console (TDWC)? 
+
+ANSWER
+To create a basic URL to Open TDWC, perform the following steps: 
+1. Define the URL to access the Dynamic Workload Console:
+
+https: //{WebUIHostname:adminSecurePort}/ibm/console/xLaunch.do?pageID=com.ibm.tws.WebUI.External.navigation&showNavArea=false
+
+where:
+
+WebUIHostname is the fully qualified hostname or the IP address of the computer where the Tivoli Dynamic Workload Console is installed.
+
+adminSecurePort is the number of the port on which the Tivoli Dynamic Workload Console is listening.
+
+
+Example: 
+
+https: //mypc:29443/ibm/console/xLaunch.do?pageID=com.ibm.tws.WebUI.External.navigation&showNavArea=false
+
+
+2. Specify the action that you want to run, by specifying the corresponding parameter:
+
+
+&action - indicates the action that you want to perform and can have one of the following values:
+
+BrowseJobs
+ZBrowseJobs
+BrowseJobStreams
+BrowseCriticalJobs
+BrowseWorkstation
+InternalTask
+
+
+3. Specify the engine on which you want to run the query by entering its parameters: 
+
+&hostname - For distributed environments, this is the host name or TCP/IP address of the computer on which the Tivoli Workload Scheduler engine is installed. 
+
+For z/OS environments, this is the host name or TCP/IP address of the computer on which the z/OS connector is installed.
+
+&port - Specifies the port number that is used to connect to the computer on which the Tivoli Workload Scheduler engine or the z/OS connector is installed.
+
+Typically, the default port numbers are:
+
+Default port numbers
+
+Port 
+number Engine
+
+31117 Tivoli Workload Scheduler distributed engine
+
+31127 Tivoli Workload Scheduler for z/OS engine with z/OS connector V.8.3
+
+31217 Tivoli Workload Scheduler for z/OS engine with z/OS connector V.8.5 or higher
+
+&server - This parameter applies to z/OS systems only and is mandatory. It is the name of the remote server of the engine as it was specified in the z/OS connector.
+
+Example: 
+&hostname = webuidev&port = 31217&server = C851
+
+Example of a complete URL: 
+https: //mypc:29443/ibm/console/xLaunch.do?pageID=com.ibm.tws.WebUI.External.navigation&showNavArea=false&action=BrowseJobs&hostname=webuidev&port=31117
+
+Advanced optional parameters: 
+
+Depending on the query whose results you want to view, you can complete your URL with the following parameters.
+
+Monitor Jobs on distributed systems: 
+
+Create a URL by specifying the BrowseJobs action, as described in “Creating a basic URL” on page 77 of the Administrator's Guide.
+
+You can also specify any of the following filters:
+
+&workstation - Filter by the workstation on which the jobs runs.
+&jobstream - Filter by the job stream that contains the jobs.
+&job - Filter by the job name.
+&schedtime - Filter by the job scheduled time.
+&status - Filter by the job status. You can filter by one or more statuses. Possible values are:
+
+W Waiting
+O Successful
+H Held
+R Ready
+E Error
+U Undecided
+S Running
+C Canceled
+B Blocked
+
+&columns - Specify the number of columns that you want to display in your result table. If not specified, the default number of columns for this query is shown. Supported values are:
+
+Min - Display a minimum set of columns
+All - Display all columns
+
+Example:
+
+https: //mypc:29043/ibm/console/xLaunch.do?pageID=com.ibm.tws.WebUI.
+
+External.navigation&showNavArea=false&action=BrowseJobs
+
+&hostname=webuidev&port=31117&workstation=my_ws&jobstream=my_js_name&job=my_job_name&status=ESB&columns=ALL
+
+Monitor Critical Jobs: 
+
+Create a URL by specifying the BrowseCriticalJobs action, as described in “Creating a basic URL” on page 77 of the Administrator's Guide.
+
+You can also specify any of the following filters:
+
+&workstation - Filter by the workstation on which the job runs.
+&jobstream - Filter by the job stream that contains the jobs.
+&job - Filter by the job name.
+&schedtime - Filter by the job scheduled time.
+&columns - Specify the number of columns that you want to display in your result table. If not specified, the default number of columns for this query is shown.
+
+Supported values are:
+
+Min - Display a minimum set of columns
+
+All - Display all columns
+
+
+Example: 
+
+https: //mypc:29043/ibm/console/xLaunch.do?pageID=com.ibm.tws.WebUI.
+
+External.navigation&showNavArea=false&action=BrowseCriticalJobs
+
+&hostname=webuidev&port=31117
+
+&workstation=my_ws&jobstream=my_js_name
+
+&job=my_job_name&server=C851&columns=Min
+
+where &server is a parameter used for z/OS only.
+
+
+Monitor Job Streams: 
+Create a URL by specifying the BrowseJobStreams action, as described in “Creating a basic URL” on page 77 of the Administrator's Guide.
+
+You can also specify any of the following filters:
+
+&workstation - Filter by the workstation on which the job stream runs.
+&jobstream - Filter by the job stream name.
+&columns
+- Specify the number of columns that you want to display in your result
+table. If not specified, the default number of columns for this query is
+shown. Supported values are:
+
+Min - Display a minimum set of columns
+All - Display all columns
+
+
+Example: 
+
+https: //mypc:29043/ibm/console/xLaunch.do?pageID=com.ibm.tws.WebUI.
+
+External.navigation&showNavArea=false&action=BrowseJobStreams
+&hostname=webuidev&port=31117
+&workstation=my_ws&jobstream=my_js_name
+
+
+
+Monitor Workstations: 
+Create a URL specifying the BrowseWorkstation action, as described in “Creating
+a basic URL” on page 77 of the Administrator's Guide.
+
+You can also specify any of the following filters:
+
+&workstation
+- Filter by the workstation on which the job stream runs.
+&columns
+- Specify the number of columns that you want to display in your result
+table. If not specified, the default number of columns for this query is
+shown. Supported values are:
+
+Min - Display a minimum set of columns
+All - Display all columns
+
+Example: 
+
+https: //mypc:29043/ibm/console/xLaunch.do?pageID=com.ibm.tws.WebUI.
+
+External.navigation&showNavArea=false&action=BrowseJobStreams
+&hostname=webuidev&port=31117
+&workstation=my_ws&jobstream=my_js_name
+&server=C851&columns=ALL
+
+where &server is a parameter used for z/OS only.
+
+
+Existing task: 
+Create a URL by specifying the InternalTask action, as described in “Creating a
+basic URL” on page 77 of the Administrator's Guide.
+
+You can save this URL can be saved as a bookmark in your browser, so that, by clicking the bookmark, you can directly open the results of a previously created task.
+
+
+To save a task URL, perform the following steps: 
+1. Create a task with the Tivoli Dynamic Workload Console:
+
+2. From the displayed panel, click the Add bookmark icon to save this link in your bookmarks.
+
+3. Specify a name for the new bookmark. By default the task name is used. Organize your bookmarks for your convenience, for example, you might organize your saved tasks in a different folder for each engine.
+
+
+Example of a saved bookmark: 
+
+https: //cairapc:29043/ibm/console/xLaunch.do?pageID=com.ibm.tws.WebUI.
+External.navigation&showNavArea=false
+&action=InternalTask&hostname=fferrar4&port=31117
+&taskname=All%20Jobs%20in%20plan%20for%20ferrari
+
+Starting from this bookmark you can manually create a URL as follows:
+
+https: //mypc:29043/ibm/console/xLaunch.do?pageID=com.ibm.tws.WebUI.
+
+External.navigation&showNavArea=false&action= InternalTask
+&hostname=webuidev&port=31117
+&server=C851 &taskname=myTask
+
+where &server parameter is used for z/OS engines only.
+
+RELATED INFORMATION
+ TWS Online Documentation [https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/Tivoli%20Documentation%20Central/page/Tivoli%20Workload%20Scheduler]

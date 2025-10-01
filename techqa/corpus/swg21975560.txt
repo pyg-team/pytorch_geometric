@@ -1,0 +1,28 @@
+Title: IBM Unable to configure IBM Content Collector (ICC) 2.2 - United States
+
+Text:
+ICC 2.2; Domino; Configure TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After installing ICC 2.2, attempts to configure result in an error message and the generation of a log file. 
+
+SYMPTOM
+Error from log file, AFuIntialConfigTrace:
+
+[127] Could not load message resource bundle for com.ibm.afu.mailinterface.domino.nls.DominoInterfaceMessages [com.ibm.afu.nls.catalog.MessageCatalog init] [Worker-0 1]Exception [java.util.MissingResourceException]: Can't find resource for bundle com.ibm.afu.mailinterface.domino.nls.DominoInterfaceMessages, key en_GB
+
+
+
+CAUSE
+Code defect with regards to using ICC 2.2 with Domino. Session Manager does not get initialized.
+
+ENVIRONMENT
+ICC 2.2
+Domino 
+Windows 2008, 64-bit VM
+
+DIAGNOSING THE PROBLEM
+Look in the AFuIntialTraceConfigTrace log file for the above error
+
+RESOLVING THE PROBLEM
+Issue was resolved in ICC 2.2 Fix pack 2.

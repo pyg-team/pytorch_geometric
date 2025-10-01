@@ -1,0 +1,151 @@
+Title: IBM HE12269: Special characters in Domino email are displayed incorrectly in IBM Content Collector email preview and indexed incorrectly - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+4.0.0.3-IBM-ICC-Server-IF002 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Collector&fixids=4.0.0.3-IBM-ICC-Server-IF002&source=SAR]
+3.0.0.6-IBM-ICC-Server-IF002 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FInformation+Management%2FContent+Collector&fixids=3.0.0.6-IBM-ICC-Server-IF002&source=SAR]
+IBM Content Collector V3.0.0.6 Interim Fix 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24039797]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Error Description:
+   When Domino email with a MIME body part which is written in a
+   non-ASCII code page is parsed, code page information contained
+   in the MIME part is not processed correctly. As a consequence,
+   all characters in those body parts are treated as ASCII
+   characters and all special characters which are not defined in
+   the ASCII code page are replaced by the replacement character.
+   
+   When this email is previewed by using the IBM Content Collector
+   web application or in the Document Viewer, the special
+   characters are displayed using the replacement character. These
+   MIME body parts are also not indexed correctly by IBM Content
+   Collector P8 Content Search Services Support.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  When  Domino email with a MIME body part which is written in a
+   non-ASCII code page is parsed, code page information contained
+   in the MIME part is not processed correctly. As a consequence,
+   all characters in those body parts are treated as ASCII
+   characters and all special characters which are not defined in
+   the ASCII code page are replaced by the replacement character.
+   
+   When this email is previewed by using the IBM Content Collector
+   web application or in the Document Viewer, the special
+   characters are displayed using the  replacement character.
+   
+   Additionally, because these MIME body parts are not parsed
+   correctly, the content is not indexed correctly by IBM Content
+   Collector P8 Content Search Services Support.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Starting with IBM Content Collector 3.0.0.6 IF002, encoded
+   content in the MIME body part of Domino email will be parsed
+   correctly.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   HE12269
+   
+   
+ * REPORTED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5700
+   
+   
+ * REPORTED RELEASE
+   300
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-02-16
+   
+   
+ * CLOSED DATE
+   2015-04-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-04-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    HE12280 [http://www-01.ibm.com/support/docview.wss?uid=swg1HE12280]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ICC FOR EMAIL
+   
+   
+ * FIXED COMPONENT ID
+   5724V5700
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R300 PSY
+   UP

@@ -1,0 +1,247 @@
+Title: IBM IZ95824: GL DOES NOT GET UPDATED AFTER CHANGING CONDITION CODE AND STOREROOM - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  steps to replicate in 7118:
+   steps:
+   
+   go to chart of accounts app, go to actions menu, select gl
+   component maintenance, select  ELEMENT, click new row, GL
+   component value = invcost
+   description = invcost
+   click OK
+   
+   go to item master app
+   create a new item called test2
+   go to actions menu, add item to storeroom
+   storeroom = CENTRAL
+   standard cost = 0
+   current balance = 1
+   issue unit and order unit both are EACH
+   click ok
+   
+   go back to actions menu, add Item to storeroom
+   storeroom = PKG
+   
+   standard cost = 0
+   current balance = 1
+   issue unit and order unit both are EACH
+   click ok
+   
+   tick condition enabled checkbox
+   click New Row in the condition code section
+   condition code = 9/16
+   click new Row button again
+   condition code = 11/32
+   save
+   
+   change status to active
+   
+   go to the storerooms app
+   PKG storeroom
+   GL Control account = 6610-800-800
+   
+   CENTRAL storeroom
+   GL Control account = 6600-800-800
+   
+   i.e. ControlAcc are different between these two Storerooms
+   
+   
+   go to app designer, bring up inventor application, add 2 GL
+   fields to the main inventory tab:
+   go to the condition code section
+   add a new text box,
+   object = INVCOST
+   attribute = CONTROLACC
+   add GLNAVIGATOR to the lookup
+   add another text box
+   add a new text box
+   object = INVCOST
+   attribute = GLACCOUNT
+   add GLNAVIGATOR to the lookup
+   
+   
+   go to inventory, bring up item test2 from the central storerom
+   
+   for 9/16 condition code
+   invcost controlacc = 6600-800-800
+   INVCOST GLACCOUNT = ????-???-000-invcost
+   
+   for 11/32 condition code
+   invcost controlacc = 6800-200-200
+   INVCOST GLACCOUNT = ????-???-000-invcost
+   
+   bring up item test2 from the PKG storeroom
+   go to inventory costs section, for condition code 9/16
+   invcost controlacc = 6610-800-800
+   invcost glaccount = ????-???-200-INVCOST
+   
+   for condition code 11/32
+   invcost controlacc = 6610-800-800
+   invcost glaccount = ????-???-200-INVCOST
+   
+   GO TO actions menu, issue current item
+   
+   When the Storeroom is changed from PKG to CENTRAL, the Credit GL
+   is updated correctly to 6800-200-200
+   
+   After changing the Storeroom from PKG to CENTRAL, and then
+   changing the Condition Code to 11/32
+   
+   tab out of the field, the Credit and Debit GL are being updated
+   based on the InvCost
+   record for the entered Condition on the CENTRAL Storeroom.
+   
+   i.e. gl debit and credit should get updated to
+   ????-???-200-INVCOST
+   6610-800-800
+   
+   but the GL remain as ????-???-000-INVCOST
+   and 6610-800-800
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  n/a
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: maximo users                                 *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: GL DOES NOT GET UPDATED AFTER CHANGING  *
+   *                      CONDITION CODE AND  STOREROOM IN ISSUE  *
+   *                      CURRENT ITEMS                           *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   *                                                              *
+   *                                                              *
+   ****************************************************************
+   GL DOES NOT GET UPDATED AFTER CHANGING CONDITION CODE AND
+   STOREROOM IN ISSUE CURRENT ITEMS
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  <This was fixed in code. The gldebitacct/glcreditacct were
+   incorrectly gotten from the invcost record in the inventory
+   record where the Issue Current Items is launched. This happened
+   when storeroom and condition code are both changed. >
+   
+   
+   
+   
+   
+   The fix for this APAR is contained in the following maintenance
+   package:
+   
+     | release\fix pack | REL 7.1.1.9 - BS
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ95824
+   
+   
+ * REPORTED COMPONENT NAME
+   INVENTORY
+   
+   
+ * REPORTED COMPONENT ID
+   5724R46IN
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-28
+   
+   
+ * CLOSED DATE
+   2011-03-02
+   
+   
+ * LAST MODIFIED DATE
+   2011-03-02
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  MAXIMO
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   INVENTORY
+   
+   
+ * FIXED COMPONENT ID
+   5724R46IN
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R711 PSY
+   UP

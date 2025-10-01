@@ -1,0 +1,131 @@
+Title: IBM JDBC ドライバーによる SQL の実行が Exception で失敗した際に Javacore を生成する方法 - United States
+
+Text:
+ 技術情報(FAQS)
+
+質問
+ ロック・タイムアウトや照会タイムアウトなど、例外がスローされたタイミングで javacore が生成されるようにするにはどうすればよいでしょう? 
+
+回答
+次のように、 IBM Java のオプション -Xdump:java:events=throw,filter=<例外クラス> を指定して Java アプリケーションを実行します。
+java "-Xdump:java:events=throw,filter=<例外クラス>" <Java アプリケーション・クラス> [引数]
+
+
+Db2 Jcc (IBM Data Server Driver for JDBC and SQLJ) Type 4 ドライバーで一般的な Exception がスローされた場合のオプション例を示します。（例外クラスはバージョンにより変わる場合があります）
+
+
+ロック・タイムアウト (SQLCODE=-911 RC=68) 
+
+次の Exception が出力される場合：
+
+com.ibm.db2.jcc.am.SqlTransactionRollbackException: DB2 SQL Error: SQLCODE=-911, SQLSTATE=40001, SQLERRMC=68, DRIVER=3.69.24
+
+次のオプションを設定します：
+
+-Xdump:java:events=throw,filter=com/ibm/db2/jcc/am/SqlTransactionRollbackException 
+
+
+照会タイムアウト (SQLCODE=-952)
+
+次の Exception がスローされる場合：
+
+com.ibm.db2.jcc.am.SqlException: DB2 SQL Error: SQLCODE=-952, SQLSTATE=57014, SQLERRMC=null, DRIVER=3.69.24
+
+次のオプションを設定します：
+
+-Xdump:java:events=throw,filter=com/ibm/db2/jcc/am/SqlException
+
+
+無効な操作。接続がクローズ済み (ERRORCODE=-4470)
+
+次の Exception がスローされる場合：
+
+com.ibm.db2.jcc.am.SqlNonTransientConnectionException: [jcc][t4][10335][10366][4.21.29] Invalid operation: Connection is closed. ERRORCODE=-4470, SQLSTATE=08003
+
+次のオプションを設定します：
+
+-Xdump:java:events=throw,filter=com/ibm/db2/jcc/am/SqlNonTransientConnectionException
+
+
+例
+
+1. ロック・タイムアウトを 10 秒に設定します。
+
+$ db2 update db cfg for sample using locktimeout 10
+DB20000I The UPDATE DATABASE CONFIGURATION command completed successfully.
+
+
+2. ORG 表に Exclusive ロックを獲得します。
+
+$ db2 connect to sample
+
+Database Connection Information
+
+Database server = DB2/AIX64 11.1.2.2
+SQL authorization ID = DB2INST1
+Local database alias = SAMPLE
+
+$ db2 +c lock table org in exclusive mode
+DB20000I The SQL command completed successfully.
+
+
+3. DB2Jcc サンプル・コードを用いて、ORG 表の SELECT を試みます。
+
+$ java -Xdump:java:events=throw,filter=com/ibm/db2/jcc/am/SqlTransactionRollbackException com.ibm.db2.jcc.DB2Jcc -url "jdbc:db2://localhost:50021/RSAMPLE" -user db2inst1 -password passw0rd -sql "'select deptname from org'"
+
+
+4. 10 秒後にロック・タイムアウトが発生し、javacore が生成されます。
+
+[jcc][10521][13706]コマンド : java com.ibm.db2.jcc.DB2Jcc -url jdbc:db2://localhost:50000/RSAMPLE -user db2inst1 -password ******** -sql 'select deptname from org'
+
+
+[jcc][10516][13709]テスト接続が成功しました。
+
+JVMDUMP039I ダンプ・イベント "throw"、詳細 "com/ibm/db2/jcc/am/SqlTransactionRollbackException" (場所: 2018/01/24 08:37:43) を処理しています - お待ちください。
+JVMDUMP032I JVM は、イベントの応答として Java ダンプ ('/home/db2inst1/javacore.20180124.083743.22741186.0001.txt' を使用する) を要求しました。
+JVMDUMP010I Java ダンプは /home/db2inst1/javacore.20180124.083743.22741186.0001.txt に書き込まれました
+JVMDUMP013I ダンプ・イベント "throw"、詳細 "com/ibm/db2/jcc/am/SqlTransactionRollbackException" を処理しました。
+JVMDUMP039I ダンプ・イベント "throw"、詳細 "com/ibm/db2/jcc/am/SqlTransactionRollbackException" (場所: 2018/01/24 08:37:43) を処理しています - お待ちください。
+JVMDUMP032I JVM は、イベントの応答として Java ダンプ ('/home/db2inst1/javacore.20180124.083743.22741186.0002.txt' を使用する) を要求しました。
+JVMDUMP010I Java ダンプは /home/db2inst1/javacore.20180124.083743.22741186.0002.txt に書き込まれました
+JVMDUMP013I ダンプ・イベント "throw"、詳細 "com/ibm/db2/jcc/am/SqlTransactionRollbackException" を処理しました。
+JVMDUMP039I ダンプ・イベント "throw"、詳細 "com/ibm/db2/jcc/am/SqlTransactionRollbackException" (場所: 2018/01/24 08:37:43) を処理しています - お待ちください。
+JVMDUMP032I JVM は、イベントの応答として Java ダンプ ('/home/db2inst1/javacore.20180124.083743.22741186.0003.txt' を使用する) を要求しました。
+JVMDUMP010I Java ダンプは /home/db2inst1/javacore.20180124.083743.22741186.0003.txt に書き込まれました
+JVMDUMP013I ダンプ・イベント "throw"、詳細 "com/ibm/db2/jcc/am/SqlTransactionRollbackException" を処理しました。
+JVMDUMP039I ダンプ・イベント "throw"、詳細 "com/ibm/db2/jcc/am/SqlTransactionRollbackException" (場所: 2018/01/24 08:37:43) を処理しています - お待ちください。
+JVMDUMP032I JVM は、イベントの応答として Java ダンプ ('/home/db2inst1/javacore.20180124.083743.22741186.0004.txt' を使用する) を要求しました。
+JVMDUMP010I Java ダンプは /home/db2inst1/javacore.20180124.083743.22741186.0004.txt に書き込まれました
+JVMDUMP013I ダンプ・イベント "throw"、詳細 "com/ibm/db2/jcc/am/SqlTransactionRollbackException" を処理しました。
+JVMDUMP039I ダンプ・イベント "throw"、詳細 "com/ibm/db2/jcc/am/SqlTransactionRollbackException" (場所: 2018/01/24 08:37:43) を処理しています - お待ちください。
+JVMDUMP032I JVM は、イベントの応答として Java ダンプ ('/home/db2inst1/javacore.20180124.083743.22741186.0005.txt' を使用する) を要求しました。
+JVMDUMP010I Java ダンプは /home/db2inst1/javacore.20180124.083743.22741186.0005.txt に書き込まれました
+JVMDUMP013I ダンプ・イベント "throw"、詳細 "com/ibm/db2/jcc/am/SqlTransactionRollbackException" を処理しました。
+JVMDUMP039I ダンプ・イベント "throw"、詳細 "com/ibm/db2/jcc/am/SqlTransactionRollbackException" (場所: 2018/01/24 08:37:43) を処理しています - お待ちください。
+JVMDUMP032I JVM は、イベントの応答として Java ダンプ ('/home/db2inst1/javacore.20180124.083743.22741186.0006.txt' を使用する) を要求しました。
+JVMDUMP010I Java ダンプは /home/db2inst1/javacore.20180124.083743.22741186.0006.txt に書き込まれました
+JVMDUMP013I ダンプ・イベント "throw"、詳細 "com/ibm/db2/jcc/am/SqlTransactionRollbackException" を処理しました。
+[jcc][10515][13711]SQL の実行がエラー・コード -911 で失敗しました。
+・・・
+
+javacore.20180124.083743.22741186.0006.txt 抜粋
+----------------------------------------------------------------------------------------------------
+1XMCURTHDINFO Current thread
+3XMTHREADINFO "main" J9VMThread:0x0000000060000100, j9thread_t:0x000001001013AB00, java/lang/Thread:0x0000000040048A90, state:R, prio=5
+3XMJAVALTHREAD (java/lang/Thread getId:0x1, isDaemon:false)
+3XMTHREADINFO1 (native thread ID:0x2190051, native priority:0x5, native policy:UNKNOWN, vmstate:R, vm thread flags:0x00000020)
+3XMCPUTIME CPU usage total: 1.234023000 secs, user: 1.001439000 secs, system: 0.232584000 secs
+3XMHEAPALLOC Heap bytes allocated since last GC cycle=278480 (0x43FD0)
+3XMTHREADINFO3 Java callstack:
+4XESTACKTRACE at com/ibm/db2/jcc/am/lp.close(lp.java:6274)
+4XESTACKTRACE at com/ibm/db2/jcc/DB2Jcc.runConnectVerifyFromCommandLine(DB2Jcc.java:482)
+4XESTACKTRACE at com/ibm/db2/jcc/DB2Jcc.main(DB2Jcc.java:366)
+----------------------------------------------------------------------------------------------------
+
+
+
+参考情報
+IBM SDK, Java Technology Edition, Version 8 filter オプション [https://www.ibm.com/support/knowledgecenter/ja/SSYKE2_8.0.0/com.ibm.java.lnx.80.doc/diag/tools/dumpagents_filters.html]
+[DB2 LUW] DB2 ツールの javacore 出力先を変更する方法 [http://www-01.ibm.com/support/docview.wss?uid=swg21628463]
+[Db2] ロック待機が原因で SQL0952N、SQL30081N または-4499 が返ることがある [http://www-01.ibm.com/support/docview.wss?uid=swg22010930]
+DB2 製品資料収集ガイド [http://www-01.ibm.com/support/docview.wss?uid=swg21960055]

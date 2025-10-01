@@ -1,0 +1,30 @@
+Title: IBM Installation Manager V1.6.3 or later is required before installing IBM Business Process Manager (BPM) on Solaris 11 - United States
+
+Text:
+ibpma85relnotes; ibpms85relnotes; Solaris 11; Installation Manager V1.6.2; ibpma8501relnotes; ibpms8501relnotes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you install IBM Business Process Manager on a Solaris 11 system using IBM Installation Manager V1.6.2, which is provided with IBM Business Process Manager V8.5, an error might occur. The error indicates that the Solaris 11 operating system is not supported. 
+
+SYMPTOM
+The error message that is displayed is similar to the following text: 
+
+"An error has occurred. See error log for more details. Argument not valid. The reference to entity "uid" must end with the ";" delimiter."
+
+CAUSE
+IBM Installation Manager V1.6.2 does not provide the required support for the Solaris 11 operating system.
+
+
+
+RESOLVING THE PROBLEM
+Before installing IBM Business Process Manager V8.5 on Solaris 11, you must first download and install the latest version of IBM Installation Manager, which must be at level 1.6.3 or later. Go to the IBM Installation Manager Support page [http://www.ibm.com/support/entry/portal/overview//software/rational/ibm_installation_manager] and click the Downloads (fixes and PTFs) link to download the the latest version.
+
+
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard Installation / Configuration Solaris 8.5.0.1, 8.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

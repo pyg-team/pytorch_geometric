@@ -1,0 +1,38 @@
+Title: IBM How do I manage my Processor Value Unit (PVU) licenses for virtualized environments? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I manage my Processor Value Unit (PVU) licenses for virtualized environments to remain in compliance with my Passport Advantage sub-capacity licensing offering? 
+
+ANSWER
+The IBM License Metric Tool helps you maintain an up-to-date inventory of the IBM distributed software assets in your IT infrastructure and to measure the Processor Value Units (PVU) available to and consumed by them. It allows you to ensure compliance with IBM sub-capacity licensing requirements and demonstrate good IT governance.
+
+Information about installed software is collected from monitored computers by an agent that can be deployed on a range of platforms. It is stored on a central server in a DB2 database and can be accessed through pre-configured reports available from a Web user interface.
+
+The audit reports generated can be used to assess your position relative to your proofs of entitlement as specified in your license agreement and to satisfy the requirements of IBM's sub-capacity licensing terms.
+
+The security of confidential information is ensured by the maintenance of security profiles for access to the Web interface, and optionally by the encryption of data during transmission over your intranet.
+
+The use of IBM License Metric Tool is required under the Passport Advantage sub-capacity licensing offering and is optional for tracking full-capacity processor value unit licenses. It replaces Tivoli License Compliance Manager for IBM software, previously required for tracking the presence of IBM software and generating required reports.
+
+To manage your software offerings, please refer to this documentation [http://publib.boulder.ibm.com/infocenter/lmt/v7r2m1/index.jsp?topic=%2Fcom.ibm.license.mgmt.planinconf.doc%2Fc_introduction.html]. 
+
+Question involving PVU can be directed to askpvu@us.ibm.com [askpvu@us.ibm.com] 
+
+ 
+
+ 
+
+RELATED INFORMATION
+ Get more Statistics answers [https://developer.ibm.com/answers/topics/collaboration.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Analytics SPSS Modeler Business Analytics SPSS Collaboration and Deployment Services Business Analytics SPSS Statistics Statistics Server 
+HISTORICAL NUMBER
+ 92571

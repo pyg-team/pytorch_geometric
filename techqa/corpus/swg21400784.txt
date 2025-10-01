@@ -1,0 +1,22 @@
+Title: IBM "javax.naming.NameNotFoundException: remaining name: env/eis/XUConnectionFactory" calling Rule Execution Server remotely from a JSR-94 client - United States
+
+Text:
+JSR94; NameNotFoundException; RES; local; remote TECHNOTE (FAQ)
+
+QUESTION
+ Why do I get "javax.naming.NameNotFoundException: remaining name: env/eis/XUConnectionFactory" calling Rule Execution Server remotely with the JSR-94 implementation? 
+
+ANSWER
+The JSR-94 JRules implementation does not provide remote access to Rule Execution Server. It provides only local access, that is, within the same JVM, whether in Java SE or Java EE environment, with a POJO rule session.
+The JSR-94 specification does not have that notion of being able to perform a local or remote call. Therefore, the behavior depends on the implementation and the JRules implementation is local.
+
+RELATED INFORMATION
+ ODM V8.0.1 doc on JSR-94 implementation [http://pic.dhe.ibm.com/infocenter/dmanager/v8r0m1/topic/com.ibm.wodm.dserver.rules.designer.run/executing_engine_topics/tpc_using_jsr94.html]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Platform Independent 8.0, 7.5 
+HISTORICAL NUMBER
+ jrules/FAQ/339

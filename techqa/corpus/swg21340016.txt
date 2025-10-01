@@ -1,0 +1,90 @@
+Title: IBM Collecting corefile information on AIX - United States
+
+Text:
+aix core dbxtrace errpt javacore TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When a program on UNIX crashes it typically leaves behind a "core" file. This file contains the state of the process when it crashed and can be used by development to pinpoint the reason for the crash. To analyze a corefile on AIX, customers need to provide both the corefile and related system and product information. 
+
+Core information: 
+
+ * corefile (compressed!)
+ * dbxtrace output
+ * errpt -a output
+ * javacore (text version, if applicable)
+
+Customers should provide the corefile in compressed format (gzip, compress, etc.) along with a dbxtrace file. IBM supplies a script file called dbxtrace.sh as a diagnostics aid and this is used to create a listing of the state of all the threads that were running at the time of the crash. A copy of the script is attached. For more information, see the links to IBM's support site below.  
+
+Ex: 
+dbxtrace_aix.sh BIBusTKServerMain core > dbxtrace.out 
+
+
+
+ For Cognos customers, there are two types of corefiles customers will see. The output of "errpt -a" provides complete details about when and how a crash occurred. If the report server process fails, the errpt information will list "BIBusTKServerMain" as the offending process. If the dispatcher or content manager process fails, it will show "java". When "java" crashes, an associated "javacore" file is also usually output. This file contains details of the threads running within the Java VM at the time of the crash. 
+
+ Q: I ran dbx on the corefile to get a stack trace, is that enough? 
+
+ A: No. This only captures the state of the thread that crashed. Since Cognos BI components use multiple threads, it's important to capture the state of all of the threads running at the time of the crash. 
+
+ Q: Can Cognos support run this script using the corefile? 
+
+ A: The dbxtrace should always be run on the machine where the corefile occurred. Corefiles contain information that is relative to the install location and versions of installed components, including third-party libraries which can't always be duplicated at Cognos. Cognos BI files: 
+
+ * cmplst.txt
+ * cogserver.log files 
+ * pogo_xxx files
+
+In addition to the corefile, cogserver and dispatcher logfiles are important for establishing what exactly was running on the server at the time of a corefile crash. For distributed environments, these logfiles for *all* servers should be collected, since information from several servers may contain relevant information. For example, the report server logfiles will show what the report server was doing but the content manager machine will show more about user logins and what was being accessed within the content store database. For full details, it's good to set the audit logging level at 3 (or 4 to see the specific requests being executed). 
+
+ENVIRONMENT
+To provide a better picture of the environment in which Cognos BI is running, use the commands below to ascertain important system details. In some cases, the reason for a crash is a lack of system resources, a limit on the amount of memory a process can use for example (see ulimits below).
+
+On each of the servers used (gateway, content manager, report server, etc.), collect the output of the following system commands:
+
+# operating system version
+oslevel -r
+
+# patch levels of installed software
+lslpp -l
+instfix -ivq
+
+# hardware info
+lscfg -vp
+
+# system memory, stack, and file limits (both system-wide "hard" limits and per-user "soft" limits)
+ulimit -Sa
+ulimit -Ha
+
+# process list
+ps -eaf
+
+# disk space
+df -k
+
+# memory stats
+vmstat -vs
+
+One word of caution concerning corefiles; although there is a lot of information contained in a single corefile, it is not always possible to deduce the cause of a problem from only a corefile. Cognos BI is a multi-threaded server application executing several tasks simultaneously, so the state of these tasks at the time of a crash may not explain the sequence of events that lead up to the crash. Problems with a lack of underlying resources, a lack of memory for example, may show up as a different type of problem, a file that can't be read in for example.
+
+Related documents:
+
+KB 1021760 Analyzing corefile crashes on AIX
+
+IBM Technote: MustGather: Crash on AIX
+http:/ /www-1.ibm.com/support/docview.wss?uid=swg21055387
+
+IBM Technote: MustGather: No response (hang) or performance degradation on AIX
+http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg21052641
+
+Keywords:
+
+aix core dbxtrace errpt javacore
+
+RELATED INFORMATION
+ [ [\] KB 1021760 Analyzing corefile crashes on AIX IBM Technote: MustGather: Crash on AIX http://www-1.ibm.com/support/docview.wss?uid=swg21055387 IBM Technote: MustGather: No response (hang) or performance degradation on AIX http://www-1.ibm.com/support/docview.wss?rs=180&uid=swg21052641 
+
+
+1021759_1.zip [/support/docview.wss?uid=swg21340016&aid=2] - 1021759_1.zip [/support/docview.wss?uid=swg21340016&aid=1]
+
+HISTORICAL NUMBER
+ 1021759

@@ -1,0 +1,48 @@
+Title: IBM Configuration Issues - All DataPower domains show as 'Down' after a device reboot. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ After a reboot of the appliance all user created domains are showing in the 'down' state. The default domain remains 'up' but other domains show as 'down' with their configuration objects missing. 
+
+CAUSE
+On boot DataPower must parse your configuration and load it into memory. This requires reviewing the files that reside in your config:/// directory (via the DataPower File Management System). Specifically config:///autoconfig.cfg (default configuration, user domain loading, etc.). Also the config:///domain/domain.cfg files which load the configuration objects inside of a domain.
+
+RESOLVING THE PROBLEM
+If application domains are unavailable first make sure that the admin-state of the domain objects are 'enabled'. This can be checked by being in the default domain, expanding the Administrative tab and opening the link for Application Domains. Inside each domain you can toggle the admin state of the object (if it is already in an Enabled state and shows as 'down' then leave it alone).
+
+
+Should you encounter an issue where all domains but default are down with an enabled admin state: 
+
+Review your config:///autoconfig.cfg and domain configuration files in the File Management. Assure that no configuration object is named after a CLI command. For a complete list of CLI commands review the CLI Reference Guide in the DataPower documentation. Visit http://www-01.ibm.com/software/integration/datapower/library/documentation/ [http://www-01.ibm.com/software/integration/datapower/library/documentation/] for more information. 
+
+ 
+
+Should you find an object that is named after a CLI command, for example: 
+
+alias ""xml"" "1.2.3.4" - Here the name 'xml' is set to an alias configuration object. This is invalid because xml is a shortcut to a CLI command (in configuration mode). Using this as a name of an object can cause parsing issues of loading a configuration. A better naming convention would be something like 'xmlAlias'. 
+
+ 
+
+Should such a conflict arise the object should be renamed and saved (from the correct .cfg reference) so that it will not conflict with a CLI command. After the cfg file is modified and saved the box must be rebooted. Assuming there are no further parser conflicts the application domains should load normally into the 'UP' state. 
+
+ 
+
+For review in the CLI configuration mode of the above example and why the command conflicts:
+xi50(config)# xml
+Options:
+xmlmgr Creates an XML manager
+xmlfirewall Creates an XML Firewall
+xml-mgmt Creates an XML management interface
+xml-manager Creates an new XML manager or accesses an existing XML manager.
+xml parser limits Enters XML Parser Limits Configuration Mode.
+xml validate Enables XML Schema validation
+
+We can see that the partial command returned some options and thus it is reserved. Instead we try something like xmlAlias and get a different response:
+xi50(config)# xmlAlias
+Unknown command or macro (xmlAlias) 
+
+ 
+
+In this case there is no conflict and the object name would be appropriate to use.

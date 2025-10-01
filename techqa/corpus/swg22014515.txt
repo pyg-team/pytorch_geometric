@@ -1,0 +1,29 @@
+Title: IBM Issue with the ITX XSLT() function in a map under IIB - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ The IBM Transformation Extender (ITX) XSLT() function is not working when run under IBM Integration Broker (IIB).
+
+
+
+This issue is similar to that described in APAR PI35144, but for IIB instead of Sterling Integrator (SI). 
+
+SYMPTOM
+The ITX XSLT() function returns no content
+
+
+CAUSE
+This has been identified as a product defect under APAR PI94985. The cause of the issue is similar to the one highlighted in the previous APAR in that the dtxxmlfin.jar file needs to be part of the CLASSPATH before the IIB environment is started.
+
+ENVIRONMENT
+ITX map running under IIB on one of the Unix platforms
+
+DIAGNOSING THE PROBLEM
+The same map under the Design Studio or Command Server gives the correct output
+
+RESOLVING THE PROBLEM
+Newer installers of ITX for Integration Servers will add the appropriate line into the dtx_wmqi_64.sh setup script.
+
+As a workaround, the dtx_wmqi_64.sh can be updated to include the dtxxmlfin.jar file in the CLASSPATH in the same place where m4java.jar and others are added.

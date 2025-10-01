@@ -1,0 +1,127 @@
+Title: IBM Mapping CICS releases from APARs and PTFs to CICS external versions - United States
+
+Text:
+compids component ids ; 5655M1500 R640 640 R400 400 HCI6400 R650 650 R500 500 HCI6500 5655-M15 5655M15 5655S9700 R660 660 R600 600 HCI6600 R670 670 R700 700 HCI6700 5655-S97 5655S97 ; 5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 R700 700 R000 000 HCI7000 R710 710 R100 100 HCI7100 5655Y0401 5655-Y04 5655Y04 ; 1.1.1 564805400 RB0P R411 R111 5648-054 5648054 ; 2.1 5655VSE00 RB2P R211 211 5655-VSE 5655VSE 564805401 RCOP kixinfo TECHNOTE (FAQ)
+
+QUESTION
+ How do you map the release numbers that IBM uses for CICS APARs and PTFs to the corresponding external versions of CICS? For example, how would you know that release 690 corresponds to CICS Transaction Server for z/OS (CICS TS ) V5.2? 
+
+CAUSE
+CICS APARs, like PM85188 [http://www.ibm.com/support/docview.wss?uid=swg1PM85188] which includes R80D PSY UK95998, include internal releases and PTFs in the "Applicable component levels" section. This is different than the external version of CICS which is 5.1 for APAR PM85188.
+
+The external or dotted form of the release (like 5.1) that an APAR is created for is listed on the web page for the APAR on the top right under "Software version". However, the APAR could have PTFs for multiple releases of the product. For example, an APAR that is created for CICS TS V4.1 could have PTFs for both CICS TS V4.1 and V4.2.
+
+ANSWER
+If you need to map the release in an APAR for a PTF to the external version and release, you can use the tables in this document. For example, using the tables below you can see that release 80D corresponds to Name IIOP/Java, Component ID 5655Y0400, and FMID JCI680D in the "CICS Transaction Server for z/OS V5.1" table.
+
+Select from one of the following products to be taken to the corresponding table containing the release mappings for each version:
+
+
+ * CICS Transaction Server for z/OS V5.4
+ * CICS Transaction Server for z/OS V5.3
+ * CICS Transaction Server for z/OS V5.2
+ * CICS Transaction Server for z/OS V5.1
+ * CICS Transaction Server for z/OS V4.2
+ * CICS Transaction Server for z/OS V4.1
+ * CICS Transaction Server for z/OS V3.2
+ * CICS Transaction Server for z/OS V3.1
+ * CICS TS for z/VSE V2.1 and CICS TS for VSE/ESA V1.1.1
+
+
+
+
+
+
+
+
+CICS Transaction Server for z/OS V5.4
+
+Name Component ID Release FMID CICS TS for z/OS 5.4 - Base 5655Y0400 100 HCI7100 COBOL Language parts 5655Y0400 101 JCI7101 PL/1 Language parts 5655Y0400 102 JCI7102 C Language parts 5655Y0400 103 JCI7103 IIOP/Java 5655Y0400 10D JCI710D WebSphere Application Server Liberty Profile 5655Y0400 10L JCI710L CICSPlex System Manager 5655Y0400 10M JCI710M WS-Security 5655Y0400 10W JCI710W CICS Explorer 5655Y0401 540 not applicable CICS TS Build Tookit 5655Y0403 540 not applicable CICS TS Enabler / Activation 5655Y0400 540 HCTS540 Value Unit Edition 5722DFJ00 100 HCV7100 Developer Trial Activation Module 5655Y3000 100 HCD7100 Service Flow Runtime 5655M1502 300 HCIZ300 CICS REXX Runtime Facility 565508700 110 H0B5110 CICS REXX Development System 565508600 110 H0B7110 CICS REXX Common 565511200 110 H0Z2110 
+Back to top
+
+
+
+
+CICS Transaction Server for z/OS V5.3
+
+
+Name Component ID Release FMID CICS TS for z/OS 5.3 - Base 5655Y0400 000 HCI7000 COBOL Language parts 5655Y0400 001 JCI7001 PL/1 Language parts 5655Y0400 002 JCI7002 C Language parts 5655Y0400 003 JCI7003 Java 5655Y0400 00D JCI700D WebSphere Application Server Liberty Profile 5655Y0400 00L JCI700L CICSPlex System Manager 5655Y0400 00M JCI700M WS-Security 5655Y0400 00W JCI700W CICS Explorer 5655Y0401 530 not applicable Activation Module 5655Y0400 530 HCTS530 Value Unit Edition 5722DFJ00 000 HCV7000 Developer Trial Activation Module 5655Y3000 000 HCD7000 Service Flow Runtime 5655M1502 300 HCIZ300 CICS REXX Runtime Facility 565508700 110 H0B5110 CICS REXX Development System 565508600 110 H0B7110 CICS REXX Common 565511200 110 H0Z2110 
+Back to top
+
+
+
+
+CICS Transaction Server for z/OS V5.2
+
+
+Name Component ID Release FMID CICS TS V5.2 Base 5655Y0400 900 HCI6900 COBOL Language parts 5655Y0400 901 JCI6901 PL/1 Language parts 5655Y0400 902 JCI6902 C Language parts 5655Y0400 903 JCI6903 IIOP/Java 5655Y0400 90D JCI690D WebSphere Application Server Liberty Profile 5655Y0400 90L JCI690L CICSPlex SM 5655Y0400 90M JCI690M WS-Security 5655Y0400 90W JCI690W CICS Explorer 5655Y0401 520 not applicable Activation Module 5655Y0400 520 HCTS520 Value Unit Edition 5722DFJ00 900 HCV6900 Developer Trial Activation Module 5655Y3000 900 HCIC900 Service Flow Runtime 5655M1502 300 HCIZ300 CICS REXX Runtime Facility 565508700 110 H0B5110 CICS REXX Development System 565508600 110 H0B7110 CICS REXX Common 565511200 110 H0Z2110 
+Back to top
+
+
+
+
+CICS Transaction Server for z/OS V5.1
+
+
+Name Component ID Release FMID CICS TS V5.1 Base 5655Y0400 800 HCI6800 COBOL Language parts 5655Y0400 801 JCI6801 PL/1 Language parts 5655Y0400 802 JCI6802 C Language parts 5655Y0400 803 JCI6803 IIOP/Java 5655Y0400 80D JCI680D WebSphere Application Server Liberty Profile 5655Y0400 80L JCI680L CICSPlex SM 5655Y0400 80M JCI680M WS-Security 5655Y0400 80W JCI680W CICS Explorer 5655Y0401 510, 511 not applicable Value Unit Edition 5722DFJ00 800 HCV6800 Dynamic Scripting Feature Pack 5655Y4700 51D / 200 HCIF51D Modern Batch Feature Pack 5655Y5000 51B / 100 HCIF51B Mobile Extensions Feature Pack 5655Y4800 51C / 100 HCIF51C Service Flow Runtime 5655M1502 300 HCIZ300 CICS REXX Runtime Facility 565508700 110 H0B5110 CICS REXX Development System 565508600 110 H0B7110 CICS REXX Common 565511200 110 H0Z2110 
+Back to top
+
+
+
+
+CICS Transaction Server for z/OS V4.2
+
+
+Name Component ID Release FMID CICS TS V4.2 Base 5655S9700 700 HCI6700 COBOL Language parts 5655S9700 701 JCI6701 PL/1 Language parts 5655S9700 702 JCI6702 C Language parts 5655S9700 703 JCI6703 IIOP/Java 5655S9700 70D JCI670D CICSPlex SM 5655S9700 70M JCI670M WS-Security 5655S9700 70W JCI670W CICS Explorer 5655S9701 110 not applicable Dynamic Scripting Feature Pack 5655S9702 110 not applicable Service Flow Runtime 5655M1502 300 HCIZ300 CICS REXX Runtime Facility 565508700 110 H0B5110 CICS REXX Development System 565508600 110 H0B7110 CICS REXX Common 565511200 110 H0Z2110 
+Back to top
+
+
+
+
+CICS Transaction Server for z/OS V4.1
+
+
+Name Component ID Release FMID CICS TS V4.1 Base 5655S9700 600 HCI6600 COBOL Language parts 5655S9700 601 JCI6601 PL/1 Language parts 5655S9700 602 JCI6602 C Language parts 5655S9700 603 JCI6603 IIOP/Java 5655S9700 60D JCI660D CICSPlex SM 5655S9700 60M JCI660M WS-Security 5655S9700 60W JCI660W CICS Explorer 5655S9701 100, 110 not applicable Dynamic Scripting Feature Pack 5655S9702 100 not applicable Service Flow Runtime 5655M1502 300 HCIZ300 CICS REXX Runtime Facility 565508700 110 H0B5110 CICS REXX Development System 565508600 110 H0B7110 CICS REXX Common 565511200 110 H0Z2110 #topofpage
+
+
+Back to top
+
+
+
+
+
+CICS Transaction Server for z/OS V3.2 
+
+Name Component ID Release FMID CICS TS V3.2 Base 5655M1500 500 HCI6500 COBOL Language parts 5655M1500 501 JCI6501 PL/1 Language parts 5655M1500 502 JCI6502 C Language parts 5655M1500 503 JCI6503 IIOP/Java 5655M1500 50D JCI650D CICSPlex SM 5655M1500 50M JCI650M REXX Alternate Lib 5655M1500 50R JCI650R WS-Security 5655M1500 50W JCI650W CICS Explorer 5655S9701 100, 110 not applicable CICS Application Migration Aid 569506100 110 HBDD110 Service Flow Runtime 5655M1502 300 HCIZ300 CICS REXX Runtime Facility 565508700 110 H0B5110 CICS REXX Development System 565508600 110 H0B7110 CICS REXX Common 565511200 110 H0Z2110 #topofpage 
+Back to top
+
+
+
+
+
+CICS Transaction Server for z/OS V3.1
+
+
+Name Component ID Release FMID CICS TS V3.1 Base 5655M1500 400 HCI6400 COBOL Language parts 5655M1500 401 JCI6401 PL/1 Language parts 5655M1500 402 JCI6402 C Language parts 5655M1500 403 JCI6403 IIOP/Java 5655M1500 40D JCI640D WS-Security 5655M1500 40W JCI640W CICSPlex SM (z/OS and OS/2 Remote MAS Support) 5655M1501 100 HCP3100 CICSPlex SM (SAS components) 5655M1501 102 JCI3102 CICS Explorer 5655S9701 100, 110 not applicable CICS Application Migration Aid 569506100 110 HBDD110 CICS REXX Runtime Facility 565508700 110 H0B5110 CICS REXX Development System 565508600 110 H0B7110 CICS REXX Common 565511200 110 H0Z2110 CICS Integrator Adapter for z/OS 6000INT00 100 HCIZ100 #topofpage 
+Back to top
+
+
+
+
+
+CICS TS for VSE/ESA V2.1 and CICS TS for VSE/ESA V1.1.1 
+
+Name Component ID Release CICS TS for VSE/ESA V2.1 5655VSE00 B2P CICS TS for VSE/ESA V1.1.1 564805400 B0P #topofpage 
+Back to top
+
+RELATED INFORMATION
+ Fixes by version for CICS products [http://www.ibm.com/support/docview.wss?uid=swg27008833]
+Finding CICS PSP Buckets [http://www.ibm.com/support/docview.wss?uid=swg21231874]
+Detailed System Requirements for CICS TS [http://www.ibm.com/support/docview.wss?uid=swg27006382]
+How to confirm service level (DFHIRP) in LPA [http://www.ibm.com/support/docview.wss?uid=swg21294935]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server CICS/VSE CICS VSE z/VSE

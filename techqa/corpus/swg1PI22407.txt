@@ -1,0 +1,165 @@
+Title: IBM PI22407: THE WTX JNI LAYER CAUSES UNEXPECTED BAPI ADAPTER CLASS LOADING ERROR MESSAGES TO GET REPORTED IN THE BROKER LOG FILES - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running WTX Java base adapter (JBAPI or JALE) under IBM
+   Integration Bus (IIB), a large number class load errors are
+   logged by Message Broker.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTXCQ - WTX00045222
+   EM / EM
+   Circumvention: None
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   WebSphere Transformation Extender user of the WTX Java-based
+   adapters (such as JBAPI and JALE) inside of a IBM Integration
+   Bus environment
+   
+   Problem Description:
+   The WTX JNI layer causes unexpected BAPI adapter class loading
+   error messages to get reported in the Broker log files.
+   
+   Platforms Affected:
+   All
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  When running under IIB, any WTX Java-based JBAPI or JALE
+   invocations prevent unnecessary class load errors from getting
+   logged by Broker.  Before this fix, a large number of class load
+    failure messages would get logged.
+   
+   Applies to:
+   8.3.0.6, 8.4.0.4, 8.4.1.2
+   
+   Fixed in the next service packs and releases.
+   
+   To obtain the fix for this APAR:
+   
+   To see if the next service pack or product release is available,
+   check the WebSphere Transformation Extender Downloads page:
+   http://www.ibm.com/support/entry/portal/product/other_software/t [http://www.ibm.com/support/entry/portal/product/other_software/t]
+   ransformation_extender
+   
+   If the service pack or product release is available, download it
+   from PassportAdvantage:
+   http://www.ibm.com/software/howtobuy/passportadvantage/pao_custo
+   mers.htm [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]
+   
+   If the service pack or product release is not available and you
+   require the APAR fix immediately, request a Limited Availability
+   Interim Fix (LAIF) by opening a PMR:
+   https://www.ibm.com/support/servicerequest/Home.action [https://www.ibm.com/support/servicerequest/Home.action]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI22407
+   
+   
+ * REPORTED COMPONENT NAME
+   WTX FOR INT SER
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4010
+   
+   
+ * REPORTED RELEASE
+   841
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2014-07-22
+   
+   
+ * CLOSED DATE
+   2014-09-16
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WTX FOR INT SER
+   
+   
+ * FIXED COMPONENT ID
+   5724M4010
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R830 PSY
+   UP
+   
+   
+ * R840 PSY
+   UP
+   
+   
+ * R841 PSY
+   UP

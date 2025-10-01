@@ -1,0 +1,73 @@
+Title: IBM Infosphere Guardium STAP not collecting traffic or Inspection Engine cannot be configured - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Infosphere Guardium STAP has been installed on a Linux System and there is no traffic being seen on the collector from it or the inspection engine configuration page has some of the settings missing. 
+
+SYMPTOM
+The STAP will not be collecting traffic, when you try to install an inspection engine some of the setting options will be missing.
+
+
+CAUSE
+The KTAP is not installed or the modules were not specified during the installation.
+
+ENVIRONMENT
+Linux 
+
+DIAGNOSING THE PROBLEM
+Any of the following may be noticed-
+
+
+ * There may be errors in some of the log files (eg. /tmp/guard_stap.stderr.txt on the DB Server ) that state that the KTAP file is missing.
+
+ *   * /dev/guard_ktap: No such file or directory
+    * 
+   
+   
+ * In the guard_tap.ini file on the DB Server the following parameter may be set as 0
+
+ *   * ktap_installed=0 
+    * 
+   
+   
+ * The inspection engine will not have all of the required settings.
+
+ *   * 
+    * The setting options that are likely to be missing are DB Process Name and DB Install Dir. 
+    * 
+    * 
+    * 
+    *   * db_exec_file
+       * 
+       * db_install_dir
+       * 
+      
+      
+   
+   
+ * The STAP is not collecting any traffic.
+
+RESOLVING THE PROBLEM
+GIM Installation 
+
+ * 
+ * 
+ * install with flex loading technote
+ * 
+ * 
+
+
+Non-GIM Installation 
+
+ * 
+ * 
+ * 
+ * Installing an S-TAP on UNIX 
+ * 
+ * 
+ *  Installing an S-TAP from the Command Line 
+
+
+If either of these steps do not help (GIM OR Non-GIM installation) contact IBM Guardium Technical Support so that they can check that there is a KTAP module available for your Linux Kernel.

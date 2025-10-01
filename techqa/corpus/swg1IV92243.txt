@@ -1,0 +1,175 @@
+Title: IBM IV92243: IMPACT ESCAPES ONLY FIRST INSTANCE OF EQUAL SIGN - United States
+
+Text:
+  DIRECT LINKS TO FIXES
+7.1.0-TIV-NCI-ZLINUX-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-ZLINUX-FP0010&source=SAR]
+7.1.0-TIV-NCI-WINDOWS-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-WINDOWS-FP0010&source=SAR]
+7.1.0-TIV-NCI-SOLARIS-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-SOLARIS-FP0010&source=SAR]
+7.1.0-TIV-NCI-LINUX-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-LINUX-FP0010&source=SAR]
+7.1.0-TIV-NCI-AIX-FP0010 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm%2FTivoli%2FTivoli+Netcool+Impact&fixids=7.1.0-TIV-NCI-AIX-FP0010&source=SAR]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 10(7.1.0-TIV-NCI-FP0010) [http://www-01.ibm.com/support/docview.wss?uid=swg24043588]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 11(7.1.0-TIV-NCI-FP0011) [http://www-01.ibm.com/support/docview.wss?uid=swg24043858]
+IBM Tivoli Netcool/Impact V7.1.0 Fix Pack 12 (7.1.0-TIV-NCI-FP0012) [http://www-01.ibm.com/support/docview.wss?uid=swg24044312]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Due to  IV74211 [http://www-01.ibm.com/support/docview.wss?uid=swg1IV74211] Impact only escapes first instance of egual
+   sign. The other possible instances are dropped.
+   Used for test:
+   Policy:
+   Filter = "Identifier='M2000__1 _23 , Function=0 ,
+   SiteMgr=251_;No.=0, Subrack=0, Slot=19, Port=3, Board
+   Type=UPEU, Site No.=251, Site Type=BTS,
+   Site Name=50BKH;65068'";
+   DataType = "test";
+   CountOnly = false;
+   MyServers = GetByFilter(DataType, Filter, CountOnly);
+   MyServer = MyServers[0];
+   DeleteDataItem(MyServer);
+   Result:
+   [MessageProcessor-Dog#6]SQL: DELETE FROM alerts.status WHERE
+   Identifier='M2000__1 _23 , Function=0 ,
+   SiteMgr251_;No.0, Subrack0, Slot19, Port3, Board
+   TypeUPEU, Site No.251, Site TypeBTS,
+   Site Name50BKH;65068';
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Impact Users                                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * SQL operations that define a filter which contains multiple  *
+   * equal signs or the AND keyword may unexpectedly fail.        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * NONE                                                         *
+   ****************************************************************
+   The SQL parser must escape the equal sign and AND keyword in
+   filter strings to ensure the final SQL query is correctly
+   formatted. However, the parser was only partially escaping the
+   filter string resulting in a malformed SQL query.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The SQL parser was not correctly escaping the equal signs/AND
+   keywords in the filter string resulting in a malformed SQL
+   query.
+   
+   The fix for this APAR is contained in the following
+   maintenance packages:
+   |Fix Pack | 7.1.0-TIV-NCI-FP0010
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV92243
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   710
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2017-01-12
+   
+   
+ * CLOSED DATE
+   2017-05-19
+   
+   
+ * LAST MODIFIED DATE
+   2017-05-19
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  UNKNOWN
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R710 PSY
+   UP

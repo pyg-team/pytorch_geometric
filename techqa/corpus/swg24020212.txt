@@ -1,0 +1,92 @@
+Title: IBM Update Installer V7.0.0.45 for WebSphere Software for AIX - United States
+
+Text:
+update installer; update installer; update installer; updateinstaller; updateinstaller; updateinstaller; UPDI; UPDI DOWNLOADABLE FILES
+
+ABSTRACT
+ You can use IBM Update Installer V7.0.0.45 for WebSphere Software to install maintenance and updates for IBM WebSphere Application Server V7.0. 
+
+DOWNLOAD DESCRIPTION
+
+
+TAB NAVIGATION
+ * AIX [http://www.ibm.com/support/docview.wss?uid=swg24020212]- selected tab,
+ * HP-UX [http://www.ibm.com/support/docview.wss?uid=swg24020444]
+ * IBM i [http://www.ibm.com/support/docview.wss?uid=swg24020445]
+ * Linux [http://www.ibm.com/support/docview.wss?uid=swg24020446]
+ * Solaris [http://www.ibm.com/support/docview.wss?uid=swg24020447]
+ * Windows [http://www.ibm.com/support/docview.wss?uid=swg24020448]
+
+
+IBM Update Installer for WebSphere Software is provided for the following: 
+
+Components:  * Application Server
+ * Feature Packs
+
+
+Operating systems:  * AIX 7.1
+ * AIX 6.1
+ * AIX 5.3
+ * AIX 5.2
+
+
+Supported WebSphere Application Server Fix Packs: 
+
+Update Installer V7.0 is backwards compatible. A single instance of the V7.0 Update Installer can now apply maintenance and updates to IBM WebSphere Application Server V7.0.0.x. 
+
+Features
+The latest Update Installer V7.0.0.45 was released on April 30, 2018. It has the following functionality: 
+
+ * A GUI and a command-line Update Installer 
+ * Installation and removal of individual and/or multiple code updates 
+ * Logging, recovery features and prerequisite handling 
+ * Compatibility with previous releases in most cases
+
+
+Readme 
+To install maintenance and updates through a Graphical User Interface (GUI) or through a command line interface, follow the instructions that are included in the Installation instructions section of this document or in the Readme file, which is available in the install directory:  * <updateInstall_home>/docs/readme_updateinstaller.html 
+ * <updateInstall_home>/docs/readme_updateinstaller.pdf 
+ * <updateInstall_home>/docs/readme_updateinstaller.txt
+
+
+Known issues 
+None 
+
+Change history 
+
+Date Change 30 Apr 2018 Updated for launch of Update Installer V7.0.0.45 24 Apr 2017 Updated for launch of Update Installer V7.0.0.43 11 Apr 2016 Updated for launch of Update Installer V7.0.0.41 02 Nov 2015 Updated for launch of Update Installer V7.0.0.39 13 Mar 2015 Updated for launch of Update Installer V7.0.0.37 13 Oct 2014 Updated for launch of Update Installer V7.0.0.35 23 Jun 2014 Updated for launch of Update Installer V7.0.0.33 16 Jan 2014 Updated for launch of Update Installer V7.0.0.31 21 Jun 2013 Updated for launch of Update Installer V7.0.0.29 21 Jan 2013 Updated for launch of Update Installer V7.0.0.27 24 Sep 2012 Updated for launch of Update Installer V7.0.0.25 28 May 2012 Updated for launch of Update Installer V7.0.0.23 16 Jan 2012 Updated for launch of Update Installer V7.0.0.21 12 Sep 2011 Updated for launch of Update Installer V7.0.0.19 16 May 2011 Updated for launch of Update Installer V7.0.0.17 28 Feb 2011 Updated for launch of Update Installer V7.0.0.15 25 Oct 2010 Updated for launch of Update Installer V7.0.0.13 18 Jun 2010 Updated for launch of Update Installer V7.0.0.11 29 Mar 2010 Updated for launch of Update Installer V7.0.0.9 13 Nov 2009 Updated for launch of Update Installer V7.0.0.7 27 Jul 2009 Updated for launch of Update Installer V7.0.0.5 27 Mar 2009 Updated for launch of Update Installer V7.0.0.3 08 Dec 2008 Updated for launch of Update Installer V7.0.0.1 26 Sep 2008 Original draft published for Version 7.0 INSTALLATION INSTRUCTIONS
+ 
+
+ 1. Ensure that you have stopped all WebSphere Application Server and related processes. The product to be updated must not be running while you apply maintenance.
+    
+    
+ 2. Download the most recent Update Installer package that matches your platform from the Download package section of this page.
+    
+    
+ 3. Extract the downloaded Update Installer package (zip or tar file) to a temporary directory. 
+    
+    
+ 4. Navigate to the UpdateInstaller subdirectory. 
+    
+    
+ 5. Use the installation wizard to install the Update Installer by running the install or install.exe executable.  * On Windows systems, run the command install.exe by double-clicking on the icon, or running it directly from a command prompt.
+       
+       
+     * On UNIX-based systems, run the command ./install to launch the Wizard interface.
+    
+    
+
+
+Complete details on how to install the Update Installer can be obtained from Installing the Update Installer for WebSphere Software [http://publib.boulder.ibm.com/infocenter/wasinfo/v7r0/index.jsp?topic=/com.ibm.websphere.installation.nd.doc/info/ae/ae/tins_updi_install.html]. DOWNLOAD PACKAGE
+The version 7.0 Update Installer platforms supported for each WebSphere Application Server release is shown in the Detailed system requirements for WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27006921]. The Update Installer installation packages can be downloaded in the zip and tar.gz format by using the FTP, HTTP and DD links in the table below.
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 32-bit Power PC (zip) 30 April 2018 US English 116162212 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/7.0.x/AixPPC32/7.0.0.45-WS-UPDI-AixPPC32.zip] [0;dBlue;http://public.dhe.ibm.com:7618;sw_websphere;appserv/support/fixpacks/was70/cumulative/cf70031/WinX64/7.0.0-WS-NDDMZ-WinX64-FP0000031.pak] HTTP [http://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/7.0.x/AixPPC32/7.0.0.45-WS-UPDI-AixPPC32.zip] [0;dBlue;http://public.dhe.ibm.com:7618;sw_websphere;appserv/support/fixpacks/was70/cumulative/cf70031/WinX64/7.0.0-WS-NDDMZ-WinX64-FP0000031.pak] DD 32-bit Power PC (tar.gz) 30 April 2018 US English 115552984 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/7.0.x/AixPPC32/7.0.0.45-WS-UPDI-AixPPC32.tar.gz] HTTP [http://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/7.0.x/AixPPC32/7.0.0.45-WS-UPDI-AixPPC32.tar.gz] [0;dBlue;http://public.dhe.ibm.com:7618;sw_websphere;appserv/support/fixpacks/was70/cumulative/cf70031/WinX64/7.0.0-WS-NDDMZ-WinX64-FP0000031.pak] [http://www-01.ibm.com/support/docview.wss?uid=swg24020212#]DD 64-bit Power PC (zip) 30 April 2018 US English 125247369 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/7.0.x/AixPPC64/7.0.0.45-WS-UPDI-AixPPC64.zip] HTTP [http://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/7.0.x/AixPPC64/7.0.0.45-WS-UPDI-AixPPC64.zip] [0;dBlue;http://public.dhe.ibm.com:7618;sw_websphere;appserv/support/fixpacks/was70/cumulative/cf70031/WinX64/7.0.0-WS-NDDMZ-WinX64-FP0000031.pak] [http://www-01.ibm.com/support/docview.wss?uid=swg24020212#]DD 64-bit Power PC (tar.gz) 30 April 2018 US English 124642381 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/7.0.x/AixPPC64/7.0.0.45-WS-UPDI-AixPPC64.tar.gz] HTTP [http://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/7.0.x/AixPPC64/7.0.0.45-WS-UPDI-AixPPC64.tar.gz] [http://www-01.ibm.com/support/docview.wss?uid=swg24020212#] [http://www-01.ibm.com/support/docview.wss?uid=swg24020212#]DD 5.2 32-bit Power PC (zip) 30 April 2018 US English 97562957 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/7.0.x/AixPPC32/7.0.0.45-WS-UPDI-AixPPC32_52.zip] HTTP [http://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/7.0.x/AixPPC32/7.0.0.45-WS-UPDI-AixPPC32_52.zip] [http://www-01.ibm.com/support/docview.wss?uid=swg24020212#]DD [http://www-01.ibm.com/support/docview.wss?uid=swg24020212#] 5.2 32-bit Power PC (tar.gz) 30 April 2018 US English 97242251 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/7.0.x/AixPPC32/7.0.0.45-WS-UPDI-AixPPC32_52.tar.gz] HTTP [http://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/7.0.x/AixPPC32/7.0.0.45-WS-UPDI-AixPPC32_52.tar.gz] [http://www-01.ibm.com/support/docview.wss?uid=swg24020212#]DD [http://www-01.ibm.com/support/docview.wss?uid=swg24020212#] [http://www-01.ibm.com/support/docview.wss?uid=swg24020212#] 5.2 64-bit Power PC (zip) 30 April 2018 US English 97854499 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/7.0.x/AixPPC64/7.0.0.45-WS-UPDI-AixPPC64_52.zip] HTTP [http://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/7.0.x/AixPPC64/7.0.0.45-WS-UPDI-AixPPC64_52.zip] [http://www-01.ibm.com/support/docview.wss?uid=swg24020212#] [http://www-01.ibm.com/support/docview.wss?uid=swg24020212#]DD [http://www-01.ibm.com/support/docview.wss?uid=swg24020212#] 5.2 64-bit Power PC (tar.gz) 30 April 2018 US English 97544839 FTP [ftp://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/7.0.x/AixPPC64/7.0.0.45-WS-UPDI-AixPPC64_52.tar.gz] HTTP [http://public.dhe.ibm.com/software/websphere/appserv/support/tools/UpdateInstaller/7.0.x/AixPPC64/7.0.0.45-WS-UPDI-AixPPC64_52.tar.gz] [http://www-01.ibm.com/support/docview.wss?uid=swg24020212#]DD [http://www-01.ibm.com/support/docview.wss?uid=swg24020212#] [http://www-01.ibm.com/support/docview.wss?uid=swg24020212#] 
+
+TECHNICAL SUPPORT
+ Contact 1-800-IBM-SERV (U.S. only) or visit the WebSphere Application Server Support site [http://www.ibm.com/software/webservers/appserv/was/support/]. 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server - Express AIX 7.0

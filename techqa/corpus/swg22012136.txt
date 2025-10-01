@@ -1,0 +1,13 @@
+Title: IBM My Rhapsody plug-in crashes when exiting with system.exit - United States
+
+Text:
+rhapsody; api; plugin; crash TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ My Java API plug-in for IBM Rational Rhapsody crashes when it should be exiting the plug-in due to the system.exit call. 
+
+DIAGNOSING THE PROBLEM
+You have used the system.exit function in your plug-in code, and Rhapsody crashes at that point in the code.
+
+RESOLVING THE PROBLEM
+The system.exit call should not be used within a Rhapsody Java API plug-in; terminating the execution of the plug-in in this way causes Rhapsody to crash. Instead, it is recommended to handle any errors that are encountered by outputting them to the Rhapsody log.

@@ -1,0 +1,49 @@
+Title: IBM Report Studio Reports missing or not updating after performing a save - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ We are unable to find new reports that are saved and we do not see changes made in existing reports that were resaved. 
+
+SYMPTOM
+After making changes to existing report studio reports and selecting the save option the changes are not saved when you reopen the report in Report Studio and confirm.
+After creating and saving a new report the report does not exist in the saved location.
+No error messages are encountered when saving an existing or a new report.
+
+
+ENVIRONMENT
+Cognos BI 10.2.1 using Internet Explorer browser
+
+RESOLVING THE PROBLEM
+Clear the IE browser cache: 
+- Launch IE and navigate to Tools > Internet Options 
+
+
+- General tab
+- Under the Browsing history selection ensure the option 'Delete browsing history on exit' is checked.
+- Select the Delete button option and ensure that 'Preserve Favorites website data' is unchecked and all other options are checked.
+- Select Delete
+- Re-launch the browser, uncheck the 'Delete browsing history on exit' option. 
+
+
+Ensure the webpage retrieves the most recent page from the server:
+
+- In Internet Explorer open Tools>Internet Options
+- General tab
+- Browsing History section Settings
+- Ensure you have the 'Every time I visit the webpage' radio button selected. 
+
+In a distributed environment ensure that all servers including gateways, content manager and application server installs have the same fixpack installed.
+
+Other Internet Explorer settings that are required:
+
+- Allow Cookies
+- Active Scripting
+- Allow META REFRESH
+- Run ActiveX controls and plug-ins
+- Script ActiveX controls marked safe for scripting
+- Binary and script behaviors
+- Allow programmatic clipboard access
+- Userdata persistence
+- Enable pop-ups for the IBM Cognos BI server

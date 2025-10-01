@@ -1,0 +1,97 @@
+Title: IBM The copy command with the scp: protocol results in an error message - United States
+
+Text:
+an error occurred while copying the file; scp; cli; copy; failed; error TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Running of the copy command with the scp: protocol can fail for many different reasons, but the error message on the CLI depends on the firmware version. 
+
+RESOLVING THE PROBLEM
+The error messages from the CLI command depend on the firmware version. 
+
+ * For 7.2:
+   
+   Independent of the failure reason, the CLI shows the following ambiguous error message.
+   
+   An error occurred while copying the file.
+   
+   Check whether you entered the correct password, that there is enough storage in the destination, and that the server IP address matches the host key that was used. Alternatively, try a different copy protocol. Remember that the logs might contain more details of the error.
+   
+ * For 7.5 and later:
+   Depending on the type of error, the CLI will display the following error messages:
+
+ *  Incorrect host key:
+   
+   copy scp://username:password@hostname/file temporary:file
+   
+   % Copy: Host key verification of 'hostname' failed
+   
+   An error occurred while copying the file
+   
+   Source file not found (Copying from remote host to DataPower appliance):
+   
+   # copy scp://username:password@hostname/file temporary:file
+   
+   % [hostname]:file - No such file could be found
+   
+   The specified file on the remote host could not be found.
+   
+   Source file not found (Copying from DataPower appliance to remote host):
+   
+   # copy scp://username:password@hostname/file temporary:file
+   
+   % [hostname]:file - No such file could be found
+   
+   The specified file on the appliance could not be found.
+   
+   Incorrect username or password:
+   
+   # copy scp://username:password@hostname/file temporary:file
+   
+   % Permission denied at 'hostname'
+   
+   The username-password combination used for copying the file is not valid.
+   
+   Incorrect remote hostname:
+   
+   # copy scp://username:password@hostname/file temporary:file
+   
+   % Failed to resolve host name: 'hostname'
+   
+   The hostname used for the copy could not be located.
+   
+   Destination storage is full:
+   
+   # copy scp://username:password@hostname/file temporary:file
+   
+   % Cannot copy file [hostname]:file. Destination storage is full.
+   
+   The storage on the appliance is exhausted.
+   
+   Destination filepath is incorrect (Copying from remote host to DataPower appliance):
+   
+   # copy scp://username:password@hostname/file temporary:file/
+   
+   % Cannot copy file [hostname]:file. Destination is incorrect
+   
+   The hostname used for the copy is not valid.
+   
+   Destination filepath is incorrect (Copying from DataPower appliance to remote host):
+   
+   # copy temporary:file scp://username:password@hostname/file/
+   
+   % Cannot copy file temporary:file. Destination is incorrect
+   
+   The path for the destination file is not valid.
+   
+   Source filepath is incorrect:
+   
+   # copy scp://username:password@hostname/file/ temporary:file
+   
+   % Cannot copy file [hostname]:file/. Source file is incorrect.
+   
+   The path to the source file on the host is not valid. The file cannot copied. 
+
+
+
+While using scp with file log target upload, the only error conditions that apply are "Incorrect hostkey," "Incorrect username or password," and "Incorrect remote hostname." All the other error scenarios result in the same behavior listed above for firmware version 7.2.

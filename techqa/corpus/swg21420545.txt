@@ -1,0 +1,151 @@
+Title: IBM Resolving connectivity problems when using IBM Installation Manager to install WebSphere Process Server (WPS) Version 7.0 - United States
+
+Text:
+wps; installation; proxy; installation manager; internet; hang; freeze TECHNOTE (FAQ)
+
+QUESTION
+ How can I install WebSphere Process Server with IBM Installation Manager if I do not have an Internet connection or if my server uses a proxy? 
+
+ANSWER
+IBM Installation Manager generally requires connectivity to the Internet to be able to connect to the live repositories and retrieve information regarding the current features/fixes available for a particular product installation.
+In cases where there is no internet connectivity, Installation Manager hangs during start up trying to access the http://public.dhe.ibm.com/software/websphere/repositories/ [http://public.dhe.ibm.com/software/websphere/repositories/] URL. This behavior includes cases when the server where installation is being attempted is behind a firewall and requires proxy server information to access the Internet. 
+
+Using IBM Installation Manager without an Internet connection 
+
+Using IBM Installation Manager when your Internet connection uses a proxy 
+
+ 
+
+
+
+USING IBM INSTALLATION MANAGER WITHOUT AN INTERNET CONNECTION
+If you do not have an active Internet connection, complete one of the following tasks, depending on whether IBM Installation Manager is already installed. 
+
+Important: 
+
+ * If you are not logged in as root or if you do not have administrator privileges on the machine, you must use the userinst command in the steps instead of the install command.
+   
+   
+ * After installing WebSphere Process Server using one of the procedures that follows, you might experience problems if you try to update, modify, or uninstall the software. These problems occur because the WebSphere Application Server, Service Component Architecture (SCA) and XML repository checks are not available as they require an active Internet connection. You can work around this problem by modifying Installation Manager preferences to include install_image/repository/repository.config, where install_image is either the mount point for the DVD or the directory in which you downloaded the installation images.
+   
+   
+ * To prevent always needing the Installation image, you can instead download the following repositories:
+   
+   http://public.dhe.ibm.com/software/websphere/downloads/xml/import/xml.1.0.import.zip [http://public.dhe.ibm.com/software/websphere/downloads/xml/import/xml.1.0.import.zip]
+   
+   http://public.dhe.ibm.com/software/websphere/downloads/sca/import/sca.1.0.import.zip [http://public.dhe.ibm.com/software/websphere/downloads/sca/import/sca.1.0.import.zip]
+   
+   http://public.dhe.ibm.com/software/websphere/downloads/was/import/was.7.0.import.zip [http://public.dhe.ibm.com/software/websphere/downloads/was/import/was.7.0.import.zip]
+   
+   
+
+
+
+IBM Installation Manager is not installed and you have a downloaded installation package  1. Install IBM Installation Manager, as follows:  1. Change to the install_image/IM directory.
+        
+        
+     2. Remove the following entry from the install.xml and post-install.xml files:
+        <repository location='http://public.dhe.ibm.com/software/websphere/repositories/'/>
+        
+        
+    
+    
+ 2. Install IBM Installation Manager with the following command, where 'location' specifies the directory containing the install.xml file: 
+    install_image/IM/install -input location/install.xml
+    
+    
+ 3. Install the product with the following command, where 'location' specifies the directory containing the post-install.xml file: 
+    install_image/IM/install -input location/post-install.xml 
+    
+    
+
+
+IBM Installation Manager is not installed and you have the installation DVD  1. Copy the install.xml and post-install.xml files from the DVD to your local file system.
+    
+    
+ 2. Remove the following entry from both files: 
+    <repository location='http://public.dhe.ibm.com/software/websphere/repositories/'/
+    
+    
+ 3. Install IBM Installation Manager with the following command, where 'location' specifies the directory containing the install.xml file: 
+    iso_mount/IM/install -input location/install.xml
+    
+    
+ 4. Install the product with the following command, where 'location' specifies the directory containing the post-install.xml file: 
+    iso_mount/IM/install -input location/post-install.xml
+    
+    
+
+
+IBM Installation Manager is installed  1. Start IBM Installation Manager with the IBMIM command. 
+    
+    
+ 2. Modify the Installation Manager repository, as follows:  1. Click File > Preferences > Repositories.
+        
+        
+     2. Clear the http://public.dhe.ibm.com/software/websphere/repositories [http://public.dhe.ibm.com/software/websphere/repositories] repository option.
+        
+        
+     3. Add the install_image/repository/repository.config repository and ensure that it is selected.
+        
+        
+    
+    
+ 3. Install WebSphere Process Server.
+    
+    
+
+Back to top
+
+
+USING IBM INSTALLATION MANAGER WITH A PROXY
+
+If your Internet connection is configured to use a proxy, complete the following steps to use IBM Installation Manager:  
+
+Using the Installation Manager GUI 
+
+ 1. If IBM Installation Manager is not yet installed on your machine, install it and start it using one of the methods described in the "Using Installation Manager without an Internet connection" section of this document.
+    
+    
+ 2. From within Installation Manager, click File > Preferences > Internet > HTTP Proxy.
+    
+    
+ 3. Click Enable proxy server.
+    
+    
+ 4. Enter the proxy server details for your particular environment.
+    
+    
+ 5. Install WebSphere Process Server.
+    
+    
+
+
+Using the silent installation mode  1. Change to the Agent data location directory (appDataLocation) for IBM Installation Manager. By default, this directory is located in C:\Documents and Settings\All Users\Application Data\ibm\Installation Manager for Windows systems and in /var/ibm/InstallationManager/or /home/<user>/var/ibm/InstallationManager for Linux systems.
+    
+    
+ 2. Make a back up copy of the com.ibm.cic.agent.core.prefs file in the appDataLocation/settings directory. 
+    
+    
+ 3. Set the proxy host preferences according to the Silent Installation Preferences Internet Keys [http://publib.boulder.ibm.com/infocenter/install/v1r2/topic/com.ibm.silentinstall12.doc/topics/r_silent_prefs.html#r_silent_prefs__internetKey] section. [http://publib.boulder.ibm.com/infocenter/install/v1r2/topic/com.ibm.silentinstall12.doc/topics/r_silent_prefs.html#r_silent_prefs__internetKey]The example illustrates the typical values for a proxy server named proxy.host.com using port 8080. Substitute the values particular to your proxy server and port. com.ibm.cic.common.core.preferences.http.proxyEnabled=true com.ibm.cic.common.core.preferences.http.proxyHost=proxy.host.com com.ibm.cic.common.core.preferences.http.proxyPort=8080 
+ 4. Save the com.ibm.cic.agent.core.prefs file.
+    
+    
+ 5. Use the documented procedure to silently install WebSphere Process Server.
+    
+    
+
+Back to top
+
+
+Additional References: 
+ * Installation process for WebSphere Process Server v7.0 by a non-root user using the silent install method [http://www.ibm.com/support/docview.wss?uid=swg21417628] 
+ * Instructions for installing an interim fix for WebSphere Process Server (WPS) and IBM Business Process Manager (BPM) using the IBM Installation Manager [http://www.ibm.com/support/docview.wss?uid=swg21417656] 
+ * Installation Manager graphical environment issues on Solaris, Linux, AIX [http://www.ibm.com/support/docview.wss?uid=swg21330190]
+
+Back to top
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WPS

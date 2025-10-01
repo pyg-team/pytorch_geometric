@@ -1,0 +1,18 @@
+Title: IBM Multiple devices not selected on restore when serial-parallel restore is done - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Why does BRMS only use one tape drive for a restore when a serial-parallel save was done? 
+
+CAUSE
+Design of BRMS restore process 
+
+ANSWER
+When a serial-parallel save is done with BRMS, a media definition representing the data saved and the volumes it spans is not created and is not needed for recovery when a serial-parallel save is done. For this reason, the various libraries and other objects saved in this manner are not mapped to multiple tape drives as data saved in a true parallel save would be. The following link provides a method for setting up batch jobs to accomplish concurrent restores of groups of data that were saved in a serial-parallel type of save: 
+
+https://www.ibm.com/developerworks/community/wikis/home?lang=en#!/wiki/IBM Backup%2C Recovery and Media Services %28BRMS%29 for i/page/How to use batch restores for faster multi-library recoveries [https://www.ibm.com/developerworks/community/wikis/home?lang=en#%21/wiki/IBM%20Backup%2C%20Recovery%20and%20Media%20Services%20%28BRMS%29%20for%20i/page/How%20to%20use%20batch%20restores%20for%20faster%20multi-library%20recoveries] 
+
+
+Cross reference information Segment Product Component Platform Version Edition Operating System IBM i 7.1 Operating System IBM i 6.1 Operating System IBM i 7.3 Operating System IBM i 7.2

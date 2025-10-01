@@ -1,0 +1,34 @@
+Title: IBM AMQ6047 for conversion between UTF8 and EBCDIC codepages on HP-UX - United States
+
+Text:
+MQPRB hp hp-ux hpux ccsid supported unsupported amq6047 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+
+An error similar to the following is observed in the WebSphere MQ queue manager error logs, for a HP-UX queue manager:
+
+AMQ6047: Conversion not supported.
+EXPLANATION:
+WebSphere MQ is unable to convert string data tagged in CCSID 1208 to data in CCSID 500.
+ACTION:
+Check the WebSphere MQ Application Programming Reference Appendix and the appropriate National Language Support publications to see if the CCSIDs are supported by your system.
+
+
+ The most likely circumstances are a channel between a HP-UX queue manager and a z/OS queue manager, where CONVERT has been specified. 
+
+
+
+CAUSE
+HP-UX is not provided with codepage conversion tables between UTF8 and the EBCDIC codepages which are used by default on z/OS queue managers (as can be seen by inspecting the file /usr/lib/nls/iconv/config.iconv on HP-UX).
+These EBCDIC codepages, such as CCSID 500, do not support the Euro € character.
+There are a set of corresponding EBCDIC codepages, which differ only in support of the Euro character, for which codepage conversion tables are supplied on HP-UX.
+As such, changing the CCSID of the z/OS queue manager to a corresponding CCSID should resolve the issue.
+
+RESOLVING THE PROBLEM
+
+
+ Change the CCSID of the z/OS queue manager to a corresponding EBCDIC codepage, which supports the Euro character.
+The following table summarizes these codepages: 
+
+CCSID not supported by HP-UX Description of EBCDIC codepage CCSID supported by HP-UX, with Euro character 273 Austria Germany 1141 277 Denmark Norway 1142 278 Finland Sweden 1143 280 Italy 1144 284 Spain 1145 285 UK 1146 297 France 1147 500 International 1148 871 Iceland 1149

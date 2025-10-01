@@ -1,0 +1,149 @@
+Title: IBM PN76611: MSGEZY2027W AND MSGEZY2028W MESSAGES SHOULD BE ISSUED ONLY WITH DEBUG TRACE ACTIVE. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  MSGEZY2027W and MSGEZY2028W are issued from the Telnet server
+   for invalid data received on a connection.  However, the
+   messages should only be displayed with debug/trace option.  The
+   messages do not indicate an error condition by themselves.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of TCP/IP for MVS                  *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: The frequency of message MSGEZY2027W    *
+   *                      issued are filling up the log, causing  *
+   *                      other important messages to be missed.  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   Since upgrading MVS TCP/IP to 3.1, 'MSGEZY2027W Extra data found
+   after termination. It is ignored.' is issued in abundance.
+   This is filling up the log causing other important messages to
+   be missed very easily.
+   Since this message is not an indication of a problem, it was
+   decided that MSGEZY2027W and 'MSGEZY2028W Extra data found
+   after FPRESENT. It is ignored.' should be issued only with
+   debug trace active.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code is change to issue the messages only when DIAG7C debug
+   trace is active.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PN76611
+   
+   
+ * REPORTED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * REPORTED COMPONENT ID
+   5655HAL00
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   1995-10-05
+   
+   
+ * CLOSED DATE
+   1995-11-30
+   
+   
+ * LAST MODIFIED DATE
+   1996-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UN84916
+   
+   
+
+MODULES/MACROS
+ *  EZACA01D
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TCP/IP V3 MVS
+   
+   
+ * FIXED COMPONENT ID
+   5655HAL00
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY UN84916 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UN84916]
+   UP96/01/04 P F601
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

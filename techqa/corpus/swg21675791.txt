@@ -1,0 +1,158 @@
+Title: IBM Some invalid records keep remaining in entity manager output queue table. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Hybrid customers sometimes experience de-queued records in the entity manager output queue tables (mpi_entOque_*** tables). The records are no longer valid and should be removed. 
+
+The de-queued records in the tables refer to the failed entity events by physical MDM as a result of a legitimate permanent error. Consequently, they are added back into mpi_entOque_*** with an 'error' status. 
+
+SYMPTOM
+Some invalid records remain in the entity manager output queue tables (mpi_entOque_***), even if they are retried.
+
+
+CAUSE
+The issue has three possible causes: 
+
+1. The failed entoque MEMBER CREATE events are determined to be redundant when the entity no longer exists in vMDM. Existence is determined by checking to see whether the original entrecno (mpi_entxeia.supentrecno) for the add is equal to the current entrecno of the entity. If it is not equal, then the original entity has either been linked, manually moved, or merged into another entity. For hybrid MDM, it is not necessary to process this event because it is a transient entity and the member has already moved on to its new entity. The MEMBER LINK event that moved the entity will result in the member being persisted in the correct entity. Re-running this event will result in the member being persisted in two entities in the physical MDM.
+
+For example, in the case just described, you could use the following SQL to retrieve records with entity type "mdmorg":
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+2.The failed entoque MEMBER LINK events are determined to be redundant because the entity no longer exists in the virtual MDM. The determination is made by checking whether the entity specified in the related entxeia record still exists. If the entity no longer exists, it does not need to be persisted in the physical MDM because its subsequent MEMBER LINK events will have moved it to a different entity. There might be a DELETE ENTITY event associated with the MEMBER LINK event that needs to be processed. For this case, do not return the record. The ENTITY UPDATE event will fail in hybrid MDM but will proceed with the ENTITY DELETE event. The record will again be de-queued into an error state, but the subsequent run of the same query will return the record for deletion after it is removed from the physical MDM. For hybrid MDM, after the old entity is deleted, these events no longer need to be processed. 
+
+For example, in the case just described, you could use the following SQL to retrieve records with entity type "mdmorg": 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+3.The failed entoque MEMBER UNLINK events are determined to be redundant because the entity no longer exists in the virtual MDM. The determination is made by checking whether the entity specified in the related entxeia record still exists. If the entity no longer exists there is no reason to persist it in the physical MDM since its subsequent MEMBER LINK events will have moved it to a different entity. There may be a CREATE ENTITY event associated to the MEMBER UNLINK that will fail in hybrid if the MEMBER has already linked to a new entity. The subsequent UPDATE ENTITY event will not be processed by this event but the MEMBER LINK event that followed this MEMBER UNLINK will update hybrid MDM. 
+
+For example, in the case just described, you could use the following SQL to retrieve records with entity type "mdmorg": 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+ENVIRONMENT
+MDM Hybrid
+
+
+
+DIAGNOSING THE PROBLEM
+Refer to cause information above.
+
+
+
+RESOLVING THE PROBLEM
+A new service (cleanEntityOutputQueue) in a new CBA (CleanEntityOutputQueue.cba) allows hybrid MDM users to clean the records. 
+
+
+
+CleanEntityOutputQueue.cba:
+************************************
+1. Transaction Name: cleanEntityOutputQueue
+
+2. Request object : CleanEntityOutputQueueRequestBObj
+"
+<CleanEntityOutputQueueRequestBObj>
+<ObjectReferenceId></ObjectReferenceId>
+<EntityType></EntityType>
+<ErrorWrkOwner></ErrorWrkOwner>
+</CleanEntityOutputQueueRequestBObj>
+"
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+3. Response object CleanEntityOutputQueueResponseBObj 
+" 
+<CleanEntityOutputQueueResponseBObj> 
+<ObjectReferenceId></ObjectReferenceId> 
+<EntityType></EntityType> 
+<ErrorWrkOwner></ErrorWrkOwner> 
+<Count></Count> 
+</CleanEntityOutputQueueResponseBObj> 
+"  * 
+
+
+
+4. If logger level is set to FinestEnabled (com.ibm.mdm.mds.api.example.component.CleanEntityOutputQueueComponent=finest), all deleted records will be logged to trace.log file with following format: 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+
+
+
+
+Deploying the CBA to the operational server from IBM WebSphere Application Server admin console: 
+************************************************************************************************************************ 
+1. Ensure that you have run the SQL scripts in the Resources/sql directory that corresponds to your installed database, and that you have restarted the IBM WebSphere Application Server. 
+
+2. Open the IBM WebSphere Application Server admin console and, in the navigation frame, click Environment > OSGi bundle repositories > Internal bundle repository. At the top of the table, click New. 
+
+3. Select the local file system and browse to the location where you saved the CBA that you exported from the MDM Workbench, then click OK, then click Save directly to the master configuration. 
+
+4. In the navigation frame, click Applications > Application Types > Business-level applications and click on the InfoSphere® MDM application. Select the EBA deployed asset (for example, com.ibm.mdm.server.app_0001.eba). This step can take several minutes. 
+
+5. From the right-hand column, click Extensions for this composition unit, then at the top of the table, click Add. 
+
+6. Select the check box next to the imported CBA, then click the Add button at the top of the table. It can take several minutes to load the next page 
+
+7. Click Save directly to the master configuration. Doing so returns you to the composition unit page. 
+
+8. Near the bottom of the page, click the button labelled Update to latest deployment in order to examine the preview of changes and then click OK. For your extension CBA, the display changes from Not deployed to a version number. 
+
+9. Click Next through the options wizard. Accept the default options on each page, then click Finish. 
+
+10. Click Save directly to the master configuration. CleanEntityOutputQueue.cba [/support/docview.wss?uid=swg21675791&aid=2]CleanEntityOutputQueue.cba [/support/docview.wss?uid=swg21675791&aid=1]
+resources.zip [/support/docview.wss?uid=swg21675791&aid=4]resources.zip [/support/docview.wss?uid=swg21675791&aid=3]

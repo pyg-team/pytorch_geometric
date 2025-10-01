@@ -1,0 +1,83 @@
+Title: IBM Security Bulletin: Multiple vulnerabilities in IBM Java Runtime affect IBM Tivoli Netcool Configuration Manager (ITNCM) - United States
+
+Text:
+ITNCM; Security Bulleting; CVEID: CVE-2014-6512; CVEID: CVE-2014-6457; CVE-ID: CVE-2014-3566 SECURITY BULLETIN
+
+SUMMARY
+ There are multiple vulnerabilities in IBM® Runtime Environment Java™ Technology Edition, Version 6 that is used by ITNCM. 
+
+This also includes a fix for the Padding Oracle On Downgraded Legacy Encryption (POODLE) SSLv3 vulnerability (CVE-2014-3566). These were disclosed as part of the IBM Java SDK updates in October 2014. (CVE-2014-6512) (CVE-2014-6457) (CVE-2014-3566) 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2014-6512 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6512] 
+
+DESCRIPTION: An unspecified vulnerability related to the Libraries component has no confidentiality impact, partial integrity impact, and no availability impact.
+
+
+
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/97147 [http://xforce.iss.net/xforce/xfdb/97147] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:N/I:P/A:N) 
+
+
+
+
+CVEID: CVE-2014-6457 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-6457]
+
+
+
+
+DESCRIPTION: An unspecified vulnerability related to the JSSE component has partial confidentiality impact, partial integrity impact, and no availability impact.
+
+
+
+
+CVSS Base Score: 4
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/97148 [http://xforce.iss.net/xforce/xfdb/97148] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:H/Au:N/C:P/I:P/A:N) 
+
+
+
+
+CVE-ID: CVE-2014-3566 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566]
+
+
+
+
+DESCRIPTION: Product could allow a remote attacker to obtain sensitive information, caused by a design error when using the SSLv3 protocol. A remote user with the ability to conduct a man-in-the-middle attack could exploit this vulnerability via a POODLE (Padding Oracle On Downgraded Legacy Encryption) attack to decrypt SSL sessions and access the plaintext of encrypted connections.
+
+
+
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See http://xforce.iss.net/xforce/xfdb/97013 [http://xforce.iss.net/xforce/xfdb/97013] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N)
+
+
+AFFECTED PRODUCTS AND VERSIONS
+· Affected releases/versions/platforms: 6.2.x, 6.3.x, 6.4.x
+· Releases/systems/configurations NOT affected: None
+
+REMEDIATION/FIXES
+ 
+
+Product version Fix Date Notes 6.4.1.x 30 Nov 2014 6.4.1-TIV-ITNCM-LINUX-FP001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm/Tivoli/Tivoli+Netcool+Configuration+Manager&fixids=6.4.1-TIV-ITNCM-LINUX-FP001&source=dbluesearch] available from fix central. 6.4.0.x 30 Nov 2014 6.4.0.3 is remediated by 6.4.1.1. ITNCM is merging the streams so it is advised that customers upgrade to 6.4.1.1 6.4.1-TIV-ITNCM-LINUX-FP001 [http://www.ibm.com/support/fixcentral/quickorder?product=ibm/Tivoli/Tivoli+Netcool+Configuration+Manager&fixids=6.4.1-TIV-ITNCM-LINUX-FP001&source=dbluesearch] available from fix central. 6.3.x 29 Jan 2015 6.3.0.6-TIV-ITNCM-IF001 [http://www-933.ibm.com/support/fixcentral/swg/doSelectFixes?options.selectedFixes=6.3.0.6-TIV-ITNCM-IF001&continue=1] Available from fix central. 6.2.x None Please contact support. 
+
+IBM recommends that you review your entire environment to identify areas that enable the SSLv3 protocol and take appropriate mitigation and remediation actions. The most immediate mitigation action that can be taken is disabling SSLv3. You should verify disabling SSLv3 does not cause any compatibility issues. GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ Original Version Published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

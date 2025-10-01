@@ -1,0 +1,123 @@
+Title: IBM IR39907: AUTOMATIC POWER ON DOES NOT WORK CORRECTLY ON TERMINALS FOR Y2K LEAP YEAR. ***FIX IN ERROR. SEE IR39985*** - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Automatic power on does not work correctly on terminals
+   for Y2K leap year.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Automatic power on does not work correctly on terminals
+   for Y2K leap year.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The check to determine if a year was a leap year didn't
+   handle the year 2000 (which is also a leap year).  As a
+   result, incorrect data was passed to the ADXSERVE call
+   in sub POWER.OFF that sets up auto power on.  Changed
+   the code to include a check for leap year 2000.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IR39907
+   
+   
+ * REPORTED COMPONENT NAME
+   4680-4690 GEN S
+   
+   
+ * REPORTED COMPONENT ID
+   569654600
+   
+   
+ * REPORTED RELEASE
+   101
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   1999-02-24
+   
+   
+ * CLOSED DATE
+   1999-02-24
+   
+   
+ * LAST MODIFIED DATE
+   2000-03-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *     EALTS1SC EALTSM0L EALTS00L EALTSFSL EALTSMFL
+   EALTSM1L EALTS10L
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   4680-4690 GEN S
+   
+   
+ * FIXED COMPONENT ID
+   569654600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R101 PSY UR51833
+   UP00/03/10 P J001

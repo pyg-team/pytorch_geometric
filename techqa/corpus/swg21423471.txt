@@ -1,0 +1,70 @@
+Title: IBM In DB2 V9.1 and V9.5, dropping a column from a table that contains an XML data type column will result in SQL1242N. - United States
+
+Text:
+SQL1242N; DROP COLUMN; XML TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you try to drop a column using the ALTER TABLE command on tables which have a XML data type, an error SQL1242N with reason code '7' will be returned. 
+
+SYMPTOM
+When a column is dropped using an ALTER TABLE command the table will be put in REORG PENDING state. Since REORG-Recommended operations are not supported for tables containing a XML column in V9.1 and V9.5, the ALTER command to drop the column will fail.
+
+
+CAUSE
+db2 "alter table CATALOG drop column CATLOG" 
+
+DB21034E The command was processed as an SQL statement because it was not a valid Command Line Processor command. During SQL processing it returned:
+SQL1242N An XML feature is not supported in the context where it is used. 
+Reason code = "7". SQLSTATE=42997
+
+
+RESOLVING THE PROBLEM
+If dropping the column(s) for the table is necessary there is no alternative other than to drop and recreate the table or use the ALTOBJ procedure. Below is an example of using ALTOBJ to drop a column. 
+
+
+The ALTOBJ procedure parses an input CREATE TABLE statement serving as the target data definition language (DDL) for an existing table that is to be altered. This will avoid a REORG PENDING state.
+
+Please note this needs to be run when no one is using/accessing the table. 
+
+
+db2 describe table CATALOG
+
+Data type Column
+Column name schema Data type name Length Scale Nulls
+------------- --------- ---------------- ---------- ----- -----
+NAME SYSIBM VARCHAR 128 0 Yes
+CATLOG SYSIBM XML 0 0 Yes
+
+2 record(s) selected.
+
+
+CALL SYSPROC.ALTOBJ('APPLY_CONTINUE_ON_ERROR', 'CREATE TABLE CATALOG (NAME VARCHAR(128))', -1, ?) 
+
+Value of output parameters 
+-------------------------- 
+Parameter Name : ALTER_ID 
+Parameter Value : 5
+
+Parameter Name : MSG
+Parameter Value : SELECT OBJ_TYPE, OBJ_SCHEMA, OBJ_NAME, SQL_OPERATION, SQL_STMT, EXEC_MODE, EXEC_SEQ FROM SYSTOOLS.ALTOBJ_INFO_V WHERE ALTER_ID=5 AND EXEC_MODE LIKE '_1______' ORDER BY EXEC_SEQ 
+
+Return Status = 0
+
+
+db2 describe table CATALOG
+
+Data type Column
+Column name schema Data type name Length Scale Nulls
+------------- --------- ---------------- ---------- ----- -----
+NAME SYSIBM VARCHAR 128 0 Yes
+
+1 record(s) selected.
+
+Please refer our DB2 info center for additional information regarding these commands. 
+This restriction has been lifted in V9.7. 
+
+
+RELATED INFORMATION
+ ALTOBJ procedure [http://publib.boulder.ibm.com/infocenter/db2luw/v9r5/topic/com.ibm.db2.luw.sql.rtn.doc/doc/r0011934.html?]
+What's new in V9.7 [http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/topic/com.ibm.db2.luw.wn.doc/doc/c0055038.html?]
+REORG-recommend operations [http://publib.boulder.ibm.com/infocenter/db2luw/v9/index.jsp?topic=/com.ibm.db2.udb.admin.doc/doc/c0023297.htm]

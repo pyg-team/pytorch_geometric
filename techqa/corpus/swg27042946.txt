@@ -1,0 +1,30 @@
+Title: IBM Fix list for IBM Integration Bus Healthcare Pack - Version 3.0 - United States
+
+Text:
+ PRODUCT DOCUMENTATION
+
+ABSTRACT
+ IBM Integration Bus Healthcare Pack provides periodic fixes for Version 3.0. The following is a complete listing of available fixes for Version 3.0 with the most recent fix at the top. 
+
+CONTENT
+Fix Pack 3.0.0.1 (V3.0.0.1) 
+
+
+Glossary of Terms [http://techsupport.services.ibm.com/guides/acronyms.html] 
+
+
+
+
+
+
+Fix Pack 3.0.0.1 (V3.0.0.1) Fix release date: 21 August 2014
+Last modified: 21 August 2014
+Status: Available
+
+[/support/docview.wss?uid=swg27042946&aid=1]Download information [http://www.ibm.com/support/docview.wss?&uid=swg24038163] Back to Top 
+No APARs existed, therefore, none are included. This fix pack does include IBM internal defect fixes and support for HIPAA. 
+
+
+Change history 
+Last modified: 21 August 2014  * 21 August 2014: Added release date. 
+ * 14 August 2014: Created fix list page.

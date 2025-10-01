@@ -1,0 +1,28 @@
+Title: IBM Microsoft SQL Server 2005 is not compatible with versions of WebSphere Application Server prior to version 6.1 - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Do IBM WebSphere Application Server versions prior to V6.1 work with Microsoft SQL Server 2005? 
+
+ANSWER
+WebSphere Application Server versions prior to V6.1 were written to be compatible with the Microsoft SQL Server 2000 database. However, Microsoft SQL Server 2005 is not fully forward compatible from Microsoft SQL Server 2000, and therefore WebSphere Application Server versions prior to V6.1 are not fully compatible with Microsoft SQL Server 2005. 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers Runtimes for Java Technology Java SDK Application Servers WebSphere Application Server for z/OS z/OS 6.0

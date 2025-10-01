@@ -1,0 +1,71 @@
+Title: IBM ITM Agent for i5/OS does not work with large number of disks - United States
+
+Text:
+crash; offline; alerts; events; ITM_i5_PERFORMANCE ITM_i5_AGENT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Tivoli Monitoring Agent for i5/OS agent does not start or job crashes when collecting data on large number of disks using OS400 Disk attribute group. 
+
+SYMPTOM
+One or more of the below symptoms can happen with Monitoring Agent for i5/OS, here after referred to as the Agent, when it encounters this problem. 
+
+1. The Agent for i5/OS does not show online on Tivoli Enterprise Portal. 
+
+2. The Agent's CT_AGENT job ends abnormally immediately after it starts. 
+
+3. The Agent's CT_AGENT job runs properly for a while and then abends. 
+
+
+CAUSE
+1. Agent job encounters a pointer exception and ends abnormally during data collection for hundreds of disk units on a i5/OS server.
+
+
+DIAGNOSING THE PROBLEM
+Verify the CT_AGENT job logs created at the time of the failure. One of the job logs will have the log statements similar to below. 
+
+MCH3601 Escape 40 20/06/10 08:21:30.826235 
+LIBKA4SH QAUTOMON *STMT LIBKA4SH QAUTOMON *STMT 
+
+From module . . . . . . : KA4US400 
+From procedure . . . . : next__19userSpaceVarRecordsFRi 
+Statement . . . . . . . . : 6 
+To module . . . . . . . . : KA4US400 
+To procedure . . . . . . : next__19userSpaceVarRecordsFRi 
+Statement . . . . . . . . : 6 
+Thread . . . . . . . . . . . : 0001B0C1 
+Message . . . . . . . . . : Pointer not set for location referenced. 
+Cause . . . . . . . . . . . : A pointer was used, either directly or as a basing pointer, that has not been set to an address. 
+
+CPI93B2 Information 50 20/06/10 08:21:31.081255 
+QPDSERR QSYS 01B4 QPDLOGER QSYS 008E 
+Thread . . . . . . . . . . . . . : 0001B0C1 
+Message . . . . . . . . . . . : Software problem data for LIBKGLBASE has been detected. 
+Cause . . . . . . . . . . . . . : A software problem data with symptom string 5724 F/CT_AGENT MOD/KA4RMAIN MSGMCH3601 RC163 on program LIBKGLBASE has been detected. Data dump output is being directed to spooled file 2 job 246560/QAUTOMON/CT_AGENT created on system xxxxxxx on xx/xx/xx xx:xx:xx.. 
+Recovery . . . . . . . . . : Report the problem using the Analyze Problem (ANZPRB) command. 
+
+
+RESOLVING THE PROBLEM
+Perform the below steps on Tivoli Enterprise Portal. 
+
+1. Identify the situations created using OS400_Disk attribute group. 
+
+2. Stop the situations identified in step 1 if they are already started. 
+
+3. De select "Run at startup" on the situation definition to make sure they do not auto start. 
+
+4. You can choose to create either new situations or modify the existing situations to use newer i5OS_Disk attribute group instead of OS400 Disk attribute group. 
+
+5. i5OS_Disk attribute group provides more disk related metrics and performs better than older OS400 Disk attribute group. 
+
+6. Stop and un configure historical data collection on OS400 Disk attribute group. 
+
+7. Do not access any workspaces related to OS400 Disk attribute group. 
+
+OS400 Disk attribute group still exists for compatibility purposes as many customer implementations use this attribute group. It works correctly on systems with smaller number of disks on a system. This attribute group and related situations, queries and workspaces will be removed in future main product refreshes. There is no way to disable this attribute group other than not starting the situations, not starting historical data collection and not accessing the related workspace views.
+
+
+
+PRODUCT ALIAS/SYNONYM
+ ITM i5/OS Agent
+ITM OS/400 Agent
+ITM IBM i Agent

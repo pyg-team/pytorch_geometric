@@ -1,0 +1,213 @@
+Title: IBM PK37435: JAVA.LANG.ARRAYINDEXOUTOFBOUNDSEXCEPTION: AT LOGIN OF THE ITCAM FOR WEBSPHERE CONSOLE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  I am at V6.0.0.2 with IF 001 applied running on Windows 2003 EE.
+   After the first login in the morning where me home page is the
+   enterprise Overview I see errors in the systemerr.log file for
+   the
+   websphere server. I see this error everyday. Would like to know
+   what the
+   cause is and how to eliminate it.
+   I am running Websphere V6.0.2.9 and Java SDK 1.4.2 SR4
+   
+   ====
+   
+   [6/27/06 6:57:43:072 CDT] 0000005e SystemErr     R
+   java.lang.ArrayIndexOutOfBoundsException: 0
+    at javachart.chart.Dataset.<init>(Unknown Source)
+    at javachart.chart.Chart.addDataset(Unknown Source)
+    at
+   javachart.applet.ParameterParser.getDatasetParameters(Unknown
+   Source)
+    at javachart.applet.ParameterParser.getDataset(Unknown Source)
+    at javachart.applet.ParameterParser.getDatasets(Unknown Source)
+    at javachart.applet.ParameterParser.getOptions(Unknown Source)
+    at javachart.servlet.Bean.getOptions(Unknown Source)
+    at javachart.servlet.lineApp.init(Unknown Source)
+    at javachart.servlet.Bean.buildChart(Unknown Source)
+    at javachart.servlet.Bean.generate(Unknown Source)
+    at javachart.servlet.Bean.generate(Unknown Source)
+    at javachart.servlet.Bean.getImageBytes(Unknown Source)
+    at
+   com.cyanea.ve.avm.LandingChartServlet.doPost(LandingChartServlet
+   .java(Co
+   mpiled Code))
+    at
+   com.cyanea.ve.avm.LandingChartServlet.doGet(LandingChartServlet.
+   java(Com
+   piled Code))
+    at
+   javax.servlet.http.HttpServlet.service(HttpServlet.java(Compiled
+   Code))
+    at
+   com.cyanea.ve.common.BaseServlet.service(BaseServlet.java(Compil
+   ed
+   Code))
+    at
+   javax.servlet.http.HttpServlet.service(HttpServlet.java(Compiled
+   Code))
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.service(ServletWr
+   apper.ja
+   va(Compiled Code))
+    at
+   com.ibm.ws.webcontainer.servlet.ServletWrapper.handleRequest(Ser
+   vletWrap
+   per.java(Compiled Code))
+    at
+   com.ibm.ws.webcontainer.servlet.CacheServletWrapper.handleReques
+   t(CacheS
+   ervletWrapper.java(Compiled Code))
+    at
+   com.ibm.ws.webcontainer.WebContainer.handleRequest(WebContainer.
+   java(Com
+   piled Code))
+    at
+   com.ibm.ws.webcontainer.channel.WCChannelLink.ready(WCChannelLin
+   k.java(C
+   ompiled Code))
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleDiscr
+   iminatio
+   n(HttpInboundLink.java(Compiled Code))
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpInboundLink.handleNewIn
+   formatio
+   n(HttpInboundLink.java(Compiled Code))
+    at
+   com.ibm.ws.http.channel.inbound.impl.HttpICLReadCallback.complet
+   e(HttpIC
+   LReadCallback.java(Compiled Code))
+    at
+   com.ibm.ws.tcp.channel.impl.WorkQueueManager.requestComplete(Wor
+   kQueueMa
+   nager.java(Compiled Code))
+    at
+   com.ibm.ws.tcp.channel.impl.WorkQueueManager.attemptIO(WorkQueue
+   Manager.
+   java(Compiled Code))
+    at
+   com.ibm.ws.tcp.channel.impl.WorkQueueManager.workerRun(WorkQueue
+   Manager.
+   java(Compiled Code))
+    at
+   com.ibm.ws.tcp.channel.impl.WorkQueueManager$Worker.run(WorkQueu
+   eManager
+   .java(Compiled Code))
+    at
+   com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java(Compiled
+   Code))
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  test fix provided
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Array index out of bounds at login
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  fix provided
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK37435
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * REPORTED COMPONENT ID
+   5724L62MS
+   
+   
+ * REPORTED RELEASE
+   600
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-01-15
+   
+   
+ * CLOSED DATE
+   2007-02-25
+   
+   
+ * LAST MODIFIED DATE
+   2007-02-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM WAS MGING
+   
+   
+ * FIXED COMPONENT ID
+   5724L62MS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP

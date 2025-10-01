@@ -1,0 +1,51 @@
+Title: IBM Creating idle user timeout at system, group or user level - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How do I establish a SESSIONTIMEOUT based upon a user being idle? 
+
+ANSWER
+The SESSIONTIMEOUT variable specifies the amount of time a session can be idle before the system terminates it. You can either specify a number of minutes from 1 to 2,147,483,647 or 0 (zero) orunlimitedto disable timeout. A user idle timeout can be created at the system level, the group level, or the user level, as follows: 
+
+System: 
+
+system(admin)=> set system default sessiontimeout TO 300; 
+
+Group: 
+
+CREATE GROUPname
+[ WITH
+[ SYSIDgid]
+[ ROWSETLIMITinteger]
+[ SESSIONTIMEOUTinteger]
+[ QUERYTIMEOUTinteger]
+[ DEFPRIORITY [ CRITICAL | HIGH | NORMAL | LOW | NONE ] ]
+[ MAXPRIORITY [ CRITICAL | HIGH | NORMAL | LOW | NONE ] ]
+[ USER username [, ...] ] ] 
+
+User: 
+
+CREATE USERusername
+WITH PASSWORD 'string'
+[ SYSIDuid]
+[ ROWSETLIMITinteger]
+[ IN GROUP groupname [, ...] ]
+[ VALID UNTIL 'date' ]
+[ SESSIONTIMEOUTinteger]
+[ QUERYTIMEOUTinteger]
+[ DEFPRIORITY [ CRITICAL | HIGH | NORMAL | LOW | NONE ] ]
+[ MAXPRIORITY [ CRITICAL | HIGH | NORMAL | LOW | NONE ] ]
+
+
+For information on which setting takes precedence, refer to the "Session attribute order of precedence" document.
+
+RELATED INFORMATION
+ Session attribute order of preference [http://www.ibm.com/support/docview.wss?uid=swg21569770]
+
+
+
+
+HISTORICAL NUMBER
+ NZ831089

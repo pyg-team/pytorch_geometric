@@ -1,0 +1,199 @@
+Title: IBM IT11617: OPERATIONS CENTER CONSOLE MODE INSTALL PROCESS MISSING 'NEXT' OPTION - United States
+
+Text:
+AIX SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The Tivoli Storage Manager Operations Center console mode
+   install process will miss the 'next' option when the free disk
+   size prerequisite is not met instead of stopping the
+   installation with an error message explaining the problem.
+   
+   The last install step will look like the following :
+   
+   =====> IBM Installation Manager> Install> Shared Directory>
+   Location> Features
+   
+   IBM Tivoli Storage Manager Operations Center
+       1. [X] Operations Center
+   
+   
+       B. Back,      C. Cancel
+   -----> [C]
+   
+   The GUI install process will show the error message that the
+   space requirements are not met.
+   
+   Customer diagnostics :
+   
+   In order to find where the disk space is lacking, enable DEBUG
+   output for Installation Manager and repeat the Operations
+   Center installation following these instructions:
+   go to the agent data's log directory
+   '/var/ibm/InstallationManager/logs'
+   Make a copy of the sample.properties and rename that file to
+   log.properties; this will enable debug mode and provide more
+   information into the log files.
+   
+   **Note: please consider that running in Debug mode will slow
+   down the IM response when going through the console mode
+   panels.**
+   Repeat the Operations Center installation and collect the
+   installation logs by using the following command:
+   /opt/IBM/InstallationManager/eclipse/tools/imutilsc
+   exportInstallData /tmp/InstallLogs.zip
+   
+   The logs will mention the filesystem where the disk space is
+   not enough to proceed with installation.
+   
+   This behaviour is addressed by the Installation Manager APAR
+   PI39285 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI39285] for which the fix is included in version 1.8.3
+   
+   Initial Impact: Low
+   
+   Tivoli Storage Manager versions affected : 7.x on Unix and
+   Windows
+   
+   Additional Keywords: zztsm OC IM 82280 install next dcf 1883307
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Ensure the install requirements are met and/or use the GUI
+   install process.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * Users performing an Operation Center install.                *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See APAR description.                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Apply fixing level when available. This problem is currently *
+   * projected to be fixed in level 7.1.5.                        *
+   * Note that this is subject to change at the discretion of     *
+   * IBM.                                                         *
+   ****************************************************************
+   *
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This problem is fixed.
+   Affected platforms:   AIX, HP-UX, Solaris, Linux, and Windows.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT11617
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   71W
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-10-07
+   
+   
+ * CLOSED DATE
+   2015-12-14
+   
+   
+ * LAST MODIFIED DATE
+   2015-12-14
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * FIXED COMPONENT ID
+   5698ISMSV
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R71A PSY
+   UP
+   
+   
+ * R71H PSY
+   UP
+   
+   
+ * R71S PSY
+   UP
+   
+   
+ * R71W PSY
+   UP

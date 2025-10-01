@@ -1,0 +1,31 @@
+Title: IBM DB2データベースへのコネクションエラー - United States
+
+Text:
+ TECHNOTE(トラブルシューティング)
+
+問題(概要)
+ Datasource connection において、DB2データベースに接続するためtest connectionをクリックすると以下のエラーが発生します。
+java.net.ConnectException: Error opening socket to server <db2 server> on port <port number> with message: connection refused. ERRORCODE=-4499, SQLSTATE=08001 
+
+症状
+Datasource test connectionで以下のようなエラーが発生します。 
+
+[/support/docview.wss?uid=swg22017152&aid=1] [/support/docview.wss?uid=swg22017152&aid=1]
+
+
+原因
+DB2リモートサーバがコネクションをリジェクトすることに起因します。
+
+
+
+診断
+以下のエラーレポートが表示されます。 
+
+java.net.ConnectException: Error opening socket to server <db2 server> on port <port number> with message: connection refused. ERRORCODE=-4499, SQLSTATE=08001 
+
+
+
+解決方法
+以下のDB2のtechnote#1403644を参照のうえ、対処ください。 
+
+http://www-01.ibm.com/support/docview.wss?uid=swg21403644 [http://www-01.ibm.com/support/docview.wss?uid=swg21403644]

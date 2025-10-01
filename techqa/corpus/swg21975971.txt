@@ -1,0 +1,33 @@
+Title: IBM Receiving error when accessing Matters tab in Atlas. - United States
+
+Text:
+atlas TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When accessing Matters tab after Atlas upgrade receiving the following error.
+
+"A system error has occurred. Contact your System Administrator for assistance" 
+
+CAUSE
+Having Atlas database schema version and application version is not in sync will cause this issue.
+
+ENVIRONMENT
+Upgrade from Atlas 6.0.1.6 to 6.0.3.3
+
+DIAGNOSING THE PROBLEM
+The following error is seen in Atlas Paearlog.log.
+
+java.sql.SQLSyntaxErrorException: ORA-00904: "EFA"."IS_EDITABLE": invalid identifier
+
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:445)
+at oracle.jdbc.driver.T4CTTIoer.processError(T4CTTIoer.java:396)
+at oracle.jdbc.driver.T4C8Oall.processError(T4C8Oall.java:879)
+
+RESOLVING THE PROBLEM
+
+
+
+
+
+ * Verify the deployed Atlas application is the latest version. 
+ * Redeploy the Atlas application using the latest PolicyAtlas.ear file.

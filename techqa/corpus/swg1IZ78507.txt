@@ -1,0 +1,243 @@
+Title: IBM IZ78507: TSAAM - SECJ0053E: AUTHORIZATION FAILED FOR /UNAUTHENTICATED WHILE INVOKING EJB/COM/IBM/EEZ/AAB/EEZDOMAINSESSIONHOME REMOVE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Support Engineer:  GBH
+   Change Team Eng:   EJ
+   
+   
+   Environment:
+   TSAAM v3.2
+   
+   Description:
+   
+   Sporadically the following message is seen in SystemOut.log:
+   
+   ----------------------------------------------------------------
+   [6/21/10 8:27:27:523 CEST] 0000016d SecurityColla A   SECJ0053E:
+   Authorization failed for /UNAUTHENTICATED while invoking (Bean)
+   ejb/com/ibm/eez/aab/EEZDomainSessionHome remove:1 securityName:
+   /UNAUTHENTICATED;accessID: UNAUTHENTICATED is not granted any of
+   the required roles: EEZMonitor EEZOperator EEZConfigurator
+   EEZAdministrator
+   ----------------------------------------------------------------
+   
+   The problem is the following:
+   We currently set the HTTP Session Invalidation Timout on a per
+   Server level to 1440 minutes (=24 hours).
+   However, on the ISC application level (EAR file), the timeout is
+   still set to 30 minutes.
+   
+   According to the WAS documentation, a timeout that is set on
+   application level overrides the setting on Server level.
+   So, effectively we still have an inactivity timeout for the HTTP
+   session of 30 minutes.
+   
+   This means that if a user does not use the operations console
+   and no events come in that cause a GUI refresh for 30 minutes,
+   the HTTP session will be invalidated by WAS. We get a call-back
+   for this where we do cleanup processing. During that cleanup
+   processing we also try to remove the EJB session. This however
+   no longer works because the HTTP session is not valid anymore
+   causing the "Authorization failed for /UNAUTHENTICATED" errors
+   to appear.
+   
+   The same thing happens if a user just closes the browser without
+   logging off from ISC. Then the HTTP session still lives in the
+   background until it is invalidated due to the timeout. In this
+   case, the invalidation of the session and also the Authorization
+   error do not hurt and can be ignored.
+   
+   On the other hand if this happens while the Operations Console
+   is still displayed in the browser, the session is also
+   invalidated after 30 minutes of inactivity, but there is no
+   visual indication for that in the SA Operations Console. So the
+   user thinks the Operations Console is still monitoring the
+   environment, however resource state changes will not be
+   automatically updated anymore because the session is dead.
+   Then if the user selects something in the operations console,
+   the session will be re-established and all data will be newly
+   retrieved. From that point in time, the session is active again
+   and the Operations Console can be used for monitoring again.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  As a workaround the customer should set the timeout on the ISC
+   level to a higher value (I recommend 1440 to keep it in sync
+   with the other timeout values).
+   How to do this is described here:
+   http://publib.boulder.ibm.com/infocenter/wasinfo/v6r1/topic/com.
+   ibm.websphere.base.doc/info/aes/isc/cons_sessionto.html [http://publib.boulder.ibm.com/infocenter/wasinfo/v6r1/topic/com.ibm.websphere.base.doc/info/aes/isc/cons_sessionto.html]
+   
+   As a permanent solution we need to provide some code in the SA
+   Operations Console which either keeps the session alive even if
+   no events come in or to at least show an indication if the
+   session times out. We will provide something for our 3.2.1
+   release.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: System Automation Application Manager (SA AM)
+   * 3.2 users
+   ****************************************************************
+   * PROBLEM DESCRIPTION:
+   * SystemOut.log sporadically shows following message:
+   * [6/21/10 8:27:27:523 CEST] 0000016d SecurityColla A SECJ0053E:
+   * Authorization failed for /UNAUTHENTICATED while invoking (Bean
+   * ejb/com/ibm/eez/aab/EEZDomainSessionHome remove:1 securityName
+   * :/UNAUTHENTICATED;accessID: UNAUTHENTICATED is not granted any
+   * of the required roles: EEZMonitor EEZOperator EEZConfigurator
+   * EEZAdministrator
+   *
+   * The problem is the following:
+   * The HTTP Session Invalidation Timout is currently set on a per
+   * Server level to 1440 minutes (=24 hours). However, on the ISC
+   * application level (EAR file), the timeout is still set to 30
+   * minutes. According to the WAS documentation, a timeout that is
+   * set on application level overrides the setting on Server
+   * level. So, effectively we still have an inactivity timeout for
+   * the HTTP session of 30 minutes.
+   * This means that if a user does not use the operations console
+   * and no events come in that cause a GUI refresh for 30 minutes,
+   * the HTTP session will be invalidated by WAS. A call-back is
+   * triggered for this to do cleanup processing. During that
+   * cleanup processing it is also tried to remove the EJB session.
+   * This however no longer works because the HTTP session is not
+   * valid anymore causing the "Authorization failed for
+   * /UNAUTHENTICATED" errors to appear.
+   * The same thing happens if a user just closes the browser
+   * without logging off from ISC. Then the HTTP session still
+   * lives in the background until it is invalidated due to the
+   * timeout. In this case, the invalidation of the session and
+   * also the Authorization error do not hurt and can be ignored.
+   * On the other hand if this happens while the Operations Console
+   * is still displayed in the browser, the session is also
+   * invalidated after 30 minutes of inactivity, but there is no
+   * visual indication for that in the SA Operations Console. So
+   * the user thinks the Operations Console is still monitoring the
+   * environment, however resource state changes will not be
+   * automatically updated anymore because the session is dead. If
+   * the user then selects something in the operations console, the
+   * session will be re-established and all data will be newly
+   * retrieved. From that point in time, the session is active
+   * again and the Operations Console can be used for monitoring.
+   ****************************************************************
+   * RECOMMENDATION:
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  A Timer has been implemented, which triggers an UI refresh if no
+   refresh has been triggered by an incoming event for the last 20
+   minutes. This keeps the session alive until either the user
+   closes the SA Operations Console, the user logs out from ISC or
+   the LTPA Token expires (default 24 hours).
+   If the browser is closed without properly logging out, the
+   session will expire after 30 minutes.
+   .
+   The fix for this problem will be included in System Automation
+   Application Manager 3.2 fix pack 1.
+   .
+   Additional Search Keywords.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ78507
+   
+   
+ * REPORTED COMPONENT NAME
+   SYS AUTO APPLI
+   
+   
+ * REPORTED COMPONENT ID
+   5724S9200
+   
+   
+ * REPORTED RELEASE
+   320
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-07-01
+   
+   
+ * CLOSED DATE
+   2010-07-30
+   
+   
+ * LAST MODIFIED DATE
+   2010-07-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   SYS AUTO APPLI
+   
+   
+ * FIXED COMPONENT ID
+   5724S9200
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R320 PSY
+   UP

@@ -1,0 +1,20 @@
+Title: IBM Tracking which widget is being clicked in the DASH Dashboard - United States
+
+Text:
+DASHL2; performance metric; widget; click; DASH; Dashboard TECHNOTE (FAQ)
+
+QUESTION
+ In the Dashboard Application Service Hub (DASH) component of Jazz for Service Management (JazzSM) application, is there any option to track which widgets are being clicked into? 
+
+CAUSE
+Customer is looking for an option to measure the effectiveness of the Dashboard they have built.
+
+ANSWER
+Such a feature is currently not implemented. There is minimal metric collection, but not page clicks. 
+
+If this functionality is important to you, please submit an Enhancement Request. 
+
+For details please see this website: 
+
+Request For Enhancement (RFE) Process: 
+https://www.ibm.com/developerworks/rfe/ [https://www.ibm.com/developerworks/rfe/]

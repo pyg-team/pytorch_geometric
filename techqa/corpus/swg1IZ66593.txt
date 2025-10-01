@@ -1,0 +1,129 @@
+Title: IBM IZ66593: USER FOR MYSAP AGENT IS CREATED AS COMMUNICATION USER NOT AS SYSTEM - United States
+
+Text:
+  A FIX IS AVAILABLE
+IBM Tivoli Monitoring for Applications: mySAP Agent, 6.2.0-TIV-ITM_SAP-IF0015 [http://www-01.ibm.com/support/docview.wss?uid=swg24033394]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  If we install the ITM SAP transport, the default user
+   IBMMON_AGENT is
+   created as communication user at the SAP system. security
+   rules
+   implicate that the password for all communication users has to
+   be
+   changed after 6 weeks. That would mean that we have to change
+   the
+   If not, our SAP agent wouldn't be able to run properly.
+   this ITM SAP transport has to be changed that the Tivoli
+   user IBMMON_AGENT is always a system user.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  In current design, mySAP agent will create a user with
+   communication type and default password, but it doesn't allow
+   customer to customized it. So it should has the capbility of
+   allowing customer to customzied user type and password when
+   install ABAP transport. We plan to add this function in 6.2 iF10
+   and allow customer to set his customized user type and password
+   in a property file and ABAP installer will create user type and
+   password defined in property file if it exists, otherwise create
+   default one just as what we do now.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+ *  We have provide a specific fix to E.ON. In this fix, the user
+   type and password are hard code, and it will not included into
+   any iFix because this fix is only for E.ON. The normal fix will
+   be in iF10.
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ66593
+   
+   
+ * REPORTED COMPONENT NAME
+   ITMF APPL - SAP
+   
+   
+ * REPORTED COMPONENT ID
+   5724B97SO
+   
+   
+ * REPORTED RELEASE
+   620
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-12-10
+   
+   
+ * CLOSED DATE
+   2010-01-13
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R620 PSY
+   UP

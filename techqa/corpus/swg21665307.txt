@@ -1,0 +1,32 @@
+Title: IBM Converting A Document With More Than 1296  Pages in IBM Datacap Taskmaster Capture - United States
+
+Text:
+Custom script; pdf; pdf limitations TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When converting from a large PDF that contains more than 1296 pages, the batch log receives an exception. 
+
+SYMPTOM
+Logs for the task that ran the PDF convert action receive the following error: "Setting the Batch to Abort. Action returns false. Exception found while extracting images: Number of digits is '2' (Conversion) result '100' exceeds allowed amount of digits.
+Parameter name: number"
+
+
+CAUSE
+As documented in the IBM Datacap Taskmaster documentation it states, "Limits: 1296 input files in batch; 1296 output images per input file, each input file can contain up to 3 embedded levels or 4 levels total (e.g. Input zip file contains another zip file which contains a multi-page pdf file; or Input msg file has attached msg file which contains a zip file which contains 100 single page TIF files)".
+
+RESOLVING THE PROBLEM
+
+
+
+ 1.  Integrate the Linux command pdftk into Windows. This can be found through a browser search of the tool. An example of the command is as follows: pdftk pages.pdf burst. 
+ 2.  Create a custom script to run the above command. 
+ 3.  Place the custom script in a Datacap compliant RRX file. 
+ 4.  Place your custom script into C:\Datacap\RSS folder. 
+ 5.  Your custom action from step 4 is now viewable in Datacap Studio Actions Library. 
+ 6.  In Datacap Studio, select the Ruleset and Function that contains your Tiff conversion action. 
+ 7.  Select the custom action in the Actions Library. 
+ 8.  Select Add to Function button. 
+ 9.  Move the custom action above the Tiff conversion action using the green arrow keys. 
+ 10. Rerun the batch and the issue is resolved
+
+This solution is for Datacap Taskmaster Capture versions 8.1 and earlier. For versions 9.0 and newer, see Batch aborts converting over 1295 pages in a PDF with IBM Datacap [http://www.ibm.com/support/docview.wss?uid=swg22009898].

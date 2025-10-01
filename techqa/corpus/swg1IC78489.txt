@@ -1,0 +1,249 @@
+Title: IBM IC78489: The newly added path via 'EXTEND DBSPACE' is not used. - United States
+
+Text:
+AIX SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When running Tivoli Storage Manager Server "EXTEND DBSPACE"
+   command to extend DB spaces, the newly added path may not
+   be used.
+   
+   
+   .
+   
+   L2/customer diagnostics:
+   1: Created 3 identical filesystems with 964MB each in size:
+   
+   df -k
+   
+   /dev/mapper/VolGroup00-fs1  983765      6647    926395   1%
+   /fs1
+   /dev/mapper/VolGroup00-fs2   983765      6647    926395   1%
+   /fs2
+   /dev/mapper/VolGroup00-fs3  983765      6646    926396   1%
+   /fs3
+   
+   
+   2: Created db using two filesystems: /fs1 and /fs2, after
+   create, DB2 use /fs1 and /fs2 evenly ( 24% or 220498K)
+   
+   
+   /dev/mapper/VolGroup00-fs1  983765    220498    712544  24%
+   /fs1
+   /dev/mapper/VolGroup00-fs2    983765    220498    712544
+   24% /fs2
+   /dev/mapper/VolGroup00-fs3   983765      6646    926396   1%
+   /fs3
+   
+   
+   3: I did "extend dbs /fs3/db3"  from tsm to add extra
+   container : /fs3/db3
+   
+   
+   ANR2017I Administrator SERVER_CONSOLE issued command: EXTEND
+   DBSPACE /fs3/db3
+   ANR2592I Directory(ies) '/fs3/db3' has been defined in the
+   database space.
+   
+   
+   But nothing used for /fs3 and now all containers are not
+   balanced, two 28% one 1%:
+   
+   /dev/mapper/VolGroup00-fs1  983765    253396    679646  28%
+   /fs1
+   /dev/mapper/VolGroup00-fs2   983765    253396    679646  28%
+   /fs2
+   /dev/mapper/VolGroup00-fs3  983765      6647    926395   1%
+   /fs3
+   
+   
+   Version Platform affected:
+   Tivoli Storage Manager Server v61, v62 on all supported
+   platforms
+   .
+   
+   Additional keywords:
+   
+   container disk full crash db2 zz61 zz62
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The local fix for this issue is different for DB2 9.5
+   tablespaces and DB2 9.7 tablespaces.  DB2 9.5 tablespaces are
+   used when the database is initially created on Tivoli Storage
+   Manager 6.1.  DB2 9.7 tablespaces are used when the database is
+   initially created on Tivoli Storage Manager 6.2 or 6.3.  For DB2
+   9.7 tablespaces, the values in the reclaimable_space_enabled
+   column of the following select is 1. The values are 0 for DB2
+   9.5 tablespaces.
+   
+   db2 connect to tsmdb1
+   db2 set schema tsmdb1
+   db2 "select reclaimable_space_enabled from
+   table(mon_get_tablespace('',-1)) where tbsp_id in (2,4,5,6)"
+   
+   After add new path via "EXTEND DBS", manually run
+   rebalance/reduce for 9.7 tablespaces using the following steps:
+   
+   1: db2 connect to tsmdb1
+   run the following command one by one:
+   
+   $ db2 alter tablespace SYSCATSPACE rebalance
+   $ db2 alter tablespace USERSPACE1 rebalance
+   $ db2 alter tablespace LARGESPACE1 rebalance
+   $ db2 alter tablespace LARGEIDXSPACE1 rebalance
+   $ db2 alter tablespace IDXSPACE1 rebalance
+   $ db2 alter tablespace SYSTOOLSPACE rebalance
+   
+   2: run command one by one:
+   
+   $ db2 alter tablespace SYSCATSPACE reduce max
+   $ db2 alter tablespace USERSPACE1 reduce max
+   $ db2 alter tablespace LARGESPACE1 reduce max
+   $ db2 alter tablespace LARGEIDXSPACE1 reduce max
+   $ db2 alter tablespace IDXSPACE1 reduce max
+   $ db2 alter tablespace SYSTOOLSPACE reduce max
+   
+   
+   For DB2 9.5 tablespaces use the following local fix procedure:
+   http://www-01.ibm.com/support/knowledgecenter/SSGSG7_6.3.0/com.i
+   bm.itsm.srv.doc/t_move_db_only.html [http://www-01.ibm.com/support/knowledgecenter/SSGSG7_6.3.0/com.ibm.itsm.srv.doc/t_move_db_only.html]
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Tivoli Storage Manager server users.     *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: See error description.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   This problem is projected to be fixed in a future version
+   of the Tivoli Storage Manager server.
+   Note that this is subject to change at the discretion of IBM.
+   Affected platforms:  AIX, HP-UX, Solaris, Linux, and Windows.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IC78489
+   
+   
+ * REPORTED COMPONENT NAME
+   TSM SERVER
+   
+   
+ * REPORTED COMPONENT ID
+   5698ISMSV
+   
+   
+ * REPORTED RELEASE
+   62S
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-09-06
+   
+   
+ * CLOSED DATE
+   2012-01-27
+   
+   
+ * LAST MODIFIED DATE
+   2015-07-21
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R62A PSY
+   UP
+   
+   
+ * R62H PSY
+   UP
+   
+   
+ * R62L PSY
+   UP
+   
+   
+ * R62S PSY
+   UP
+   
+   
+ * R62W PSY
+   UP
+   
+   
+ * R63A PSY
+   UP
+   
+   
+ * R63H PSY
+   UP
+   
+   
+ * R63L PSY
+   UP
+   
+   
+ * R63S PSY
+   UP
+   
+   
+ * R63W PSY
+   UP

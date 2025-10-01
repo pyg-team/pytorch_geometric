@@ -1,0 +1,287 @@
+Title: IBM PK91642: RELEASEBUILDER: ALLOWED-PORTLET TAG FOR DELETED PORTLETS CAUSES XMLFORMATEXCEPTION DURING IMPORT - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.3 Download: WebSphere Portal and WCM V6.1 fix pack 3, 6.1.5 feature pack [http://www-01.ibm.com/support/docview.wss?uid=swg24025054]
+6.1.0.4 Download: WebSphere Portal and WCM V6.1.0 fix pack 4 & 6.1.5 fix pack 1 [http://www-01.ibm.com/support/docview.wss?uid=swg24026394]
+6.1.0.5 Download: WebSphere Portal and WCM V6.1.0 fix pack 5 [http://www-01.ibm.com/support/docview.wss?uid=swg24027475]
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The ReleaseBuilder output cannot be imported, if a portlet was
+   deleted, that was part of the allowed portlets on a page. An
+   exception similar to the following can be found in the
+   SystemOut.log:
+   [7/20/09 21:39:43:905 CEST] 00000050 Engine        E
+   com.ibm.wps.command.xml.Engine processSax EJPFB0002E: Exception
+   occurred.
+   
+   com.ibm.wps.command.xml.XmlFormatException: EJPXA0129E: An error
+   occurred while retrieving the resource with object ID
+   3_B1L68B1A001P70I815H1MI2006. [content-node
+   6_CGAH47L00GEA00I86TI2OM1G21 uniquename=ibm.portal.Home.Beta]
+    at
+   com.ibm.wps.command.xml.ConfigItem.lookupOIDString(ConfigItem.ja
+   a:632)
+    at
+   com.ibm.wps.command.xml.items.AbstractConfigItem.getAttributeOID
+   eference(AbstractConfigItem.java:549)
+    at
+   com.ibm.wps.command.xml.items.AllowedPortletData.<init>(AllowedP
+   rtletData.java:66)
+    at
+   com.ibm.wps.command.xml.items.AllowedPortletData.initAllowedPort
+   etData(AllowedPortletData.java:81)
+    at
+   com.ibm.wps.command.xml.items.ContentNodeItem.init(ContentNodeIt
+   m.java:423)
+    at
+   com.ibm.wps.command.xml.DecodeEngine.makeItem(DecodeEngine.java:
+   04)
+    at
+   com.ibm.wps.command.xml.DecodeEngine.processNodeSax(DecodeEngine
+   java:342)
+    at
+   com.ibm.wps.command.xml.DecodeEngine.decodeTopLevelNode(DecodeEn
+   ine.java:122)
+    at
+   com.ibm.wps.command.xml.XmlAccessHandler.fillObjectModel(XmlAcce
+   sHandler.java:337)
+    at
+   com.ibm.wps.command.xml.XmlAccessHandler.endElement(XmlAccessHan
+   ler.java:227)
+    at
+   org.apache.xerces.parsers.AbstractSAXParser.endElement(Unknown
+   Source)
+   ..
+    at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1527)
+   Caused by: com.ibm.wps.command.xml.XmlFormatException:
+   EJPXA0141E: No resource could be found for object ID
+   3_B1L38B46001P70I815H1MI2006. [content-node
+   6_CGAH47488GEA00I86TI2OM1G21]
+    at
+   com.ibm.wps.command.xml.ConfigItem.lookupOIDString(ConfigItem.ja
+   a:625)
+    ... 49 more
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  The ReleaseBuilder output cannot be imported, if a portlet was
+   deleted, that was part of the allowed portlets on a page. An
+   exception similar to the following can be found in the
+   SystemOut.log:
+   
+   [7/20/09 21:39:43:905 CEST] 00000050 Engine E
+   com.ibm.wps.command.xml.Engine processSax EJPFB0002E: Exception
+   occurred.
+   com.ibm.wps.command.xml.XmlFormatException: EJPXA0129E: An error
+   occurred while retrieving the resource with object ID
+   3_B1L68B1A001P70I815H1MI2006. [content-node
+   6_CGAH47L00GEA00I86TI2OM1G21 uniquename=ibm.portal.Home.Beta]
+   at
+   com.ibm.wps.command.xml.ConfigItem.lookupOIDString(ConfigItem.ja
+   va:632)
+   at
+   com.ibm.wps.command.xml.items.AbstractConfigItem.getAttributeOID
+   Reference(AbstractConfigItem.java:549)
+   at
+   com.ibm.wps.command.xml.items.AllowedPortletData.<init>(AllowedP
+   ortletData.java:66)
+   at
+   com.ibm.wps.command.xml.items.AllowedPortletData.initAllowedPort
+   letData(AllowedPortletData.java:81)
+   at
+   com.ibm.wps.command.xml.items.ContentNodeItem.init(ContentNodeIt
+   em.java:423)
+   at
+   com.ibm.wps.command.xml.DecodeEngine.makeItem(DecodeEngine.java:
+   404)
+   at
+   com.ibm.wps.command.xml.DecodeEngine.processNodeSax(DecodeEngine
+   .java:342)
+   at
+   com.ibm.wps.command.xml.DecodeEngine.decodeTopLevelNode(DecodeEn
+   gine.java:122)
+   at
+   com.ibm.wps.command.xml.XmlAccessHandler.fillObjectModel(XmlAcce
+   ssHandler.java:337)
+   at
+   com.ibm.wps.command.xml.XmlAccessHandler.endElement(XmlAccessHan
+   dler.java:227)
+   at
+   org.apache.xerces.parsers.AbstractSAXParser.endElement(Unknown
+   Source)
+   ..
+   at com.ibm.ws.util.ThreadPool$Worker.run(ThreadPool.java:1527)
+   Caused by: com.ibm.wps.command.xml.XmlFormatException:
+   EJPXA0141E: No resource could be found for object ID
+   3_B1L38B46001P70I815H1MI2006. [content-node
+   6_CGAH47488GEA00I86TI2OM1G21]
+   at
+   com.ibm.wps.command.xml.ConfigItem.lookupOIDString(ConfigItem.ja
+   va:625)
+   ... 49 more
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  XMLAccess code was extended and can process the
+   ReleaseBuilder output without failing.
+   
+   Manual Steps:
+      None
+   
+   Failing Module(s):
+      XML Access
+      Release Builder
+   
+   Affected Users:
+      All users
+   
+   Version Information:
+       Portal Version(s): 6.0.1.3
+        Pre-Requisite(s): PK60599 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK60599]
+         Co-Requisite(s): ---
+   
+       Portal Version(s): 6.0.1.4
+        Pre-Requisite(s):
+         Co-Requisite(s): ---
+   
+       Portal Version(s): 6.0.1.5
+        Pre-Requisite(s):
+         Co-Requisite(s): ---
+   
+       Portal Version(s): 6.0.1.6
+        Pre-Requisite(s):
+         Co-Requisite(s): ---
+   
+       Portal Version(s): 6.1.0.2
+        Pre-Requisite(s):
+         Co-Requisite(s): ---
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   
+   A fix is available from Fix Central:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PK91642&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PK91642&productid=WebSphere%20Portal&brandid=5]
+   
+   You may need to type or paste the complete address into your Web
+   browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK91642
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   60G
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-07-17
+   
+   
+ * CLOSED DATE
+   2009-08-31
+   
+   
+ * LAST MODIFIED DATE
+   2009-08-31
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R60G PSY
+   UP
+   
+   
+ * R60H PSY
+   UP
+   
+   
+ * R60J PSY
+   UP
+   
+   
+ * R60K PSY
+   UP
+   
+   
+ * R61B PSY
+   UP

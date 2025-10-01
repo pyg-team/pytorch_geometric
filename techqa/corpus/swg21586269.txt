@@ -1,0 +1,23 @@
+Title: IBM LMT 7.2.2 - ADM5530W message in db2diag.log - United States
+
+Text:
+ADM5530W; db2diag.log TECHNOTE (FAQ)
+
+QUESTION
+ What does ADM5530W error message from the db2diag.log means and what actions should be taken? 
+
+ANSWER
+ 
+
+The "MESSAGE : ADM5530W The COMMIT processing of table "ADM.TEMP_AGENT_INV" that used NOT LOGGED INITIALLY has been initiated."(...), from the db2diag.log file in ILMT 7.2.2 means that some temporary tables uses the 'NOT LOGGED INITIALLY' option for performance purposes. (the LMT temporary tables are created with 'not logged initially' option'). 
+
+Transactions with NOT LOGGED INITIALLY option allows better performance and less transaction logs. This is usually used for databases which tables are easily recreated and which the DB size is considerably small such as ILMT TLMA database compared to that of enterprise class databases setting. 
+
+This is a normal massage and do not indicate any error. 
+Since there is no possibility to prevent these messages from being generated, they should simply be ignored. 
+
+In conclusion:
+- These messages has only told us that the "NOT LOGGED INITIALLY" option is used with a SQL. 
+- The option is specified by the application which performs SQL, in this case, it is LMT. 
+- It cannot be managed from DB2 side whether it is specified or not. 
+- Since it cannot be managed from LMT either, the customer has to ignore it.

@@ -1,0 +1,84 @@
+Title: IBM Silently installing AppScan Source on supported OS results in "This is not a supported operating system" - United States
+
+Text:
+silent; custom; install; This is not a supported operating system; not supported; operating system; Please check the system requirements; XWindows; RHEL; OUNCE_CONFIG_FILE; custom_install.properties; setup.bin; Installer User Interface Mode Not Supported; silently; installing; installation; AppScan Source; Listening for transport dt_socket at address; 5005; dt_socket TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to silently install IBM Rational AppScan Source Edition on a supported Red Hat Enterprise Linux (RHEL) machine results in error "This is not a supported operating system. Please check the system requirements and try installing IBM Rational AppScan Source Edition on a supported platform." 
+
+SYMPTOM
+The following error occurs when you try to silently install the product:
+
+
+> ./setup.bin -i Silent
+Listening for transport dt_socket at address: 5005
+This is not a supported operating system. Please check the
+system requirements and try installing IBM Rational AppScan
+Source Edition on a supported platform.
+
+
+
+CAUSE
+The "-i Silent" option is not a supported. 
+
+
+
+ENVIRONMENT
+This installation issue occurs on a supported Red Hat Enterprise Linux machine. 
+
+As of version 8.0.0.2, AppScan Source supports the following RHEL versions: 
+
+
+Red Hat Enterprise Linux Version 4 (workstation and server)
+Red Hat Enterprise Linux Version 5 (workstation and server) 32-bit or 64-bit
+
+Note: On 64-bit Linux, Rational AppScan Source Edition runs in 32-bit mode.
+
+
+RESOLVING THE PROBLEM
+To install AppScan Source for Core on a RHEL machine, you need to have XWindows installed and then run setup.bin to initiate the installation Wizard. 
+
+
+If you do not have XWindows installed and you try to install via the command line by executing "setup.bin", you will get an error that states, "Installer User Interface Mode Not Supported"; this essentially indicates that XWindows is required to run setup.bin.
+
+To install any of the other AppScan Source components other than Core, you may use the silent install without XWindows pre-installed. 
+
+To achieve this, create a custom_install.properties file on a Microsoft Windows machine, then distribute that file to as many Linux machines as you want to perform the silent install on. 
+
+Here are the installation steps in detail:
+
+
+ 1. On a Windows machine, create a new user variable: OUNCE_CONFIG_FILE (Click Start > Control Panel > System > Advanced tab > Environment Variables) and set the value to: 
+    
+    C:\custom_install.properties
+    
+    Note: When setting OUNCE_CONFIG_FILE, do not put quotes around the value even if the value contains spaces
+    
+    
+ 2. Next, run setup.exe
+    
+    When you run the setup.exe, you should get a choice to select whether you want to do a silent install.
+    
+    You will also be able to select which components will be included in the install. 
+    
+    The only ones available are: 
+ 3.   * Automation 
+     * Security 
+     * Command Line Client 
+     * Dev Plug-in for VS 2003 
+     * Dev Plug-in for VS 2005 
+     * Dev Plug-in for VS 2008 
+     * Dev Plug-in for VS 2010 (version 8.0.0.2 and above) 
+     * Dev Plug-in for Eclipse and RAD
+       
+       Upon completion, the custom_install.properties file is created
+       
+       
+    
+    
+ 4. Distribute the custom_install.properties file to the RHEL machine where you want to install the AppScan Source component. 
+    
+    
+ 5. Execute the following command on the RHEL machine to run the silent install: 
+    
+    > setup.bin -f <path_to_file>/custom_install.properties

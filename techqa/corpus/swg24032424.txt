@@ -1,0 +1,120 @@
+Title: IBM 8.2.0-ISS-SAMESSO-AA-FP0002 - United States
+
+Text:
+ DOWNLOADABLE FILES
+
+ABSTRACT
+ Fix Pack for IBM Security Access Manager for Enterprise Single Sign-On AccessAgent version 8.2 
+
+DOWNLOAD DESCRIPTION
+This fix pack corrects the following issues found in IBM Security Access Manager for Enterprise Single Sign-On version 8.2 and 8.1 release:
+
+
+
+ * APAR IV18013
+   Symptom: Microsoft Internet Explorer version 8 64-bit stops unexpectedly when the Auto-learn AccessProfile is used for a long time and selective user actions are performed.
+   
+   
+ * APAR IV17925
+   Symptom: EnGINA is not displayed after the computer resumes from hibernate mode.
+   
+   
+ * APAR IV12853
+   Symptom: The computer stops working when the user unlocks it with an IBM Security Access Manager for Enterprise Single Sign-On password and there is a smart card in the reader. 
+   
+   
+ * APAR IV14273
+   Symptom: The Citrix client engine stops working, and all Citrix sessions close. This scenario occurs when the EncVcClient.dll file crashes.
+   
+   
+ * APAR IV12323
+   Symptom: Users who do not have console logon privileges cannot log on remotely to a Citrix client.
+   
+   
+ * APAR IV14271
+   Symptom: The AccessAgent icon from the Citrix server does not display in the system tray of the local computer. This scenario occurs when a user makes an ICA connection to the Citrix server that is in standard mode.
+   
+   
+ * APAR IV14557
+   Symptom: Offline logon sometimes fails when the policy pid_wallet_cache_security_enabled is enabled.
+   
+   
+ * APAR IV14556
+   Symptom: Write operations fail when setting the temp\FullRegistryEnabled registry key to 1. This scenario causes logon failure in offline mode.
+   
+   
+ * APAR IV11168
+   Symptom: Single sign-on in Citrix lightweight mode does not work consistently in Citrix published web type applications.
+   
+   
+ * APAR IV11891
+   Symptom: The Wallet becomes accessible by another user after changing a password. This scenario happens when transparent screen lock is enabled.
+   
+   
+ * APAR IV12814 
+   Symptom: The Remote Desktop Connection session closes immediately when a user logs on to AccessAgent in a Citrix server. This scenario occurs when there is slow network connection.
+   
+   
+ * APAR IV14908
+   Symptom: Microsoft Internet Explorer 7.0 closes when a user works on several web applications in the browser.
+   
+   
+ * APAR IV11882
+   Symptom: The GetWindowPosition plug-in API in the AccessProfile does not work. 
+   
+   
+ * APAR IV13295
+   Symptom: The ESSO Network Provider is sometimes not available during system startup.
+   
+   
+ * Defect
+   Symptom: A memory leak occurs in Microsoft Internet Explorer and Mozilla Firefox when single sign-on is enabled and the user is logged on to AccessAgent.
+   
+   
+ * Defect
+   Symptom: The task bar does not display the running applications in the default desktop in private desktop mode.
+   
+   
+ * Defect
+   Symptom: When AccessAgent is upgraded from version 8.1, it tries to download the Wallets twice. This scenario happens when Wallet security is enabled.
+   
+   
+ * Defect
+   Symptom: User cannot log on with fingerprint to AccessAgent with only a username. This issue occurs on a newly installed IMS Server 8.2 that is configured with a Tivoli® Directory Server or base connector. You need to run fixEnterpriseDirectoryConfig.bat to fix this issue.
+   
+
+ * Defect
+   Symptom: Citrix client 12.1 does not launch as a Single Instance Application on a private desktop running on Windows XP x64.
+   
+   
+ * Defect
+   Symptom: AccessAgent does not respond to subsequent taps of an unregistered RFID when transparent screen lock is enabled.
+   
+   
+ * Defect 
+   Symptom: Fingerprints enrolled in BIO-key 1.9 are not compatible with BIO-key 1.10. 
+   
+   
+ * Defect
+   Symptom: Single sign-on for Windows Explorer is not supported on private desktops.
+   
+   
+ * Defect
+   Symptom: Changes in the AccessProfile are not saved in AccessStudio Test Mode.
+
+PREREQUISITES
+See the Fix Pack Readme.
+
+INSTALLATION INSTRUCTIONS
+See the Fix Pack Readme.
+
+URL LANGUAGE SIZE(Bytes) 8.2.0-ISS-SAMESSO-AA-FP0002 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/Tivoli/Tivoli+Access+Manager+for+Enterprise+Single+Sign-On&release=All&platform=All&function=fixId&fixids=8.2.0-ISS-SAMESSO-AA-FP0002&includeSupersedes=0] English 50561293 
+DOWNLOAD PACKAGE
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 
+What is DD? [http://www6.software.ibm.com/dldirector/doc/DDfaq_en.html] 8.2.0-ISS-SAMESSO-AA-FP0002 13 Apr 2012 English 50561293 FC [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?product=ibm/Tivoli/Tivoli+Access+Manager+for+Enterprise+Single+Sign-On&release=All&platform=All&function=fixId&fixids=8.2.0-ISS-SAMESSO-AA-FP0002&includeSupersedes=0] [ ] DD 
+ [/support/docview.wss?uid=swg24032424&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24032424&aid=2]Problems (APARS) fixed
+IV18013, IV17925, IV12853, IV14273, IV12323, IV14271, IV14557, IV14556, IV11168, IV11891, IV12814, IV14908, IV11882, IV13295

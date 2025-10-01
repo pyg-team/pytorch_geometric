@@ -1,0 +1,79 @@
+Title: IBM Business Process Manager(BPM)产品中，将来自不同Process Center的首字母缩略词重复的snapshot通过BPMInstallOfflinePackage命令部署到同一Process Server，会导致部署失败。 - United States
+
+Text:
+首字母缩略词，BPMInstallOfflinePackage部署，多Process Center TECHNOTE (TROUBLESHOOTING)
+
+问题（摘要）
+ 当您试图使用BPMInstallOfflinePackage命令部署来自不同Process Center的首字母缩略词(acronym)重复的snapshot到同一Process Server，会导致部署失败。 
+
+症状
+例如，在Process Center中有三个snapshot，它们已经部署到Process Server，其命名如下： 
+
+Snapshot 首字母缩略词(acronym)
+MYAPPS v1.1.0 MYAPP_1 
+MYAPPS v1.1.1 MYAPP_2 
+MYAPPS v1.1.2 MYAPP_3 
+
+由于某种需要，创建一个新的Process Center，或者通过还原数据库清空了之前的Process Center。然后导入snapshot“MYAPPS v1.1.2”，编辑、开发并创建了一个新的snapshot，命名为”MYAPPS v1.1.3”。但是，系统生成的首字母缩略词却是MYAPP_1。由于重复的首字母缩略词已存在于数据库中，在将该snapshot(MYAPPS v1.1.3)部署到Process Server时会失败。
+
+我们会在日志中发现关于SqlIntegrityConstraintViolationException异常的出错信息，如下所示：
+WASX7015E: Exception running command: "$AdminTask 
+BPMInstallOfflinePackage {-inputFile /tmp/APSAP_1.zip}"; exception 
+information: 
+java.lang.Exception: java.lang.Exception: 
+com.lombardisoftware.client.delegate.BusinessDelegateException: 
+PreparedStatementCallback; SQL [update LSW_SNAPSHOT set CREATED_ON = 
+?,NAME = ?,ACRONYM = ?,DESCRIPTION = ?,SEQ_NUM = ?,ERROR_COUNTER = 
+?,ORIG_CREATED_ON = ?,ACTIVATED_ON = ?,STATUS = ?,ARCHIVED_ON = 
+?,LAST_MODIFIED = ?,REPOSITORY_BRANCH_ID = ?,CREATED_BY_USER_ID = 
+?,BRANCH_ID = ?,PROJECT_ID = ?,LAST_MODIFIED_BY_USER_ID = ?,CHANGE_DATA 
+= ?,IS_ACTIVE = ?,IS_BLA_ACTIVE = ?,IS_STARTED = ?,IS_INSTALLED = 
+?,IS_BLA_INSTALLED = ?,IS_TIP_DEPLOYED = ?,IS_DEFAULT = 
+?,TIP_DEPLOYMENT_IN_PROGRESS = ?,IS_ARCHIVED = ? where SNAPSHOT_ID = ?]; 
+Error for batch element #1: DB2 SQL Error: SQLCODE=-803, SQLSTATE=23505, 
+SQLERRMC=2;BPMBDBA.LSW_SNAPSHOT, DRIVER=4.11.69; nested exception is 
+com.ibm.db2.jcc.am.SqlIntegrityConstraintViolationException: Error for 
+batch element #1: DB2 SQL Error: SQLCODE=-803, SQLSTATE=23505, 
+SQLERRMC=2;BPMBDBA.LSW_SNAPSHOT, DRIVER=4.11.69
+
+
+原因
+这个问题的根本原因是，当您重新创建一个Process Center并和之前的Process Center关联到同一个Process Server，或者清空了旧的Process Center，这个新的（空的）Process Center和Process Server没有保持同步，Process Center的首字母缩略词计数器也会重新从1开始计数，例如MYAPP_1。 新的Process Center不能获知所有已经部署到Process Server的首字母缩略词，所以它不能自动校正它的计数器，将它设置成Process Server首字母缩略词计数的最大值加1。比如Process Server中已经存在MYAPP_1, MYAPP_2,...,MYAPP23, 新的Process Center中的首字母缩略词应该从24 (23+1)开始计数。
+
+
+诊断问题
+这个问题适用于流程应用(process application)和工具(toolkit)的snapshot。当snapshot的首字母缩略词重复时，缩略词后会自动附加一个递增的数字来保持其唯一性。通常我们应该避免使用带有自动递增数字的首字母缩略词。 
+
+首字母缩略词一般由snapshot名称的前4至7个大写字母，数字或特殊字符组成。我们建议您可以将版本号放在首字母缩略词的前端来保证缩略词的唯一性。
+
+如果您使用了大量的首字母缩略词重复的snapshot，它们使用自动递增的数字附加在缩略词之后。这使得保持跨多个Process Center环境中的snapshot是唯一的变得更加困难。每个Process Center环境中的缩略词的数字都是按照当前Process Center环境的计数器来计算递增的，与其他Process Center不同步。
+
+
+解决问题
+我们有两种方法可以解决这个问题： 
+
+1. 使用新的命名规则
+对于那些首字母缩略词重复的snapshot，您可以创建一个新的snapshot，命名并保证它的首字母缩略词的命名在跨Process Center的环境中也是唯一的。
+如果重命名的是toolkit，您还需要更新所有引用到该toolkit的snapshot。
+
+2. 通过BPMDeleteSnapshot命令删除snapshot，来清空Process Server。
+关于BPMDeleteSnapshot命令的更多信息请您参考以下文章：
+More information regarding BPMDeleteSnapshot command can be found here:
+http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r0m1/index.jsp?topic=%2Fcom.ibm.wbpm.ref.doc%2Ftopics%2Frref_deletesnapshot.html [http://pic.dhe.ibm.com/infocenter/dmndhelp/v8r0m1/index.jsp?topic=%2Fcom.ibm.wbpm.ref.doc%2Ftopics%2Frref_deletesnapshot.html]
+
+
+从Process Server中删除所有旧的snapshot之后，您可以重新安装需要部署的snapshot
+。
+
+总结，当使用新的Process Center关联旧的Process Server时，您需要引起注意，新的Process Center和Process Server已经不同步了。
+
+相关信息
+#An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21659437]
+
+
+ 
+
+
+交叉引用信息 分段 产品 组件 平台 版本 修订版 Business Integration IBM Business Process Manager Express Application Deployment Linux, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5 Business Integration IBM Business Process Manager Standard Application Deployment AIX, Linux, Windows 8.5, 8.0.1, 8.0, 7.5.1, 7.5 
+产品别名/同义词
+ BPM

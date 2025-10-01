@@ -1,0 +1,159 @@
+Title: IBM IT08407: PEFORMANCE IS DEGRADED WITH BLU WHILE COMPARING CHAR with VARCHAR IN WHERE CLAUSE IF DB2_COMPATIBILITY_VECTOR IS SET. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+DB2 Version 10.5 Fix Pack 9 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24044110]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  You may observe degraded performance if following conditions are
+   met:
+   
+   1. DB2_COMPATIBILITY_VECTOR is set to one of the valid value
+   (like ORA, SYB etc).
+   2. It has to be column organized table.
+   3. We are comparing different datatypes in WHERE clause.
+   
+   Testcase:
+   
+   db2stop
+   db2set DB2_COMPATIBILITY_VECTOR=ORA
+   db2 update dbm cfg using intra_parallel YES
+   db2start
+   CREATE TABLE tab1 (HASH_DIFF CHARACTER(32) NOT NULL, HASH_KEY
+   CHARACTER(32))ORGANIZE BY COLUMN;
+   CREATE OR REPLACE VARIABLE parav VARCHAR(32);
+   CREATE OR REPLACE VARIABLE parac CHAR(32);
+   CREATE OR REPLACE VARIABLE param2 CHAR(32);
+   SET parav = '000723afab3fa1cf475a61789e85ba76';
+   SET parac = '000723afab3fa1cf475a61789e85ba76';
+   SET param2 = '5d34a29f43bdfeaed314d51031cfb7f0';
+   -- Following UPDATE will run slower
+   UPDATE tab1 SET HASH_DIFF=param2 WHERE HASH_KEY=CAST(parav AS
+   CHAR(32));
+   -- Following UPDATE will run faster
+   UPDATE tab1 SET HASH_DIFF=param2 WHERE HASH_KEY=CAST(parac AS
+   CHAR(32));
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  If possible, please specify same datatype while comparing data
+   in WHERE clause.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All BLU Users prior to DB2 v10.5 FP7                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Please upgrade to DB2 v10.5 FP7.                             *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem is first fixed in DB2 v10.5 FP7.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT08407
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   A50
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-04-18
+   
+   
+ * CLOSED DATE
+   2016-01-20
+   
+   
+ * LAST MODIFIED DATE
+   2016-01-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA50 PSY
+   UP

@@ -1,0 +1,107 @@
+Title: IBM COMException (0x80004005): [DB2/NT64] SQL0290N  Table space access is not allowed.  SQLSTATE=55039 - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User runs an Excel link (spreadsheet) report (e.g. F9). The words "Calling RunReport" appear. A short time later, an error appears. After acknowledging the error message, any populated 'fGetVal' formulae results change from their current value (e.g. 100) to zero (0). 
+
+SYMPTOM
+Information 
+
+Standard Error
+Number: 5
+Source: FrangoDirect.ExcelLinkD.FetchValuesBulk#ControllerProxyClient
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.Runtime.InteropServices.COMException (0x80004005): [DB2/NT64] SQL0290N Table space access is not allowed. SQLSTATE=55039
+
+at Cognos.Controller.Proxy.CCRWS.ExcelLinkB_FetchValuesBulk(String sGuid, String sKeys, String sMcurr, Boolean bLocLang, String sUser, String sRep, Boolean bIsLnk, String sSortOrd, String sParams)
+--- End of inner exception stack trace --- 
+
+ 
+[/support/docview.wss?uid=swg21618122&aid=1] [/support/docview.wss?uid=swg21618122&aid=1]
+
+Event Viewer (Application log):
+Log Name: Application
+Source: Cognos Controller
+Date: 21/11/2012 09:50:26
+Event ID: 0
+Task Category: None
+Level: Warning
+Keywords: Classic
+User: N/A
+Computer: SERVERNAME
+Description:
+Standard Error
+Number: 5
+Source: FrangoDirect.ExcelLinkD.FetchValuesBulk#ControllerProxyClient
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.Runtime.InteropServices.COMException (0x80004005): [DB2/NT64] SQL0290N Table space access is not allowed. SQLSTATE=55039
+
+at Cognos.Controller.Proxy.CCRWS.ExcelLinkB_FetchValuesBulk(String sGuid, String sKeys, String sMcurr, Boolean bLocLang, String sUser, String sRep, Boolean bIsLnk, String sSortOrd, String sParams)
+--- End of inner exception stack trace ---
+at Microsoft.VisualBasic.ErrObject.Raise(Int32 Number, Object Source, Object Description, Object HelpFile, Object HelpContext)
+at Cognos.Controller.Common.RaiseErrCli.RaiseError(Int32 lErrNo, String sErrSource, String sErrDesc, String sErrHelpFile, Int32 lErrHelpContext)
+at Cognos.Controller.Direct.ExcelLinkD.FetchValuesBulk(String sKeys, String sMcurr, Boolean bLocLang, String sRep, Boolean bIsLnk, String sSortOrd, String sParams)
+at Cognos.Controller.Reports.ExcelLink.RunReportLnkBulk()
+
+Description:
+The VB Application identified by the event source logged this Application FrExcelLinkB: Thread ID: 3532 ,Logged: Error occured at 21/11/2012 09:50:26 in FrExcelLinkB, Error No=-2147467259, Source=Server Sub:Db_ExecuteSql(..) , Description=[DB2/NT64] SQL0290N Table space access is not allowed. SQLSTATE=55039
+, HelpFile= HelpContext=0 
+
+
+CAUSE
+Code production problem (APAR PM78698) in Controller.
+
+
+ENVIRONMENT
+All of the following are true: 
+
+ 1. Spreadsheet/Report is configured to utilise Enhanced Reporting Optimisation (also known as "ERO / Optimise2" 
+ 2. Controller application database repository hosted on DB2 server 
+ 3. This database has been configured to use DB2 log archive method 1.
+
+
+More Information on how to configure log archive methods 
+
+Imagine a scenario where an existing database ("MYDBASE") was changed to use Log Archive Method #1 by running the following commands: 
+
+ * 
+ * LOGARCHMETH1 
+ * 
+ * 
+ * 
+ * 
+ * 
+
+DIAGNOSING THE PROBLEM
+In addition to the above error messages, the DBA can see the following behaviour on the DB2 database server: 
+
+ * Run the following command: db2 list tablespaces show detail 
+ * You will see that at least one of the tables (e.g. "USERSPACE1") is set to "0x0020 = Backup pending":
+
+
+Tablespace ID = 2 
+Name = USERSPACE1 
+Type = Database managed space 
+Contents = All permanent data. Large table space. 
+State = 0x0020 
+Detailed explanation: 
+Backup pending 
+
+[/support/docview.wss?uid=swg21618122&aid=2] [/support/docview.wss?uid=swg21618122&aid=2] 
+RESOLVING THE PROBLEM
+Fix: 
+
+Upgrade to Controller 10.2 or later. 
+
+ 
+
+Workaround: 
+
+Disable the use of Optimise2/ERO with the 'bad' spreadsheet reports. 
+
+ * In other words, delete the name "Optimise2" that has been added (e.g. via "Name Manager") in cell A1.
+
+
+TIP: For more information on this, see separate IBM Technote # 1347048 . RELATED INFORMATION
+#1347048 - What is Optimise2 (ERO / Enhanced Reporting O [http://www.ibm.com/support/docview.wss?uid=swg21347048]
+APAR PM78698 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM78698]

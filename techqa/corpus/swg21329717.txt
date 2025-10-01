@@ -1,0 +1,31 @@
+Title: IBM DFHPI0001 0C4 in DFHPIPM and DFHPI0002 code 0607 in DFHPIIW - United States
+
+Text:
+11AC DFHPIPM 0607 DFHPIIW ABENDS0C4 ABEND0C4 ABENDAKEA AKEA MSGDFHPI0001 MSGDFHPI0002 5655M1500 R650 650 R500 500 HCI6500 5655-M15 5655M15 kixinfo retention32 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Your CICS Transaction Server for z/OS (CICS TS) V3.2 region abends with an 0C4 / AKEA at offset X'11AC' in module DFHPIPM. This is followed by a severe error code X'0607' in module DFHPIIW. 
+
+SYMPTOM
+DFHPI0001 [http://publib.boulder.ibm.com/infocenter/cicsts/v3r2/topic/com.ibm.cics.ts.messages.doc/cics_mc/dfhpi/dfhg4_dfhpi.html] An abend (code 0C4/AKEA) has occurred at offset X'11AC' in module DFHPIPM.
+DFHPI0002 A severe error (code X'0607') has occurred in module DFHPIIW.
+
+CAUSE
+Mixed maintenance levels between PI and XM modules.
+
+DIAGNOSING THE PROBLEM
+You can format out the dump of the 0C4 and look in the KE domain for the task that received the error. The failing instruction should be a 5020700C which is a store operation. CICS is trying to store the contents of Register 2 into Register 7 +C.
+
+
+You can also look at the LD domain to check the level of maintenance you have on DFHPI modules and DFHXM. In particular, DFHXMTA and DFHXMAT. In this case, APAR PK56777 [http://www.ibm.com/support/docview.wss?uid=swg1PK56777] ships changes to the PI domain modules as well as several XM modules, including the ones previously mentioned. If they do not have the correct level of maintenance applied to all modules, this would cause the problem you are experiencing
+
+
+RESOLVING THE PROBLEM
+Make sure you have the right levels of maintenance applied. In this case, make sure that everything (all modules) changed by PTF UK33821 for APAR PK56777 has the correct maintenance.
+
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

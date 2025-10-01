@@ -1,0 +1,108 @@
+Title: IBM Security Bulletin: Vulnerability in SSLv3 affects Rational BuildForge (CVE-2014-3566) - United States
+
+Text:
+SSLv3; PSIRT; Security; poodle; CVE-2014-3566 SECURITY BULLETIN
+
+SUMMARY
+ SSLv3 contains a vulnerability that has been referred to as the Padding Oracle On Downgraded Legacy Encryption (POODLE) attack. SSL_TLS is enabled by default in Build Forge in some pages. 
+
+VULNERABILITY DETAILS
+
+CVE ID: CVE-2014-3566 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2014-3566]
+
+Description: IBM WebSphere Application could allow a remote attacker to obtain sensitive information, caused by a design error when using the SSLv3 protocol. A remote user with the ability to conduct a man-in-the-middle attack could exploit this vulnerability via a POODLE (Padding Oracle On Downgraded Legacy Encryption) attack to decrypt SSL sessions and access the plaintext of encrypted connections. 
+
+CVSS Base Score: 4.3
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/97013 [https://exchange.xforce.ibmcloud.com/vulnerabilities/97013] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:M/Au:N/C:P/I:N/A:N) 
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Rational Build Forge versions 7.1.1, 7.1.2, 7.1.3 and 8.0
+
+WORKAROUNDS AND MITIGATIONS
+You can change the configuration file by the following steps to disable the SSLv3. 
+
+Note: bfinstall is used below to represent the installation directory you have chosen to place Build Forge. 
+
+Procedure:
+
+
+ 1.  Open Build Forge console in browser
+     
+     
+ 2.  Go to Administration > Security-SSL
+     
+     
+ 3.  Change all the SSL_TLS/SSLv3/SSL to TLSv1 and save
+     
+     
+ 4.  Backup the bfclient.conf file  * By default the bfclient.conf is under \bfinstall on Windows 
+      * By default the bfclient.conf is under /bfinstall/<platform> on Linux and UNIX
+        
+        
+     
+     
+ 5.  Go to Administration > Security
+     
+     
+ 6.  Click Update Master BFClient.conf
+     
+     Note: The bfclient.conf is used for Communication between Build Forge Service Layer and UI&Engine. It is also used by Build Forge API when you use the secure connection to Build Forge.
+     
+     
+ 7.  Stop Build Forge
+     
+     
+ 8.  Change the Apache ssl.conf config file  * By default the ssl.conf is under \bfinstall\Apache\Conf\ssl\ on Windows 
+      * By default the ssl.conf is under /bfinstall/server/apache/conf/ssl/ on Linux and UNIX
+        
+        
+     
+     
+ 9.  Update the following line for you version of Build Forge  * For Build Forge 7.1.x:
+        From: SSLProtocol -ALL +SSLv3 +TLSv1
+        To: SSLProtocol -ALL +TLSv1
+        
+        
+      * For Build Forge 8.0.0.x:
+        From: SSLProtocol -ALL +SSLv3 +TLSv1 +TLSv1.1 +TLSv1.2
+        To: SSLProtocol -ALL +TLSv1 +TLSv1.1 +TLSv1.2
+        
+        
+     
+     
+ 10. Change the Tomcat server.conf config  * By default the server.conf is under \bfinstall\Apache\tomcat\conf\ on Windows 
+      * By default the server.conf is under /bfinstall/server/tomcat/conf/ on Linux and UNIX
+        
+        
+     
+     
+ 11. Find the sslProtocol="SSL_TLS" line and change the SSL_TLS to TLS and save
+     
+     Note: If Build Forge is installed with WebSphere Application Server, this step is not required
+     
+     
+ 12. Start Build Forge
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+ACKNOWLEDGEMENT
+None 
+
+CHANGE HISTORY
+ * 31 October 2014: Original copy published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

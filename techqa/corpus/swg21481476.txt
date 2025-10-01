@@ -1,0 +1,31 @@
+Title: IBM Modeler 64 bit client does not work with Statistics 32 bit. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 
+After installing Modeler 14.1 64-bit client and Statistics 32-bit client on a 64-bit operating system, Modeler cannot find the Statistics install. Nor will any of the Statistics function within Modeler. 
+
+The user will receive the error "Please run the Statistics License Utility"
+
+
+RESOLVING THE PROBLEM
+ 
+
+Having a 64-bit install of Modeler and a 32-bit installation of Statistics is not a supported configuration by IBM SPSS. In order to use the SPSS Statistics nodes from within Modeler, you will need to install the 64-bit version of Statistics. 
+
+This is because the 32-bit API's of SPSS Statistics cannot be loaded by the 64-bit installation of SPSS Modeler. 
+
+ 
+
+This limitation is expected to be documented in future releases of IBM SPSS Modeler.
+
+RELATED INFORMATION
+ Need more help? Our Modeler forum is Live! [https://developer.ibm.com/answers/topics/modeler/?smartspace=predictive-analytics]
+
+
+ 
+
+HISTORICAL NUMBER
+ 93142

@@ -1,0 +1,28 @@
+Title: IBM CICS Transaction Server V2.3 End of Support announcement - United States
+
+Text:
+CICS TS 2.3 ; EOS; end of support; out of support; product lifecyle; end of lifecycle; withdrawal from support; withdrawn from support ; out of support; withdrawal announcement letter 5697E9300 R300 300 R630 630 HCI6300 5697-E93 5697E93 ; KIXINFO retention31 PRODUCT LIFECYCLE
+
+ABSTRACT
+ CICS Transaction Server for z/OS (CICS TS) V2.3 was withdrawn from support 30 September 2009. This document contains a link to the Software service discontinuance announcement letter and product replacement information. 
+
+CONTENT
+The Software service discontinuance announcement letter that says CICS TS V2.3 will be withdrawn from support 30 September 2009 is 908-016 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?infotype=an&subtype=ca&supplier=897&appname=IBMLinkRedirect&letternum=ENUS908-016]. The following product replacement information is included in this announcement: 
+
+5697-E93, CICS Transaction Server for z/OS V2.3, is replaced by 5655-M15, CICS Transaction Server for z/OS V3.2, announced in Software Announcement 207-051 [http://www.ibm.com/common/ssi/cgi-bin/ssialias?subtype=ca&infotype=an&appname=iSource&supplier=897&letternum=ENUS207-051] , dated March 27, 2007.
+
+The SOAP for CICS feature was also withdrawn from support on 30 September 2009. See SOAP for CICS feature End of Support announcement [http://www.ibm.com/support/docview.wss?uid=swg21305795] for more details.
+
+See the Announcement Letters for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21227090] if you are interested in upgrading to the latest release of CICS TS or any other CICS products.
+
+Since it has been more than 2 years since EOS, IBM is NOT generally offering a fee based service extension for CICS TS V2.3. However, if you have a special situation, you should contact your sales representative who will put in a special bid request for you. A service extension entitles you to continue to receive the level of support that you receive today using the same channels into IBM, including raising PMRs and APARs.
+
+RELATED INFORMATION
+#Announcement letters for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21227090]
+End of Service dates for CICS products [http://www.ibm.com/support/docview.wss?uid=swg21154953]
+
+
+
+
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

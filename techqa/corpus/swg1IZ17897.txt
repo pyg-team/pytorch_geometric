@@ -1,0 +1,139 @@
+Title: IBM IZ17897: IMPACT V4 CANNOT RETRIEVE DATA ITEMS FOR SNMP DSA DATASOURCE WHEN TARGET TYPE IS DEFINED AS TABLE. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Impact v4 when we configure an SNMP datasource to retrieve
+   data items from an SNMP agent running on a remote host we get an
+   error if the type for target agent is specified as TABLE.
+   
+   The error is either a timeout or a message like "OID not valid".
+   
+   This has been confirmed with various versions of Impact v4.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All Netcool/Impact user who are using SNMP   *
+   *                 DSA to query SNMP Table                      *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: SNMP DSA COULD NOT RETERIEVE SNMP TALBE *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   *                                                              *
+   ****************************************************************
+   Steps to replicate: 1) Confirgure SNMP DSA 2) Create a Data
+   Type for syORTable ( or any other) 3) Create a policy using the
+   Data Type created in step 2. use getbyfilter() to query it.
+   NOTE you may use the SnmpTableTest canned policy within impact
+   4) Run the policy and observe  the timeout exception
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  fixed in 4.0.2.1-TIV-NCI-IF0001
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ17897
+   
+   
+ * REPORTED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * REPORTED COMPONENT ID
+   5724O59IS
+   
+   
+ * REPORTED RELEASE
+   310
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-03-17
+   
+   
+ * CLOSED DATE
+   2008-04-24
+   
+   
+ * LAST MODIFIED DATE
+   2008-04-24
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  NETCOOL
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   NETCOOL/IMPACT
+   
+   
+ * FIXED COMPONENT ID
+   5724O59IS
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R310 PSY
+   UP

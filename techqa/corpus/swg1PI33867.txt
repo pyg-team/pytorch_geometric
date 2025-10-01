@@ -1,0 +1,173 @@
+Title: IBM PI33867: TIMPORT.EXE UTILITY FAIL TO IMPORT COBOL COPYBOOK ON A WINDOWS COMPUTER THAT IS SET TO FRENCH OR CHINESE SIMPLIFIED LOCALE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Specific COBOL Copybooks fail to import using timport.exe
+   utility on a Windows computer set to French or Chinese
+   Simplified local when using WebSphere Transformation
+   Extender 8.4.0.x.
+   
+   The same COBOL Copybook imports successfully using the Design
+   Studio.  The WTX 8.4.1.2 version timport.exe utility
+   successfully imports the specific COBOL Copybooks.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  WTXCQ - WTX00046199
+   PB / EJ
+   Circumvention:  Use one the following methods.
+   1. Use the Design Studio to import the Copybook
+   2. Set Windows to use English locale
+   3. Use a newer WTX version
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Users Affected:
+   WebSphere Transformation Extender customers who use TIMPORT
+   command line utility with COBOL CopyBook Importer
+   
+   Problem Description:
+   COBOL CopyBook Importer fails to import a type tree from the
+   CopyBook when invoked from TIMPORT command line utility on
+   French and Chinese Simplified locales.
+   
+   Platforms Affected:
+   Windows
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed a problem with COBOL CopyBook Importer where it now
+   imports the type tree from the CopyBook on French and Chinese
+   Simplified locales when invoked from TIMPORT command line
+   utility.
+   
+   Applies to:
+   8.3.0.6, 8.4.0.5, 8.4.1.2
+   
+   Fixed in the next service packs and releases.
+   
+   To obtain the fix for this APAR:
+   
+   To see if the next service pack or product release is available,
+   check the WebSphere Transformation Extender Downloads page:
+   http://www.ibm.com/support/entry/portal/product/other_software/t [http://www.ibm.com/support/entry/portal/product/other_software/t]
+   ransformation_extender
+   
+   If the service pack or product release is available, download it
+   from PassportAdvantage:
+   http://www.ibm.com/software/howtobuy/passportadvantage/pao_custo
+   mers.htm [http://www.ibm.com/software/howtobuy/passportadvantage/pao_customers.htm]
+   
+   If the service pack or product release is not available and you
+   require the APAR fix immediately, request a Limited Availability
+   Interim Fix (LAIF) by opening a PMR:
+   https://www.ibm.com/support/servicerequest/Home.action [https://www.ibm.com/support/servicerequest/Home.action]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI33867
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE DESIG
+   
+   
+ * REPORTED COMPONENT ID
+   5724M4008
+   
+   
+ * REPORTED RELEASE
+   840
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2015-02-02
+   
+   
+ * CLOSED DATE
+   2015-02-12
+   
+   
+ * LAST MODIFIED DATE
+   2016-07-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE DESIG
+   
+   
+ * FIXED COMPONENT ID
+   5724M4008
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R830 PSY
+   UP
+   
+   
+ * R840 PSY
+   UP
+   
+   
+ * R841 PSY
+   UP

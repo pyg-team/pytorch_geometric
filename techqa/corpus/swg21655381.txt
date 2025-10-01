@@ -1,0 +1,80 @@
+Title: IBM AFUS2034E Error when searching for email by date range using ICC eDiscovery client. - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Content Based Retrieval search for emails by date range using the ICC (IBM Content Collector) eDiscovery client fails with a AFUS2034E Error. 
+
+SYMPTOM
+FileNet Content Engine P8 Server log shows the following ExtendedException: IQQP9002E error: 
+
+Caused by: java.util.concurrent.ExecutionException: com.filenet.api.
+exception.EngineRuntimeException: FNRCB0041E:
+CBR_TS_QUERY_FAILED_EXCEPTION: An IBM Content Search Services server
+could not run a full-text search. See the p8_server_error.log file for
+the error message stack that includes this error for more information
+on the specific cause of the error. For information about the location
+of this log, see "Viewing the IBM FileNet P8 log files" in the IBM
+FileNet P8 information center. If you cannot determine the cause of the
+error, restart the server. If the error continues to occur, contact IBM
+Software Support.
+at java.util.concurrent.FutureTask$Sync.innerGet(FutureTask.
+java:243)
+at java.util.concurrent.FutureTask.get(FutureTask.java:102)
+at com.ibm.filenet.cse.cascade.CSECascadeQuery.callSearch
+(CSECascadeQuery.java:451)
+... 45 more
+Caused by: com.filenet.api.exception.EngineRuntimeException:
+FNRCB0041E: CBR_TS_QUERY_FAILED_EXCEPTION: An IBM Content Search
+Services server could not run a full-text search. See the
+p8_server_error.log file for the error message stack that includes this
+error for more information on the specific cause of the error. For
+information about the location of this log, see "Viewing the IBM
+FileNet P8 log files" in the IBM FileNet P8 information center. If you
+cannot determine the cause of the error, restart the server. If the
+error continues to occur, contact IBM Software Support.
+at com.ibm.filenet.cse.cascade.CSECascadeQuery$1.run
+(CSECascadeQuery.java:437)
+at java.util.concurrent.Executors$RunnableAdapter.call
+(Executors.java:452)
+at java.util.concurrent.FutureTask$Sync.innerRun(FutureTask.
+java:314)
+at java.util.concurrent.FutureTask.run(FutureTask.java:149)
+at java.lang.Thread.run(Thread.java:735)
+Caused by: ExtendedException: IQQP9002E The specified wildcard query
+cannot be processed because the query exceeded the maximum number of
+permitted BooleanQuery clauses.
+
+
+CAUSE
+In FileNet Content Engine Content Search Services(CSS), if the Partitioning Settings Interval is configured for CSS Collections, you may receive this error depending on the Interval value that was selected on the Object Store's CBR IBM Search tab.
+
+The queryExpansionLimit can be easily exceeded if the Partitioning Settings Interval selected in FEM (FileNet Enterprise Manager) is more than 1 month:
+
+Each day can generate up to 24 unique values for 24 hours. So if the date partition interval is 2 months, the maximum number of unique values is 60 days * 24 i.e. 1440.
+
+
+RESOLVING THE PROBLEM
+To resolve the issue: 
+
+
+1. Add the following parameter to the CSS .../config/config.xml file.
+
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  
+ * 
+ * :
+ * 
+ * 
+ * 
+ * 
+ * 
+
+2. Then restart the CSS Service.

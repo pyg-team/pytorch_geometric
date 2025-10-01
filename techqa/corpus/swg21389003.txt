@@ -1,0 +1,86 @@
+Title: IBM Rational Requirement Composer Server Error: -SQL error, expection: com.ibm.db2.jcc.c.SqlException -551/-552. SQL STATE: - United States
+
+Text:
+Rational. Requirements; composer; SQL ; Error; Tomcat; Service. Server; administrator; Jazz; database; user; ERROR com.ibm.team.jrs; com.ibm.team.jrs; exception TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ This technote resolves the SQL Error that occurs while trying to start the IBM Rational Requirement Composer Server Tomcat services. 
+
+SYMPTOM
+The following error can be seen when starting the Tomcat service: 
+
+
+
+[http-9443-Processor25] ERROR com.ibm.team.jrs
+- SQL error, exception:com.ibm.db2.jcc.c.SqlException: DB2 SQL 
+
+error: SQLCODE: -552, SQLSTATE: 42502, SQLERRMC: JRSUSER;CREATE SCHEMA 
+
+ 
+
+[http-9443-Processor25] ERROR com.ibm.team.jrs 
+
+- SQL error, exception:com.ibm.db2.jcc.c.SqlException: DB2 SQL 
+
+error: SQLCODE: -551, SQLSTATE: 42501, SQLERRMC: JRSUSER;CREATE INDEX;JRS.RDF_ABOUT 
+
+ 
+
+[http-9443-Processor25] ERROR com.ibm.team.jrs 
+
+- SQL error, exception:com.ibm.db2.jcc.c.SqlException: DB2 SQL 
+
+error: SQLCODE: -551, SQLSTATE: 42501, SQLERRMC: JRSUSER;CREATE INDEX;JRS.RDF_RESOURCE 
+
+ 
+
+[http-9443-Processor25] ERROR com.ibm.team.jrs 
+
+- SQL error, exception:com.ibm.db2.jcc.c.SqlException: DB2 SQL 
+
+error: SQLCODE: -551, SQLSTATE: 42501, SQLERRMC: JRSUSER;CREATE INDEX;JRS.PROP_STRING 
+
+ 
+
+[http-9443-Processor25] ERROR com.ibm.team.jrs 
+
+- SQL error, exception:com.ibm.db2.jcc.c.SqlException: DB2 SQL 
+
+ 
+
+error: SQLCODE: -551, SQLSTATE: 42501, SQLERRMC: JRSUSER;CREATE INDEX;JRS.PROP_NUM 
+
+[http-9443-Processor25] ERROR com.ibm.team.jrs 
+
+ 
+
+- SQL error, exception:com.ibm.db2.jcc.c.SqlException: DB2 SQL error: SQLCODE: -551, SQLSTATE: 42501, SQLERRMC: JRSUSER;CREATE INDEX;JRS.PROP_TIMESTAMP
+
+
+
+
+
+[/support/docview.wss?uid=swg21389003&aid=1] [/support/docview.wss?uid=swg21389003&aid=1]
+
+
+
+CAUSE
+The Jazz Rest Services database user may not have full administrator permission on the IBM Rational Composer Server.
+
+
+
+RESOLVING THE PROBLEM
+Adding the Jazz Rest Services database user to the administrator group will resolve the problem. 
+
+To add the the Jazz Rest Services database user to the administrator group 
+
+ 1. Open Control Panel 
+ 2. Click on Administrative tools 
+ 3. Click on Computer Management 
+ 4. Expand the local users and group folder 
+ 5. Click on the Groups folder 
+ 6. Right Click on the Administrators 
+ 7. In the field of members of click add to add the Jazz Rest Services user 
+
+
+This users should be created on the Operating systems once you have ran the server initialization by default this user is called " jrsuser".

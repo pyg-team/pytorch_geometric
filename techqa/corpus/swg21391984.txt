@@ -1,0 +1,79 @@
+Title: IBM Configuring nco_sql login to the Uni-directional gateway on linux [PAM] - United States
+
+Text:
+nco_sql; nco_g_objserv_uni; nco_g_objserv_bi; pam; linux; unable to get login token TECHNOTE (FAQ)
+
+QUESTION
+ nco_sql login to uni-directional gateways on linux , how is it configured? 
+
+ANSWER
+
+In order to use nco_sql to login to the object server gateway on linux using PAM authentication, the PAM authentication system must be correctly configured correctly.
+e.g.
+Create the netcool and binary named pam files;
+cd /etc/pam.d
+cp system-auth netcool
+cp system-auth nco_g_objserv_uni
+cp system-auth nco_g_objserv_bi
+
+All files are;
+#%PAM-1.0
+auth required pam_stack.so service=system-auth
+account required pam_stack.so service=system-auth
+password required pam_stack.so service=system-auth
+
+Example non-root user:-
+
+grep ncoadmin /etc/group
+ncoadmin::300:root,ncoadmin,netcool
+grep netcool /etc/passwd
+netcool:x:500:500:Netcool:/opt/netcool:/bin/bash
+
+Ensure PAM authentication is given in the gateways properties file:- [file:-]
+
+vi objserv_uni.props
+Name : 'UNI_GATE'
+Gate.MapFile : '$OMNIHOME/gates/UNI_GATE/objserv_uni.map'
+Gate.StartupCmdFile : '$OMNIHOME/gates/UNI_GATE/objserv_uni.startup.cmd'
+MessageLog : '$OMNIHOME/log/UNI_GATE.log'
+Gate.Reader.Server : 'NCOMS1'
+Gate.Reader.Username : 'gateway'
+Gate.Reader.Password : 'ECEDBJAGBJFHGD'
+Gate.Writer.Username : 'gateway'
+Gate.Writer.Server : 'NCOMS2'
+Gate.Writer.Password : 'ECEDBJAGBJFHGD'
+Gate.UsePamAuth : TRUE
+
+Attempt to login to the uni-directional gateway:-
+nco_sql -server UNI_GATE -user netcool -password ECEDBJAGBJFHGD
+1>
+
+If the user is unable to login to the gateway ensure that nco_pad is run as root, and the gateway is being run by process automation correctly;
+e.g.
+
+nco_process 'UniGateway'
+{
+Command '$OMNIHOME/bin/nco_g_objserv_uni -propsfile /opt/v721-nonroot/omnibus/gates/UNI_GATE/objserv_uni.props' run as 500
+Host = 'host'
+Managed = True
+RestartMsg = '${NAME} running as ${EUID} has been restored on ${HOST}.'
+AlertMsg = '${NAME} running as ${EUID} has died on ${HOST}.'
+RetryCount = 0
+ProcessType = PaPA_AWARE
+}
+
+Configuring Process Automation doesn't affect the nco_sql login to the gateway although it is important in a production environment to check that the system is configured correctly.
+e.g.
+nco_pa.conf and NCOMS.props files are configured for PA - in this example ncoadmin is the administrator group and netcool the owner of the $NCHOME files
+The netcool user should be able to use the nco_pa_status etc. commands and the processes listed would be run by the user netcool.
+
+Depending upon the systems configuration the /etc/shadow password may need to be altered to allow access.
+
+To further debug issues relating to the operating environment you can use the debug option in PAM;
+
+#%PAM-1.0
+auth required pam_stack.so service=system-auth debug
+account required pam_stack.so service=system-auth debug
+password required pam_stack.so service=system-auth debug
+
+Or else strace the gateway process during repeated login attempts to determine the cause of the login failures.

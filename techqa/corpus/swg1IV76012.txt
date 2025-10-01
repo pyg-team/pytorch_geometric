@@ -1,0 +1,292 @@
+Title: IBM IV76012: THE CODE FOR MULTIVERSION VIEW SENDS THE OBJECTNAME INSTEAD OF THE MULTIVERSION FEATURE CLASS NAME. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  PROBLEM TITLE:
+   Maximo Spatial - Issue with using Multiversion Views
+   
+   ERROR DESCRIPTION:
+   The issue occurs when Maximo writes values and/or
+   geometry back to GIS using the crontask load procedure
+   or auto create/manual create of features. This issue
+   only occurs when using a view off of the versioned
+   view or feature class. The Maximo code is incorrect
+   in that it does not look for the possibility of a
+   view serving the Maximo synonym. The view approach is
+   [recommended ] for the Spatial architecture and should be
+   supported.
+   
+   In the SDEHelper.class where the UpdateLayerExtent is not
+   building the query correctly for a Multiversion view feature.
+   The query SQL is correct, but the parameter value being
+   passed to it is not passing the multiversion feature class
+   name to do the search in the SDE.TABLE_REGESTRY and the
+   query fails.
+   
+   This of course only effects multiversion view features,
+   and the user doesn't see anything but the error is in
+   the SystemOutlog and the extent is not atupdated.
+   
+   PROBLEM:
+   Maximo Spatial is using the objectName() to build SQL queries,
+   even when the feature is multi versioned.
+   
+   PERFORMANCE ISSUE:
+   No
+   
+   STEPS TO REPRODUCE:
+   1 - Configuring a feature as multi versioned:
+   Go to Arc Map, Catalog tab
+   Click on any feature that is already configured in Maximo
+   Right click -> Register as Versioned
+   When the confirmation dialog appears, leave the check box in
+   blank and click OK
+   Restart Arc Gis Server
+   
+   2 - Reproducing the issue in Maximo Spatial
+   Login as MAXADMIN
+   Go to Assets
+   Click new
+   Type any asset number, click Save
+   Click in feature class, Select Value
+   Select the feature configured as multi versioned in the steps
+   above
+   Click Open Map
+   Put a point in anywhere in map
+   Click OK
+   Save
+   
+   Then the save is called, Spatial is building queries using
+   the feature objectName, although the feature used is multi
+   versioned and shoulb be using the viewName.  The following
+   error can be seen in the logs:
+   
+   [12/19/14 8:58:45:807 EST] 00000061 SystemOut     O 19 Dec 2014
+   08:58:  45:807 [DEBUG] [MXServer] [] ObjectName: PTWOS
+   [12/19/14 8:58:45:807 EST] 00000061 SystemOut     O 19 Dec 2014
+   08:58:  45:807 [ERROR] [MXServer] [] Error querying data from
+   layers table to  set the new extent based on the new feature
+   record. java.sql.SQLException: Exhausted Resultset
+   [12/19/14 8:58:45:807 EST] 00000061 SystemOut     O 19 Dec 2014
+   08:58:  45:807 [ERROR] [MXServer] [] Query: select
+   minx,miny,maxx,maxy from SDE.layers@ARCGIS.COHESIVESOLUTIONS.COM
+   where database_name is null  and owner=? and spatial_column=?
+   and table_name  in (select table_name from
+   SDE.table_registry@ARCGIS.COHESIVESOLUTIONS.COM where
+   imv_view_name=? and owner=?)
+   [12/19/14 8:58:45:807 EST] 00000061 SystemOut     O 19 Dec 2014
+   08:58:  45:807 [ERROR] [MXServer] [] SdeOwner: SDE
+   [12/19/14 8:58:45:807 EST] 00000061 SystemOut     O 19 Dec 2014
+   08:58:  45:807 [ERROR] [MXServer] [] GeometryColumnName: SHAPE
+   [12/19/14 8:58:45:807 EST] 00000061 SystemOut     O 19 Dec 2014
+   08:58:  45:807 [ERROR] [MXServer] [] ObjectName: PTWOS
+   [12/19/14 8:58:45:807 EST] 00000061 SystemOut     O 19 Dec 2014
+   08:58:  45:807 [ERROR] [MXServer] [] Error updating layers table
+   to set the new extent based on the new feature record.
+   psdi.util.MXSystemException: BMXAA4214E - An unknown error has
+   occurred. Please contact your system administrator for
+   assistance. Gather the logs from the <HOME> directory and
+   determine where and why the error is thrown.
+   
+   
+   Exhausted Resultset
+   psdi.util.MXSystemException: BMXAA4214E - An unknown error has
+   occurred. Please contact your system administrator for
+   assistance. Gather the logs from the <HOME> directory and
+   determine where and why the error is thrown.
+   Exhausted Resultset
+                   at
+   psdi.pluss.mbo.interfaces.SDEHelper.getLayerExtent(SDEHelper.jav
+   a:777)
+                   at
+   psdi.pluss.mbo.interfaces.SDEHelper.updateLayerExtent(SDEHelper.
+   java:619)
+                   at
+   psdi.pluss.mbo.interfaces.SDEHelper.updateFeatureGeometry(SDEHel
+   per.java:850)
+                   at
+   psdi.pluss.mbo.interfaces.SDEHelper.postInsertMbo(SDEHelper.java
+   :870)
+                   at
+   psdi.pluss.mbo.SDEMboSet.insertMbo(SDEMboSet.java:101)
+                   at
+   psdi.mbo.MboSet.saveTransaction(MboSet.java:7305)
+                   at
+   psdi.txn.MXTransactionImpl.saveTransaction(MXTransa
+   
+   CURRENT ERRONEOUS RESULT:
+   Spatial is using objectName when adding a multi version
+   to SDE database.  A exception is throwing when saving a feature
+   to ARC GIS
+   Exhausted Resultset
+   psdi.util.MXSystemException: BMXAA4214E - An unknown error has
+   occurred. Please contact your system administrator for
+   assistance. Gather the logs from the <HOME> directory and
+   determine where and why the error is thrown.
+   
+   EXPECTED RESULT:
+   Spatial should use the viewName when adding a multi version
+   feature to database.
+   
+   ADDITIONAL INFO:ADDITIONAL INFO:
+   None
+   
+   ENVIRONMENT (SYSTEM INFO):
+   App Server IBM WebSphere Application Server 8.5.5.5
+   Version Tivoli's process automation engine 7.6.0.0 Build
+   20141117-2230
+   DB Build V7600-218
+   IBM TPAE Integration Framework 7.6.0.0 Build 20141117-1800 DB
+   Build V7
+   600-15
+   TPAE OSLC Object Structure 7.5.1.1 Build 20141118_165910-0600 DB
+   Build
+   V7511-02
+   IBM Maximo Asset Management Scheduler 7.5.3.0 Build
+   20141117-2230 DB B
+   uild V7530-19
+   IBM Maximo Spatial Asset Management 7.5.0.1-20141210-1253 Build
+   201207
+   14-2208 DB Build V7501-13 HFDB Build HF7501-06
+   IBM Maximo for Utilities 7.5.0.1-20150108-1306 Build
+   20120710-0136 DB
+   Build V7501-14 HFDB Build HF7501-10
+   IBM Maximo Asset Management 7.6.0.0 Build 20141117-2230 DB Build
+   V7600
+   -00
+   Server OS Windows Server 2012 R2 6.3
+   Server DB Oracle 12.1 (Oracle Database 12c Enterprise Edition
+   Release
+   12.1.0.2.0 - 64bit Production With the Partitioning, OLAP,
+   Advanced An
+   alytics and Real Application Testing options)
+   (c) Copyright IBM Corp. 2011
+   
+   LOCAL FIX:
+   Customer suggested to change the part of the code in
+   SDEHelper.java where is using the objectName.
+   The suggestion was to check whether the feature is muti
+   versioned or not with isVersioned method, and to replace the
+   objectName with getMultiVersionViewName() if the condition is
+   true.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  No workaround.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * none                                                         *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * THE CODE FOR MULTIVERSION VIEW SENDS THE OBJECTNAME INSTEAD  *
+   * OF THE MULTIVERSION FEATURE CLASS NAME.                      *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * none                                                         *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV76012
+   
+   
+ * REPORTED COMPONENT NAME
+   MAXIMO SPATIAL
+   
+   
+ * REPORTED COMPONENT ID
+   5724T3900
+   
+   
+ * REPORTED RELEASE
+   750
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-08-17
+   
+   
+ * CLOSED DATE
+   2015-08-25
+   
+   
+ * LAST MODIFIED DATE
+   2015-08-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   MAXIMO SPATIAL
+   
+   
+ * FIXED COMPONENT ID
+   5724T3900
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R750 PSY
+   UP

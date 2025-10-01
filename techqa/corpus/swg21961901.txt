@@ -1,0 +1,58 @@
+Title: IBM Clicking on the Solutions folder to expand it under the Design Object Store in IBM Case Manager administration client causes this error: The requested item was not found. Folder /IBM Case Manager/Solution Deployments not found. - United States
+
+Text:
+Add-on; addon; 5.2.1 Case Manager Target Object Store Extensions; ICM; 5.2.1; DOS; Design object store; Solution Deployments TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Simply clicking on the Solutions folder to expand it under the Design Object Store in IBM page causes this error:: The requested item was not found. Folder /IBM Case Manager/Solution Deployments not found. 
+
+SYMPTOM
+Here is the screen shot of the error when trying to expand the Solutions folder under the Design Object Store in IBM Case Manager administration client: 
+
+[/support/docview.wss?uid=swg21961901&aid=1] [/support/docview.wss?uid=swg21961901&aid=1]
+
+
+
+CAUSE
+The error will occur if the Target Object Store extensions have been installed to the Design Object Store, regardless of whether the extensions have been installed successfully or have failed. When an Object Store extension installation fails, CPE still creates a record of the installation including the failing reason and status in the Object Store extensions database. IBM Case Manager administration client will look at the records indiscriminately. 
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+ 1. Collect the the Content Platform Engine (CPE) Global Catalog Database (GCD) file from the following location: /WebSphere/AppServer/profiles/<profile>/FileNet/<server>/GCD? There should be a gcdDBFile.xxx. See the sample screen shot below. 
+ 2. [/support/docview.wss?uid=swg21961901&aid=2] [/support/docview.wss?uid=swg21961901&aid=2] 
+ 3. Collect a query output by running Select * from AddOnRecord from this table in the database where the Design Object store resides: Object Store DB > AddOnRecord table 
+ 4. Review the query output you have obtained from step 2 to find the Target Object Store extension record. Look for a valid record or for the failed import record. Here is the excerpt of a failed record :
+    78d49351f011204ea27303b9b0df51e6 48422f83fde653449f86c3ba210a7589 1326a9eb34e6624684436ed4d0857a96 f59e6012ed74c24382107480a3cb3c82 13 TMK_P8Admin 2015-03-30 14:38:56.988 2<ImportErrors><PropertyTemplates><PropertyTemplateInteger32><Id>03f236e5-923d-4b25-8491-cc3b97ab652d</Id><Name>Target Environment Type</Name><ExceptionMessage>An inappropriate object was passed as parameter to this function. For example, the object does not support a required interface or is of an inappropriate class.</ExceptionMessage><ExceptionCode>E_BAD_OBJECT</ExceptionCode><HRESULT>0x80040209</HRESULT></PropertyTemplateInteger32></PropertyTemplates></ImportErrors> dd1a52ac000000000000000000000002 
+ 5. Use vwtool to convert the dd1a52ac000000000000000000000002 addon id obtained from step 3 to GUID as shown in the screen shot below. [/support/docview.wss?uid=swg21961901&amp;aid=3] 
+ 6. Next use the GUID {AC521ADD-0000-0000-0000-000000000002} you have obtained from step 4 to verify the "5.2.1 Case Manager Target Object Store Extensions" information in the GCD xml file obtained in step 1 as shown below.
+
+ * 
+ * 
+ * 
+ * {AC521ADD-0000-0000-0000-000000000002}
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 5.2.1 Case Manager Target Object Store Extensions
+ * 
+ * 
+ * 
+
+
+As demonstrated in the above steps, the failed import is associated with the " 5.2.1 Case Manager Target Object Store Extensions" addon. That is reason the IBM Case Manager administration client failed because the source code is still checking for this addon. 
+
+RESOLVING THE PROBLEM
+If the Target Object Store extensions exist on the Design Object Store, here are the resolution depending on the situation: 
+
+ *  If the TOS extensions are installed successfully in the DOS, then the customer will need to rebuild their Object Store and make sure they only install the DOS extensions. They should not try to install the extensions manually from CPE ACCE. They should use ICM Config Tool to configure the TOS object store, which will also configure DOS. 
+ *  If the TOS extensions are not installed successfully and there is a failed message, then it might be possible to remove the record. Before doing so, please reach out to the CE team and consult with them on deleting any records from the Object Store add on records database table. a) Make sure a database backup is taken. 
+   
+   b) Check to see if TOS extension objects exist in the Design Object Store. These include but are not limited to 'Base Case' and 'Case Type Subfolder' classes. There are also other classes, please check as much as possible. 
+   
+   c) If this is a fairly new Object Store, the recommended path is to still re-create the DOS, instead of taking the risk of removing an Object Store Addon.

@@ -1,0 +1,71 @@
+Title: IBM PI15518;8.5.5: notifications not sent to service integration bus clients when a messaging engine instance is stopped forcefully - United States
+
+Text:
+PI15518; PI15518; PI15518 DOWNLOADABLE FILES
+
+ABSTRACT
+ When messaging engine receives FORCE_STOP request, clients which are connected to the messaging engine are not notified about the stop event. As a result, the client will not be ab 
+
+DOWNLOAD DESCRIPTION
+PI15518 resolves the following problem:
+
+ERROR DESCRIPTION: 
+Notifications not sent to Service Integration Bus clients when a messaging engine instance is stopped forcefully. 
+
+LOCAL FIX: 
+
+
+PROBLEM SUMMARY
+
+USERS AFFECTED:
+Users of the default messaging provider for IBM WebSphere Application Server V8.5
+
+PROBLEM DESCRIPTION:
+When a messaging engine receives a FORCE_STOP request, clients which are connected to the messaging engine are not notified about the stop event. As a result, the client will not be able to connect to the messaging engine after it fails over to another member in the cluster. Since the clients are not notified about the stop event, they would still use the existing connection that has been established previously and SIConnectionUnavailableException and SIMPConnectionUnavailableException will be written to the logs.
+
+RECOMMENDATION:
+None
+
+In a WebSphere Application Server Service Integration Bus, when a messaging engine loses a connection to the datastore, it will try to re-establish a connection for 15 minutes. If unsuccessful then the messaging engine receives a FORCE_STOP request and goes to disabled state. But the connected clients will not be notified about the messaging engine stop event. Since the clients are not notified about the stop event, they would still use the existing connection that has been established previously, leading to SIConnectionUnavailableException and SIMPConnectionUnavailableException in the logs. com.ibm.wsspi.sib.core.exception.SIConnectionUnavailableException: CWSIC8007E: An exception was caught from the remote server with ID 3-008-0001 Exception: CWSIK0022E: The connection is closed to messaging engine CL_BPWH01.000-BPM.De1.Bus and cannot be used....
+at com.ibm.ws.sib.comms.common.CommsByteBuffer.parseSingleException
+(CommsByteBuffer.java:1810)
+at
+com.ibm.ws.sib.comms.common.CommsByteBuffer.getException(CommsBy
+teBuffer.java:1263)
+at
+com.ibm.ws.sib.comms.common.JFAPCommunicator.checkFor_SIConnecti
+onUnavailableException(JFAPCommunicator.java:1300)
+at
+com.ibm.ws.sib.comms.client.ConnectionProxy._createConsumerSessi
+on(ConnectionProxy.java:1269)
+at
+com.ibm.ws.sib.comms.client.ConnectionProxy.createConsumerSessio
+n(ConnectionProxy.java:943)
+at
+com.ibm.ws.sib.api.jms.impl.JmsMsgConsumerImpl.createCoreConsume
+r(JmsMsgConsumerImpl.java:1048)
+........
+
+PROBLEM CONCLUSION: 
+We will now send stop event notifications to messaging engine clients when the messaging engine receives a FORCE_STOP request. 
+
+The fix for this APAR is currently targeted for inclusion in fix pack 8.5.5.3. Please refer to the Recommended Updates page for delivery information: 
+http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+
+PREREQUISITES
+None
+
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI15518/8.5.5.2/readme.txt] US English 5077 
+DOWNLOAD PACKAGE
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 8.5.5.2-WS-WASProd-IFPI15518 06-10-2014 US English 277990 HTTP [http://www-933.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?fixes=8.5.5.2-WS-WASProd-IFPI15518&productid=WebSphere%20Application%20Server&brandid=5] 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24037779&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24037779&aid=2]Problems (APARS) fixed
+PI15518

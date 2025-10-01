@@ -1,0 +1,182 @@
+Title: IBM IT14222: MQ V8.0.0.4 REDISTRIBUTABLE CLIENT: UNMANAGED .NET APPLICATION THROWS TYPE INITIALIZER ERROR. - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An unmanaged .NET application using the Redistributable Client
+   feature introduced in MQ v8.0.0.4 fails with a "type
+   initializer" exception.
+   
+   MQ trace of the failure shows the following:
+   System.TypeInitializationException: The type initializer for
+   'IBM.WMQ.Nmqi.UnmanagedNmqiMQ' threw an exception. --->
+   System.NullReferenceException: Object reference not set to an
+   instance of an object.
+      at IBM.WMQ.Nmqi.NativeManager.InitializeNativeApis(String
+   mode)
+      at IBM.WMQ.Nmqi.UnmanagedNmqiMQ..cctor()
+      --- End of inner exception stack trace ---
+      at System.RuntimeMethodHandle.InvokeMethod(Object target,
+   Object arguments, Signature sig, Boolean constructor)
+      at
+   System.Reflection.RuntimeConstructorInfo.Invoke(BindingFlags
+   invokeAttr, Binder binder, Object&#221;&#168; parameters, CultureInfo
+   culture)
+      at System.RuntimeType.CreateInstanceImpl(BindingFlags
+   bindingAttr, Binder binder, Object args, CultureInfo culture,
+   Object activationAttributes, StackCrawlMark& stackMark)
+      at System.Activator.CreateInstance(Type type, BindingFlags
+   bindingAttr, Binder binder, Object&#221;&#168; args, CultureInfo culture,
+   Object  activationAttributes)
+      at System.Reflection.Assembly.CreateInstance(String
+   typeName,Boolean ignoreCase, BindingFlags bindingAttr, Binder
+   binder, Object args,
+   
+   CultureInfo culture, Object activationAttributes)
+      at IBM.WMQ.Nmqi.NmqiEnvironment.GetInstance(String name)
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Install higher version of MQ client along with Redistributable
+   client.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   USERS AFFECTED:
+   Users of the IBM MQ .NET v8 Redistributable client
+   
+   
+   Platforms affected:
+   Windows
+   
+   ****************************************************************
+   PROBLEM DESCRIPTION:
+   The logic to locate the MQ .NET runtime library (amqmdnet.dll)
+   when running a .NET application has changed with
+   resdistributable clients. A coding error within this change
+   meant that the MQ .NET client was unable to locate runtime
+   library when the environment was not associated with a full MQ
+   installation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The MQ .NET redistributable client has been updated to correctly
+   locate the runtime library from the client directory if a full
+   MQ installation is not present.
+   
+   ---------------------------------------------------------------
+   The fix is targeted for delivery in the following PTFs:
+   
+   Version    Maintenance Level
+   v8.0       8.0.0.6
+   
+   The latest available maintenance can be obtained from
+   'WebSphere MQ Recommended Fixes'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006037]
+   
+   If the maintenance level is not yet available information on
+   its planned availability can be found in 'WebSphere MQ
+   Planned Maintenance Release Dates'
+   http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309 [http://www-1.ibm.com/support/docview.wss?rs=171&uid=swg27006309]
+   ---------------------------------------------------------------
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT14222
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * REPORTED COMPONENT ID
+   5724H7251
+   
+   
+ * REPORTED RELEASE
+   800
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-03-09
+   
+   
+ * CLOSED DATE
+   2016-04-29
+   
+   
+ * LAST MODIFIED DATE
+   2016-11-25
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ BASE MULTIP
+   
+   
+ * FIXED COMPONENT ID
+   5724H7251
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

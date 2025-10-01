@@ -1,0 +1,68 @@
+Title: IBM How to proceed to installation of ODM on Windows when the launchpad stays blocked - United States
+
+Text:
+Installation Manager; launchpad; blocked TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ ODM launchpad stays blocked at 0%. 
+
+SYMPTOM
+ 
+
+ * When trying to install and run as a regular user ODM 8.5 on Windows 7, you get the following errors:
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * When trying to install and run as an administrator, the installation process stays stuck at "Starting Installation Manager ..." and remains at 0 % without moving forward, and you get the following errors:
+   " Installation ended with errors "
+   For details see journal log :
+   C:\Users\[yourUser]\AppData\Local\Temp\IBM_LaunchPad_Typical_Install_1375685302198\Prerequisites_WAS_Silent.xml.log
+   => File does not exist :
+   C:\Users\IBM_ADMIN\AppData\Local\Temp\IBM_LaunchPad_Typical_Install_1375685302198\Prerequisites_WAS_Silent.xml.sysoutcontent :
+   => File contains :
+   + "C:\\Users\\IBM_ADMIN\\IBM\\Installation Manager\eclipse\tools\imcl"
+   -input
+   C:\Users\IBM_AD~1\AppData\Local\Temp\IBM_LaunchPad_Typical_Install_1375685302198\Prerequisites_WAS_Silent.xml -acceptLicense
+   -showVerboseProgress -log
+   C:\Users\IBM_AD~1\AppData\Local\Temp\IBM_LaunchPad_Typical_Install_1375685302198\Prerequisites_WAS_Silent.xml.log -vmargs
+   -Dcic.doNotReconcile=true -Xmx1024m
+   C:\Users\IBM_ADMIN\AppData\Local\Temp\IBM_LaunchPad_Typical_Install_1375685302198\Prerequisites_WAS_Silent.xml.syserr
+   => File contains :
+   The system cannot find the path specified.
+
+
+CAUSE
+When you install using the launchpad, the launchpad will try to find out any available IBM Installation Manager (IIM) installed in the machine through the Registry. The two possible keys with IIM are the following:
+
+'HKCU\\SOFTWARE\\IBM\\Installation Manager'
+'HKLM\\SOFTWARE\\Wow6432Node\\IBM\\Installation Manager'
+
+Check your registry, and check that keys point to an existing location of IBM Installation Manager.
+It could happen for unknown reason that IBM Installation Manager has been uninstalled and is missing, but registry key still exists. So if the launchpad finds the first location and assumes that IIM is there but eventually, it's not, then it fails as the actual files for IBM Installation Manager do not exist.
+
+
+ENVIRONMENT
+Windows
+
+
+
+RESOLVING THE PROBLEM
+If you have a registry key pointing to somewhere where IBM Installation Manager is not installed anymore, delete it. 
+
+Then run the launchpad again and it will complete successfully.
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Decision Center Installation Platform Independent 8.5, 8.0.1

@@ -1,0 +1,106 @@
+Title: IBM Saving "Row Definition" changes in 'Form Structures Define' with many accounts takes a very long time, with CPU at 100%, and may crash with OutOfMemoryException error - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ User clicks ‘Maintain – Form Structure – Define’. 
+User highlights the relevant form. User clicks ‘Row Definition’ Tab, then selects the code (for example ‘ABC’). User selects ALL the accounts (on the left hand side), and then clicks on the red ‘X’ button to delete them all. 
+User then clicks on the button ‘Multiselection of codes to insert in the grid’. User selects some/multiple accounts (for example uses ‘Ctrl – A’ to select ALL the accounts). User presses green ‘tick’ button. User presses ‘save’ icon. 
+The message “saving row definition” appears in the lower-left corner of the screen. However, this process seems to take a VERY long time (it still runs after perhaps many hours!) to complete. In fact, it does not complete successfully. Instead, there is (eventualy, for example after 5 hours) an error message on the screen. 
+
+SYMPTOM
+Screen: 
+
+ 
+Information
+Standard Error
+Source: ControllerProxyClient
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.OutOfMemoryException: Out of memory
+at FrFormsBT.FormsDefineTClass.SaveLineColStruc(String sGuid, String sUser, Int32 lLLocale, String sForm, String sMall, String sMallTyp, Recordset rsLineColStruc, Recordset rsLineColStrucT, Recordset rsMall)
+at Cognos.Controller.Proxy.CCRWS.FormsDefineT_SaveLineColStruc(String sGuid, String sUser, Int32 lLLocale, String sForm, String sMall, String sMallTyp, DataSet rsLineColStruc, DataSet rsLineColStrucT, DataSet rsMall)
+--- End of inner exception stack trace ---
+at Cognos.Controller.Common.RaiseExceptionCli.RaiseException(Exception ex)
+at Cognos.Controller.ControllerForms.frmFormsDefine.PerformSave(String sCode, String sOldCode, Int32 lPrevTab)
+at Cognos.Controller.ControllerForms.frmFormsDefine.IFile_DoSave()
+[OK]
+
+Event Viewer (Application Log)
+Event Type: Warning
+Event Source: Cognos Controller
+Event Category: None
+Event ID: 0
+Date: 29/11/2010
+Time: 11:03:28
+User: N/A
+Computer: SERVERNAME
+Description:
+Standard Error
+Source: ControllerProxyClient
+Description: System.Web.Services.Protocols.SoapException: Server was unable to process request. ---> System.OutOfMemoryException: Out of memory
+at FrFormsBT.FormsDefineTClass.SaveLineColStruc(String sGuid, String sUser, Int32 lLLocale, String sForm, String sMall, String sMallTyp, Recordset rsLineColStruc, Recordset rsLineColStrucT, Recordset rsMall)
+at Cognos.Controller.Proxy.CCRWS.FormsDefineT_SaveLineColStruc(String sGuid, String sUser, Int32 lLLocale, String sForm, String sMall, String sMallTyp, DataSet rsLineColStruc, DataSet rsLineColStrucT, DataSet rsMall)
+--- End of inner exception stack trace ---
+at Cognos.Controller.Common.RaiseExceptionCli.RaiseException(Exception ex)
+at Cognos.Controller.ControllerForms.frmFormsDefine.PerformSave(String sCode, String sOldCode, Int32 lPrevTab)
+at Cognos.Controller.ControllerForms.frmFormsDefine.IFile_DoSave()
+
+Event Type: Warning
+Event Source: Cognos Controller
+Event Category: None
+Event ID: 0
+Date: 29/11/2010
+Time: 11:03:27
+User: N/A
+Computer: SERVERNAME
+Description:
+Error occured at 29/11/2010 11:03:27 in IBM Cognos 8 Controller, Error No=-1, Source=ControllerProxyClient, Description=ControllerProxyClient, HelpFile= HelpContext=
+
+Event Type: Warning
+Event Source: VBRuntime
+Event Category: None
+Event ID: 1
+Date: 29/11/2010
+Time: 11:03:24
+User: N/A
+Computer: SERVERNAME
+Description:
+The VB Application identified by the event source logged this Application FrFormsBT: Thread ID: 6124 ,Logged: Error occured at 29/11/2010 11:03:24 in FrFormsBT, Error No=7, Source=SaveLineColStruc, Description=Out of memory, HelpFile= HelpContext=0
+
+Event Type: Warning
+Event Source: VBRuntime
+Event Category: None
+Event ID: 1
+Date: 29/11/2010
+Time: 11:03:24
+User: N/A
+Computer: SERVERNAME
+Description:
+The VB Application identified by the event source logged this Application FrFormsBT: Thread ID: 6124 ,Logged: Error occured at 29/11/2010 11:03:24 in FrFormsBT, Error No=7, Source=Internal_SaveLineColStruc, Description=Out of memory, HelpFile= HelpContext=0
+
+
+CAUSE
+At least one of the added accounts is invalid. For example, one of the accounts chosen might sum into itself, causing an indefinite loop.
+
+
+DIAGNOSING THE PROBLEM
+To check whether your Controller database contains accounts which sum into itself (in other words how to identify accounts which have a sum account that is equal to itself, causing indefinite loops) run the following SQL script: 
+
+ * 
+ * select * from xkonto a, xkonto b where a.konto=b.konto and (a.konto=b.sum1 or a.konto=b.sum2 or a.konto=b.sum3) 
+
+
+Steps: 
+The following steps are based on SQL 2005. For other database systems/versions, the instructions may differ slightly:  1. Logon to the SQL server as an Administrator 
+ 2. Launch "SQL Server Management Studio" and logon to the database server 
+ 3. Right-click on the Controller database, and choose "New query" 
+ 4. Paste the script (above in bold) into the new Window 
+ 5. Click on the "Execute" button 
+ 6. In the results window (below) there will be several columns/rows displayed. Look in the column 'konto'. This will contain a list of each of the invalid "looping sum" accounts.
+
+RESOLVING THE PROBLEM
+Modify the account structure to solve any invalid accounts. 
+
+ 
+
+ * For example, in one real-life example, after removing the account loop the form took 60 seconds to save.

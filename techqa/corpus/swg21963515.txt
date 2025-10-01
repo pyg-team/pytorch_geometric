@@ -1,0 +1,135 @@
+Title: IBM Abend U4091 in WDI CICS after upgrading SEDILMD2 loadlib as part of z/OS upgrade. - United States
+
+Text:
+ABENDU4091 ABEND4091 ABEND 4091 USER 4091 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Any execution of WebSphere Data Interchange EDIB transaction or program EDIFFUT under CICS which executes WMQ for any function; such as Continuous Receive processing with WMQ, PERFORM SEND, PERFORM RECEIVE, or PERFORM TRANSFORM with INTYPE(MQ) or OUTTYPE(MQ) fails with User abend code of 4091. In this case, WDI's SEDILMD2 load library was from a SERVERPAC volume as part of a z/OS upgrade. 
+
+SYMPTOM
+CICS joblog contains: 
+
++CEE1000S z/OS INTERNAL ABEND. ABCODE = 4091 REASON = 00000003 
+
+DFHDU0203I 07/22/2015 05:26:26 CICSTEST transaction dump was taken for dumpcode: 4091, Dumpid: 1/0001. 
+DFHAC2236 07/22/2015 05:26:26 CICSTEST Transaction EDIB abend 4091 in program EDIFFUT term ????. Updates to local recoverable resources will be backed out. 
+
+
+Then, the following as reported by z/OS Language Environment: 
+
+CEE0355C The user-written condition handler that was scheduled using CEEHDLR returned an unrecognized result code. From entry point mqsconnect at compile unit offset +00006182 at entry offset +00006182 at address 27BB1BFA.
+CEE3DMP V2 R1.0: Condition processing resulted in the unhandled condition.
+
+Task Number: 0058 Transaction ID: EDIB 
+
+CEE3845I CEEDUMP Processing started.
+
+Information for enclave main 
+Information for thread 8000000000000000
+
+Traceback: 
+
+DSA Entry E Offset Statement Load Mod Program Unit
+Service Status
+1 CEEHDSP +00004A4C CEEHDSP 
+UI90017 Call
+2 CEEHSGLT +00000060 CEEHSGLT 
+HLE7790 Exception 
+3 CEEHDSP +00004CC4 CEEHDSP 
+UI90017 Call
+4 CEECGEX +000001FE CEECGEX 
+HLE7790 Call
+5 mqsconnect +00006182
+Exception 
+6 mqsopen +0000080E
+Call
+7 main +000000CE 
+Call
+8 main -27662100
+Call
+9 CrtMsgSys -275891B8
+Call
+10 trform +000012AC 
+Call
+11 proccmd +000001AC
+Call
+12 main +00000FAE
+Call
+13 main -27513D28 
+Call
+14 CEECRINV +00000306 CEECRINV
+HLE7790 Call
+15 CEECRINI +00000B4E CEECRINI
+UI90017 Call
+
+
+ENVIRONMENT
+WebSphere Data Interchange (WDI) V3.3 for CICS running with WebSphere MQ (WMQ). 
+
+
+
+DIAGNOSING THE PROBLEM
+Run a load map of module EDIMQS. Sample JCL follows. Be sure to keep a back-up of the SEDILMD2 loadlib. While this sample will not change the module, as is, there's always a possibility of typos.
+
+//LOADMAP EXEC PGM=HEWL,REGION=256K,
+// PARM='XREF,RENT,MAP,AMODE=31,RMODE=ANY'
+//LOADLIB DD DISP=SHR,DSN=EDI.V3R3M0.SEDILMD2
+//SYSPRINT DD SYSOUT=*
+//SYSLMOD DD DSN=&&TMPLOAD(EDIMQS),
+// DISP=(NEW,DELETE,DELETE),
+// UNIT=SYSALLDA,SPACE=(CYL,(1,1,1)),
+// DCB=(RECFM=U,LRECL=0,BLKSIZE=6144)
+//SYSUT1 DD UNIT=SYSALLDA,SPACE=(CYL,(5,5))
+//*
+//SYSLIN DD *
+INCLUDE LOADLIB(EDIMQS)
+NAME EDIMQS(R)
+/*
+//
+
+
+
+
+RESOLVING THE PROBLEM
+Inspect the EDIMQS load map joblog:
+ELEMENT 
+
+SYMBOL(ABBREV) SECTION (ABBREV) OFFSET CLASS NAME
+
+$@STKSIZ $UNRESOLVED(W)
+MAIN MQSC 28B0 B_TEXT
+DFHEI1 DFHEAI 8 B_TEXT
+CEEMAIN CEEMAIN 0 B_TEXT
+CEEFMAIN $UNRESOLVED(W)
+CEEBETBL CEEBETBL 0 B_TEXT
+CEEROOTA CEEROOTA 0 B_TEXT
+MQSS MQSS 0 B_TEXT
+FXXZC FXXZC 0 B_TEXT
+MQSS MQSS 0 B_TEXT
+FXXZC FXXZC 0 B_TEXT
+MQCONN EDIABND 0 B_TEXT
+MQDISC EDIABND 0 B_TEXT
+MQSERROR MQSC 88 B_TEXT
+MQSS MQSS 0 B_TEXT
+FXXZC FXXZC 0 B_TEXT
+MQSERROR MQSC 88 B_TEXT
+MQSCONNE MQSC 670 B_TEXT
+
+Note in the above, for example, symbol for MQCONN refers to section EDIABND, along with others. What this means is that the true components of WMQ stub (interface) programs have not been linked-in to the new SEDILMD2 loadlib. These should have been resolved during SMP/E base FMID installation via this DDDEF entry:
+
+ADD DDDEF (SCSQLOAD)
+DATASET(MQS.SCSQLOAD)
+UNIT(SYSALLDA)
+VOLUME(vvvmqs)
+WAITFORDSN
+SHR.
+
+See EDI.V3R3M0.SEDIINS1(EDIDDDEF) for the DDDEFs for WDI installation. Check the above entry to see if it has EDI.V3R3M0.SEDISTUB. It should instead point to the actual WMQ SCSQLOAD load lib. You may also want to check the other entries for accuracy.
+
+Use one of the following techniques to resolve the external references within load module EDIMQS:
+
+- Use SMP/E LINK LMODS CALLLIBS [http://www.ibm.com/support/knowledgecenter/SSLTBW_2.1.0/com.ibm.zos.v2r1.gim1000/lnklmd.htm?lang=en] command to relink WDI load modules.
+
+- Re-install the WDI V3.3 FMID (H28N330) after having updated the DDDEF entries. 
+
+- Re-link manually, and specifically for EDIMQS, via sample JCL in the WDI installation library: EDI.V3R3M0.SEDIINS2(FXXJMQS). This was the solution chosen for this particular case.

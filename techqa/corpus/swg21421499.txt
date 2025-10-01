@@ -1,0 +1,95 @@
+Title: IBM HADR resources Online / Offline on opposite nodes to actual primary / stdby - United States
+
+Text:
+TSA; TSAMP; HADR; hadrV95_monitor.ksh; db2gcf; Operational; Available; IBM.Test; UserInitiatedMove; Manual; takeover TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ 'lssam' showing HADR resource Online on server where it is "standby" and Offline on server where it is "primary". Have also seen the HADR resource shown as Offline on both servers when it was peer and the HADR group was Nominal=Online. 
+
+CAUSE
+If TSAMP is placed into Manual mode and a 'db2 takeover hadr ...' command is issued, the HADR pair still swap roles, and an IBM.Test resource "UserInitiatedMove" is created. However the IBM.Test resource is not removed after the HADR role has swapped, thus the status reported to TSAMP remains the old state, since the presence and absence of these 
+temporary IBM.Test resources are being used by DB2 to help track the status of HADR resources. The DB2 engine is not removing the IBM.Test resource 
+when TSAMP is in Manual mode. 
+
+A similar problem occurs when the HADR RG's Nominal State is changed to Offline. In this case an IBM.Test resource is created with "VirtualOffline" in its name. Now if you issue a 'db2 takeover hadr ...' at this point, the actual HADR pair still swap and the VirtualOffline IBM.Test resource is removed, but a UserInitiatedMove IBM.Test resource is created and remains there indefinitely, thus causing the same situation as the first example, that is a mismatch between the OpStates of the HADR resource on each node compared to the primary/standby role of each node.
+
+
+
+ENVIRONMENT
+DB2 v9.5 or v9.7, being automated by TSAMP. 
+
+The DB2 automation scripts are creating IBM.Test resources to record certain actions/activity, for example: 
+
+1) when a user initiates a takeover, an IBM.Test resource is created with the text "UserInitiatedMove" in its name.
+
+2) when the HADR RG is Offlined, the actual HADR primary/standby pair is not disconnected, instead an IBM.Test resource is created with the text "VirtualOffline" in its name and the hostname in its name, so as to simulate an Offline state as far as the TSAMP software is concerned.
+
+The DB2 automation scripts are testing for the presence of these IBM.Test resources, and this helps the DB2 engine determine the state of the HADR database.
+
+
+DIAGNOSING THE PROBLEM
+Run the HADR monitor script to show that it is exiting with a 2 (offline) on the primary server and a 1 (online) on the standby. The following is an example of the location and syntax to run the HADR monitor script on each server : 
+
+/usr/sbin/rsct/sapolicies/db2/hadrV97_monitor.ksh db2inst1 db2inst1 MYDB verbose
+
+When the above script returns control back to the prompt, immediately run 'echo $?' to see the return code of the last command/script executed.
+
+The following sequence shows the typical problematic behavior from start to finish ....
+
+With TSAMP in Manual mode, issue 'db2 takeover hadr on database mydb' on node2 (current standby) and the following IBM.Test resource will be created :
+
+root@node1:/home/db2inst1 # lsrsrc -Ab IBM.Test
+Resource Persistent and Dynamic Attributes for IBM.Test
+resource 1:
+Name = "db2_MYDB_node2_UserInitiatedMove_db2inst1_db2inst1"
+ResourceType = 0
+...
+ActivePeerDomain = "hadrdom"
+NodeNameList = {"node1"}
+OpState = 2
+...
+
+As instance owner, check the failover worked and is still in Peer state :
+
+db2inst1@node2:/home/db2inst1 > db2pd -hadr -db mydb 
+Role State SyncMode HeartBeatsMissed LogGapRunAvg (bytes)
+Primary Peer Sync 0 0
+
+db2inst1@node1:/home/db2inst1 > db2pd -hadr -db mydb
+Role State SyncMode HeartBeatsMissed LogGapRunAvg (bytes)
+Standby Peer Sync 0 0
+
+
+The failover completed, but the IBM.Test resource created for the move still remains ...
+
+root@node1:/home/db2inst1 # lsrsrc -Ab IBM.Test
+Resource Persistent and Dynamic Attributes for IBM.Test
+resource 1:
+Name = "db2_MYDB_node2_UserInitiatedMove_db2inst1_db2inst1"
+ResourceType = 0
+...
+ActivePeerDomain = "hadrdom"
+NodeNameList = {"node1"}
+OpState = 2
+...
+
+As a result, the OpStates for the HADR database resources have not changed yet, that is, the true primary HADR database (on node2) is shown as Offline while the new standby HADR database (on node1) is still showing Online :
+
+Online IBM.ResourceGroup:db2_db2inst1_db2inst1_MYDB-rg Automation=Manual Nominal=Online
+|- Online IBM.Application:db2_db2inst1_db2inst1_MYDB-rs
+|- Online IBM.Application:db2_db2inst1_db2inst1_MYDB-rs:node1
+'- Offline IBM.Application:db2_db2inst1_db2inst1_MYDB-rs:node2
+
+
+RESOLVING THE PROBLEM
+The work-around is actually quite simple; manually remove the IBM.Test resource. 
+
+rmrsrc -s "Name = 'db2_MYDB_node2_UserInitiatedMove_db2inst1_db2inst1'" IBM.Test
+
+This work-around can be performed each time the HADR takeover is done while in Manual mode or the HADR RG has Nominal set to Offline, However it might simply be best to limit the 'db2 takeover hadr ... ' action while TSAMP is in Manual mode or the HADR RG has been offlined.
+
+The problem is within the DB2 engine. The 'db2gcf' command on primary returns Operational instead of Available. The following DB2 APARs now 
+exist to address the problem within the DB2 engine : 
+
+V9.5 - IC65575
+V9.7 - IC65580

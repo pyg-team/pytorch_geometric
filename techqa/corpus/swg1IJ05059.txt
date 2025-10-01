@@ -1,0 +1,182 @@
+Title: IBM IJ05059: WAS AGENT NEED TO REMOVE THE LEGACY FEATURE OF THE CONFIGURED LIBERTY SERVER - United States
+
+Text:
+  A README IS AVAILABLE
+8.1.4.0-IBM-APM-WAS-AGENT-IF0005 [http://www-01.ibm.com/support/docview.wss?uid=isg400003915]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Environment:  APM Agent V8 & Liberty
+   APM release number where the problem was found:
+   Agent 8.1.4 & IFix .
+   Problem Description:
+   The APM agent seems to modify the server.xml, server.env and
+   jvm.options
+   files in order to attach itself to the running liberty instance.
+   There are one specific features that the agent installer added
+   to the
+   server.xml:
+   
+   usr:itcam-730.140
+   
+   However, on starting the liberty server, the following Errors
+   are
+   visible in the messages.log.
+   
+   Detailed Recreation Procedure and messages that you see in the
+   log
+   files:
+   On starting the liberty server, the following Errors are visible
+   in the
+   messages.log.
+   [1/30/18 23:45:34:931 EST] 00000027
+   -160-com.ibm.tivoli.itcam.liberty.classloader.730.140feature E
+   CWWKE0702E: Could not resolve module:
+   com.ibm.tivoli.itcam.liberty.classloader.730.140feature [160]
+   Unresolved requirement: Import-Package: javax.jms
+   
+   [1/30/18 23:45:34:999 EST] 00000027
+   .ibm.tivoli.itcam.liberty.classloader.servlet.730.140feature E
+   CWWKE0702E: Could not resolve module:
+   com.ibm.tivoli.itcam.liberty.classloader.servlet.730.140feature
+   [164]
+   Unresolved requirement: Import-Package: javax.servlet.jsp
+   
+   Startup does continue and eventually after a 100 second
+   initialization
+   we do see data come through on the APM cloud dashboard.
+   
+   The errors are still concerning and we are hopeful the Support
+   team has
+   input into why this is the case or if there should be something
+   we can
+   all do to resolve/fix these errors.
+   Workaround:
+   When you finished the configuration wit APM agent for monitoring
+   Liberty. The server.xml  will  be changed for liberty server as
+   below:
+   3.server.xml will only adding two feature.
+     <featureManager>
+                 <feature>monitor-1.0</feature>
+                 <feature>usr:itcam-730.140</feature>
+      </featureManager>
+   monitor-1.0 is must have,another is not must have.
+   consider the customer's liberty env,we found the feature
+   usr:itcam-730.140 was  not working and leading the error.
+    The feature is not must have .so we provider 2 method to work
+   around to
+   reduce the error log happening.
+   One is to install the dependent import pacakge ,another is to
+   remove the
+   feature.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The exception is due to the
+   com.ibm.tivoli.itcam.liberty.classloader.*feature depend on the
+   javax.jms import, but there is not intalled in customer's
+   liberty.
+    The exception just show the load feature error, it will not
+   impact the
+   customer env.
+   
+   To:
+   Ther is a workarund to remove this
+   feature from the server.xml:
+   
+   <feature>usr:itcam-730.140</feature>
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Fixed
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IJ05059
+   
+   
+ * REPORTED COMPONENT NAME
+   MON AGENT WSA
+   
+   
+ * REPORTED COMPONENT ID
+   5725U05WA
+   
+   
+ * REPORTED RELEASE
+   730
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2018-03-22
+   
+   
+ * CLOSED DATE
+   2018-06-27
+   
+   
+ * LAST MODIFIED DATE
+   2018-06-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R730 PSY
+   UP

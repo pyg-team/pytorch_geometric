@@ -1,0 +1,57 @@
+Title: IBM java.io.CharConversionException occurs when accessing DBCS data from a JDBC application running under JRE 1.8+ - United States
+
+Text:
+java.io.CharConversionException; -4220; JDK 8; JRE 8; JRE 1.8; Java 1.8 character encoding error TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ An application using the IBM Data Server Driver for JDBC and SQLJ accesses a database that uses double byte character set encoding for character data (such as CCSID 1399 - Japanese). When running under JRE 1.8 or above, the application receives an
+SQL Exception with the message "Caught java.io.CharConversionException" and ERRORCODE=-4220 on querying character data.. 
+
+SYMPTOM
+An exception is thrown similar to this: 
+
+com.ibm.db2.jcc.am.SqlException: [jcc][t4][1065][12306][XXX.XXX.XXX] Caught java.io.CharConversionException. See attached Throwable for details. ERRORCODE=-4220, SQLSTATE=null
+[...]
+Caused by: java.nio.charset.MalformedInputException: Input length = XXX
+[...]
+
+The same application works without any exceptions under JRE 1.7 or lower. 
+
+
+CAUSE
+IBM Data Server Driver for JDBC and SQLJ relies on the Java runtime for byte to character conversions. The error occurs due to presence of specific byte sequences in the character data that were accepted by Java character converters in JRE 1.7 and lower but are considered invalid and rejected in JRE 1.8 with a java.io.CharConversionException.
+
+
+ENVIRONMENT
+Java Runtime Environment 1.8 or above
+
+
+
+DIAGNOSING THE PROBLEM
+You can use the HEX function to find out the byte values for data in a character column: 
+
+
+For example, to find out the byte values in column COL1 in table TAB1, run:
+
+SELECT HEX(col1) FROM tab1
+
+With respect to the designated character set encoding / CCSID, this may help identify the invalid byte sequences that need to be rectified.
+
+
+RESOLVING THE PROBLEM
+The solution to the problem is to identify and correct the invalid data. 
+
+
+The following workaround may be used to maintain application continuity until the invalid data is fixed:
+
+
+ * IBM Data Server Driver for JDBC and SQLJ versions 3.70, 4.20 and above support JRE 1.8. Confirm that the version of the IBM Data Server Driver for JDBC and SQLJ used by the application supports JRE 1.8. 
+ * Set the driver configuration property db2.jcc.charsetDecoderEncoder=3 
+   
+   With this property set, the driver instructs the Java character converters to use a replacement (dummy) character in the decoding output of an invalid sequence of bytes instead of throwing the java.io.CharConversionException exception. 
+
+
+Another option is to continue running the application under JRE 1.7 or lower to avoid the error. 
+RELATED INFORMATION
+ java.io.CharConversionException with UTF-8 data under J [http://www-01.ibm.com/support/docview.wss?uid=swg21973226]
+Technote describing possible causes of invalid data enc [http://www-01.ibm.com/support/docview.wss?uid=swg21684365]

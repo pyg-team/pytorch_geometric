@@ -1,0 +1,159 @@
+Title: IBM IV88264: NULLPOINTEREXCEPTION BEING THROWN IN WAS SYSTEMOUT LOGS DUE TO ITCAM SOA 7.2.X - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+ A README IS AVAILABLE
+IBM Tivoli Composite Application Manager for SOA 7.2 Interim Fix 12 README 7.2.0.1-TIV-ITCAMSOA-IF0012 [http://www-01.ibm.com/support/docview.wss?uid=isg400003852]
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Problem Description: The following exception is being thrown in
+   the WebSphere SystemOut log
+   
+   Operations    E com.ibm.management.soa.agent.wps61.WPS61Tracker
+   invoke() KD4WT0002E The following exception occurred:
+      Exception: null
+      Stack trace: java.lang.NullPointerException
+      at
+   com.ibm.management.soa.agent.ExternalStateData.convertStringToBy
+   tes(ExternalStateData.java:477)
+      at
+   com.ibm.management.soa.agent.ExternalStateData.toSoapHeaderStrin
+   g(ExternalStateData.java:178)
+      at
+   com.ibm.management.soa.agent.wps61.WPS61Tracker.attachCorrelator
+   ToMessage(WPS61Tracker.java:133)
+      at
+   com.ibm.management.soa.agent.wps61.WPS61Tracker.serverLeave(WPS6
+   1Tracker.java:1763)
+   
+   Users Affected:
+   All ITCAM for SOA users with WebSphere BPM
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  N/A
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of ITCAM for SOA Data Collectors for
+   * WebSphere BPM.
+   ****************************************************************
+   * PROBLEM DESCRIPTION: NullPointerException thrown from
+   *
+   com.ibm.management.soa.agent.ExternalStateData.convertStringToBy
+   tes
+   (ExternalStateData.java:477)
+   * Interim Fix 12 resolves this issue.
+   ****************************************************************
+   * RECOMMENDATION: Apply IFix 12.
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The fix for this APAR is contained in the following maintenance
+   packages and later version:
+   | interim fix | 7.2.0.1-TIV-ITCAMSOA-IF0012
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV88264
+   
+   
+ * REPORTED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * REPORTED COMPONENT ID
+   5724SOA00
+   
+   
+ * REPORTED RELEASE
+   711
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2016-08-18
+   
+   
+ * CLOSED DATE
+   2018-05-04
+   
+   
+ * LAST MODIFIED DATE
+   2018-05-04
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITCAM FOR SOA-D
+   
+   
+ * FIXED COMPONENT ID
+   5724SOA00
+   
+   
+
+APPLICABLE COMPONENT LEVELS

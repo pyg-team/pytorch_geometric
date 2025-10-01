@@ -1,0 +1,42 @@
+Title: IBM SPSS Statistics Operating System Compatibility for the License Manager - United States
+
+Text:
+sentinel license manager slm lms compatibility operating system os support TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ There is no IBM documentation addressing SPSS Statistics operating system compatibility for the License Manager. 
+
+SYMPTOM
+There is no Compatibility Report for the Sentinel RMS/Concurrent/Network License Manager available from IBM sources.
+
+
+CAUSE
+ Sentinel RMS/Concurrent/Network License Manager is not an IBM product and Compatibility Reports for non-IBM products are not available from IBM.
+
+ENVIRONMENT
+Any.
+
+DIAGNOSING THE PROBLEM
+There are no Compatibility Reports for the Sentinel RMS/Concurrent/Network License Manager available from IBM sources.
+
+RESOLVING THE PROBLEM
+There are no specific Compatibility Reports for the License Manager. However, the operating systems that are indicated in the Compatibility Report for an SPSS Statistics product line (client/desktop/server) and version (for example, 19, 20) can be used as a 'stand-in' for the operating systems supported by the License Manager. If you want to know the supported operating systems of a particular License Manager version, determine which version of the Statistics product line was released with that particular version of the License Manager. Next, run the IBM Compatibility Report for that version of the Statistics product line. The list of operating systems that are supported by that version of Statistics product line is the same operating systems on which the License Manager is supported. 
+
+To acquire a compatibility report for a given version of the License Manager, perform the following procedure:
+
+
+
+
+(1) Access the following web page: http://www-969.ibm.com/software/reports/compatibility/clarity/index.jsp [http://www-969.ibm.com/software/reports/compatibility/clarity/index.jsp]
+(2) Select 'Create a report' in the section 'In-depth reports' near bottom of page.
+(3) Under the 'Full or partial product name' section, type the following: SPSS Statistics
+(4) Select the 'magnifying glass' icon.
+(5) In the 'Search results' dialog box, select the following entry: SPSS Statistics
+(6) In the 'Version' list dialog box, select the version of the product released at the same time as the version of the License Manager.
+(7) In the 'Filters' section, select 'Operating system platforms'.
+(8) Under the 'Operating system platforms', select the operating sysem you want.
+(9) click 'Submit' A report will be displayed with multiple tabs. Select the 'Operating systems' tab. The operating systems that are supported by the corresponding version of the License Manager is listed.
+
+RELATED INFORMATION
+ Need more help? Our Statistics forum is Live! [https://developer.ibm.com/answers/topics/statistics.html?smartspace=predictive-analytics]
+Need more help? Our Licensing forum is Live! [https://developer.ibm.com/answers/topics/spsslicensing.html]

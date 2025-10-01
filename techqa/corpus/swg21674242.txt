@@ -1,0 +1,73 @@
+Title: IBM A full text search with other search parameters finds fewer defects than expected - United States
+
+Text:
+full text search; workitems; query result; full text merge limit; defect; search TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ In IBM Rational Team Concert (RTC), attempts to run a query with the full text search parameter value set to " * " results in fewer results than expected. 
+
+SYMPTOM
+There are two scenarios in which this problem occurs. 
+
+
+Scenario 1: 
+
+ 1. Create a work item query, where the Type is Defect
+    
+    
+ 2. Run this work item query. Some work items will be returned.
+    
+    
+ 3. Create a query in which Type is Defect and the Full Text Search contains *
+    
+    
+ 4. Run the query from Step 3
+    Actual Result: You have fewer results returned than in the query created in Step 1.
+    Expected Result: The queries created in Steps 1 and 3 should return exactly the same number of results.
+
+
+Scenario 2: 
+
+ 1. Create a work item query, where Type is Defect.
+    
+    
+ 2. Run this work item query. Some work items will be returned.
+    
+    
+ 3. Open any work item in web interface.
+    
+    
+ 4. Navigate to links section and select Add > Related. The Search dialog will open.
+    
+    
+ 5. Select Defect as Type and type * in Search.
+    Actual Result: You have fewer results results returned than in the query created in Step 1.
+    Expected Result: The number of returned work items in Step 5 should be exactly the same as in Step 1.
+
+
+CAUSE
+Full text search option queries are designed to work as follows: 
+
+ 1. First it is run as a full text search query. The number of work items returned by this query is limited by Full Text Merge Limit option. If this option is set, for example, to 100, then only 100 work items will be returned, even if all work items match search criteria (*).
+    
+    
+ 2. After running full text search, additional search parameters are checked for work items returned in Point 1.
+
+RESOLVING THE PROBLEM
+WORKAROUND 
+
+
+You can increase the Full Text Merge Limit value with these steps: 
+
+ 1. Navigate to Advanced properties: https://your-server:9443/ccm/admin#action=com.ibm.team.repository.admin.configureAdvanced
+    
+    
+ 2. Increase the value for Full Text Merge Limit.
+    
+    
+ 3. Click Save button.
+    
+
+
+Note: There is no recommended value for the Full Text Merge Limit in your server. However, you should keep the value less than 1 500 to avoid performance problems. RELATED INFORMATION
+ Improve the approach of performing full text search [https://jazz.net/jazz/web/projects/Rational%20Team%20Concert#action=com.ibm.team.workitem.viewWorkItem&id=238575]

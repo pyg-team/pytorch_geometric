@@ -1,0 +1,159 @@
+Title: IBM IY98398: DISPLAY ITEM VALUES HAVING JAPANESE CHARACTERS UNREADABLE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Approver:EA
+   
+   <Environment>
+     TEMS/TEPS : AIX 5.3
+                 ITM 6.1 + FP03 / ITMSAP 6.1
+     TEP       : Windows XP + SP2
+                 TEP 6.1 + FP03
+   
+   
+   <Problem Description>
+   "Display Item" values having Japanese characters is garbled in
+   the Situation Event flyover.
+   It is not garbled in the situation event console or message log
+   view even if it has Japanese characters.
+   The problem occurs both on TEP desktop and TEP Browser.
+   
+   In this case, if I right click on the garbled Japanese message
+   in the Situation Event flyover and select "Acknowledge Event"
+   --> "Quick Acknowledge",
+   Japanese "Display Item" of the "Acknowledged" status in the
+   situation event console and the message log view become to be
+   garbled.
+   It does not happen when I execute the "Quick Acknowledge" from
+   the "Situation Event Console".
+   
+   The problem also occurs on FP04 env.
+   
+   
+   <Detailed Recreation Procedure>
+     1. fire the situation event which having Japanese characters
+   in the "Display Item".
+     2. point up the navigator view by the mouse cursor
+     3. "Situation Event flyover" window is displayed and "Display
+   Item" value which having Japanese characters in it is garbled.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Japanese characters in Event Display Item values are garbled
+   when displayed in Event Flyover popup.
+   
+   Japanese and other multi-byte characters are represented
+   differently in the TEP than they are in the TEPS/TEMS.  When a
+   situation specifies a Display Item, its value can contain these
+   multi-byte characters.  Such characters are unreadable when
+   displayed in the TEP if not converted to the native Java
+   character encoding.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The logic was changed to convert multi-byte characters from the
+   TEPS to the TEP encoding before they are displayed.
+   
+   The fix for this APAR is included in the following maintenance
+   vehicle(s):
+   
+   | fix pack | 6.1.0-TIV-ITM-FP0006
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IY98398
+   
+   
+ * REPORTED COMPONENT NAME
+   TEP
+   
+   
+ * REPORTED COMPONENT ID
+   5724C04EP
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-05-11
+   
+   
+ * CLOSED DATE
+   2007-10-30
+   
+   
+ * LAST MODIFIED DATE
+   2007-10-30
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   TEP
+   
+   
+ * FIXED COMPONENT ID
+   5724C04EP
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP

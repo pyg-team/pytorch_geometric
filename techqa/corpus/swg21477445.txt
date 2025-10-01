@@ -1,0 +1,23 @@
+Title: IBM Error com.spss.rosetta.component.survey data.core.model.data exception when opening 38,000 record file into Text Analysis for Surveys - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I am trying to open a rather large (nearly 40,000 cases) .xlsx file into Text Analysis for Surveys using the Excel (*.xls, *.xlsx) Data Source. Doing so results in the following error message: 
+
+com.spss.rosetta.component.survey data.core.model.DataException 
+
+I click OK on this error and am presented with a second message: 
+
+No variables found in the dataset!
+
+I click OK on this message and am presented with the Variables screen where I can ordinarily select the variables for my analysis but in this case it is blank. I can choose nothing and the Back button is my only available other option. How can I bring my .xlsx file into Text Analysis for Surveys? 
+
+RESOLVING THE PROBLEM
+This problem has been reported to SPSS Development. We appologize for your inconvenience. As a workaround, you can use ODBC to bring the file into Text Analysis for Surveys.
+
+
+
+HISTORICAL NUMBER
+ 83238

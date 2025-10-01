@@ -1,0 +1,26 @@
+Title: IBM BINLOG_FORMAT errors when starting WorkLight Application Center - United States
+
+Text:
+TPAEANYWHERE; mobile; Maximo Anywhere; MySQL; BINLOG_FORMAT TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When starting the IBM Application Center running on MySQL errors regarding BINLOG_FORMAT may occur. 
+
+SYMPTOM
+The WebSphere system out logs for the WorkLight server will show the following message on startup. Preventing you to access the console and your Maximo Anywhere applications. 
+
+Caused by: <openjpa-1.2.2-r422266:898935 nonfatal general error> org.apache.openjpa.persistence.PersistenceException: Cannot execute statement: impossible to write to binary log since BINLOG_FORMAT = STATEMENT and at least one table uses a storage engine limited to row-based logging. InnoDB is limited to row-logging when transaction isolation level is READ COMMITTED or READ UNCOMMITTED.
+
+
+CAUSE
+This is caused by the BINLOG_FORMAT being set to STATEMENT when a BINLOG_FORMAT of ROW is used. 
+
+
+
+RESOLVING THE PROBLEM
+To resolve this problem you can update the the BINLOG format for your Application Center database to MIXED, so it uses both the STATEMENT and ROW format. You can do this with the following query. 
+
+
+SET GLOBAL binlog_format = 'MIXED';
+
+Once done restart MySQL and your WorkLight server.

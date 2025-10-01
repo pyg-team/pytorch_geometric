@@ -1,0 +1,27 @@
+Title: IBM Smart Analytics System 5600 configuration for DB2 Performance Expert - United States
+
+Text:
+Smart Analytics System; 5600; performance expert; pefs; BCU; Balanced Warehouse; ISAS; DB2 PE TECHNOTE (FAQ)
+
+QUESTION
+ What is the correct configuration for the "Event monitoring remote path" for the DB2 Performance Expert (PE) software in my IBM Smart Analytics System 5600 environment? 
+
+
+CAUSE
+Some IBM Smart Analytics System 5600 environments are incorrectly configured with the DB2 Performance Expert event monitoring remote path set to the value "/pefs/evmfiles". When the event monitoring remote path is set to this value, NFS might be configured to mount the /pefs/evmfiles file system to all data nodes.
+
+ANSWER
+The correct configuration uses the local "/db2fs/<instance_name>/db2dump" file system for the remote path, where <instance_name> represents the name of the core warehouse instance. 
+
+If your PE configuration does not display the configuration value "Event monitoring remote path = /db2fs/<instance_name>/db2dump", then you will need to change your PE configuration. If NFS is configured to mount the /pefs/evmfiles to all data nodes, you must also remove the NFS mount for the /pefs file system.
+
+To change the PE configuration:
+1. Log in to the management node as the Performance Expert instance owner.
+2. Launch either the Performance Expert graphical user interface or the command-line console (peconfig -console). 
+3. Set the value of the "Event monitoring remote path =" to /db2fs/<instance_name>/db2dump, where <instance_name> is the name of the core warehouse instance. 
+4. Restart PE to update the configuration:
+peconfig -restart
+
+To remove the NFS mount for the /pefs file system:
+1. Log in to the management node as the root user and remove pefs from /etc/exports.
+2. Log in to each administration, data, and standby node as the root user and remove the pefs line from /etc/fstab.

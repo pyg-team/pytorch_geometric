@@ -1,0 +1,210 @@
+Title: IBM PK60812: NAVIGATIONURL TAG DOES NOT CONVERT THE CREATED URLS IN PORTAL INTO LINK, INSTEAD IT JUST DISPLAYS AS TEXT - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Customer is using themes from portal 5.1.X into their portal 6
+   env.
+   
+   Customer stated that there is an issue with url link created
+   for their portal navigation.  They stated that on their theme
+   that has a search button they see that the name of the links
+   display but are not links, just text.
+   
+   They said they identified that problem comes from changes
+   introduced in Menu.jsp (see attached).
+   
+   
+   Specifically:
+   
+   <%@ taglib
+   uri="http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-
+   navigati
+   on" prefix="portal-navigation" %>
+   <%@ taglib
+   uri="http://www.ibm.com/xmlns/prod/websphere/portal/v6.0/portal-
+   logic"
+   prefix="portal-logic" %>
+   
+     <portal-navigation:navigationUrl screenTemplate="Home"
+   type="link"
+   var="myURL">
+       <%
+                           java.io.Writer w = new
+   java.io.StringWriter();
+                           myURL.writeDispose(w);
+                           selectURL = w.toString();
+       %>
+   </portal-navigation:navigationUrl>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  temp. workaround provided by L3 (andreas)
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  In some cases, navigationUrl tags that reference internal URL
+   links do not create a correct URL.
+   
+   SystemOutl.log shows  the following exception:
+      RuntimeConten E
+   com.ibm.wps.model.content.impl.RuntimeContentURLImpl getTarget()
+   EJPEJ0004E: An unexpected exception occurred.
+   
+   com.ibm.wps.services.identification.SerializationExceptionImpl:
+   EJPDB0124E: The specified string [http://] can neither be
+   deserialized as an object ID nor resolved as a unique name.
+       at
+   com.ibm.wps.services.identification.IdentificationService.deseri
+   alize(IdentificationService.java:1187)
+       at
+   com.ibm.wps.model.content.impl.RuntimeContentURLImpl.getReferenc
+   edContentNodeID(RuntimeContentURLImpl.java:182)
+       at
+   com.ibm.wps.model.content.impl.RuntimeContentURLImpl.getTarget(R
+   untimeContentURLImpl.java:190)
+       at
+   com.ibm.wps.engine.tags.NavigationUrlTag.doStartTag(NavigationUr
+   lTag.java:186)
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Incorrect content node type resolution in NavigationUrlTag.
+   
+   Failing Module(s):
+      Engine: Page Assembly
+   
+   Affected Users:
+      users of NavigationUrl tag
+   
+   Version Information:
+       Portal Version(s): 6.0.1.0
+        Pre-Requisite(s): PK58050 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK58050]
+         Co-Requisite(s): ---
+   
+       Portal Version(s): 6.0.1.1
+        Pre-Requisite(s): PK58050 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK58050]
+         Co-Requisite(s): ---
+   
+       Portal Version(s): 6.0.1.3
+        Pre-Requisite(s): PK58050 [http://www-01.ibm.com/support/docview.wss?uid=swg1PK58050]
+         Co-Requisite(s): ---
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   A fix is available from Fix Central:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PK60812&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PK60812&productid=WebSphere%20Portal&brandid=5]
+   
+   You may need to type or paste the complete address into your Web
+   browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK60812
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2008-02-11
+   
+   
+ * CLOSED DATE
+   2008-03-18
+   
+   
+ * LAST MODIFIED DATE
+   2008-03-18
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY
+   UP
+   
+   
+ * R60E PSY
+   UP
+   
+   
+ * R60G PSY
+   UP

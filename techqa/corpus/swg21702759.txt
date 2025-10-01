@@ -1,0 +1,36 @@
+Title: IBM FileNet Deployment Manager and exporting and re-importing a Document Class with a single indexed property or properties - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ With FileNet Deployment Manager (FDM), for FileNET Content Platform Engine (CPE), you can export a document class and it's associated property templates. For example, going from a Development (source) environment to a Production (target) environment. 
+
+With versions prior to CPE 5.2.1, An Administrator, using FileNet Enterprise Manager (FEM), could create a single database index on a property template in order to improve database performance.
+
+When importing the document class and it's associated property templates, FDM does not carry over or retain the single index creation on the property template, which could cause database performance problems on the target environment. 
+
+SYMPTOM
+Possible database related performance problems with CPE on the target server.
+
+
+CAUSE
+FDM does not carry over or retain a database index associated with a property template. 
+
+DIAGNOSING THE PROBLEM
+Sudden performance problems on the target environment after exporting a Document Class from one FileNET P8 server to P8 another.
+
+RESOLVING THE PROBLEM
+If exporting a document class from a source environment, then importing it into the target environment, where there are certain property templates that are indexed in the database, the process of re-creating the same indexes have to be performed on the target environment after importing the document class.
+
+The recommendation is to use Administration Console Content Engine (ACCE) to perform the index creation on the target server, this way the metadata stays consistent with the database. 
+
+
+With the release of CPE 5.2.1, improvements were made to the creation of database indexes. Prior to CPE version 5.2.1, a given property definitions column could be indexed by setting the corresponding ColumnDefinition's "IsSingleIndexed" property to True. This property, however was deprecated in version 5.2.1, the property was replaced with a much richer set of functionality that enables multi-column index creation. As a result, the TableDefinition class was enhanced with an object valued list property named IndexDefinitions. A CmIndexDefinition is then comprised of a set of CmIndexedColumn objects. ACCE has been extended with this functionality via a new Table Definitions node under the current Data Design node. 
+
+[/support/docview.wss?uid=swg21702759&aid=1] [/support/docview.wss?uid=swg21702759&aid=1]
+
+References
+http://www-01.ibm.com/support/knowledgecenter/api/content/nl/en-us/SSGLW6_5.2.1/com.ibm.p8.relnotes.doc/wn_cpe_dev.htm [http://www-01.ibm.com/support/knowledgecenter/api/content/nl/en-us/SSGLW6_5.2.1/com.ibm.p8.relnotes.doc/wn_cpe_dev.htm]
+
+http://www-01.ibm.com/support/knowledgecenter/SSGLW6_5.2.1/com.ibm.p8.ce.dev.prop.doc/props_CmIndexDefinition.htm [http://www-01.ibm.com/support/knowledgecenter/SSGLW6_5.2.1/com.ibm.p8.ce.dev.prop.doc/props_CmIndexDefinition.htm]

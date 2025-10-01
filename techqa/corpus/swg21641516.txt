@@ -1,0 +1,106 @@
+Title: IBM A new IBM Support Assistant data collector exists in the IBM Business Process Manager (BPM) Version 8.5 products - United States
+
+Text:
+ISA data collection datacollection logs bpmdc isadc NEWS
+
+ABSTRACT
+ The new data collector in IBM Business Process Manager V8.5 is designed for ease of use to gather some of the standard information that is needed to debug IBM Business Process Manager issues. This command-line tool can gather log file or configuration information and upload it to a Problem Management Record (PMR). This collector is also included in IBM Business Process Manager V8.0.1 Fix Pack 3. 
+
+CONTENT
+The script gathers various product information, compresses it into a .zip file, and can optionally send the compressed file to IBM for a PMR. You can also use this tool to compress the data without sending it to IBM. The command is profile_root/bin/bpmdc
+The profile_root variable is the base profile directory for the profile from which you want to get data. 
+
+Common Examples 
+
+To gather the logs and upload them to ECURep: 
+C:/MyProfileDirectory/bin/bpmdc -PMR=12345.678.901 -uploadToIBM=yes 
+
+To gather the logs and config directory: 
+
+C:/MyProfileDirectory/bin/bpmdc -PMR=12345.678.901 -uploadToIBM=yes -config=yes 
+
+To gather logs for installation issues: 
+
+C:/MyProfileDirectory/bin/bpmdc -PMR=12345.678.901 -uploadToIBM=yes -type=Install 
+
+To gather 3 java cores from MyAppServer at 60 second intervals: 
+
+C:/MyProfileDirectory/bin/bpmdc -PMR=12345.678.901 -uploadToIBM=yes -type=Dump -server=MyAppServer -soapport=8881 -user=admin -password=admin -dumptype=Thread -count=3 -interval=60 
+
+
+
+
+
+Command Line Parameter Default Value Description PMR None This parameter is the 11-digit PMR number to which the data is associated. Use one of the following forms for this value: 12345.678.901 or "12345,678,901"
+Note: Comma characters can be an issue on the Microsoft Windows command-line if you do not surround the value with the double quote characters. uploadToIBM no This parameter specifies whether to upload the data to the IBM ECURep site for a particular PMR. You can set this value to yes or no. outputDirectory install_root/BPM/isadc This parameter specifies the path to the directory where the output collection .zip file will be stored. type General This parameter specifies which type of collection to run. The valid values are General, Install, or Dump(8.5.5). config no With a general collection, when you set this parameter to yes, the config directory is included. You can set this value to yes or no. help No values When you include this parameter with the command, a description of the command options is displayed. Server Connection options added in 8.5.5 
+Required for -type=Dump server No default This option specifies the server from which you wish to collect JVM dumps. soapport No default This option specifies the SOAP port for the server. user No default This option specifies the user with wsadmin access to the server to which you are connecting. password No default This option specifies the password for the user. Dump options added in 8.5.5 
+Available for -type=Dump dumptype Thread This option specifies the type of Java™ virtual machine (JVM) dump to trigger: 
+Thread - Javacore or thread dump. 
+Heap - A Heap dump is generated.
+System - System dump is also generated and has JExtract run on it. count 1 This option specifies the number of JVM dumps to trigger during the collection. interval 0 This option specifies the interval in seconds to wait between JVM dumps. 
+
+You can run the command without any parameters, which results in the general collection being run and the logs directory is compressed into a .zip file. 
+
+
+The output file name has the following format: PMRnumber . type _ timeStampValue .zip
+In V8.5.5 the format is changed to: PMRnumber . ProfileName_type _ timeStampValue .zip 
+
+
+The data gathered is based on the profile where the command is run. If it is run from the installation directory, then the default profile is used. 
+
+
+Note: Be sure to run the command from the profile from which you wish to gather data. 
+
+
+General collection 
+The "General" collection gathers the following information:  * Profile logs directory (profile_root/logs). The collected files include all of the server log files and trace under this profile directory. 
+ * The results of the versionInfo-maintenancePackages command. 
+ * (Optionally) The profile config directory (profile_root/config). This directory is only collected when the -config=yes option is used.
+
+
+Note: The limitation with this collection is that it does not gather log files and trace if it goes to a custom directory outside of the Profile logs directory. It is not recommended that you change the log file locations from the default as it makes it more difficult for other people to find them. 
+
+Install collection
+The "Install" collection gathers the following information that is listed in the Collect troubleshooting data for installation or upgrade problems with IBM Business Process Manager products [http://www.ibm.com/support/docview.wss?uid=swg21506937] document: 
+
+ * Any temporary launchpad log files. 
+ * Installation Manager Data directory 
+ * The results of the versionInfo -maintenancePackages command 
+ * Installation logs directory 
+ * Profile logs directory 
+ * Database upgrade script log files 
+ * Various configuration files that are related to the installation process
+
+
+
+
+JVM Dump collection The "Dump" collection type triggers various JVM dumps on a target server within a profile prior to gathering the general collection and generated dumps. 
+
+With the provided server connection options, the command will connect to the server using the soapport to make a wsadmin connection with the user and password. Depending on the dump type, it will trigger various JVM dumps until the count amount is reached. The dumps are triggered a set number of seconds apart based on the interval that is set. 
+
+The collection will gather the general collection files like /logs and version information in addition to the dump files like Javacores, heap dumps and system dump .zip files. 
+
+ * Thread - This type will trigger Javacores or thread dumps to be produced for the JVM. 
+ * Heap - This type will trigger heap dumps to be generated. 
+ * System - This type will trigger system dumps to be generated. It will also run JExtract on the dump prior to the upload, which can take some time depending on the heap size. 
+
+
+
+Common usage The following list provides some common usage scenarios for this command: 
+
+ * After an issue occurs, use the basic bpmdc command to compress the log files for the profile into a .zip file. 
+ * Recreate your issue after setting a trace string using the administrative console [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/topic/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/ttrb_entrrs.html] or wsadmin [http://pic.dhe.ibm.com/infocenter/wasinfo/v8r0/topic/com.ibm.websphere.nd.multiplatform.doc/info/ae/ae/txml_troubleshooting.html]. 
+   Then, run the bpmdc command to collect the log files and send them to IBM. 
+ * After opening a PMR, use bpmdc-PMR=PMRnumber-uploadToIBM=yes with the most relevant type options to upload data. 
+ * IBM Support provides a specific command or set of commands to run for your environment that gets the needed data. 
+ * IBM Support provides a traces string that needs to be gathered with the commands. With trace enabled, you recreate the issue or wait for a reoccurrence before running the provided commands to gather and upload the data to IBM.
+
+RELATED INFORMATION
+ A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21644209]
+
+
+ 
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Business Process Manager Standard General AIX, Linux, Linux zSeries, Solaris, Windows 8.5 Business Integration IBM Business Process Manager Express General Linux, Linux zSeries, Windows 8.5 
+PRODUCT ALIAS/SYNONYM
+ BPM

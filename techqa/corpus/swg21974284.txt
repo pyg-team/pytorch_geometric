@@ -1,0 +1,24 @@
+Title: IBM Creating a FileNet Deployment Manager Export Manifest via a search request - United States
+
+Text:
+Export Manifest Search TECHNOTE (FAQ)
+
+QUESTION
+ How can a FileNet Deployment Manager Export Manifest be created and assets added to, via a FileNet Content Manager search request?
+
+
+CAUSE
+With the release of IBM FileNet Content Manager 5.21, IBM introduced the opportunity to create a FileNet Deployment Manager Export Manifest, from a search request
+
+ANSWER
+FileNet Deployment allows for search via a SQL search request. Without the aid of a query builder, writing the query can be inefficient. An alternate solution is to first create and refine the search from within ACCE and then copy the generated SQL from ACCE and paste into the FileNet Deployment Manager Search request screen. 
+
+ 1. Create the search request from within ACCE and refine the search to fit the requirements 
+ 2. Select the "SQL View" tab and copy the entire SQL statement with the exception of "(OPTIONS(TIMELIMIT 180)"[/support/docview.wss?uid=swg21974284&aid=1] [/support/docview.wss?uid=swg21974284&aid=1] 
+ 3. Start FileNet Deployment Manager and configure the source environment if this hasn't been done already 
+ 4. Create a new Export Manifest and then select the option to "Add Assets" 
+ 5. Open the Add Assets tree to locate the "Search" option 
+ 6. Change to the "SQL Search" tab and paste in the search SQL from ACCE
+
+
+[/support/docview.wss?uid=swg21974284&aid=2] [/support/docview.wss?uid=swg21974284&aid=2]

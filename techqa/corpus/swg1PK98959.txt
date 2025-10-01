@@ -1,0 +1,147 @@
+Title: IBM PK98959: Semaphores are not release when job is manually cancelled - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Semaphores are not release when job is manually cancelled.
+   Jobs that are configured to run with semophores will not release
+    the semaphore if they are cancelled manually.
+   Semaphore will appear as 'inactive' under the Jobs-?Semaphores i
+   nterface until manully removed.
+   
+   Steps to reproduce:
+   
+   - Create a project with several steps working with a semaphre an
+   d sleep command.
+   
+    Step 1 - .semget Test
+    Step 2 - .sleep 60
+    Step 3 - .semput Test
+   
+   - Start project
+   
+   - After Step 1 has completed and while Step 2 is running the .sl
+   eep command, cancel the job.
+   
+   - After jobs has been labeled as canceled, verify if the Semapho
+   re is still present under the Jobs-Semaphore interface.
+   
+   
+   Expected result:
+   
+   Semaphore for canceled jobs should be removed
+   
+   Actual result:
+   
+   Semaphores from canceled jobs are still present in the engine, h
+   angging/failing any other jobs that will use the same semaphore.
+   
+   Workaround:
+   
+   Remove semaphore manually via Jobs-?Semaphores
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  Semaphores are not release when job is manually cancelled
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Semaphores are now released when the job is cancelled.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK98959
+   
+   
+ * REPORTED COMPONENT NAME
+   BUILD FORGE SE
+   
+   
+ * REPORTED COMPONENT ID
+   5724S2705
+   
+   
+ * REPORTED RELEASE
+   701
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-10-19
+   
+   
+ * CLOSED DATE
+   2009-11-28
+   
+   
+ * LAST MODIFIED DATE
+   2009-11-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   BUILD FORGE SE
+   
+   
+ * FIXED COMPONENT ID
+   5724S2705
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R701 PSN
+   UP

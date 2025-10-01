@@ -1,0 +1,162 @@
+Title: IBM PK56028: ADMA8019E MESSAGE SEEN WHILE TRYING TO MAP RESOURCES DURING APPLICATION DEPLOYMENT - United States
+
+Text:
+z/os SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  This customer has configured a CICS RAR resource at the node
+   scope.  The servers on this node are part of a cluster.  When he
+   deploys his application at the cluster level he receives the
+   following message:
+   .
+   ADMA8019E: The resources that are assigned to the application
+   are beyond the deployment target scope.  Resources are within
+   the deployment target scope if they are defined at the cell,
+   node, server, or application level when the deployment target is
+   a server, or at the cell, cluster, or application level when the
+   deployment target is a cluster. Assign resources that are within
+   the deployment target scope of the application or confirm that
+   these resources assignments are correct as specified.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Users of Websphere Application Server        *
+   *                 6.0.2.17 and above.                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: While deploying an application using    *
+   *                      the Administrative Console with         *
+   *                      Resource Validation, the customer sees  *
+   *                      the following message:                  *
+   *                      ADMA8019E: The resources that are       *
+   *                      assigned to the application are         *
+   *                      beyond the deployment target scope.     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   While deploying an application using the Administrative Console
+   with Resource Validation, after mapping the resources a customer
+   might see validation errors stating that the mapped resources
+   are out of scope even if the resources that are mapped belong
+   to the correct scope. The problem is that the validation logic
+   incorrectly sets the resource to be out of scope before actually
+   verifying the scope at which the resource is declared.
+   The following validation error message can be observed in the
+   next screen:
+   ADMA8019E: The resources that are assigned to the application
+   are beyond the deployment target scope.
+   
+   This problem was introduced by APAR PK23311 in WebSphere
+   Application Server 6.0.2.17.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The code has been modified to correct the validation logic to
+   ensure the correct scope of the resource is taken into
+   consideration before throwing the validation errors.
+   
+   APAR PK56028 is currently targeted for inclusion in Service
+   Level (Fix Pack) 6.0.2.27 of WebSphere Application Server
+   V6.0.1.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK56028
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * REPORTED COMPONENT ID
+   5655I3500
+   
+   
+ * REPORTED RELEASE
+   601
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   YesPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2007-11-06
+   
+   
+ * CLOSED DATE
+   2007-12-17
+   
+   
+ * LAST MODIFIED DATE
+   2008-05-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE FOR Z
+   
+   
+ * FIXED COMPONENT ID
+   5655I3500
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R601 PSY UK35173 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK35173]
+   UP08/04/18 P F804
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

@@ -1,0 +1,70 @@
+Title: IBM How to restrict certain browsers from accessing OpenPages - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ How to restrict certain browsers from accessing OpenPages. 
+
+CAUSE
+Users are accessing OpenPages with browsers that are not approved by the administrator.
+
+ANSWER
+The following information applies to OpenPages 7.0.0.4 IF1 and 7.1 FP1. It will also apply to subsequent maintenance releases in those code lines. 
+
+In order to restrict which browsers can be used to access OpenPages, the administrator can configure a white list of allowable browsers. In order to do so, the administrator will need to add a new environment property to the 'aurora.properties' file and a new registry setting that contains a list of allowable browers. 
+
+Note: This functionality is a feature of the XSS filter. Please ensure the following settings are enabled (set to true) prior to implementing the steps below:
+
+/OpenPages/Platform/Security/Cross-site Scripting Filter 
+/OpenPages/Platform/Security/Advanced XSS Filter 
+
+
+Add registry setting 
+
+1. Add a new registry setting (/OpenPages/Applications/Common/Configuration/Allowed Browsers) 
+
+2. Update the value of this registry setting to include a '|' delimited list of browsers that users can use when accessing the OpenPages UI. The '|' delimited list can specify browsers in general and/or specific versions of a particular browser. 
+
+When specifying particular browser versions, the administrator will need to know the 'User-Agent' values for the browsers they would like to allow access. For more information on the 'User-Agent' HTTP header please refer to https://msdn.microsoft.com/en-us/library/ms537503%28v=vs.85%29.aspx [https://msdn.microsoft.com/en-us/library/ms537503%28v=vs.85%29.aspx]
+
+The following values are case insensitive.
+
+Example) 
+i) MSIE 
+- Allows all Internet Explorer browsers version 10 or below 
+
+ Trident/7 
+- Allows all Internet Explorer version 11
+
+ii) MSIE | Trident/7 | FireFox 
+- Allows both Internet Explorer & FireFox browsers
+
+iii) MSIE | Trident/7 | Chrome 
+- Allows both Internet Explorer & Chrome browsers
+
+iv) MSIE | Trident/7 | FireFox | Chrome 
+- Allows Internet Explorer, FireFox, and Chrome browsers
+
+v) mozilla/5.0 (compatible; msie 10.0; windows nt 6.1; wow64; trident/6.0) | mozilla/5.0 (windows nt 6.1; wow64) applewebkit/537.36 (khtml, like gecko) chrome/42.0.2311.135 safari/537.36
+| mozilla/5.0 (windows nt 6.1; wow64; rv:31.0) gecko/20100101 firefox/31.0
+- Only allows Internet Explorer 10, Chrome 42.0.2311.135 and FireFox 31.0 browsers on the Windows 7 Operating System. All other browsers or operating systems will not be allowed access to OpenPages.
+
+NOTE: An empty value means that all browsers are allowed to access OpenPages.
+
+Once the above registry setting is saved it will take effect immediately. If this behavior ever needs to be disabled, an OpenPages administrator can remove the newly added environment property from the 'aurora.properties' file or simply set it to false and then restart the OpenPages server. This will result in every browser type being allowed to access OpenPages again.
+
+Note: This feature will also impact applets in the OPX application. If you are making use of features that use the applets (such as editing report pages or pagespecs), you will need to add Java as a supported browser. For example, to enable all versions of Internet Explorer and Java, use the string:
+
+MSIE | Trident/7 | Java 
+
+It is important to note that just because a browser has been added to this registry setting, it does not necessarily indicate that OpenPages supports that browser. For a list of supported browsers please refer to the Software Product Compatibility Report. [http://www.ibm.com/software/reports/compatibility/clarity/softwareReqsForProduct.html] Search for OpenPages, select your version, and run the report. You will find the list of compatible browsers on the Prerequisites tab.
+
+
+Add environment property
+1. Add the following entry to the aurora.properties file located at <OP_HOME>/aurora/conf/aurora.properties
+enforce.browser.support=true 
+
+2. Restart the OpenPages server.
+
+NOTE: If you ever need to disable this, either remove the entry or change the value to false and then perform another OpenPages server restart for the settings to take effect.

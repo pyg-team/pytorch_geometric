@@ -1,0 +1,63 @@
+Title: IBM Security Bulletin: Public disclosed vulnerability from Apache Struts affects IBM Spectrum LSF Explorer - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Public disclosed vulnerability from Apache Struts affects IBM Spectrum LSF Explorer. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2018-1327 
+
+DESCRIPTION: Apache Struts is vulnerable to a denial of service. By sending a specially crafted XML request using the XStream handler with the Struts REST plugin, a remote attacker could exploit this vulnerability to cause a denial of service. 
+
+CVSS Base Score: 7.5 
+
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/140766 [https://exchange.xforce.ibmcloud.com/vulnerabilities/140766] for the current score 
+
+CVSS Environmental Score*: Undefined 
+
+CVSS Vector: (CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L)
+
+
+Mitigation 
+
+The only solution is to replace fixed Apache Struts 2 files into LSF Explorer environment.
+
+AFFECTED PRODUCTS AND VERSIONS
+IBM Spectrum LSF Explorer
+
+REMEDIATION/FIXES
+ 
+
+<Product VRMF APAR Remediation/First Fix IBM Spectrum LSF Explorer 10.1 None See work around IBM Spectrum LSF Explorer 10.2 None See work around WORKAROUNDS AND MITIGATIONS
+IBM Spectrum LSF Explorer10.1 & 10.2 
+
+1. Download Apache Struts 2.5.16 from following link, https://cwiki.apache.org/confluence/display/WW/S2-056 [https://cwiki.apache.org/confluence/display/WW/S2-056] 
+
+2. Replace the downloaded files (struts2-core-2.5.16.jar, struts2-json-plugin-2.5.16.jar and struts2-spring-plugin-2.5.16.jar) into Explorer installed environment. 
+
+3. How to find replace files location 
+
+· Navigate to Explorer installed directory 
+
+· run command ‘find . -name "*struts*.jar"’
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ <3 Apr 2018>: Original version 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

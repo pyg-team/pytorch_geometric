@@ -1,0 +1,25 @@
+Title: IBM How do I enable logging for TaskMaster Server in Datacap TaskMaster Capture 8.1? - United States
+
+Text:
+log file; must gather; mustgather TECHNOTE (FAQ)
+
+QUESTION
+ How do I enable logging for TaskMaster Server in Datacap TaskMaster Capture 8.1? 
+
+ANSWER
+These are the steps to turn on logging for IBM Datacap Taskmaster Server versions 8.1 or higher. Although there are logging configuration options that can be used for different levels of logging, these steps are specific to providing maximum logging to troubleshoot Taskmaster Server issues when they occur. If desired, logging may be left on continuously for a test or development system, but should be set to minimum on a production server, as it will negatively impact performance.
+Enabling Taskmaster Server Logging
+
+
+ 1. Run Taskmaster Server Manager and select the Logging tab. 
+ 2. Select the Datacap log subtab, slide the slider all the way to the right, and check Output to file. 
+ 3. Select Save and exit Taskmaster Server Manager. 
+ 4. Generate the error or perform the action for which logging information is needed. 
+ 5. The log files will be located at C:\Datacap and will consist of from one to five files with the name tms.log.X.log where X is the log number.
+
+
+Additional Information 
+
+The Taskmaster Server service does not have to be restarted after saving logging configuration settings, as the service will pick up the changes automatically within a few seconds. 
+
+The Taskmaster Server service uses managed logging. Once all log files are full, the oldest file will be deleted and a new file started. This allows logging to be left on without worrying about filling up the hard disk.

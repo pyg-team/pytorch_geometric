@@ -1,0 +1,74 @@
+Title: IBM On high amount of transfers from AIX to Windows processing terminated. - United States
+
+Text:
+STERLINGNFX TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ On high amount of transfers from AIX to Windows processing terminated. 
+
+SYMPTOM
+
+
+On try to transfer more than 50.000 files from AIX to Windows with Connect:Direct the processing terminated.
+Moving the files to Windows in smaller batches were successful.
+
+Connect:Direct Unix
+
+Connect:Direct File Agent on Unix
+
+Connect:Direct Windows
+
+JRE version 1.4.2
+
+ 
+
+Error Message 0SECTION TITLE subcomponent dump routine 
+NULL =============================== 
+1TISIGINFO OUTOFMEMORY received 
+1TIDATETIME Date: 2011/07/05 at 10:43:23 
+1TIFILENAME Javacore 
+filename: / opt/cdunix/file_agent/javacore44228674.1309855403.txt 
+NULL 
+------------------------------------------------------------------------ 
+0SECTION XHPI subcomponent dump routine 
+NULL ============================== 
+1XHTIME Tue Jul 5 10:43:23 2011 
+1XHSIGRECV Unexpected signal -1 received at 0x0 in <unknown>. 
+Processing terminated. 
+1XHFULLVERSION J2RE 1.4.2 IBM AIX build ca142-20060824 (SR6)
+
+
+RESOLVING THE PROBLEM
+
+
+Upgrade FileAgent to latest version.
+
+The Java stack trace shows use of JRE version 1.4.2 as you can see below:
+
+1XHFULLVERSION J2RE 1.4.2 IBM AIX build ca142-20060824 (SR6)
+
+We have not used that in FileAgent since the days of version 1.1.
+
+JRE 1.6 as used in later File Agent versions has significant improvements around memory management and should 
+address this issue.
+
+ 
+
+ 
+
+HISTORICAL NUMBER
+ NFX11568 
+
+PRODUCT ALIAS/SYNONYM
+ 
+
+Escalation ID
+
+
+0032583
+
+
+Severity
+
+
+Normal

@@ -1,0 +1,156 @@
+Title: IBM PM32298: HIGH CPU OR PING DELAY CAUSED BY STALE SESSIONS AT A LONG-RUNNING STANDBY LOAD BALANCER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  High CPU or ping delay for a standby Load Balancer node could be
+   occurred at a long-running standby Load Balancer.
+   
+   Connections are considered stale when there has been no activity
+   on that connection for the number of seconds specified in stale
+   timeout. When the number of seconds has been exceeded with no
+   activity, Load Balancer will remove that connection record from
+   its tables, and subsequent traffic for that connection is
+   discarded.
+   
+   A standby Load Balancer also maintains that table. The cleanup
+   function does not work correctly for all scenarios. It could be
+   a large entries caused high cpu or ping delay at a standby Load
+   Balancer.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  WebSphere Application Server Load Balancer  *
+   *                  for ipv4 users                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If using Load Balancer for ipv4 in a    *
+   *                      high availability setup, performance    *
+   *                      may degrade on backup.                  *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The backup load balancer is notified when to create and delete
+   connection records. This notification may get dropping due to
+   takeovers or network issues and then the backup will never
+   create or remove the connection. If the connection is not
+   removed, the list of records may not be checked for clean up
+   after the missed record leading to performance degradation.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The backup load balancer code was modified so that stale
+   connections are checked and reused off of the linked list to
+   account for lost or missing record updates.
+   
+   Affects the load balancer for ipv4 release only.
+   Fix levels :
+   6.0.2.108
+   6.1.0.48
+   7.0.0.18
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM32298
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS LOAD BALAN
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8811
+   
+   
+ * REPORTED RELEASE
+   610
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-02-09
+   
+   
+ * CLOSED DATE
+   2011-02-15
+   
+   
+ * LAST MODIFIED DATE
+   2011-02-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBS LOAD BALAN
+   
+   
+ * FIXED COMPONENT ID
+   5724H8811
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R600 PSY
+   UP
+   
+   
+ * R610 PSY
+   UP
+   
+   
+ * R700 PSY
+   UP

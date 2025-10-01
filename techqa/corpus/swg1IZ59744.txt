@@ -1,0 +1,136 @@
+Title: IBM IZ59744: UPGRADE DOCUMENT NEEDS AMMENDMENT ON PAGE 33 OF ILMT72_UPGRADE_GUIDE. PDF - United States
+
+Text:
+ 
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  After upgrade to LMT 7.2 customer tried to verify the upgrade.
+   According to upgrade document:
+   
+   "Verify that the program was upgraded successfully by logging
+   into the
+   Integrated Solutions Console (http://administration server
+   IPaddress:portNumber/ibm/console/login.do) and checking if
+   Tivoli Asset
+   Discovery for Distributed 7.2 appears in the navigation bar."
+   
+   However there is no Tivoli Asset Discovery for Distributed. I
+   think doc should read as follows:
+   
+   
+   "Verify that the program was upgraded successfully by logging
+   into the
+   Integrated Solutions Console (http://administration server
+   IPaddress:portNumber/ibm/console/login.do) and checking if
+   License Metric Tool 7.2 appears in the navigation bar."
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ********************************************************
+   * USERS AFFECTED: Customers upgrading LMT 7.1 to LMT 7.2
+   ********************************************************
+   * PROBLEM DESCRIPTION: Upgrade scenario incorrectly
+   described installation verification. It asked user to check if
+   Tivoli Asset Discovery appears in ISC navigation bar instead of
+   License Metric Tool
+    ********************************************************
+   * RECOMMENDATION: Users should refer to corrected online
+   documentation.
+   ********************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Updated documentation will be published on 2/11/2009.
+   (Sections: Upgrading - Planning a License Metric Tool -
+   Upgrading to IBM License Metric Tool version 7.2)
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ59744
+   
+   
+ * REPORTED COMPONENT NAME
+   LICENSE METRIC
+   
+   
+ * REPORTED COMPONENT ID
+   5724LMT00
+   
+   
+ * REPORTED RELEASE
+   720
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2009-09-01
+   
+   
+ * CLOSED DATE
+   2009-10-20
+   
+   
+ * LAST MODIFIED DATE
+   2009-10-20
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LICENSE METRIC
+   
+   
+ * FIXED COMPONENT ID
+   5724LMT00
+   
+   
+
+APPLICABLE COMPONENT LEVELS

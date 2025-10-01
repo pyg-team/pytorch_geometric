@@ -1,0 +1,12 @@
+Title: IBM Included Fixes for WebSphere Cast Iron Live 6.1.0.7 - United States
+
+Text:
+ RELEASE NOTES
+
+ABSTRACT
+ This document lists included APAR fixes for WebSphere Cast Iron Live 6.1.0.7. 
+
+CONTENT
+ 
+
+APAR Summary LI76671 While invoking Get Bulk Result activity, Null exception occurred. Job was not able to continue with the following exception: Could not perform input map transform: java.lang.RuntimeException Node is NULL; passed the end of the stream. LI76677 List Files FTP activity doesn't map value to orchestration but is filled with only XML directive. LI76592 No Data Found on WebSphere Cast Iron when using NetSuite Add Records activity. In configure->Browse to the record type, it returns No Data Found. LI76620 Project mappings are lost when the projects are opened through WebStart studio. LI76712 WebSphere Cast Iron Studio is not displaying the custom fields for some specific record types from Netsuite. For example, the record types DescriptionItem, DiscountItem, MarkupItem, SerializeAssemblyItem, and SerializeInventoryItem custom field data is not being returned. Internal WMC not showing activity names/images when running in non-english mode Internal Output parameter sometimes appears empty during logging level ALL Internal JMX attribute CachedHosts sometimes returns "null" for a node ID

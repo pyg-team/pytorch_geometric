@@ -1,0 +1,143 @@
+Title: IBM PI45633: UNABLE TO PERFORM 'UPDATE OBJECT' ON FM QUERY SUBJECT TO UPDATE THE METADATA ON A DQM MODEL USING NETEZZA DATASOURCE. - United States
+
+Text:
+ SUBSCRIBE TO THIS APAR
+By subscribing, you receive periodic emails alerting you to the status of the APAR, along with a link to the fix after it becomes available. You can track this item individually or track all items by product.
+
+Notify me when this APAR changes.
+
+Notify me when an APAR for this component changes.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  'BMT-IMP-0002 Failed to execute metadata request.
+   jdbcSQLExceptionCAF-WRN-2082'
+   
+   Able to execute the Run Metadata Wizard in Framework Manager to
+   import the Query Subjects automatically, however unable to
+   'Update Objects' to update metadata in scenarios where an
+   existing model definition query subject has to synchronise with
+   the source database table definition details.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Upgrade to IBM Cognos Business Intelligence 10.2.2 Fix Pack  *
+   * 3                                                            *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Code Fix
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+ *  A fix for this APAR is targeted for IBM COGNOS 10.2.2 BI Fix
+   Pack 3.
+   The Fix Pack Release Schedule can be found at
+   http://www.ibm.com/software/analytics/support/fixes/pbi_schedule [http://www.ibm.com/software/analytics/support/fixes/pbi_schedule]
+   .html.
+   
+   
+    
+   
+   
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI45633
+   
+   
+ * REPORTED COMPONENT NAME
+   COG FRAMEWRK MG
+   
+   
+ * REPORTED COMPONENT ID
+   5724W12FM
+   
+   
+ * REPORTED RELEASE
+   A21
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-07-24
+   
+   
+ * CLOSED DATE
+   2015-10-15
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-15
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+    PI43924 [http://www-01.ibm.com/support/docview.wss?uid=swg1PI43924]
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   COG FRAMEWRK MG
+   
+   
+ * FIXED COMPONENT ID
+   5724W12FM
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * RA22 PSN
+   UP

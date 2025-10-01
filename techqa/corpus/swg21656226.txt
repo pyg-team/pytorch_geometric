@@ -1,0 +1,32 @@
+Title: IBM db2look failed to generated DDL after applying DB2 v10.1 fixpack 2 or later - United States
+
+Text:
+SQL0206N; A.TYPERULES TECHNOTE (FAQ)
+
+QUESTION
+ Why the db2look contained in db2support missed a lot of DDL after applying db2 v10.1 fixpack 2 or later?
+Why db2look failed with SQL206N error after applying db2 v10.1 fixpack 2 or later? 
+
+CAUSE
+A new column TYPERULES in SYSCAT.DATATYPES was introduced by a new feature "Weak type support" in db2 v10.1 fixpack 2. In this new feature, db2look was accordingly changed to pick up this new column then generate new clause in DDL. However, all the database created before v10.1 fixpack 2 does not have this column.
+The db2support uses the following db2look command, but it does not print out the error message in db2support\db2supp_opt\OPTIMIZER\optimizer.log. If running the db2look from db2 command line directly, you will see this error:
+
+=> db2look -d FEDDB -a -e -m -l -o db2look.out
+-- Generate statistics for all creators
+-- Creating DDL for table(s)
+-- Running db2look in mimic mode
+-- Output is sent to file: db2look.out
+
+
+SQL0206N "A.TYPERULES" is not valid in the context where it is used. 
+SQLSTATE=42703
+
+
+
+ANSWER
+Use db2updv10 to upgrade the system catalog table to resolve the db2look error. 
+
+Note that the db2updv10 in v10.1 fixpack 2 and fixpack 3 has an APAR IC96837 which will block the system catalog upgrade. Please refer to the APAR for details.
+
+RELATED INFORMATION
+ IC96837 [http://www.ibm.com/support/docview.wss?uid=swg1IC96837]

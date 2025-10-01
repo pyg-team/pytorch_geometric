@@ -1,0 +1,49 @@
+Title: IBM DB2 Storage Management Changes - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ After applying PM99575, why is DB2 consuming more CPU, especially in MSTR and/or DIST preemptible SRB time? Why does my LPAR show a higher uncaptured time? 
+
+CAUSE
+Storage management design change
+
+ANSWER
+In version 10, DB2 moved most of its storage above the bar and used 64 bit shared storage in preference to private storage. This allowed one stack to be used by multiple system address spaces, which cut down on the REAL footprint and reduced complexity. The thread storage pools are now shared, and there has been a reduction in expensive cross memory moves. However, the amount of virtual storage that needs to be managed is an order of magnitude higher, and can lead to higher cost, especially if there is not enough real storage. DB2 requests from z/OS Real Storage Manager (RSM) a large shared memory object that reserves an addressing range. The object is sparsely populated and only needs to be backed by real storage when it is referenced. 
+
+z/OS Real Storage Manager (RSM) only tracks storage at the LPAR level for shared and common storage. IARV64 DISCARDDATA is z/OS's way of allowing DB2 to manage the huge above the bar storage. There are two options that are important to DISCARDDATA: KEEPREAL(YES) or KEEPREAL(NO) 
+
+ * When DB2 uses DISCARDDATA with KEEPREAL(YES), the storage is only "virtually freed". RSM flags the page as freed or unused, but the storage is still in REAL with the data and charged against DB2. 
+ * KEEPREAL(NO) tells RSM to free and reclaim the page immediately. It takes CPU to do the free. 
+
+
+As far as DB2 is concerned, DB2 is freeing the storage either way. It's what RSM does that is key. 
+
+There are two places DB2 frees thread storage:  * Contraction - This is done when a thread has done 120 commits. At this time DB2 does DISCARDDATA for all unused storage that is associated with the thread. 
+ * Deallocation - The thread is finished and goes back to reuse cache. Here DB2 does DISCARDDATA for all thread storage. 
+
+
+V10 APAR PM88804 
+Before APAR PM88804/UK95350, DB2 used DISCARDDATA KEEPREAL(NO) on contraction without taking into account the DB2 system parameter (zPARM) REALSTORAGE MANAGEMENT setting. DB2 created APAR PM88804 because, with DISCARDDATA KEEPREAL(NO), RSM has to get LPAR level serialization to manage those pages that are being freed immediately. That added to CPU usage and also caused some CPU spin at the LPAR level to get that serialization. PM88804 reduces CPU and reduces the chances of the spin. If there were no storage issues, PM88804 removed DISCARDDATA completely for REALSTORAGE MANAGEMENT=OFF, and for REALSTORAGE_MANAGEMENT=AUTO with NO paging. The exception is when there are storage problems. DB2 always discards if storage reaches a critical level. 
+
+After APAR PM88804:  * ENF 55 signal means DISCARD KEEPREAL=NO 
+ * REALSTORAGE_MANAGEMENT=OFF means: No DISCARD 
+ * REALSTORAGE_MANAGEMENT=AUTO with no paging means: No DISCARD at Thread Deallocation or 120 commits 
+ * REALSTORAGE_MANAGEMENT=AUTO with paging or REALSTORAGE_MANAGEMENT=ON means DISCARD with KEEPREAL=NO at Deallocation or 30 commits.STACK also DISCARDED 
+ * REALSTORAGE_MAX means DISCARD KEEPREAL=NO at 80% 
+
+
+APAR PM86862 and PM99575 
+DB2 subsequently issued PM86852 and PM99575 which gave up some of the CPU reduction that was in PM88804 but still allowed RSM to manage the frames. If DB2 doesn't tell RSM that it doesn't need a frame, then the frame will remain backed in real storage in some form. That causes the growth of real storage and paging and everything that goes with using up REAL storage. KEEPREAL(YES) allows DB2 to tell RSM that z/OS can steal the page if it needs it, but DB2 retains ownership of the page, and it remains backed with real storage. If z/OS needs the page, it can steal it and the RSM accounting that goes with it is done. 
+
+After PM99575: 
+DB2 uses KEEPREAL(YES) for REALSTORAGE_MANAGEMENT=AUTO 
+ * ENF 55 signal or REALSTORAGE MAX is hit means DISCARD KEEPREAL=NO 
+ * REALSTORAGE_ MANAGEMENT=OFF means No DISCARD 
+ * REALSTORAGE_MANAGEMENT=AUTO with no paging means DISCARD with KEEPREAL=YES at thread deallocation or 120 commit 
+ * REALSTORAGE_MANAGEMENT=AUTO with paging or REALSTORAGE_MANAGEMENT=ON means DISCARD with KEEPREAL=YES at Deallocation or 30 commits. STACK is also DISCARDED 
+ * REALSTORAGE_MAX (100%) means DISCARD KEEPREAL=NO at 100 
+
+
+If you have ample storage and can tolerate some storage growth, set REALSTORAGE_MANAGEMENT=OFF to prevent the additional CPU overhead that PM99575 adds. To reduce the impact of REALSTORAGE_MANAGEMENT=AUTO, minimize deallocations by reusing threads as much as possible. db2forzosrealstoragemonitoringcontrolandplanning-150413045423-conversion-gate01.pdf [/support/docview.wss?uid=swg21971496&aid=2]db2forzosrealstoragemonitoringcontrolandplanning-150413045423-conversion-gate01.pdf [/support/docview.wss?uid=swg21971496&aid=1]

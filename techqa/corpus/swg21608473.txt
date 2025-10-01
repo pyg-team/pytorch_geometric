@@ -1,0 +1,82 @@
+Title: IBM Configuring floating license for Rational Integration Tester results in a warning 'The server is available, but does not serve license keys for IBM Rational Integration Tester' - United States
+
+Text:
+Rational Integration Tester; License error; Users of ibmrit; PACKAGE ibmrtw ibmratl COMPONENTS="ibmrit ibmrft ibmrpt ibmrpt_pvu; The server is available; but does not serve license keys for IBM Rational Integration Tester TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to configure the floating license for IBM Rational Integration Tester using IBM Installation Manager leads to the warning 'The server is available, but does not serve license keys for IBM Rational Integration Tester'. 
+
+SYMPTOM
+Steps to reproduce:
+
+
+ 1. In Rational Integration Tester client, Click on Start > IBM Installation Manager > Manage Licenses.
+    
+    
+    
+ 2. Highlight Rational Integration Tester from the List of Installed Products.
+    
+    
+    
+ 3. Configure floating license support [http://www-01.ibm.com/support/docview.wss?uid=swg21403623] for Rational Integration Tester.
+    
+    
+    
+ 4. Clicking on "Test Connection" results in the below message:
+    -------------------
+    'The server is available, but does not serve license keys for IBM Rational Integration Tester'.
+    -------------------
+
+
+CAUSE
+The PACKAGE ibmrtw block (as shown below) is missing which displays the components of IBM Rational Test Workbench Suite. 
+-------------------
+PACKAGE ibmrtw ibmratl COMPONENTS="ibmrit ibmrft ibmrpt ibmrpt_pvu"
+-------------------
+
+
+DIAGNOSING THE PROBLEM
+On the license server, launch Rational License Key Administrator. 
+
+
+
+
+ 1. Verify if there are 5 lines of 'IBM Rational Test Workbench License' key served by the license server as shown below:
+    [/support/docview.wss?uid=swg21608473&aid=1] [/support/docview.wss?uid=swg21608473&aid=1]
+    
+    
+    
+ 2. If the lines are not displayed, perform a status enquiry by clicking on Start> IBM Rational> LMTools > Server Status. 
+    
+    
+    
+ 3. If the line 'Users of ibmrit' is missing, follow the steps below to resolve the problem. 
+
+RESOLVING THE PROBLEM
+Steps to resolve: 
+
+ 1. Navigate to IBM Rational License Key Center [http://www-01.ibm.com/software/rational/support/licensing/] website. 
+    
+    
+    
+ 2. Return and generate the license [https://www-304.ibm.com/support/docview.wss?uid=swg21308308] file for IBM Rational Test Workbench Floating License. 
+    
+    
+    
+ 3. Download and Import the license file again.
+    
+    
+    
+ 4. Click on Start > IBM Rational > LMTools > Start/Stop/Reread tab to stop and start the license server.
+    
+    
+    
+ 5. Next, click on Start > IBM Rational > LMTools > Server Status to perform status enquiry and look for 'Users of ibmrit' line.
+    
+    
+    
+ 6. Reactivate [http://www-01.ibm.com/support/docview.wss?uid=swg21403623] the floating license for Rational Integration Tester using Rational Installation Manager.
+
+RELATED INFORMATION
+#License Requirements for Rational Integration Tester [http://www-01.ibm.com/support/docview.wss?uid=swg21605379]
+A simplified Chinese translation is available [http://www.ibm.com/support/docview.wss?uid=swg21674212]

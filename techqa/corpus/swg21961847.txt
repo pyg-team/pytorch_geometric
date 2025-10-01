@@ -1,0 +1,41 @@
+Title: IBM Security Bulletin: Current Release of IBM® SDK for Node.js™ is affected by CVE-2015-5380 - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ Denial of service vulnerability caused by an out of bounds write in the V8 JavaScript engine's UTF decoder. 
+
+VULNERABILITY DETAILS
+CVEID:CVE-2015-5380 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2015-5380]
+DESCRIPTION:Google V8, as used in Node.js, is vulnerable to a denial of service that is caused by the failure to verify available memory for a UTF-16 surrogate pair. A remote attacker could exploit this vulnerability by using a specially crafted byte sequence to corrupt memory and cause a denial of service or have an unspecified impact.
+CVSS Base Score: 7.3
+CVSS Temporal Score: Seehttps://exchange.xforce.ibmcloud.com/vulnerabilities/104510 [https://exchange.xforce.ibmcloud.com/vulnerabilities/104510]for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:L) 
+
+AFFECTED PRODUCTS AND VERSIONS
+This vulnerability affects IBM SDK for Node.js v1.2.0.3 and previous releases.
+
+REMEDIATION/FIXES
+The fix for this vulnerability is included in IBM SDK for Node.js v1.2.0.4 and subsequent releases.
+
+IBM SDK for Node.js can be downloaded, subject to the terms of the developerWorks license, from here [http://www.ibm.com/developerworks/web/nodesdk/].
+
+IBM customers requiring an update for an SDK shipped with an IBM product should contact IBM support [http://www.ibm.com/support/], and/or refer to the appropriate product security bulletin.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v2 Guide [http://www.first.org/cvss/v2/guide] 
+On-line Calculator v2 [http://nvd.nist.gov/CVSS-v2-Calculator] 
+Node.js 0.12.6 [http://blog.nodejs.org/2015/07/03/node-v0-12-6-stable/] RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/PSIRT] CHANGE HISTORY
+ 14 July 2015: Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

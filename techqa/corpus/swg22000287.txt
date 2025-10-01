@@ -1,0 +1,17 @@
+Title: IBM ITCAM for AD support for Tradition WebSphere v9 and Liberty Profile on z/OS - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ Which ITCAM for Application Diagnostics v7.1 patch level is required to support monitoring of WebSphere Application Server (WAS) for z/OS v9 and Liberty for z/OS? 
+
+ANSWER
+
+Support for Traditional WebSphere for z/OS v9 is available in v7.1.0.4.1 [http://www.ibm.com/support/docview.wss?uid=swg24041705].
+
+Alternatively, support for Traditional WebSphere for z/OS v9 and Liberty Profile for z/OS is available via the v7.2.0.0.14 Data Collector, which is available for download from the developerWorks [https://developer.ibm.com/apm/resources/itcam-websphere-application-server-v7-2-support-websphere-application-server-v9-liberty/] or directly in Fix Central [http://www.ibm.com/support/fixcentral/swg/quickorder?product=ibm/Tivoli/Tivoli+Composite+Application+Manager+for+Applications&release=All&platform=All&function=fixId&fixids=7.2.0.0-TIV-ITCAM_DC-zos-IF0014&includeSupersedes=0&source=fc]. 
+
+If the TEMA has not been installed yet, follow the installations steps for FMID HKYN710 in the Program Directory [http://publibfp.dhe.ibm.com/epubs/pdf/i1193340.pdf]. 
+
+For further details, see the Data Collector Installation and User Guide [https://iwm.dhe.ibm.com/sdfdl/v2/regs2/tivoliopal/1TW10CD07/Xa.2/Xb.dwZJOcflxmZ5GtGlzIS390t7DBDnIkhWbspYbso1SW8/Xc.1TW10CD07/itcamwas720dc_Installation_and_User_Guide.pdf/Xd./Xf.LPr.A6vr/Xg.9503804/Xi.tivopal/XY.regsrvs/XZ.tI4hU1pvlTNvcqDyUNTy_rvrfSk/itcamwas720dc_Installation_and_User_Guide.pdf] and the TEMA Installation and Configuration Guide [https://www.ibm.com/support/knowledgecenter/en/SSDTFJ_7.1.0.2/com.ibm.itcamfad.doc_7101/was_agent_install_guide_z/parttema.html].

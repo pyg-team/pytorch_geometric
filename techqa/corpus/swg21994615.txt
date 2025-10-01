@@ -1,0 +1,277 @@
+Title: IBM My Guardium Appliance is Full and GUI is down - How can I purge data off my Appliance ? - United States
+
+Text:
+ TECHNOTE (FAQ)
+
+QUESTION
+ My Guardium Appliance is Full and GUI is down - How can I purge data off my Appliance ? 
+
+CAUSE
+Two areas can get full on a Guardium Appliance which can then cause the GUI to be stopped.
+- The Internal Database 
+- The filesystem itself (usually its the /var partition that can fill up)
+
+One or other or both the above can get full but more often it is the Database that fills up which can also cause the /var partition to fill up also.
+
+As user cli you can chjeck if the DB is full with this command 
+
+ * support show db-status free %
+
+
+If this comes back with 10% or less - you know the DB is 90% full or more. 
+
+To check if /var partition (filesystem) is 90% full or more - run a must gather from cli thus  * support must_gather system_db_info
+ * 
+
+You should be able to use fileserver [http://www-01.ibm.com/support/docview.wss?uid=swg21499434]to chcek the df -k output within the system_output.txt file that can be seen in fileserver 
+ * must_gather/system_logs/system_output.txt
+
+
+or extracted from the system.<datetime>.tgz file once you have downloaded it 
+
+Inside the system_output.txt file you can find the detail ... Here the /var is only 65% full in this example. 
+ * 
+ * ==========2016-11-30 08:36:09 ... Output of df command:==========
+ * 
+ * Filesystem 1024-blocks Used Available Capacity Mounted on
+ * 
+ * /dev/sda3 10154020 2272668 7357232 24% /
+ * 
+ * /dev/sda2 28571320 17384504 9712052 65% /var
+ * 
+ * /dev/sda1 505604 33476 446024 7% /boot
+ * 
+ * tmpfs 6169768 0 6169768 0% /dev/shm
+
+
+
+
+The later Guardium versions have a safety catch/feature that will stop the main processes from collecting any more data when the DB or filesystem reaches a certain level . 
+
+The default is to stop the processes when the DB and /or the filesystem reaches a 90% full level. as per this example v10.1 documentation. You can check the current value of the safety catch in cli - eg. 
+ * xxx.xxx.xxx.com> show 
+ * auto_stop_services_when_full
+ * 
+ * on
+ * 
+ * 
+ * 
+ * Configuration and Control CLI Commands
+
+ *   * (* WARNING 
+    * 
+    * 
+    * auto_stop_services_when_full
+    * 
+    * off 
+    * 
+    * 
+    * 
+    * 
+    * auto_stop_services_when_full
+    * 
+    * 
+    * 
+    * **** - 
+    * 
+    *  stop inspection-core
+    * 
+    *  )
+   
+   
+
+
+
+So in this case the system will automatically stop inspection-core and other processes when the filesystem or DB is 90% full. This includes the GUI interface - so you wont be able to connect to the GUI at that point. 
+
+If you attempt to restart stopped services with this command below then the system (and GUI interface) is likely to stop again after 5 minutes for the same reason.  * restart stopped_services
+
+
+WARNING - This command should only be used once you are sure that space has been recovered. 
+
+
+Before the DB or the filesystem fills to the "auto stop" level you should receive warnings in the system log (messages file) 
+
+Alerts can be made to email you about the space problems before the auto stop is triggered. see Guardium Full DB Alert [http://www-01.ibm.com/support/docview.wss?uid=swg21696915] 
+
+You can run a must_gather command and look inside the compressed file that gets created to check the latest messages file within 
+ * support must_gather system_db_info
+
+
+See below - Appendix A - Example message filesystem space problem errors 
+
+
+
+ANSWER
+Purging Data from the Internal Database when the GUI is down 
+
+ 
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *   * stop inspection-core
+    * 
+   
+   
+ * 
+ * 
+ *  support show db-processlist running 
+   
+   xxx.xxx.xxx.com> support show db-processlist running 
+   
+   Id| User| Host| db|Command|Time| State| Info| 
+   ------ ---------- --------- ------- ----- - ---- ---------------- 
+   141791| enchantedg| localhost| TURBINE| Query| 0| init| show processlist| 
+   
+   Total of running processes: 1 
+   Total of sleep processes: 44 
+ * 
+ * 
+ * 
+ *  restart gui
+ * 
+ * What can I do if I see my Guardium Appliance getting full?
+ * 
+ * If there is a problem where GUI keeps going down every 5 minutes - then you can then consider switching the auto_stop_services_when_full to off TEMPORARILY to allow you to restart gui and purge some data. Just restarting GUI on its own might only stay running for 5 minutes - the main nanny process might stop the services again before enough data is purged or before you've had time to set the purge going. 
+   
+    *  (* WARNING 
+      If the auto_stop_services_when_full is switched off the Appliance may go on to fill the system to 100% preventing you from accessing the system at all. 
+      
+      You should never need to or want to set the auto_stop_services_when_full to OFF unless used temporarily in the specific circumstance described here when you should then use it as described before switching it back to ON once you have resolved the space problem. 
+      
+      **** You must stop inspection-core before switching the auto_stop off - this will avoid the system filling any further ) 
+   
+   
+    * xxx.xxx.xxx.com> store auto_stop_services_when_full off
+    * 
+    * ok
+    * 
+    * xxx.xxx.xxx.com> show auto_stop_services_when_full
+    * 
+    * off
+   
+    * restart gui 
+   
+   
+   Now you can go to the GUI and then Data Management Archive and set a purge running to clear some data. ( What can I do if I see my Guardium Appliance getting full? [http://www-01.ibm.com/support/docview.wss?uid=swg21511904] ) 
+   
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  store auto_stop_services_when_full on 
+   restart stopped services 
+ * 
+ * 
+ *  start inspection-core 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * Why is my Guardium internal database filling up?
+ * 
+ * 
+ * NOTE 
+ * if you encounter a problem with restarting the stopped services like this 
+    * xxx.xxx.xxx.com> restart stopped services
+    * 
+    * Restarting stopped services, please wait....
+    * 
+    * There are not stopped services (no 'backup' file). Nothing to do.
+    * 
+    * Restart Services returned an error.
+    * 
+    * err
+    * 
+    * xxx.xxx.xxx.com>
+   
+   
+   ...please engage IBM Technical Support via a PMR so that they can check and rectify if needed to make sure the normal nanny process is running. 
+   
+   
+   
+
+Purging Data from the filesystem  
+
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ *  show filesystem usage 
+   support show large_files 10 0 
+    * (larger than 10MB older than 0 days ) 
+   
+   
+ *   * consider the ones listed at the end (the largest ones) .. 
+   
+   
+ * 
+ * 
+ * WORK WITH IBM TECHNICAL SUPPORT
+ * 
+ * 
+ * Support will confirm that it is ok to remove certain files or not. 
+   - send the list to support to confirm they can be deleted without adverse effect 
+   
+   Only once IBM Technical Support have confirmed files to be deleted - they can removed as follows. 
+   From cli run the diag command . 
+    * diag 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+    * 
+   
+   
+
+
+Appendix A - Example message filesystem space problem errors 
+ * 
+ * 
+ *  Nov 23 12:00:13 xxx nanny:[2986]: Nanny is awake. 
+   Nov 23 12:00:13 xxx nanny:[2986]: DB parameters - status 2 db warn level 75 db critical level 90 db auto stop 1. 
+   Nov 23 12:00:13 xxx nanny:[2986]: It is in critical ..Used space on your system is almost full(currently at 93%). Please use CLI command 'show filesystem usage' to see which directories take too much space to target your clean up. 
+   Nov 23 12:00:13 xxx nanny:[2986]: Email has been sent to admin (admin@admin.com) on the out-of-space issue. 
+   Nov 23 12:00:13 xxx nanny:[2986]: Stopping Guardium Services until used space on your system has been cleaned up. 
+   Nov 23 12:00:13 xxx init: Re-reading inittab 
+   Nov 23 12:00:17 2016-11-23 12: 00:17,450 [localhost-startStop-2] ERROR syslog - Guardium Application Server Going Down 
+   Nov 23 12:00:17 2016-11-23 12: 00:17,451 [ManagementServletGenericLoggers] ERROR syslog - Guardium Application Server Logging thread Going Down 
+ * 
+ * 
+ * 
+ * 
+ *  Nov 23 14:13:12 xxx nanny:[10070]: TURBINE DB is configured after nap 
+   Nov 23 14:13:12 xxx nanny:[10070]: Nanny is awake. 
+   Nov 23 14:13:12 xxx nanny:[10070]: DB parameters - status 1 db warn level 75 db critical level 90 db auto stop 1. 
+   Nov 23 14:13:12 xxx nanny:[10070]: Used space on your system is filling up (currently at 88%). Please use CLI command 'show filesystem usage' to see which directories take too much space to target your clean up. 
+   Nov 23 14:13:12 xxx nanny:[10070]: Email has been sent to admin (admin@admin.com) on the out-of-space issue. 
+   Nov 23 14:13:12 xxx nanny:[10070]: A partition is rapidly filling up. Partition /dev/sda2 (/var) on xxx is on 88 percent usage. Doing preventive cleaning. 
+   Nov 23 14:13:13 xxx root: 64 bit big mem 24554360 limit is 12277180 
+   Nov 23 14:13:13 xxx nanny:[15110]: Hunting version 35, every 300, for more than 12277180 kb. 
+   Nov 23 14:13:13 xxx nanny:[15110]: Also checking tomcat. 
+   Nov 23 14:13:13 xxx nanny:[15110]: Nanny set memory limit to 12277180 
+   Nov 23 14:13:13 xxx nanny:[15110]: TURBINE DB Already configured before nap 
+   Nov 23 14:13:13 xxx nanny:[15110]: Going for my initial nap.

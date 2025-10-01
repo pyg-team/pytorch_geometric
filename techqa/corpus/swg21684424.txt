@@ -1,0 +1,17 @@
+Title: IBM Rational support policy for Microsoft Internet Explorer 11 - United States
+
+Text:
+IE 11; Internet Explorer; compatibility TECHNOTE (FAQ)
+
+QUESTION
+ What is the support policy for Microsoft Internet Explorer 11 (MSIE) with IBM Rational Performance (RPT)? 
+
+CAUSE
+MSIE 11 is not mentioned in the supported browsers summary.
+
+ANSWER
+Officially, Microsoft Internet Explorer 11 is not mentioned. The differences between MSIE versions 10 and 11 are minimal. At our labs both versions are in use and we do not encounter any issues that actually refer to functional differences due their different versions. 
+
+Likely the "IE11 only" part of the application mentioned is related to some expectation of being able to handle client-side operations; won't really be relevant to RPT.
+
+From a traffic and configuration perspective, IE11 is not different from the previous versions.

@@ -1,0 +1,48 @@
+Title: IBM Optim Performance Manager (OPM) shows ERRORCODE=-4220 on "Current Application Connections" screen - United States
+
+Text:
+ERRORCODE=-4220 OPM Current Application Connections TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Optim Performance Manager (OPM) shows the ERRORCODE=-4220 error when using the "Current Application Connections" screen 
+
+SYMPTOM
+In Current Application Connections screen, OPM shows the following exception:
+[jcc][1037][12036][3.63.81] Exception occurred during clob conversion.
+See attached Throwable for details. ERRORCODE=-4220, SQLSTATE=null 
+com.ibm.db2.jcc.am.SqlException: [jcc][1037][12036][3.63.81] Exception
+occurred during clob conversion. See attached Throwable for details.
+ERRORCODE=-4220, SQLSTATE=null
+
+
+CAUSE
+The OPM database code page is configured as UTF. 
+When the Driver converts CLOB bytes to UTF characters driver is encountering invalid UTF data, causing the -4220 error.
+You will see a SQL exception on the resultset.getClob() call with error code -4220. 
+
+DIAGNOSING THE PROBLEM
+On the Current Application Connections dashboard, OPM displays the SQL statement text by running this query via JDBC :
+SELECT T1.STMT_TEXT as STMT_TEXT, \
+T1.STMT_OPERATION as STMT_OPERATION, \
+DEC(DOUBLE((T1.STMT_ELAPSED_TIME_S * 1000000)+ T1.STMT_ELAPSED_TIME_MS)/1000000,8,3) as STMT_ELAPSED_TIME_S, \
+DEC(DOUBLE((T1.STMT_SYS_CPU_TIME_S * 1000000)+ T1.STMT_SYS_CPU_TIME_MS)/1000000,8,3) as STMT_SYS_CPU_TIME_S, \
+DEC(DOUBLE((T1.STMT_USR_CPU_TIME_S * 1000000)+ T1.STMT_USR_CPU_TIME_MS)/1000000,8,3) as STMT_USR_CPU_TIME_S \
+FROM SYSIBMADM.SNAPSTMT T1, \
+SYSIBMADM.APPLICATIONS T2 \
+WHERE T1.AGENT_ID = T2.AGENT_ID \
+AND T1.DBPARTITIONNUM = T2.DBPARTITIONNUM \
+AND T1.STMT_TYPE = 'DYNAMIC' \
+AND TRIM(T1.DB_NAME) = 'replaceDBName' \
+AND T1.AGENT_ID =
+The STMT_TEXT column is a CLOB column. Please check if this column has certain problematic characters.
+
+RESOLVING THE PROBLEM
+From a command window, follow these steps:
+1. Stop OPM by running the <OPM_install>/bin/OPMStop.sh script
+2. Set the JAVA_OPTS environment variable: 
+
+
+
+
+ export JAVA_OPTS=-Ddb2.jcc.charsetDecoderEncoder=3
+3. Start OPM by running the <OPM_install>/bin/OPMStart.sh script

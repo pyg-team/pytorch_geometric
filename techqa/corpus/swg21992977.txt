@@ -1,0 +1,49 @@
+Title: IBM Security Bulletin: IBM WebSphere Cast Iron Solution is affected by Apache Tomcat vulnerability (CVE-2016-5388) - United States
+
+Text:
+ SECURITY BULLETIN
+
+SUMMARY
+ There is a vulnerability (CVE-2016-5388) reported in Apache Tomcat v6 that is used by WebSphere Cast Iron Solution. WebSphere Cast Iron has remediated the affected versions. 
+
+VULNERABILITY DETAILS
+CVEID: CVE-2016-5388 [http://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2016-5388]
+DESCRIPTION: Apache Tomcat could allow a remote attacker to redirect HTTP traffic of CGI application, caused by the failure to protect applications from the presence of untrusted client data in the HTTP_PROXY environment variable. By using a specially-crafted Proxy header in a HTTP request, an attacker could exploit this vulnerability to redirect outbound HTTP traffic to arbitrary proxy server. This is also known as the "HTTPOXY" vulnerability.
+CVSS Base Score: 8.1
+CVSS Temporal Score: See https://exchange.xforce.ibmcloud.com/vulnerabilities/115091 [https://exchange.xforce.ibmcloud.com/vulnerabilities/115091] for the current score
+CVSS Environmental Score*: Undefined
+CVSS Vector: (CVSS:3.0/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H)
+
+AFFECTED PRODUCTS AND VERSIONS
+This vulnerability affects all versions of the product
+
+WebSphere Cast Iron v 7.5.x
+WebSphere Cast Iron v 7.0.0.x
+WebSphere Cast Iron v 6.4.0.x
+WebSphere Cast Iron v 6.3.0.x
+WebSphere Cast Iron v 6.1.0.x
+
+REMEDIATION/FIXES
+ 
+
+Product VRMF APAR Remediation/First Fix Cast Iron Appliance 7.5.* LI79259 7.5.1.0-CUMUIFIX-005 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=7.5.1.0&platform=All&function=fixId&fixids=7.5.1.0-WS-WCI-20161103-1048_H7_64-CUMUIFIX-005.scrypt2,7.5.1.0-WS-WCI-20161103-1048_H7_64-CUMUIFIX-005.vcrypt2,7.5.1.0-WS-WCI-20161103-1048_H7_64-CUMUIFIX-005.docker&includeSupersedes=0] Cast Iron Appliance 7.0.0.x LI79259 7.0.0.2-CUMUIFIX-033 [https://www-945.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=7.0.0.2&platform=All&function=fixId&fixids=7.0.0.2-WS-WCI-20161103-1040_H8_64-CUMUIFIX-033.scrypt2,7.0.0.2-WS-WCI-20161103-1040_H8_64-CUMUIFIX-033.vcrypt2&includeSupersedes=0] Cast Iron Appliance 6.4.0.x LI79259 6.4.0.1-CUMUIFIX-042 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=6.4.0.1&platform=All&function=fixId&fixids=6.4.0.1-WS-WCI-20161103-1131_H3-CUMUIFIX-042.scrypt2,6.4.0.1-WS-WCI-20161103-1131_H3-CUMUIFIX-042.vcrypt2&includeSupersedes=0] Cast Iron Appliance 6.3.0.x LI79259 6.3.0.2-CUMUIFIX-023 [http://www-933.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm~WebSphere&product=ibm/WebSphere/WebSphere+Cast+Iron+Cloud+integration&release=6.3.0.2&platform=All&function=fixId&fixids=6.3.0.2-WS-WCI-20161103-1226_H4-CUMUIFIX-023.scrypt2,6.3.0.2-WS-WCI-20161103-1226_H4-CUMUIFIX-023.vcrypt2&includeSupersedes=0] WORKAROUNDS AND MITIGATIONS
+Customers on Cast Iron v6.1.0.x should contact IBM Support for migrating to one of the remediated releases as Cast Iron v6.1.0.x EOS was September 2016.
+
+GET NOTIFIED ABOUT FUTURE SECURITY BULLETINS
+ Subscribe to My Notifications [ http://www-01.ibm.com/software/support/einfo.html] to be notified of important product support alerts like this. 
+
+REFERENCES
+Complete CVSS v3 Guide [http://www.first.org/cvss/user-guide] 
+On-line Calculator v3 [http://www.first.org/cvss/calculator/3.0] 
+
+RELATED INFORMATION
+IBM Secure Engineering Web Portal [http://www.ibm.com/security/secure-engineering/bulletins.html] 
+IBM Product Security Incident Response Blog [http://www.ibm.com/blogs/psirt] 
+
+CHANGE HISTORY
+ 07 November 2016 : Original version published 
+
+*The CVSS Environment Score is customer environment specific and will ultimately impact the Overall CVSS Score. Customers can evaluate the impact of this vulnerability in their environments by accessing the links in the Reference section of this Security Bulletin. 
+
+DISCLAIMER
+According to the Forum of Incident Response and Security Teams (FIRST), the Common Vulnerability Scoring System (CVSS) is an "industry open standard designed to convey vulnerability severity and help to determine urgency and priority of response." IBM PROVIDES THE CVSS SCORES "AS IS" WITHOUT WARRANTY OF ANY KIND, INCLUDING THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. CUSTOMERS ARE RESPONSIBLE FOR ASSESSING THE IMPACT OF ANY ACTUAL OR POTENTIAL SECURITY VULNERABILITY.

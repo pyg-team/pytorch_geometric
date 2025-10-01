@@ -1,0 +1,37 @@
+Title: IBM Best Practices for Go Live/Code Promotions - United States
+
+Text:
+Best Practices for Go Live/Code Promotions TECHNOTE (FAQ)
+
+QUESTION
+ This technote describes the process and best practices around go live events or production code promotions. 
+
+ANSWER
+These steps should be performed for Teamworks 6.x installations when doing a go-live or production code promotions. New versions of Teamworks 7.x/WebSphere Lombardi Edition do not use the same code promotion mechanism. 
+
+ 1. Prior to a code promotion or go live we recommend that you follow these steps:  * Code review - we highly recommend that you take advantage of one of the Lombardi Professional Services offerings that includes a review of your solution code to determine that you are using Teamworks best practices. This will not only help with planning and a successful go-live, but will also help ensure that your code will be easier to upgrade during your next release/code promotion. Please contact your Lombardi Client Partner or Account Rep for additional information. Feel free to contact Lombardi Support if you need assistance determining the correct contact information. 
+     * Load testing - in addition to standard solution code testing, we recommend that you have tested your solution under the appropriate load for your production environment and hardware. 
+     * In-Flight task testing - if you have in-flight tasks affected by this promotion make sure that your tests include in-flight data. 
+     * Mock upgrade/promotion - practicing your upgrade on a environment that mirrors your production environment is the best way to find problems prior to the actual promotion. The best way to do this typically involves taking a backup of the production process server and performance server databases and restoring those into a sandbox environment. Then practice the upgrade/code promotion on that sandbox environment that mirrors production. Note that when you do this you will need to take into consideration the need to isolate the environment so your actual production system is not impacted by this testing.
+    
+    
+ 2. Open a PMR with as much notice as possible (at least a week ideally), letting us know the plans for the upgrade. Include the following information in the ticket:  * When will the upgrade happen? 
+     * What is involved? Code promotion, TW upgrade, other, both? 
+     * Is Lombardi Professional Services helping or involved? 
+     * If appropriate, what is the test plan? 
+     * Any other useful information...
+    
+    
+ 3. The support engineer who is on-call during the promotion will be assigned your ticket. The support engineer who is assigned the ticket might collect additional information to help ensure everything goes as smoothly as possible. 
+ 4. If there is a problem during the go-live/promotion event, open a new severity 1 PMR with all the appropriate information about the problem, just as you would under any "Live Site Down" scenario. Our on-call support team is paged when severity 1 PMRs are opened. This is the best way to contact Lombardi Support.  * Please include any relevant data in the support ticket. 
+     * A support engineer will typically call customers who are experiencing Live Site Down type issues. Under any circumstance, if you feel that there needs to be phone conversations or collaborative screen sharing, feel free to make that request in PMR update. On occasion support might request to review log files prior to a call since log review is often done faster and more accurately "off-line".
+    
+    
+
+ 
+
+HISTORICAL NUMBER
+ 344 
+
+PRODUCT ALIAS/SYNONYM
+ TW Teamworks

@@ -1,0 +1,188 @@
+Title: IBM PM37003: AFTER MIGRATION TO WEBSPHERE MQ V701 AN MDB NO LONGER RETRIEVES MESSAGES FOR A SPECIFIED SELECTOR. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Tracing shows that when CSQMATCH is called during the
+   get of a message, it is failing to match the selector.
+   This appears to be due to there being no MMC_SEG_PROPS
+   segment in the message. This means that the getter is
+   unable to compare the properties in the message against
+   those specified by the selector.The problem occurs when
+   attempting to parse the RFH2 header. zrfLocateMQRFH2
+   is called to locate any RFH2 headers in the message.
+   The first thing it does is convert the format string into
+   a suitable CCSID so that the header type can be
+   determined. However, instead of converting to the
+   qmgr CCSID it converts to the applications CCSID.
+   In many cases these will be the same, but in the apar
+   case the qmgr is running in CCSID 424, and the
+   application (WSAS region) in 1047. The first
+   format string (from the MD) should not need converting,
+   as it always in the qmgr's ccsid, but due to this error
+   an attempt is made to convert it from 424->1047. This is
+   not a supported conversion, and so the parsing of the RFH2
+   header fails. This means that the properties are not
+   available when needed for selection when the message is
+   got.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: All users of WebSphere MQ Version 7 Release  *
+   *                 0 Modification 1.                            *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: MQ JMS application (for example a MDB   *
+   *                      running on WAS for z/OS) cannot get     *
+   *                      messages using selectors based on       *
+   *                      message properties (reason 2033).       *
+   *                      Application and queue manager are       *
+   *                      running with CCSIDS that are            *
+   *                      incompatible or not supported (for      *
+   *                      example application CCSID 1047 and      *
+   *                      queue manager CCSID 424).               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   MQJMS application (application CCSID 1047) connects in bindings
+   mode to queue manager running with CCSID 424. This application
+   puts messages with message properties.
+   
+   MQPUT process should locate and parse MQRFH2 headers to find the
+   message properties. MQPUT fails to locate the MQRFH2 headers
+   because it cannot convert the MQMD.Format string
+   (MQFMT_RF_HEADER_2). MQPUT tries to do an incorrect conversion
+   to the application CCSID instead of converting to the compiler
+   CCSID. In this instance, the attempted conversion between CCSID
+   424 and CCSID 1047 is not necessary as well as it is not
+   supported in MQ V701.
+   
+   A MQJMS consumer application (MDB running in WAS), that gets
+   messages using selectors based on message properties, fails to
+   get messages because MQ was unable to parse properties from
+   MQRFH2 header.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  MQPUT converts MQMD.Format string to compiler CCSID instead
+   of converting to application CCSID.
+   010Y
+   CMQZRFAA
+   CMQZRFHA
+   CMQZRFPA
+   CMQZSTM0
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM37003
+   
+   
+ * REPORTED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * REPORTED COMPONENT ID
+   5655R3600
+   
+   
+ * REPORTED RELEASE
+   010
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2011-04-14
+   
+   
+ * CLOSED DATE
+   2011-06-15
+   
+   
+ * LAST MODIFIED DATE
+   2011-07-05
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UK68786 IV02035
+   
+   
+
+MODULES/MACROS
+ *  CMQZRFAA CMQZRFHA CMQZRFPA CMQZSTM0
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WMQ Z/OS V7
+   
+   
+ * FIXED COMPONENT ID
+   5655R3600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R010 PSY UK68786 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UK68786]
+   UP11/06/30 P F106
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

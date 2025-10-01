@@ -1,0 +1,42 @@
+Title: IBM MQ2551 when using pub/sub functionality in WBIFN - United States
+
+Text:
+PUBSUB; MQ; WMB; DNIM5050E; 2551; content-based filtering TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When WBIFN 3.11 runs with Message Broker V7 or Message Broker V8 commands which result in an MQ subscription, like e.g. registrations in the DNI_MONITOR service, may end with MQRC 2551.
+
+
+SYMPTOM
+The following message will be displayed in the WBIFN event log: 
+
+DNIM5050E 3/10/14 11:06:01 AM SYSOU DNI_MONITOR Internal error while processing request message; reason code '2551'. 
+
+
+CAUSE
+content-based filtering is not enabled
+
+
+DIAGNOSING THE PROBLEM
+ 
+
+As WBIFN uses content based filtering, please check, whether content-based filtering is enabled for exactly one execution group in the broker. 
+To check, whether content-based filtering is enabled, run the mqsireportproperties command (Job BIPRPPR for z/OS).
+
+
+
+RESOLVING THE PROBLEM
+
+If you find, that content based filtering is not enabled, run mqsichangeproperties (Job BIPCHPR) to enable it for exactly one execution group of the Message broker (no matter, which).
+For a detailed description how to enable content-based filtering, please refer to WBIFN 'Planning, Installation and Customization Guide', Section 'Enable content-based filtering'.
+
+
+
+RELATED INFORMATION
+#other related technotes for Message Broker / MQ [http://www-01.ibm.com/support/docview.wss?uid=swg21678499#Message%20Broker%20/%20MQ]
+
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WBIFN V3.1.1 for z/OS

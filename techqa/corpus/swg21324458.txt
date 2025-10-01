@@ -1,0 +1,164 @@
+Title: IBM Tips to improve Rational DOORS performance - United States
+
+Text:
+performance; latency; speed; slow; refresh; load TECHNOTE (FAQ)
+
+QUESTION
+ What tips do you recommend for improving IBM Rational DOORS performance? 
+
+CAUSE
+Some activities in IBM Rational DOORS seem very slow.
+
+ANSWER
+Here are a few suggestions and guidelines which may assist in identifying IBM Rational DOORS bottlenecks and improving performance: 
+
+ * For installations where only one disk exists for applications and database activity, everything has to go through that one disk. When there is performance degradation suspected for this type of setup, be sure to check for possible I/O bound conditions during the investigation.
+
+
+
+ * DOORS data is sent in small packets between the client and the server. Therefore, good ping times are essential to gain optimal performance. If performance is poor, ping times between client and server should be monitored to determine a cross section of results over a period of a typical working week. Results that are greater than 50 ms will introduce performance degradation. Results that are significantly greater than 50 ms will impact more considerably on performance and may result in time-outs for requested operations. 
+   
+   
+ * Large modules that are not baselined on a regular basis will affect performance. Since DOORS records all the changes made, history files can become very large. Baselining locks away the current history and starts a new history log. 
+   
+   
+ * Overuse of the edit-share option can degrade performance. Every edit shareable section creates a new file in the database that needs to be loaded. In large modules, it is recommended that edit shareable is set up at either level 1, 2, or 3. If you use edit shareable mode, you should consider opening each module in full edit mode and doing a save on a periodic basis -- this will roll the contents of the small files in the database into a larger file and improve performance. 
+   
+   
+ * Large amounts of OLE objects and pictures can affect a module's load time.
+   
+   To improve performance in this area, an entry can be made in the registry that will limit the number of OLEs loaded at any one time in a DOORS module. 
+   
+   REGISTRY EDITS: This solution contains information about modifying the system registry. Before making any modifications to the Microsoft Registry Editor, it is strongly recommended that you make a backup of the existing registry. For more information describing how to back up the registry, refer to Microsoft Knowledge Base article 256986 [http://support.microsoft.com/kb/256986]
+   
+    1. Open the registry editor and navigate to DOORS client area. 
+       (For example: HKEY_LOCAL_MACHINE/Software/Telelogic/DOORS/9.5/Config)
+       
+       
+    2. Add the following String Value: 
+       Name: OleOpenLimit, Data: 5 
+       
+       This means that only five OLEs will ever be loaded in memory in the DOORS module at any one time.
+       Five is the amount suggested because it is unlikely that more OLEs will fit on to the screen. 
+       Modifications to the registry should only be carried out by a user with experience in this area. Errors made during editing of the registry may be impossible to correct by means other than a re-installation of the product. 
+       
+       Note: Legacy versions of DOORS ( 5.2 or earlier) stored configuration information in the doors.ini file, not in the registry. Although information on DOORS 5.2 is included below, this version is no longer supported. 
+   
+   
+
+
+ * Removing the Network Server Monitor from the system tray may also improve DOORS performance on sites that are experiencing problems. The Network Server Monitor is the square blue icon that appears in the system tray and flashes when data is being sent between the client and server.
+   
+   To remove the network server monitor  1. Select the menu TOOLS from the DOORS database Manager.
+       
+       
+    2. Select Options.
+       
+       
+    3. Click on the settings tab.
+       
+       
+    4. Uncheck the option show network server monitor.
+       
+       
+   
+   
+
+ * You may find that removing the Explorer pane from a default view for a module may reduce load times for a particularly large module.
+   
+   
+ * Unnecessary triggers at open or close of module can slow down performance. 
+   Consider the implications of using triggers before implementation.
+   
+   
+ * Large tables or large numbers of tables can again impede performance -- think about whether the use of a table is really necessary or appropriate before implementation. 
+   
+   
+ * Large numbers of links can cause performance difficulties -- again, before creation of large numbers of outgoing or incoming links, consider whether they are really necessary. 
+   
+   
+ * Heavy use of impact/trace or attribute DXL columns in views can have a negative impact on performance. 
+   
+   
+ * The removal of all unnecessary soft deleted data will also assist in ensuring that performance is maximized. 
+
+
+
+To purge a project: 
+
+ 1. In the Database Explorer, make sure that deleted items are being displayed.
+    If necessary, click View > Show Deleted.
+    
+    
+ 2. In the right pane of the Database Explorer, select the deleted project you want to purge. 
+    
+    
+ 3. Click File > Purge...
+    A message is displayed asking if you really want to purge the selected item. 
+    
+    
+ 4. Click Yes.
+    The project and all the data in it is permanently removed from the database.
+    
+    
+    
+
+To purge a module:  1. In the Database Explorer, make sure that deleted items are being displayed.
+    If necessary, click View > Show Deleted.
+    
+    
+ 2. In the right pane of the Database Explorer, select the module you want to purge. 
+    
+    
+ 3. Click File > Purge...
+    A message is displayed asking if you really want to purge the selected item.
+    
+    
+ 4. Click Yes.
+    The module is permanently removed from the database.
+    
+    
+    
+
+To purge an object:  1. Open the module exclusive edit.
+    
+    
+ 2. In the module window, make sure that deleted objects are being displayed.
+    If necessary, click View > Show > Deletions.
+    Deleted objects are colored red, and their change bars are black.
+    
+    
+ 3. Select the deleted object you want to purge, and then click Edit > Object > Purge...
+    A message is displayed asking, "Do you want to purge the selected deleted object?" 
+    
+    
+ 4. Click Confirm.
+    
+    
+ 5. Click File > Save to save the change.
+    The object and all objects in the tree below it are permanently removed from the database.
+    
+
+
+Note: You cannot delete or purge objects that have descendants if sorting is turned on. 
+Leaf objects can be deleted when sorting is on. 
+
+
+
+To purge all deleted objects:  1. Open the module in exclusive edit.
+    
+    
+ 2. Click Edit > Purge All.
+    A message is displayed showing the number of objects marked for deletion.
+    
+    
+ 3. Click Yes to purge all the deleted items.
+    Deleted objects are purged even if they are not being displayed.
+    
+    
+ 4. Click File > Save.
+    
+    
+
+These recommendations are to be used as guidelines. No content specific recommendations are provided since performance metrics are determined from several factors, all which can affect the performance of DOORS. 
+These factors vary from network configuration, local machine configuration and capabilities, to the nature of the DOORS data itself.

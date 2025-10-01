@@ -1,0 +1,10 @@
+Title: IBM Event Dashboard: Unable to get data from the server - United States
+
+Text:
+event dashboard; filters; webgui; monitor boxes TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Event Dashboard reports an error: 'Unable to get data from the server' for certain monitor boxes. Clicking on one of these monitor boxes results in an error "This event list is unavailable". The default Active Event List, however, can successfully display events, so there does not seem to be any problem with object server connectivity. 
+
+RESOLVING THE PROBLEM
+This problem is most likely due to a mismatch between the datasource name provided for certain filters in filter.xml files under $WEBGUI_HOME/etc/data/* and the datasource name(s) provided in ncwDataSourceDefinitions.xml. One or the other needs to be changed. In either case a server restart is required.

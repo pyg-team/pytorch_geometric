@@ -1,0 +1,34 @@
+Title: IBM WebSphere SSL HANDSHAKE FAILURE error trying to establish a DataStage client connection - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If you try to establish a DataStage client (Designer, Director, and Administrator) connection you will see the WebSphere SSL HANDSHAKE FAILURE error displayed. 
+
+SYMPTOM
+You will see an error message similar to the following:
+
+SSL HANDSHAKE FAILURE: A signer with SubjectDN "CN=NAMDCSW032.nam.
+nsroot.net, OU=CALC, OU=NA, O=IBM CA1, C=US" was sent from target
+host:port "null:null". The signer may need to be added to local trust
+store "D:
+/IBM/WebSphere/AppServer/profiles/InfoSphere/config/cells/itrsappu702Nod
+e01Cell/nodes/itrsappu702Node01/trust.p12" located in SSL configuration
+alias "NodeDefaultSSLSettings" loaded from SSL configuration file
+"security.xml". The extended error message from the SSL handshake
+exception is: "PKIX path building failed: java.security.cert.
+CertPathBuilderException: PKIXCertPathBuilderImpl could not build a
+valid CertPath.; internal cause is:
+java.security.cert.CertPathValidatorException: The certificate issued
+by O=IBM CA1, C=US is not trusted; internal cause is:
+java.security.cert.CertPathValidatorException: Certificate chaining
+error".
+
+
+
+CAUSE
+One or more of the certificates were updated but did not fully propagate throughout the environment. Anytime a certificate is replaced on the web server (the certificate expires, for example) you need to update the certificates in WAS and then run UpdateSignercerts on all Information Server systems, services tiers, engine tiers, and include all client tiers.
+
+RESOLVING THE PROBLEM
+You need to run UpdateSignerCerts from ASBNode/bin on the client system to add the certificates into the truststore on the client for use in SSL exchange with the services tier.

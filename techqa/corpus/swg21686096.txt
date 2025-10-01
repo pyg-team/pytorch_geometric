@@ -1,0 +1,20 @@
+Title: IBM Script Portlet Cannot create ID when running in a virtual portal - United States
+
+Text:
+script; script portlet; Cannot create ID; import; export; virtual portal; virtual TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+The Script Portlet import and export functionality does not work properly when running in a virtual portal context. 
+
+SYMPTOM
+The import and export dialogs fail with an error message from WCM indicating an error like this:
+Cannot create ID. Reason: 248cc021-2a50-4692-90e8-f2eb2d0c1c6b
+
+
+CAUSE
+This is a known limitation of the Script Portlet import and export functionality. 
+
+
+
+RESOLVING THE PROBLEM
+In order to work with Script Portlet instances in a virtual portal, the Script Portlet editor or WCM Authoring tools must be used to create the Script Portlet content.

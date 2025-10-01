@@ -1,0 +1,48 @@
+Title: IBM PI78804:Information disclosure in WebSphere Application Server with SAML (CVE-2018-1614) - United States
+
+Text:
+PI78804; PI78804; PI78804 DOWNLOADABLE FILES
+
+ABSTRACT
+ Information disclosure in WebSphere Application Server with SAML (CVE-2018-1614) 
+
+DOWNLOAD DESCRIPTION
+PI78804 resolves the following problem:
+
+ERROR DESCRIPTION:
+IBM WebSphere Application Server using malformed SAML responses from the SAML identity provider could allow a remote attacker to obtain sensitive information. (CVE-2018-1614) 
+
+PROBLEM SUMMARY:
+IBM WebSphere Application Server using malformed SAML responses from the SAML identity provider could allow a remote attacker to obtain sensitive information.
+
+PROBLEM CONCLUSION:
+Confidential for Security Integrity ifix.
+
+
+THE FOLLOWING FIXES ARE PROVIDED:
+8.0.0.4-WS-WASProd-IFPI78804.zip applies to fixpacks 8.0.0.4 through 8.0.0.15.
+8.5.5.0-WS-WASProd-IFPI78804.zip applies to fixpacks 8.5.5.0 through 8.5.5.13.
+9.0.0.0-WS-WASProd-IFPI78804.zip applies to fixpacks 9.0.0.0 through 9.0.0.7
+
+Note: There is no fix for WebSphere v7 because no fixpack for WebSphere v7 contains the vulnerability that is fixed with APAR PI78804.
+
+PREREQUISITES
+Please download the UpdateInstaller below to install this fix.
+
+URL LANGUAGE SIZE(Bytes) UpdateInstaller [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21205991] US English 7250000 
+INSTALLATION INSTRUCTIONS
+Please review the readme.txt for detailed installation instructions.
+
+URL LANGUAGE SIZE(Bytes) V80 Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI78804/8.0.0.15/readme.txt] US English 2586 V85 Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI78804/8.5.5.13/readme.txt] US English 2627 V90 Readme [ftp://public.dhe.ibm.com/software/websphere/appserv/support/fixes/PI78804/9.0.0.8/readme.txt] US English 2319 
+DOWNLOAD PACKAGE
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options 
+What is Fix Central(FC)? [https://www.ibm.com/support/fixcentral/help?page=swfaqs] 8.0.0.4-WS-WASProd-IFPI78804 06-15-2018 US English 286986 HTTP [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere Application Server&release=All&platform=All&function=fixId&fixids=8.0.0.4-WS-WASProd-IFPI78804&includeSupersedes=0] 8.5.5.0-WS-WASProd-IFPI78804 06-15-2018 US English 297413 HTTP [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere Application Server&release=All&platform=All&function=fixId&fixids=8.5.5.0-WS-WASProd-IFPI78804&includeSupersedes=0] 9.0.0.0-WS-WASProd-IFPI78804 06-15-2018 US English 283235 HTTP [http://www.ibm.com/support/fixcentral/swg/selectFixes?parent=ibm/WebSphere&product=ibm/WebSphere/WebSphere Application Server&release=All&platform=All&function=fixId&fixids=9.0.0.0-WS-WASProd-IFPI78804&includeSupersedes=0] 
+TECHNICAL SUPPORT
+ Contact IBM Support using SR (http://www.ibm.com/software/support/probsub.html [http://www.ibm.com/software/support/probsub.html]), visit the WebSphere Application Server support web site (http://www.ibm.com/software/webservers/appserv/was/support/ [http://www.ibm.com/software/webservers/appserv/was/support/]), or contact 1-800-IBM-SERV (U.S. only). 
+
+ [/support/docview.wss?uid=swg24044985&aid=1]Problems (APARS) fixed [/support/docview.wss?uid=swg24044985&aid=2]Problems (APARS) fixed
+PI78804

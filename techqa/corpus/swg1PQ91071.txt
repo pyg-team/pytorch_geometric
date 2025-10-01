@@ -1,0 +1,159 @@
+Title: IBM PQ91071: ENTERPRISE PL/I STORAGE LEAK UNDER MULTITHREADING BECAUSE OF INSUFFICIENT FREES DURING DETACH - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+Obtain the fix for this APAR.
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Storage leak under multithreading detected because of
+   insufficient frees during DETACH
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Enterprise PL/I users who have               *
+   *                 Multi-threading application.                 *
+   *                                                              *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: Storage leak under multi-threading      *
+   *                      reported in the HEAPCHK output.         *
+   *                                                              *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The thread level control blocks and the mutex were not
+   sufficiently freed during the thread termination.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  The leaking storages have been identified and freed accordingly
+   and the HEAPCHK report is clean now.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PQ91071
+   
+   
+ * REPORTED COMPONENT NAME
+   LE VA PL/I
+   
+   
+ * REPORTED COMPONENT ID
+   568819806
+   
+   
+ * REPORTED RELEASE
+   707
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt / Xsystem
+   
+   
+ * SUBMITTED DATE
+   2004-07-07
+   
+   
+ * CLOSED DATE
+   2004-12-15
+   
+   
+ * LAST MODIFIED DATE
+   2005-03-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    UQ96128 UQ96129 UQ96130 UQ96131 UQ96132
+   
+   
+
+MODULES/MACROS
+ *  IBMPTINI IBMPTTRM IBMVENTY IBMVTCA
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LE VA PL/I
+   
+   
+ * FIXED COMPONENT ID
+   568819806
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R705 PSY UQ96128 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ96128]
+   UP05/02/03 P F502
+   
+   
+ * R706 PSY UQ96129 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ96129]
+   UP05/02/03 P F502
+   
+   
+ * R707 PSY UQ96130 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ96130]
+   UP05/02/03 P F502
+   
+   
+ * R708 PSY UQ96131 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ96131]
+   UP05/02/03 P F502
+   
+   
+ * R709 PSY UQ96132 [HTTPS://WWW14.SOFTWARE.IBM.COM/WEBAPP/SET2/ORDERMEDIA/SHOPCART?PTFS=UQ96132]
+   UP05/02/03 P F502
+   
+   
+
+FIX IS AVAILABLE
+ * SELECT THE PTF APPROPRIATE FOR YOUR COMPONENT LEVEL. YOU WILL BE REQUIRED TO SIGN IN. DISTRIBUTION ON PHYSICAL MEDIA IS NOT AVAILABLE IN ALL COUNTRIES.

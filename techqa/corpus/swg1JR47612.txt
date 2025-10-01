@@ -1,0 +1,136 @@
+Title: IBM JR47612: SRVC- WLE 7.2 PRODUCT MIGRATION TO BPM 8.0.1 RUNS INTO OOM - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  WLE 7.2 product migration to BPM 8.0.1 runs into OOM and other
+   issues like slow performance
+   
+   Different parameters like the below needs to be tweaked to
+   complete the product migration
+   
+   SET JVM_HEAPSIZE_OPTIONS="-Xms512m -Xmx8192m"
+   
+   
+   set  worker.thread.size=5
+   
+   Set   database.batch.size=100
+   
+   Default values for these parameters may not work in many
+   scenarios and needs to be tweaked. Also when run with the
+   changed values, trc still says using default values though the
+   threads being used seems to be different and reflecting the set
+   value
+   
+   Can we print the values accordingly in the trc and and also
+   change the Infocenter with details on what these parameters are
+   and how to use them with sample values
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  change values
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  IBM BPM Advanced                            *
+   *                  IBM BPM Standard                            *
+   *                  IBM BPM Express                             *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: WLE 7.2 product migration to BPM        *
+   *                      8.0.1 runs into OOM                     *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   WLE 7.2 product migration to BPM 8.0.1 runs into OOM and other
+   issues like slow performance, issue has been fixed in BPM850x.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR47612
+   
+   
+ * REPORTED COMPONENT NAME
+   BPM ADVANCED
+   
+   
+ * REPORTED COMPONENT ID
+   5725C9400
+   
+   
+ * REPORTED RELEASE
+   801
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-08-26
+   
+   
+ * CLOSED DATE
+   2015-01-29
+   
+   
+ * LAST MODIFIED DATE
+   2015-01-29
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * R800 PSY
+   UP

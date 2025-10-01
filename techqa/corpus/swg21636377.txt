@@ -1,0 +1,48 @@
+Title: IBM Unable to start TSAM 7.2.2.1 Launchpad. - United States
+
+Text:
+launchpad; "No such file or directory"; "java class is not found"; "java class not found"; com.ibm.eec.launchpad.runtime.Launchpad TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Error received starting launchpad:
+
+cp: cannot stat `/7.2.2-TIV-TSAM-FP0001/TSAMBASE7221/launchpad/lib': No such file or directory 
+
+The java class is not found: com.ibm.eec.launchpad.runtime.Launchpad 
+
+SYMPTOM
+When launching launchpad.sh, I get two lines of output and a window that pops up briefly: 
+cp: cannot stat `/7.2.2-TIV-TSAM-FP0001/TSAMBASE7221/launchpad/lib': No
+such file or directory 
+The java class is not found: com.ibm.eec.launchpad.runtime.Launchpad 
+
+
+CAUSE
+You may see this problem if you are running FireFox 10+
+
+RESOLVING THE PROBLEM
+Follow these steps to resolve the problem:
+
+1.) Enable Firefox 10+ support:
+Change ./launchpad/browser.sh by adding one line to accept Firefox 10. After this, the launchpad should start.
+
+...
+supportedFirefoxVersion()
+{
+case "$*" in
+*Firefox\ 1-9.*) return 0;;
+*Firefox/1-9.*) return 0;;
+*Firefox\ [1-9][0-9].*) return 0;; #line added
+*Firefox/[1-9][0-9].*) return 0;; #line added
+*Firefox*) return 1;;
+...
+
+If the same problem affects the firststeps/firsteps.sh of your Process Server installation (it always asks to export BROWSER, even though you may have done it). For this you can make the same changes in firststeps/fbrowser.sh.
+
+2.) Fix to get Firefox 15+ working:
+
+a. Open the <launchpad_root_dir>/launchpad/preferences.sh file, and edit it to add the following line to the file (this line can be added anywhere in this file): 
+
+echo 'user_pref("security.enablePrivilege.enable_for_tests", true);' >>$userprefpath/user.js 
+
+b. Restart the launchpad.

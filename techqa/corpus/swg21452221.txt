@@ -1,0 +1,104 @@
+Title: IBM Data sources for a BPF Metastore database and Process Engine database created by the BPF Installer do not work with WAS 7.x and Microsoft SQL Server - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ When you install BPF 4.1 on WAS 7.x and the BPF Metastore database type or the Process Engine database type is Microsoft SQL Server, the data source created by the installer does not work. 
+
+SYMPTOM
+Test connection fails. 
+
+
+CAUSE
+The JDBC driver used by the BPF installer is the driver embedded in WAS 6.1. However, WAS 7.x does not include this driver.
+
+RESOLVING THE PROBLEM
+The solution is to create the BPF Metastore data source or Process Engine data source manually in WAS using Microsoft SQL Server JDBC Driver 1.0 or 2.0. Select the Provider Type 
+
+"Microsoft SQL Server JDBC Driver" when you create the JDBC Provider .
+
+When you install BPF with Microsoft SQL Server on WebSphere Application Server 7.x select "Use Existing"
+
+If the BPF Metastore DB type or PE DB type is Microsoft SQL Server and you want to use WebSphere Application Server 7.x, you must manually create the BPF Metastore data source or Process Engine data source before executing BPF web server installer. The installation program asks “Choose Create New or Use Existing” for Metastore data source or Process Engine data source. Choose "Use Existing", as shown below.
+Use Existing [/support/docview.wss?uid=swg21452221&aid=1] [/support/docview.wss?uid=swg21452221&aid=1]
+
+Manually Creating the Metastore data source on WebSphere Application Server 7.x for Microsoft SQL Server
+
+You can manually configure the JDBC data source connection for the Metastore on WebSphere Application Server 7.x for Microsoft SQL Server.
+
+Procedure
+
+1. Install JDBC drivers on the WebSphere Application Server cell where you will deploy BPF
+a. Obtain the Microsoft SQL Server JDBC Driver 1.0 or 2.0 through the Microsoft Support center.
+b. Extract and copy the JDBC driver file to the following suggested location:
+UNIX: /opt/jars
+Windows: C:\jars
+Note: If you want to use Microsoft SQL Server JDBC Driver 2.0, you must use sqljdbc4.jar.
+c. Start the WebSphere Application Server administrative console
+d. Navigate to Environment > WebSphere Variables. 
+e. Select Cell scope from the All scopes list. 
+f. Set the value of the variable MICROSOFT_JDBC_DRIVER_PATH to the JDBC driver path that you specified when you installed the JDBC drivers on the IBM WebSphere Application Server machine. If the variable does not exist, create it and then set its value.
+g. Restart the WebSphere Application Server
+
+2. Log on to the WebSphere Application Server Administrative Console: 
+http://<web application server>:9060/ibm/console
+
+3. To create the JDBC Provider:
+a. Click Resources →JDBC → JDBC Providers.
+Do steps b though h if the connection pool does NOT exist. Skip these sub steps if the meta connection pool exists. 
+b. Click New.
+c. Select the database type: SQL Server
+d. Select the provider type: Microsoft SQL Server JDBC Driver
+e. Select the implementation type: Connection pool data source.
+f. Click Next.
+g. Click Finish.
+h. Save changes to master configuration.
+
+4. To create the initial JDBC data source:
+a. Click Resources →JDBC → JDBC Providers.
+b. Click the appropriate provider: meta connection pool.
+c. Click DataSources under Additional Properties. Do not select DataSources (Version 4).
+d. Click New.
+e. Enter the name for the data source. Suggested name: Bp8MetadataDS.
+f. Enter JNDI name: meta datasource
+Restriction: The data source name and the data source JNDI name must be the same.
+g. Click Next.
+h. Enter Database name: meta database
+i. Enter Server name: meta data server
+j. Enter Port number:1433
+k. Click Next.
+l. Click Next.
+m. Click Finish.
+n. Save changes to master configuration.
+
+5. To create the Authentication Entry:
+a. Click Resources →JDBC → JDBC Providers.
+b. Click the appropriate provider: meta connection pool
+c. Click DataSources under Additional Properties.
+d. Click meta datasource.
+e. Click J2EE Connector Architecture (J2C) authentication data entries under Related Items.
+f. Click New.
+g. Enter Alias name. meta authentication name
+h. Enter user ID: meta user
+i. Enter Password: meta password.
+j. Click Apply.
+k. Save changes to master configuration
+
+6. To set the JDBC data source authentication:
+a. Click Resources →JDBC → JDBC Providers.
+b. Click the appropriate provider: meta connection pool
+c. Click DataSources under Additional Properties.
+d. Click meta datasource.
+e. Select Component-managed authentication alias: meta authentication name
+f. Click Apply.
+g. Save changes to master configuration.
+7. To test the connection:
+a. Click Resources →JDBC → JDBC Providers.
+b. Click the appropriate provider: meta connection pool
+c. Click DataSources under Additional Properties.
+d. Click meta datasource.
+e. Click Test Connection. A success message is displayed.
+
+Manually create data source for PE database
+Please refer the above steps for Metastore data source.

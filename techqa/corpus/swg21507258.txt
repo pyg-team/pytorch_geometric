@@ -1,0 +1,54 @@
+Title: IBM Rational Team Concert SCM Command Line Interface fails to launch when --config not used in the command - United States
+
+Text:
+scm; z/os; zos; path; Ant; result 4 TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Attempts to run the IBM Rational Team Concert SCM Command Line Interface results in the error "Could not create directory" and fails with an error code of 4. 
+
+SYMPTOM
+Attempts to run an Ant script that calls scm.exe results in the error: 
+
+[exec] Could not create .jazz-scm:
+[exec] Could not create directory /.jazz-scm
+[exec] Result: 4
+
+CAUSE
+Cause #1: Your home path environment variable is not set in the /etc/profile or in the $HOME/.profile 
+
+Cause #2: The location of the metadata is not indicated with the --config parameter of the scm command.
+
+
+RESOLVING THE PROBLEM
+If the home directory path has not been set with one of the options in step #2 below, the --config switch must be used to identify where your metadata is to be created and stored. 
+
+
+Prerequisites for running the SCM Command Line Interface on z/OS successfully include the following:
+
+
+ 1. Set up your home directory that is defined in RACF.
+    Typically, this is /u/user_id 
+    
+    For example: /u/george
+    
+    
+ 2. Ensure the path to find your home directory and the scm.exe file is set correctly using one of the following methods:
+     * Edit /etc/profile
+       or 
+     * Edit $HOME/.profile
+       or 
+     * Run the command export PATH=$PATH:/u/george/scmtools/eclipse
+       or 
+     * Add the command to the Ant script that is launching scm.exe
+       or 
+     * Use --config to specify the user location in the scm command
+       
+       [ --config ]path 
+       The Rational Team Concert source control command line client stores per-user metadata in a configuration directory. The configuration directory is normally $HOME/.jazz-scm, where $HOME represents your home directory. If you want to use a different configuration directory, specify its path name in path.
+       
+       Note: If one of the five above is not set, the command will try to use the install directory to launch the command.
+       
+       
+    
+    
+ 3. Ensure the permissions on the directories allow for directory and file creation and that you have permission to create in RACF.

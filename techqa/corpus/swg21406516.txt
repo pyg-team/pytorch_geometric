@@ -1,0 +1,53 @@
+Title: IBM Why can't I call invoker.jsp without the invoking_user parameter after upgrading to InfoSphere MDM Server for PIM Fix Pack 3 or later? - United States
+
+Text:
+custom tools; update; cmp TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ I have just upgraded InfoSphere MDM Server for PIM Management to FP3 or later, but found that I can no longer call invoker.jsp the way I used to - without explicitly specifying the invoking_user parameter. I see an error message that asks me to supply an invoking user as a parameter in my invoking statement. 
+
+SYMPTOM
+An error message like this displays in a message dialog box and is logged in the application's back and exception logs: 
+
+CWPCM0552E: Invoking user is required.
+
+The invoker.jsp is not called.
+
+
+CAUSE
+Prior to FP3 APAR JR32027 was raised and is now resolved in FP3. The defect deals with the implicit usage of company "trigo" and user "admin" (default values) on the invoking statement, when invoker.jsp was called and an invoking user wasn't specified. This turns out to be a security violation.
+
+
+RESOLVING THE PROBLEM
+The resolution is to state the invoking user and the applicable company code explicitly as a parameter in the invoking statement in FP3 versions and above, or error CWPCM0552E occurs. 
+
+
+In addition, the invoking user should have correct permission for the task that is being performed by calling the invoker.jsp. You must also supply the company code with the invoking user, or else the application will default to the trigo company. 
+
+A sample invoking statement is as follows:
+
+localhost:8080/utils/invoker.jsp?company_code=<enterYourCompanyCo 
+deHere>&bUserOutput=<BOOLEANtrueORfalse>&invoking_user=<username>/<enter 
+CompanyCodeHere>&script=<enterTriggerScriptNameHere> 
+
+For example, if the invoking user is "admin" of the "Acme" company, and the intention here is to call a trigger script within the Acme company, then you will have to specify "invoking_user=admin/Acme" in order to have the statement function correctly. If "invoking_user=admin" is used, it will mean that you are invoking the invoker.jsp as the admin for the trigo company, and the application will start searching for the trigger script within the trigo company, which will not be there in the first place. You will then get an error similar to the following message: 
+
+CWPDS0009E: The path provided
+([/scripts/triggers/<some_scripts>] [1]) was not found
+
+where [1] is the company ID for the trigo company, and the search of this file is taking place inside the trigo company. Since the trigo company is just a shell company, nothing exists and you will get the error. Acme company should have a company id like [20001], [30001], etc.
+
+Please note that you have to supply the company code twice in the statement - once for the company_code parameter and once for the invoking_user parameter.
+
+Please also note that the company code is different than company ID. A company code is usually a name, such as "Acme" or "trigo" whereas company ID is a number. Use only the company code in the invoking statement.
+
+In summary, prior to the application's FP3 release, you can call the invoker.jsp with or without the invoking_user parameter, and both will work. You must have invoking_user as a parameter on or after FP3.
+
+ 
+
+PRODUCT ALIAS/SYNONYM
+ WPC 
+WebSphere Product Center
+MDMPIM
+InfoSphere MDM Server for PIM
+InfoSphere Master Data Management Server for Product Information Management

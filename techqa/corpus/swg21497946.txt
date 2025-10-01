@@ -1,0 +1,40 @@
+Title: IBM User accounts locked out after entering one wrong password, logging into Workplace - United States
+
+Text:
+com.ibm.websphere.security.ldap.retryBind; Account locked out; Workplace; entering wrong password once TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ LDAP User accounts get locked out when you enter the wrong password while logging into FileNet Content Manager through Workplace 
+
+SYMPTOM
+User accounts get locked out after one wrong password is entered even though the LDAP password security policy is setup for four incorrect password attempts
+
+
+CAUSE
+In the case where: 
+
+ * Multiple LDAP servers configured or 
+ * A system is setup as a failover environment or 
+ * LDAP failover is configured by associating a single hostname to multiple IP addresses through the use of a load balancer 
+
+
+then, entering an invalid password can cause multiple LDAP bind retries. 
+
+With the default settings in WebSphere, the number of LDAP bind retries is equal to one more than the number of associated IP addresses, so a single invalid login attempt can cause the LDAP account to get locked. 
+RESOLVING THE PROBLEM
+A custom property can be set in WebSphere so that LDAP bind calls are not retried. 
+
+
+To configure the property: 
+
+ 1. Login to the WebSphere Admin Console 
+ 2. Go to Global Security 
+ 3. Select Standalone LDAP registry and click Configure. 
+ 4. Change the password for bind DN on one LDAP server 
+ 5. Update the new bind DN password to WebSphere Application security runtime by calling resetLdapBindInfo with the bind DN and by using its new password as a parameter. 
+ 6. Add the following custom property: com.ibm.websphere.security.ldap.retryBind property to false
+    
+
+When this property is set to false, WebSphere does not retry LDAP 
+bind calls. RELATED INFORMATION
+ Udating the LDAP binding information [http://www.ibm.com/support/knowledgecenter/SSAW57_8.5.5/com.ibm.websphere.nd.doc/ae/tsec_updateldap_bind.html]

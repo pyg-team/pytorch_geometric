@@ -1,0 +1,51 @@
+Title: IBM Mustgather: Gathering data for diagnosing shared class corruption issues - United States
+
+Text:
+Shared Class corruption crash gather Mustgather TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ If your Java application crashes due to shared class corruption issues on any operating system such as AIX®, Linux, Windows, or z/OS® operating system, there are a number of diagnostic data files that are useful for diagnosing the problem. This mustgather document describes about the diagnostic data files to be collected and the procedure to collect the same. 
+
+RESOLVING THE PROBLEM
+The following set of diagnostic data files will be generated during the time of the java application crash due to shared class corruption:
+1. Javacores
+2. Core dumps
+3. Snap traces
+4. Cache file that caused the crash
+5. Cache statistics log
+
+
+For these diagnostic data files to be created, check that the system is configured correctly as per setup [http://www.ibm.com/support/docview.wss?rs=727&uid=swg21606944] document. 
+
+Please collect the diagnostic data files generated during the time of the java application crash as per the below steps: 
+
+1. Collect the javacore, core dump and snap trace file generated. 
+
+Please note that all the javacore and snap trace generated can be found in the current path and the names of them will follow the below format: 
+
+Javacore : javacore.<time stamp>.<id>.txt
+Snap trace file : snap.<time stamp>.<id>.trc 
+
+For AIX®, Linux and Windows operating systems, the core dumps generated can be found in the current path and the names of them will follow the below format:
+Core dump : core.<time stamp>.<id>.dmp
+
+Run the JExtract tool against the generated core dump file using the following command:
+<installpath>/jre/bin/jextract [coredump]
+
+For 64bit JVM enabled with -Xcompressedrefs option, please use
+<installpath>/jre/bin/jextract -J-Xcompressedrefs [coredump] 
+
+Save the resulting archive file, which has a name in the format of
+core.<time stamp>.<id>.dmp.zip
+
+For z/OS® operating system, the transaction dumps will be generated as standard MVS™ dump data sets and the names of them will follow the below format:
+Transaction dump : %uid.JVM.TDUMP.%job.D%y%m%d.T%H%M%S
+
+2. Collect the cache file that caused the crash and compress the same in zip format. The cache file can be identified by looking at the option specified to the JVM, -Xshareclasses:name=<nameOfCache> 
+
+Please note that if the cache has been corrupted, the JVM will not start correctly. In such cases, it is important to collect the corrupted cache file before deleting/cleaning/resetting the cache.
+
+3. Collect the cache statistics data using the below command:
+<path to sdk installation>/jre/bin/java -Xshareclasses:<nameOfCache>,printAllStats &> printAllStats.out 
+
+After collecting all the above diagnostic data files, you can submit them for help with diagnosing the problem.

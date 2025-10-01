@@ -1,0 +1,24 @@
+Title: IBM Monitoring MSSQL 2000 - United States
+
+Text:
+ITM; itcam; no data; support; sql server; gksi TECHNOTE (FAQ)
+
+QUESTION
+ What is the latest OQ agent which is able to monitor MSSQL server 2000? 
+
+ANSWER
+MSSQL server 2000 is supported by following oq agent versions:
+Agent V6.1.2 is latest agent which still support MSSQL 2000 but is not supported on Windows 2000.
+
+(C1HL8EN) - IBM Tivoli Monitoring for Microsoft Applications V6.1.2: Component Software for Windows Platforms, English
+Latest IF for 6.1.2 is 6.1.2-TIV-ITM_SQL-IF0008
+
+If running MSSQL 2000 on Windows 2000, OQ agent version 6.2 needs to be installed:
+(C1R3JIE) - IBM Tivoli Monitoring for Databases V6.2 Fix Pack 1 Base, Multiplatform, English 
+
+Both agents 6.2 and 6.12 are already out of support. 
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Systems and Asset Management Tivoli Monitoring for Databases

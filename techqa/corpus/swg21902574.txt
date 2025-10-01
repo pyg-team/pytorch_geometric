@@ -1,0 +1,28 @@
+Title: IBM DIA3604E The SSL function "gsk_secure_soc_init" failed with the return code "8" in "sqlccSSLSocketSetup". - United States
+
+Text:
+DB2 JCC DIA3604E SSL gsk_secure_soc_init sqlccSSLSocketSetup -4499 connection reset TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ A certficate expired and has been updated on the application server howerver connections to the remote DB2 datasource continue to fail with error -4499 and message "Connection Reset". 
+
+SYMPTOM
+java.sql.SQLException: [jcc][t4][2030][11211][3.62.95] A communication error occurred during operations on the connection's underlying socket, socket input stream, or socket output stream. Error location: T4Agent.sendRequest() - flush (-1). Message: Connection reset. ERRORCODE=-4499, 
+SQLSTATE=08001DSRA0010E: SQL State = 08001, Error Code = -4,499 
+
+2015-05-01-08.16.01.431000-420 I14639093F515 LEVEL: Error 
+PID : 3920 TID : 7208 PROC : db2syscs.exe 
+INSTANCE: DB2 NODE : 000 DB : OMNI 
+APPHDL : 0-30292 HOSTNAME: 
+EDUID : 7208 EDUNAME: db2agent () 0 
+FUNCTION: DB2 UDB, common communication, sqlccMapSSLErrorToDB2Error, probe:30 
+MESSAGE : DIA3604E The SSL function "gsk_secure_soc_init" failed with the return code "8" in "sqlccSSLSocketSetup". 
+Reason Code: 8 GSK_ERROR_CERT_VALIDATION Certificate validation error. 
+
+
+CAUSE
+Problem with certificate validation.
+
+
+RESOLVING THE PROBLEM
+Ensure a valid certificate has been updated and deployed at both the application client and DB2 server.

@@ -1,0 +1,153 @@
+Title: IBM MQJMS2013 (V6) JMSWMQ2013 (V7) 無効なセキュリティ認証 (RC 2035) - United States
+
+Text:
+ TECHNOTE(トラブルシューティング)
+
+問題(概要)
+ WebSphere MQとMQ JMSアプリケーションを使用する場合のセキュリティ認証エラーに関して
+
+
+You are running WebSphere MQ and your MQ JMS application fails with security authentication errors. 
+
+
+症状
+MQRC 2035 MQRC_NOT_AUTHORIZED 
+
+MQRC 2063 MQRC_SECURITY_ERROR 
+
+MQ V6:
+MQJMS2013: 無効なセキュリティー認証が MQQueueManager に指定されました。 
+
+
+MQ V7 と以降のバージョン:
+JMSWMQ2013: 接続モード 'Client' およびホスト名 'x' の QueueManager 'x' に指定されたセキュリティー認証は無効でした。 指定したユーザー名およびパスワードが接続先の QueueManager 上で正しいかどうかを確認してください。
+
+
+原因
+ 
+
+MQキュー・マネージャーから理由コード2035が原因でWebSphere Application ServerのログにMQJMS2013 exception がログされることがあります。
+
+この理由コードは、次のいずれかの状況で発生することがあります。
+
+a) JVM(WebSphere Application Server)の始動に使用されたユーザーIDがキュー・マネージャーが存在するホストで定義されていなかった。
+
+b) ユーザーIDは定義されているが、キュー・マネージャーが稼動できる適切な権限を持っていなかった。
+
+c) MQ 7.1キュー・マネージャーをを使用している場合、ユーザーを定義し、MQ管理者グループのメンバーとして所属しているかもしれませんが、MQ管理者は、デフォルト・クライアント認証でリモート・ログインを許可していません。
+
+d) MQ V8 : パスワードを指定しなかった場合、キューマネジャーのエラーログに次のメッセージがログされます。
+AMQ5540: アプリケーション 'Sphere MQ\bin64\amqsputc.exe' はユーザー ID とパ
+スワードを提供しませんでした。
+AMQ5541: 失敗した認証確認は、キュー・マネージャー CONNAUTH
+CHCKCLNT(REQDADM) の構成が原因で発生しました。
+
+
+
+
+
+解決方法
++++ WAS 7.0 もしくは 8.0 から WAS 8.5 に以降された場合 
+
+下記のTechnote でWAS 7.0, 8.0 (MQ JMS 7.0を含む) とWAS 8.5 (MQ JMS 7.1を含む)でのセキュリティの変更に伴う挙動の変更に関して説明します。
+
+.
+Changes in the default user identifier between WebSphere MQ V7.0.1 classes for JMS and WebSphere MQ V7.1 classes for JMS [http://www.ibm.com/support/docview.wss?uid=swg21662193] 
+. 
++ begin quote 
+. 
+- When using WebSphere Application Server v7.0 and v8.0, no user identifier value (blank) is passed to the queue manager. 
+. 
+- When using WebSphere Application Server V8.5, a non-blank user identifier value is passed to the queue manager. 
+.
++ end quote 
+
+ 
+
++++ MQ 7.1 キュー・マネージャーを使用している場合 
+
+下記のtechnote を参照してください。
+WMQ 7.1 / 7.5 キュー・マネージャーへのクライアント接続における理由コード 2035 MQRC_NOT_AUTHORIZED または AMQ4036
+http://www.ibm.com/support/docview.wss?uid=swg21642073 [http://www.ibm.com/support/docview.wss?uid=swg21642073]
+
+
++++ MQ 8.0 キュー・マネージャーを使用している場合
+Specifically when using MQ 8.0 or later queue managers:
+
+MQ 8.0: errors AMQ5540 and AMQ5541, application did not supply a user ID and password, 2035 MQRC_NOT_AUTHORIZED [http://www.ibm.com/support/docview.wss?uid=swg21680930] 
+
+
+
++++ 共通 
+
+アプリケーションで使用しているユーザーIDを確認してください。そして、MQキュー・マネージャーが稼動しているサーバーで適切な権限を持ったグループにそのユーザーIDが所属しているか確認ください。 
+
+runmqsc から下記コマンドを実行してください。 
+
+REFRESH SECURITY(*) 
+
+
+WebSphere Application Server JMS Trace (trace.log)
+WebSphere Application Server のトレースに下記のMQ理由コードがログされることがあります。
+
+MQJE001: MQException が発生しました: 完了コード 2、理由 2035
+理由コード 2035 : "MQRC_NOT_AUTHORIZED"
+
+MQJE001: MQException が発生しました: 完了コード 2、理由 2063
+理由コード 2063 : "MQRC_SECURITY_ERROR"
+
+
+もしキュー・マネージャーとの認証にどのユーザーIDが用いられているか明らかでないならば、JMSクライアントとMQサーバーのトレースを確認する必要があります。詳しくは、関連文書を参照してください。
+セクション『関連のURL』を見てください。
+
+例えば、JMSクライアントのtrace.logは、下記のような情報が含まれます。
+com.ibm.mq.jms.MQQueueConnectionFactory connecting as user: JohnDoe
+com.ibm.mq.jms.MQQueueConnection Setting username = JohnDoe
+com.ibm.mq.MQv6InternalCommunications userID = 'JohnDoe '
+com.ibm.mq.MQv6InternalCommunications UID :JOHNDOE
+
+MQ server trace:
+MQトレースのひとつのファイルに下記のような存在しないユーザーIDの値が見つかるかもしれません。
+
+UnknownPrincipal(johndoe)
+
+また、ユーザーIDが存在する場合、他に考えられる原因として適切な権限を持っていないかもしれません。
+そのため、次のようなエントリーを確認してください。
+
+The following requested permissions are unauthorized: xxx
+
+問題判別に関連するtechnotes:
+
+デフォルトでは、この理由コード2035（MQRC_NOT_AUTHORIZED）を引き起こすユーザーＩＤは、MQキュー・マネージャー・エラー・ログ、または、FDCファイルに示されません。
+アプリケーションが数千回も接続を試みるとことができるため、数千個のログのエントリーとFDCファイルが生成されることを防ぎます。
+
+MQキュー・マネージャー・エラー・ログとFDCファイルにで理由コード2035を引き起こしているユーザーＩＤを示すために使用できる２つの環境変数があります。
+１つもしくは両方の環境変数を設定し、キュー・マネージャーを再起動します。
+
+
+参照文書：
+
+MQS_REPORT_NOAUTH environment variable can be used to better diagnose return code 2035 (MQRC_NOT_AUTHORIZED)
+http://www.ibm.com/support/docview.wss?&uid=swg21299319 [http://www.ibm.com/support/docview.wss?&uid=swg21299319]
+
+Using MQSAUTHERRORS to generate FDC files related to RC 2035 (MQRC_NOT_AUTHORIZED)
+http://www.ibm.com/support/docview.wss?&uid=swg21377578 [http://www.ibm.com/support/docview.wss?&uid=swg21377578]
+
+IZ49302: THE WEBSPHERE MQ JAVA MESSAGE SERVICE CLIENT MUST TREAT "" FOR A USERID THE SAME AS NULL WHEN CREATING CONNECTIONS
+http://www.ibm.com/support/docview.wss?uid=swg1IZ49302 [http://www.ibm.com/support/docview.wss?uid=swg1IZ49302]
+
+
+【関連文書】
+英文:Technote (FAQ) : 1138961
+MQJMS2013 (V6) JMSWMQ2013 (V7) invalid security authentication (RC 2035) [http://www.ibm.com/support/docview.wss?uid=swg21138961]
+
+※ 最新の情報は英文をご参照いただくことをお勧めいたします。
+
+
+
+【お問合せ先】
+技術的な内容に関して、サービス契約のあるお客様はIBMサービス・ラインにお問い合わせください。
+IBM サービス・ライン [http://www.ibm.com/jp/news/20070420001.html]
+
+関連情報
+ An US English translation is available [http://www.ibm.com/support/docview.wss?uid=swg21138961]

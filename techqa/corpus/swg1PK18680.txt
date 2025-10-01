@@ -1,0 +1,146 @@
+Title: IBM PK18680: INFORMIX V9.4 SHOULD BE LISTED IN THE LIST OF INFORMIX VERSIONS THAT REQUIRES TO HAVE "STATEMENT CACHE SIZE" SET TO 0 - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  InfoCenter section "WebSphere Application Server data source
+   properties" at URL:
+   "http://publib.boulder.ibm.com/infocenter/wasinfo/v6r0/index.jsp
+   ?topic=/com.ibm.websphere.express.doc/info/exp/ae/udat_jdbcdatas
+   orprops.html"
+   Under the "Statement Cache Size",
+     Data type Integer
+     Default Depends on the database. Most are 10. Informix Version
+     7.3, 9.2, or 9.3 without latest fix must be 0. A default of 0
+     means there is no cache statement.
+   .
+   The Informix Version 9.4 should be included in the above list
+   of Informix Version. That means, the above should be changed to:
+     Data type Integer
+     Default Depends on the database. Most are 10. Informix Version
+     7.3, 9.2, 9.3 or 9.4 without latest fix must be 0. A default
+     of 0 means there is no cache statement.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED: Administrators who configure Java            *
+   *                 database connectivity (JDBC) access          *
+   *                 to Informix Dynamic Server Version 9.4       *
+   *                 for WebSphere Application Server Versions    *
+   *                 6.0, 6.01, and 6.02                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: If you activate statement caching on    *
+   *                      a data source that accesses Informix    *
+   *                      Dynamic Server Version 9.4, the data    *
+   *                      source fails if the database does not   *
+   *                      use the latest Informix Dynamic         *
+   *                      Server fix.                             *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The article entitled, "WebSphere Application Server data
+   source properties," does not document the fact that
+   Informix Dynamic Server Version 9.4 databases must run the
+   latest fix to support the statement caching property for
+   data sources.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  If your data sources access Informix Dynamic Server Version
+   9.4 and do not run the latest fix, you must set the Statement
+   Cache Size data source property to a value of zero. This
+   setting disables the statement caching function. For more
+   information on the latest fix, see the following Web site:
+   http://www.ibm.com/software/data/informix/ids/ [http://www.ibm.com/software/data/informix/ids/]
+   
+   The updated documentation will be available in the next
+   refresh of the information center on or before March 31, 2006.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PK18680
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBS APP SERV N
+   
+   
+ * REPORTED COMPONENT ID
+   5724H8800
+   
+   
+ * REPORTED RELEASE
+   60A
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2006-01-27
+   
+   
+ * CLOSED DATE
+   2006-02-07
+   
+   
+ * LAST MODIFIED DATE
+   2009-05-07
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

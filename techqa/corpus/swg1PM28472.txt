@@ -1,0 +1,181 @@
+Title: IBM PM28472: AN XMLACCESS CONTENT-NODE LOCATE WITHOUT UNIQUENAME ATTRIBUTE FOR WPS.CONTENT.ROOT FAILS - United States
+
+Text:
+  FIXES ARE AVAILABLE
+6.1.0.6 Download: WebSphere Portal and WCM V6.1.0 fix pack 6 [http://www-01.ibm.com/support/docview.wss?uid=swg24030970]
+7.0.0.2 Download: WebSphere Portal and WCM V7.0 fix pack 2 [http://www-01.ibm.com/support/docview.wss?uid=swg24031676]
+Fixes integrated in WebSphere Portal 7.0.0.1 & 7.0.0.2 Combined Cumulative Fixes [http://www-01.ibm.com/support/docview.wss?uid=swg24029452]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  An XMLAccess content-node locate without using "uniquename"
+   attribute for "wps.content.root" fails.
+   
+   The following valid XMLAccess file fails to execute:
+   
+   <request xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance
+   xsi:noNamespaceSchemaLocation="PortalConfig_6.1
+   .0.2.xsd"
+   type="export">
+   <portal action="locate">
+   <content-node action="export"
+   objectid="6_000000000000000000000000A0"/>
+   </portal>
+   </request>
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Add the uniquename attribute explicitly.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  An XMLAccess content-node locate without using uniquename
+   attribute for wps.content.root fails.
+   
+   The following valid XMLAccess file fails to execute:
+   
+      <request xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance
+      xsi:noNamespaceSchemaLocation="PortalConfig_6.1
+      .0.2.xsd"
+      type="export">
+      <portal action="locate">
+      <content-node action="export"
+      objectid="6_000000000000000000000000A0"/>
+      </portal>
+      </request>
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Problem Solution:
+      Code fix
+   
+   Manual Steps:
+      None
+   
+   Failing Module(s):
+      XML Access
+   
+   Affected Users:
+      XMLAccess user
+   
+   Version Information:
+       Portal Version(s): 6.1.0.3
+        Pre-Requisite(s): PM02234 [http://www-01.ibm.com/support/docview.wss?uid=swg1PM02234]
+               (or the respective cumulative fix)
+         Co-Requisite(s): ---
+   
+   Platform Specific:
+      This fix applies to all platforms.
+   
+   A fix is available from Fix Central:
+   
+   http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorde
+   r?apar=PM28472&productid=WebSphere%20Portal&brandid=5 [http://www.ibm.com/eserver/support/fixes/fixcentral/swgquickorder?apar=PM28472&productid=WebSphere%20Portal&brandid=5]
+   
+   You may need to type or paste the complete address into your Web
+   browser.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PM28472
+   
+   
+ * REPORTED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * REPORTED COMPONENT ID
+   5724E7600
+   
+   
+ * REPORTED RELEASE
+   61C
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-12-09
+   
+   
+ * CLOSED DATE
+   2011-01-18
+   
+   
+ * LAST MODIFIED DATE
+   2013-02-27
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   WEBSPHERE PORTA
+   
+   
+ * FIXED COMPONENT ID
+   5724E7600
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R610 PSY
+   UP
+   
+   
+ * R61C PSY
+   UP

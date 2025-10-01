@@ -1,0 +1,44 @@
+Title: IBM Security Access Manager for Oracle WebLogic Server - United States
+
+Text:
+TIVOIAM00 access manager Oracle weblogic adapter sso wls amwls security provider DOWNLOADABLE FILES
+
+ABSTRACT
+ This integration solution enables integration between IBM Security Access Manager with Oracle WebLogic Server for Web Single Sign-On and delegated user authorization management. 
+
+DOWNLOAD DESCRIPTION
+This integration solution enables integration between IBM Security Access Manager with Oracle WebLogic Server. 
+
+The integration package contains custom Security Providers and documentation to install and configure Web Single Sign-On and optional delegated, coarse-grained authorization using IBM Security Access Manager group membership to WebLogic Server role mapping.
+
+The included sample application provides optional scenarios for Risk-Based Access (RBA) using IBM Security Access Manager for Mobile.
+
+Note: This integration is currently distinct from the Tivoli Access Manager for WebLogic 6.0 product provided with the Tivoli Access Manager CDs.
+
+PREREQUISITES
+
+One of the following versions: 
+
+ * Oracle WebLogic Server 11g 
+ * Oracle WebLogic Server 12c
+
+
+and 
+
+one of the following versions:  * IBM Security Access Manager for Web Version 9.0 and IBM Security Access Manager Advanced Access Control 9.0 (optional) 
+ * IBM Security Access Manager for Web Version 8.0 and IBM Security Access Manager for Mobile 8.0 (optional) 
+ * IBM Security Access Manager for Web Version 7.0 
+ * IBM Security Access Manager WebSEAL Version 7.0 
+ * IBM Tivoli Access Manager for e-business WebSEAL Version 6.1.1
+
+DOWNLOAD PACKAGE
+
+
+
+
+
+Download RELEASE DATE LANGUAGE SIZE(Bytes) Download Options README 13 Apr 2016 English 4013 FTP [ftp://public.dhe.ibm.com/software/tivoli_support/misc/Security/AMeB/WebLogic/4.0-WEBLOGIC.README] Integration 13 Apr 2016 English 2413834 FTP [ftp://public.dhe.ibm.com/software/tivoli_support/misc/Security/AMeB/WebLogic/AmOracleWLSAdapter-4.0.zip] 
+TECHNICAL SUPPORT
+ This download is offered free of charge to existing Tivoli Access Manager customers. Support for this download is available through the normal Tivoli Access Manager support channels. This integration has been tested and is supported on the platforms and product versions listed in this document. When accessing support for this download, please quote the component ID as TIVOIAM00 or 5724C0800. 
+
+Cross reference information Segment Product Component Platform Version Edition Security IBM Security Access Manager for Mobile

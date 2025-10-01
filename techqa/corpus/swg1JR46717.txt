@@ -1,0 +1,175 @@
+Title: IBM JR46717: SUB SPEC EDITING DOES NOT UPDATE SPECS RESULTING IN SERVER ERROR - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS FIXED IF NEXT.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  When adding new attributes to sub-spec and updating the
+   associated primary spec a Server Error is received.
+   
+   Steps to reproduce:
+   1. Create a sub spec with one or two attributes.
+   2. Create a primary spec and add the sub spec to it then save
+   the primary spec, the result is that the attributes of the sub
+   spec is now part of the primary spec.
+   3. Open the sub spec and make sure to add TWO more attributes
+   and save the sub spec.
+   4. Select the "Edit" button for the Spec Associations.
+   5. Tick the Primary Spec name and click save.
+   6. After save the Server Error page shows up.
+   
+   In the appserver's exception.log and db.log, the following
+   exception is found:
+   2013-05-07 06:47:41,784 [jsp_220: /ccd_content/spec_tree.jsp]
+   ERROR com.ibm.ccd.common.db.Query - CWPCM0040E:The query failed
+   : [ Static Query [name: GET_SPEC_DETAILS]
+   [id: 1914]
+   select spc_name
+   from tctg_spc_specification
+   where spc_id IN (
+       select nom_master_spec_id
+       from tctg_nom_node_mapping
+       where nom_sub_spec_id = 10603
+           and nom_next_version_id = 999999999
+   
+    ], Exception:DB2 SQL Error: SQLCODE=-104, SQLSTATE=42601,
+   SQLERRMC=END-OF-STATEMENT;sion_id = 999999999
+   ;), DRIVER=3.65.77
+   com.ibm.db2.jcc.am.SqlSyntaxErrorException: DB2 SQL Error:
+   SQLCODE=-104, SQLSTATE=42601, SQLERRMC=END-OF-STATEMENT;sion_id
+   = 999999999
+   ;), DRIVER=3.65.77
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  The issue doesn't occur if only 1 attribute is added at a time.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * All Users                                                    *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * When adding new attributes to sub-spec and updating the      *
+   * associated primary spec a Server Error is received.          *
+   *                                                              *
+   * Steps to reproduce:                                          *
+   * 1. Create a sub spec with one or two attributes.             *
+   * 2. Create a primary spec and add the sub spec to it then     *
+   * save the primary spec, the result is that the attributes of  *
+   * the sub spec is now part of the primary spec.                *
+   * 3. Open the sub spec and make sure to add TWO more           *
+   * attributes and save the sub spec.                            *
+   * 4. Select the "Edit" button for the Spec Associations.       *
+   * 5. Tick the Primary Spec name and click save.                *
+   * 6. After save the Server Error page shows up. In the         *
+   * appserver's exception.log and db.log, the following          *
+   * exception is found: 2013-05-07 06:47:41,784 [jsp_220:        *
+   * /ccd_content/spec_tree.jsp] ERROR                            *
+   * com.ibm.ccd.common.db.Query - CWPCM0040E:The query failed :  *
+   * [ Static Query [name: GET_SPEC_DETAILS] [id: 1914] select    *
+   * spc_name from tctg_spc_specification where spc_id IN (       *
+   * select nom_master_spec_id from tctg_nom_node_mapping where   *
+   * nom_sub_spec_id = 10603 and nom_next_version_id = 999999999  *
+   * ], Exception:DB2 SQL Error: SQLCODE=-104, SQLSTATE=42601,    *
+   * SQLERRMC=END-OF-STATEMENT;sion_id = 999999999 ;),            *
+   * DRIVER=3.65.77 com.ibm.db2.jcc.am.SqlSyntaxErrorException:   *
+   * DB2 SQL                                                      *
+   * Error: SQLCODE=-104, SQLSTATE=42601,                         *
+   * SQLERRMC=END-OF-STATEMENT;sion_id = 999999999 ;),            *
+   * DRIVER=3.65.77                                               *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * IBM recommends checking a future release of the product for  *
+   * resolution (i.e. later than Version 11.0).                   *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   JR46717
+   
+   
+ * REPORTED COMPONENT NAME
+   MDM SERVER FOR
+   
+   
+ * REPORTED COMPONENT ID
+   5724V5100
+   
+   
+ * REPORTED RELEASE
+   A10
+   
+   
+ * STATUS
+   CLOSED FIN
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-05-21
+   
+   
+ * CLOSED DATE
+   2013-08-09
+   
+   
+ * LAST MODIFIED DATE
+   2013-08-09
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS
+ * RA10 PSY
+   UP

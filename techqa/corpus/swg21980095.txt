@@ -1,0 +1,51 @@
+Title: IBM Integration of CICS event support with ODM Decision Server Insights - United States
+
+Text:
+5655Y0400 R680 680 R800 800 HCI6800 R690 690 R900 900 HCI6900 R700 700 R000 000 HCI7000 5655Y0401 5655-Y04 5655Y04 KIXINFO NEWS
+
+ABSTRACT
+ Events from CICS can be consumed by IBM Operational Decision Management (ODM) Decision Server Insights, allowing Insights to detect interesting patterns of events and help decide the best actions to take. This document describes new support that makes it simpler, quicker, and more intuitive to integrate CICS events with ODM Decision Server Insights. Although it was previously possible to consume existing CICS event formats in Decision Server Insights, this required complicated use of XML transforms. 
+
+CONTENT
+CICS Transaction Server for z/OS (CICS TS) has provided support for event processing since CICS TS V4.1. This support has been continually enhanced since that release and allows events that relate to processing in CICS to be captured without the need to change CICS applications. APAR PI55134 [http://www.ibm.com/support/docview.wss?uid=swg1PI55134] for CICS TS V5.3, and APAR PI55133 [http://www.ibm.com/support/docview.wss?uid=swg1PI55133] for CICS TS V5.1 and CICS TS V5.2, together with refresh V5.3.0.2 of IBM Explorer for z/OS Aqua, provide further enhanced support for integrating events from CICS with ODM, using a new 'Decision Server Insights' event (DSIE) format emitted from CICS. 
+
+The DSIE format is readily consumable by ODM Decision Server Insights, allowing the events from CICS to be used to detect situations and determine the best actions to take. Users can select the 'DSIE' format for emission to ODM Decision Server Insights over either HTTP or IBM MQ. The CICS Explorer tooling allows export of event schemas that describe the events, for direct import into the ODM Insight Designer tooling, where information from the events can then be included in event rules. 
+
+CICS Explorer V5.3.0.2 together with APARs PI55134 and PI55133 provide the following capabilities: 
+
+ * A new event format can be selected using the CICS Explorer, for any of the MQ Queue, HTTP or TS Queue Event Processing (EP) adapters, to specify that events using that EP adapter will be emitted in DSIE format.
+   
+ * Bundles can be deployed into CICS that contain EP adapters that specify the DSIE event format (whether as embedded EP adapters within an event binding, as standalone EP adapters, or as EP adapter sets).
+   
+ * The CICS runtime can emit events in DSIE format for CICS Application, System, and Policy events.
+   
+ * The schema that describes an event emitted in the DSIE format can be exported from CICS Explorer as a .xsd file. This file can then be imported into a Business Object Model (BOM) project in the ODM developer tool, Insight Designer, so that Decision Server Insights can consume events of that type.
+   
+ * A new example event binding can be created using CICS Explorer that, when deployed to CICS, enables a 'Catalog Order' event to be emitted when orders are made from the CICS Catalog Manager example application.
+
+
+These capabilities allow events from CICS to be processed by event rule agents in ODM Decision Server Insights, which is part of the ODM Advanced offering. From ODM Advanced release 8.8 or later, Decision Server Insights can be run on z/OS, enabling potential benefit from the co-location of CICS and Insight Server. 
+
+For CICS TS V5.1 and V5,2:  * APAR PI55133 and CICS Explorer V5.3.0.2 are required.
+
+
+For CICS TS V5.3:  * APAR PI55134 and CICS Explorer V5.3.0.2 are required.
+
+
+For more information about integrating CICS events with Decision Server Insights, including a worked example based on the Catalog Manager example application, please see the series of CICS DevCenter blog posts:  * More rapid business insight with ODM and CICS integration [https://developer.ibm.com/cics/2015/12/11/cics-odm-dsi/] 
+   
+ * Emitting CICS Events for ODM Decision Server Insights [https://developer.ibm.com/cics/2016/03/30/cics-odm-dsi-2/] 
+   
+ * Consuming CICS Events in ODM Decision Server Insights [https://developer.ibm.com/cics/2016/03/31/cics-odm-dsi-3/]
+
+RELATED INFORMATION
+ What is IBM ODM Advanced – Decision Server Insights? [https://developer.ibm.com/odm/2015/03/25/ibm-operational-decision-server-insights/]
+Latest version of CICS Explorer [http://www.ibm.com/support/docview.wss?uid=swg21404312]
+
+
+ 
+
+
+Cross reference information Segment Product Component Platform Version Edition Business Integration IBM Operational Decision Manager Advanced Platform Independent 8.8.0.1, 8.8 Advanced 
+PRODUCT ALIAS/SYNONYM
+ CICS/TS CICS TS CICS Transaction Server

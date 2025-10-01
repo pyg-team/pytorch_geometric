@@ -1,0 +1,42 @@
+Title: IBM Cognos Viewerに表示されるユーザー名を非表示にする - United States
+
+Text:
+ 技術情報(FAQS)
+
+質問
+ Cognos 8 バージョン8.1から10.2.2にアップグレードしています。以前のバージョンではsystem.xmlファイルの"ui_hide"パラメータ内に<CRN_HEADER_USERNAME/>を設定する事でユーザ名は非表示となっておりましたが、10.2.2では"サポートなし"となっており、動作いたしません。代替方法は無いでしょうか？ 
+
+回答
+使用されているcssファイルを編集して頂く方法が考らえれます。以下、その具体的な手順となります。
+-------- 
+
+ 1. IBM Cognos Connectionの画面右上にある"個人用領域のオプション"から個人用設定 --> 全般タブ --> スタイル にて使用されているスタイルを確認します。ここでは、スタイルにコーポレートが使用されているものと仮定します。 
+ 2. Cognosのサービスを停止します。 
+ 3. <C10_HOME>\webcontent\skins\corporate\viewer\CRN.cssファイルをコピー等によりそのバックアップを取得後、エディタで開きます。 
+ 4. .bannerTextを検索し、そのフォントサイズを00%、色を#000000（黒）にします。 
+ 5. 変更前）
+    .bannerText
+    {
+    color: #e7e7e7;
+    font-size:70%;
+    font-weight:bold;
+    white-space:nowrap;
+    padding: 1px 5px 1px 5px;
+    } 
+ 6. 変更後）
+    .bannerText
+    {
+    color: #000000;
+    font-size:00%;
+    font-weight:bold;
+    white-space:nowrap;
+    padding: 1px 5px 1px 5px;
+    } 
+ 7. Cognosのサービスを起動します。また、ブラウザのキャッシュを削除します。
+
+-------- 
+
+なお、上記の方法はパッチやFixPackを適用されるとcssファイルが上書きされ再設定が必要となりますのでご注意下さい。 
+
+また、手順の3. ですが、設定されてるスタイルが例えばクラシックであれば <C10_HOME>\webcontent\skins\classic となりますので、スタイルに応じた <C10_HOME>\webcontent\skins 以下のフォルダを参照して下さい。 関連情報
+#非表示にできる要素 [http://www.ibm.com/support/knowledgecenter/SSEP7J_10.2.2/com.ibm.swg.ba.cognos.ug_cra.10.2.2.doc/c_elementsyoucanhide.html]

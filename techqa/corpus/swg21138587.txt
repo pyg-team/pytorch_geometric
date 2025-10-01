@@ -1,0 +1,100 @@
+Title: IBM MustGather: Out of Memory errors with WebSphere Application Server on AIX, Linux, or Windows - United States
+
+Text:
+MustGather; MustGather; MustGather; OOM; outofmemory; outofmemoryexception; java; lang; memory; outofmemoryerror; MustGatherDocument; WASWEB; WOTWEB; javacore; heap; heapdump; JVM; autopd TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Collecting data for Out of Memory errors with IBM WebSphere Application Server. Gathering this MustGather information before calling IBM Support will help familiarize you with the troubleshooting process and save you time. 
+
+RESOLVING THE PROBLEM
+This MustGather details how to collect necessary logs for an OutOfMemory exception on AIX, Linux, or Windows. 
+
+If IBM support has already been contacted for this issue, continue through this document as requested by the support representative. Otherwise, refer to MustGather: Read first for WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21145599].
+
+OutOfMemory specific MustGather information
+
+Note: If the problem has already occurred with verboseGC enabled, please skip to Step 6.  1. Enable verboseGC.
+    Enabling verboseGC in WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21114927].
+    
+    
+ 2. Stop the WebSphere Application Server.
+    
+    
+ 3. Clear all Application Server log files.
+    
+    
+ 4. Restart the Application Server.
+    
+    
+ 5. Recreate the Out of Memory condition or wait for the condition to reoccur.
+    
+    
+ 6. Collect the following:
+    *Please collect data for a single OOM event on a single server unless otherwise instructed.*  * heapdump*.phd 
+     * javacore*.txt 
+     * Snap*.trc 
+     * server.xml file for the server experiencing the OutOfMemory exception. 
+     * V8.0.0.2 and above (optional): A system core file is generated with OOMs on Java 6 R26 and above. Please collect the respective core*.dmp file(s) if requested by IBM Support. 
+     * All files located in the following directory:  * For WebSphere Application Server V6.0 to V8.0:  * AIX or Linux:
+             profile_root/logs/server_name
+             
+             
+           * Windows:
+             profile_root\logs\server_name
+             
+             
+          
+          
+        * For WebSphere Application Server V5.1:  * AIX or Linux:
+             install_root/logs/server_name
+             
+             
+           * Windows:
+             install_root\logs\server_name
+          
+          
+       
+       
+    
+    
+
+
+For a listing of all technotes, downloads, and educational materials specific to Out of Memory errors, search the WebSphere Application Server support site [http://www.ibm.com/software/webservers/appserv/was/support/] . 
+
+Related information [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852] 
+Submitting information to IBM support [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21153852] 
+Steps to getting support for WebSphere Application Server [http://www.ibm.com/developerworks/websphere/support/appserver_support.html] 
+MustGather: Read first for WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=180&uid=swg21145599] 
+Troubleshooting guide for WebSphere Application Server [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27005324] 
+Generating System Cores on OutOfMemory Errors [http://www.ibm.com/support/docview.wss?uid=swg21626849] 
+
+EXCHANGING DATA WITH IBM SUPPORT
+To diagnose or identify a problem, it is sometimes necessary to provide Technical Support with data and information from your system. In addition, Technical Support might also need to provide you with tools or utilities to be used in problem determination. You can submit files using one of following methods to help speed problem diagnosis: 
+
+ * IBM Support Assistant (ISA) 
+ * Service Request (SR)
+ * E-mail 
+ * FTP to the Enhanced Customer Data Repository (ECuRep)
+
+
+
+
+Instructions for exchanging information with IBM Support [http://www.ibm.com/support/docview.wss?uid=swg21153852]
+
+READ FIRST AND RELATED MUSTGATHERS
+MustGather: Read first for WebSphere Application Server [http://www.ibm.com/support/docview.wss?uid=swg21145599]
+
+
+
+
+ Crash problem [http://www.ibm.com/support/search.wss?tc=SSCYP8L&q=MustGatherDocument] Hang / High CPU / Performance Problem [http://www.ibm.com/support/search.wss?tc=SSCMPB9&q=MustGatherDocument] 
+
+RELATED INFORMATION
+ Recording your screen to share with IBM Support [https://www.ibm.com/developerworks/community/blogs/IBMElectronicSupport/entry/recording_your_screen_to_share_with_support?lang=en]
+
+
+ 
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Application Servers WebSphere Application Server - Express Hangs/performance degradation AIX, Linux, Windows 7.0, 6.1, 6.0, 5.1 Application Servers Runtimes for Java Technology Java SDK

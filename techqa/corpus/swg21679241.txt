@@ -1,0 +1,44 @@
+Title: IBM NULLPPOINTER exception from JDBC application while accessing temporary log or cache files - United States
+
+Text:
+db2.jcc.outputDirectory; NULLPPOINTER; JDBC TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ Applications using IBM Data Server Driver for JDBC and SQLJ will throw NULLPPOINTER exception while accessing temporary log or cache files. This includes jccServerListCache.bin, jccdiag.log and connlicj.bin 
+
+SYMPTOM
+If application is receiving the nullpointer exception while accessing cached license file (connlicj.bin), application log will show call stack similar to below:
+
+java.lang.NullPointerException
+at com.ibm.db2.jcc.am.lp.b(lp.java:632)
+at com.ibm.db2.jcc.am.kp.a(kp.java:581)
+at com.ibm.db2.jcc.am.Connection.isLicenseValidatedWithServerLicenseProc(Connection.java:8223)
+at com.ibm.db2.jcc.am.Connection.validatedByLicenseProc(Connection.java:4827)
+at com.ibm.db2.jcc.am.Connection.checkForLicenseRestrictions(Connection.java:4790)
+at com.ibm.db2.jcc.am.Connection.completeConnect(Connection.java:4736)
+at com.ibm.db2.jcc.t4.b.completeConnect(b.java:614)
+at com.ibm.db2.jcc.t4.b.a(b.java:425)
+at com.ibm.db2.jcc.t4.b.a(b.java:397)
+at com.ibm.db2.jcc.t4.b.<init>(b.java:335)
+at com.ibm.db2.jcc.DB2SimpleDataSource.getConnection(DB2SimpleDataSource.java:233)
+at com.ibm.db2.jcc.DB2SimpleDataSource.getConnection(DB2SimpleDataSource.java:199)
+at com.ibm.db2.jcc.DB2Driver.connect(DB2Driver.java:474)
+at com.ibm.db2.jcc.DB2Driver.connect(DB2Driver.java:115)
+at java.sql.DriverManager.getConnection(Unknown Source)
+at java.sql.DriverManager.getConnection(Unknown Source)
+
+No apparent errors found in JCC trace file. 
+
+
+CAUSE
+JDBC driver property db2.jcc.outputDirectory specifies where the IBM Data Server Driver for JDBC and SQLJ stores temporary log or cache files. This includes jccServerListCache.bin, jccdiag.log and connlicj.bin. If db2.jcc.outputDirectory is not specified, the IBM Data Server Driver for JDBC and SQLJ searches for a directory that is specified by the java.io.tmpdir system property. If you are using either db2.jcc.outputDirectory or java.io.tmpdir to store these temporary files, and user running the application does not have read, write permissions on the directories specified with db2.jcc.outputDirectory or java.io.tmpdir, this error may occur. 
+
+
+DIAGNOSING THE PROBLEM
+Check if your application is using db2.jcc.outputDirectory or java.io.tmpdir properties and if user executing the application has read, write permissions to it.
+
+RESOLVING THE PROBLEM
+Make sure user has read, write permissions to db2.jcc.outputDirectory and/or java.io.tmpdir to store and read temporary JCC files.
+
+RELATED INFORMATION
+ db2.jcc.outputDirectory [http://www-01.ibm.com/support/knowledgecenter/SSEPGG_10.1.0/com.ibm.db2.luw.apdv.java.doc/src/tpc/imjcc_r0052075.html?lang=en]

@@ -1,0 +1,47 @@
+Title: IBM SQL0727N error during implicit rebind attempt required by db2look - United States
+
+Text:
+SQL0727N; -551 TECHNOTE (FAQ)
+
+QUESTION
+ This technote explains a cause and resolution for following error that can occur when using db2look on an IBM DB2® database:
+SQL0727N An error occurred during implicit system action type "1". 
+Information returned for the error includes SQLCODE "-551", SQLSTATE 
+"42501" and message tokens "IRDDBUSR|SELECT|SYSIBM.SYSCOLUMNS". 
+SQLSTATE=56098 
+
+ANSWER
+Problem:
+After a database has been migrated to a new instance using redirected restore, and all database permissions for the previous instance ID have been revoked, the following error can occur when running db2look as current instance ID:
+
+SQL0727N An error occurred during implicit system action type "1". 
+Information returned for the error includes SQLCODE "-551", SQLSTATE 
+"42501" and message tokens "IRDDBUSR|SELECT|SYSIBM.SYSCOLUMNS". 
+SQLSTATE=56098 SQLCA Size = 136 SQLCODE = -727 
+
+ Tokens = 1 þ -551 þ 42501 þ IRDDBUSR|SELECT|SYSIBM.SYSCOLUMNS 
+
+ RDS fn = SQLRPRIV 
+
+ RC = 0x8012006D = -2146303891 
+
+Cause:
+
+The error message -551 means that the user does not have the privilege to perform the specified operation. 
+
+Since the previous instance owner ID normally would not exist on the restored UNIX system in question, and database permission have been revoked for that ID, the implict rebinds will fail. This is because the REBIND recreates the package without using the bind file by using the autorization ID from the BOUNDBY column - after a resotre. This value would be that of the previous instance ID.
+
+The db2look tool requires that a number of DB2 packages be created, and bound to the database. 
+You, therefore, should explicitly BIND - not REBIND - the packages as the new instance owner ID before using db2look. You can verify this by checking the SYSCAT.PACKAGEs BINDBY column - which should show the new instance owner ID.
+
+Solution:
+
+
+
+ 1. GRANT permission to the previous instance ID in the new restored database -- OR -- 
+ 2. Drop and recreate the package. As the new instance ID -
+
+ * cd $INSTHOME/sqllib/bnd 
+ * db2 bind db2look.bnd 
+ * db2 bind db2lkfun.bnd 
+ * db2 bind db2advis.bnd

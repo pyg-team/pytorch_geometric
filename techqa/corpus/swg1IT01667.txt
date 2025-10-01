@@ -1,0 +1,196 @@
+Title: IBM IT01667: PACKED DESCRIPTOR OF A RANGE PARTITION TABLE CAN GET CORRUPTED WHEN ATTACHING A PARTITION. - United States
+
+Text:
+z/os  A FIX IS AVAILABLE
+DB2 Version 9.7 Fix Pack 10 for Linux, UNIX, and Windows [http://www-01.ibm.com/support/docview.wss?uid=swg24038641]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The packed descriptor of a Range Partition Table can get
+   corrupted when attaching a partition, if the target table
+   column(s) have statistics collected, and does not have default
+   values defined on its column(s); but the source column(s)
+   has/had default values. (The corruption is confined to a wrong
+   stats_offset for the column packed descriptor)
+   
+   In DPF environment, the -901 trap happens during the attach:
+   
+   alter table t2 attach partition t1p0 starting from (0) ending at
+   (9) from table t1p0
+   DB21034E  The command was processed as an SQL statement because
+   it was not a
+   valid Command Line Processor command.  During SQL processing it
+   returned:
+   SQL0901N  The SQL statement failed because of a non-severe
+   system error.
+   Subsequent SQL statements can be processed.  (Reason "Packed
+   descriptor
+   corruption found. Please run RUNSTATS on this table".)
+   SQLSTATE=58004
+   
+   In non-DPF environment, the -901 trap happens during set
+   integrity:
+   
+   set integrity for t2 immediate checked
+   DB21034E  The command was processed as an SQL statement because
+   it was not a
+   valid Command Line Processor command.  During SQL processing it
+   returned:
+   SQL0901N  The SQL statement failed because of a non-severe
+   system error.
+   Subsequent SQL statements can be processed.  (Reason "Packed
+   descriptor
+   corruption found. Please run RUNSTATS on this table".)
+   SQLSTATE=58004
+   
+   The top of stack looks like this:
+   Stack #1             Signal #12        Timestamp
+   2014-04-28-05.22.20.930414
+   0        ossDumpStackTraceEx
+   1        OSSTrapFile::dumpEx
+   2        sqlo_trce
+   3        sqloDumpDiagInfoHandler
+   4        __restore_rt
+   5        pthread_kill
+   6        sqloDumpEDU
+   7        sqldDumpContext
+   8        sqlrr_dump_ffdc
+   9        sqlzeDumpFFDC
+   10       sqlzeSqlCode
+   11       sqlrrSqlCode
+   12       sqlrlc_systables_fetch_from_disk
+   13       sqlrlc_systables_load_entry
+   14       sqlrlc_load_entry
+   15       sqlrlc_request_ulock
+   16       sqlrlc_find_request_usage_lock
+   17       sqlrlc_systables_fetch
+   
+   
+    
+   
+   
+
+LOCAL FIX
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:                                              *
+   * all                                                          *
+   ****************************************************************
+   * PROBLEM DESCRIPTION:                                         *
+   * See Error Description                                        *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   * Update to DB2 9.7 Fix Pack 10                                *
+   ****************************************************************
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fixed in DB2 9.7 Fix Pack 10
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+ *  No Local Fix
+   
+   
+    
+   
+   
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IT01667
+   
+   
+ * REPORTED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * REPORTED COMPONENT ID
+   DB2FORLUW
+   
+   
+ * REPORTED RELEASE
+   970
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2014-05-08
+   
+   
+ * CLOSED DATE
+   2014-12-01
+   
+   
+ * LAST MODIFIED DATE
+   2014-12-01
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+    IT04046 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT04046] IT04047 [http://www-01.ibm.com/support/docview.wss?uid=swg1IT04047]
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   DB2 FOR LUW
+   
+   
+ * FIXED COMPONENT ID
+   DB2FORLUW
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R970 PSN
+   UP
+   
+   
+ * RA10 PSN
+   UP
+   
+   
+ * RA50 PSN
+   UP

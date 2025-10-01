@@ -1,0 +1,26 @@
+Title: IBM Operational Decision Manager on Cloud Technotes - United States
+
+Text:
+ NEWS
+
+ABSTRACT
+ This page provides links to technotes that contain information about IBM Operational Decision Manager (ODM) on Cloud. 
+
+CONTENT
+What's new in IBM Operational Decision Manager [http://www.ibm.com/support/docview.wss?uid=swg21992623] 
+Learn about the latest features and resources. 
+
+ * IBM Operational Decision Manager on Cloud - Detailed System Requirements [http://www.ibm.com/support/docview.wss?uid=swg27046500]
+   Provides links to the detailed system requirements (DSR) for IBM Operational Decision Manager (ODM) on Cloud and information on the product's compatibility with IBM Operational Decision Manager. 
+ *  [http://www.ibm.com/support/docview.wss?uid=swg21966156]IBM Operational Decision Manager on Cloud - Known Limitations [http://www.ibm.com/support/docview.wss?uid=swg21966156]
+   Lists the known limitations in IBM ODM on Cloud, and provides comments and workarounds to resolve the problems. These limitations can include display issues, problems with features, and missing information. 
+ * Password policy strengthened for ODM on Cloud [http://www.ibm.com/support/docview.wss?uid=swg22011280] 
+   ODM on Cloud portal passwords get stronger, expiring after 60 days instead of 90. 
+ * IBM Operational Decision Manager on Cloud Compatibility [http://www.ibm.com/support/docview.wss?uid=swg21966923]
+   Explains how to share rule projects between IBM ODM on Cloud and the on-premises Operational Decision Manager. 
+ * IBM Cloud Product Insights deprecated for IBM Operational Decision Manager on Cloud in Bluemix [http://www.ibm.com/support/docview.wss?uid=swg22013741]
+   This service is set to be discontinued for ODM on Cloud. A new monitoring service is being developed for the next release of ODM on Cloud. 
+ * Best practices for REST and SOAP invocation [http://www.ibm.com/support/docview.wss?uid=swg22004722]
+   ODM on Cloud supports the use of basic authentication in invoking REST and SOAP APIs. This webpage covers using service credentials to authenticate calling applications, and addresses some of the associated errors. 
+ * Rule Designer crashes when you try to connect to IBM ODM on Cloud [http://www.ibm.com/support/docview.wss?uid=swg21976997]
+   Your browser settings prevent Rule Designer from connecting to the IBM ODM on Cloud portal. When authentication fails, Rule Designer crashes.

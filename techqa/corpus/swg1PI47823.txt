@@ -1,0 +1,173 @@
+Title: IBM PI47823: In Liberty profile ignoreCase=true is not honored for administra tor-role entries - United States
+
+Text:
+  FIXES ARE AVAILABLE
+8.5.5.8: WebSphere Application Server V8.5.5 Fix Pack 8 [http://www-01.ibm.com/support/docview.wss?uid=swg24041178]
+8.5.5.9: WebSphere Application Server V8.5.5 Fix Pack 9 [http://www-01.ibm.com/support/docview.wss?uid=swg24041819]
+8.5.5.10: WebSphere Application Server V8.5.5 Fix Pack 10 [http://www-01.ibm.com/support/docview.wss?uid=swg24042150]
+8.5.5.11: WebSphere Application Server V8.5.5 Fix Pack 11 [http://www-01.ibm.com/support/docview.wss?uid=swg24043005]
+8.5.5.12: WebSphere Application Server V8.5.5 Fix Pack 12 [http://www-01.ibm.com/support/docview.wss?uid=swg24043844]
+8.5.5.13: WebSphere Application Server V8.5.5 Fix Pack 13 [http://www-01.ibm.com/support/docview.wss?uid=swg24044479]
+
+
+SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  In Liberty profile ignoreCase=true is not honored for
+   administrator-role entries
+   
+   
+   When you define a group in Liberty profile server.xml with
+   case
+   senstivity you will Unable to login into into  adminCenter
+   for
+   administrative functionality
+   
+   Example
+   
+   LDAP has group name CN=IBMgroup,CN=Users,DC=IBMldap,DC=local
+   
+   In Liberty profile server.xml the administrator-role was set
+   with
+   group role is defined with group name in lowercase.. as
+   follows
+   
+   cn=IBMgroup,cn=Users,dc=IBMldap,dc=local
+   
+   ignoreCase=true will help for authorization for group but it
+   is
+   not working in Liberty profile.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  Defined correct group name in server.xml to match with ldap
+   group.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  ****************************************************************
+   * USERS AFFECTED:  All users of IBM WebSphere Application      *
+   *                  Server Liberty Profile - Security           *
+   ****************************************************************
+   * PROBLEM DESCRIPTION: In Liberty profile ignoreCase=true is   *
+   *                      not honored for administrator-role      *
+   *                      entries                                 *
+   ****************************************************************
+   * RECOMMENDATION:                                              *
+   ****************************************************************
+   The authorization decision of the administrative role mapping
+   table and the application role mapping  was not consisitent,
+   because the administrative role mapping table did not take into
+   account of the setting of ignoreCase of the active user
+   registry. As a result, there was a possibility that the
+   administrative role mapping table rejected the authorization
+   request even if it should be granted.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  With this fix, all of the authorization tables uses the same
+   algorithm for authorization decision.
+   
+   The fix for this APAR is currently targeted for inclusion in fix
+   pack 8.5.5.8.  Please refer to the Recommended Updates page for
+   delivery information:
+   http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980 [http://www.ibm.com/support/docview.wss?rs=180&uid=swg27004980]
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   PI47823
+   
+   
+ * REPORTED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * REPORTED COMPONENT ID
+   5724J0814
+   
+   
+ * REPORTED RELEASE
+   855
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2015-08-28
+   
+   
+ * CLOSED DATE
+   2015-10-12
+   
+   
+ * LAST MODIFIED DATE
+   2015-10-12
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   LIBERTY PROFILE
+   
+   
+ * FIXED COMPONENT ID
+   5724J0814
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R855 PSY
+   UP

@@ -1,0 +1,58 @@
+Title: IBM How Connect TDWC 9.3 to TWS Engine lower level release - United States
+
+Text:
+dwc 93; connect; SSL ; TLS TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM(ABSTRACT)
+ DWC 9.3 users cannot connect to TWS Engine lower level releases (8.5.1 until 9.2) 
+
+SYMPTOM
+Unable to connect to TWS 8.5.1 ,8.6 or 9.1/9.2 from DWC 9.3. 
+
+Check the WAS SystemOut.log for error :
+
+SSL0080E: javax.net.ssl.SSLHandshakeException - The client and server could not negotiate the desired level of security. Reason: Server chose SSLv3, 
+but that protocol version is not enabled or not supported by the client. javax.net.ssl.SSLHandshakeException: Server chose SSLv3, but that protocol version is not enabled or not supported by the client.
+
+
+CAUSE
+DWC 9.3 is packaged with WAS 8.5.5.4 and due to known vulnerabilities has SSLV3 disabled. However TWS 9.2 and earlier versions use SSLv3 by default and so the DWC 9.3 cannot connect
+
+
+RESOLVING THE PROBLEM
+You can solve this problem by configuring your TWS engines to use TLS instead of SSL :
+
+
+Backup and edit : 
+
+TWA_HOME/WAS/TWSProfile/config/cells/TWSNodeCell/security.xml 
+
+Find sslProtocol and change "SSL_TLS" to "TLS" 
+
+Find ssl.protocol and change value="SSL" to value="TLS" 
+
+Backup and edit : 
+
+TWA_HOME/WAS/TWSProfile/properties/ssl.client.props 
+
+Find com.ibm.ssl.protocol=SSL and change to com.ibm.ssl.protocol=TLS 
+
+Backup and edit : 
+
+TWA_HOME/WAS/TWSProfile/temp/ssl.client.props 
+
+Find com.ibm.ssl.protocol=SSL and change to com.ibm.ssl.protocol=TLS 
+
+Stop and restart WAS. 
+
+*Be aware that your Engines are now using TLS and so you must also reconfigure any DWC 9.2 or 9.1 installations that need to connect to those engines. You would change them to use TLS in the same way as above but also by the same changes in these copies of security.xml and ssl.client.props : 
+
+TWA_HOME/JazzSM/profile/config/cells/JazzSMNode01Cell/security.xml 
+
+TWA_HOME/JazzSM/profile/properties/ssl.client.props 
+
+TWA_HOME/JazzSM/profile/temp/ssl.client.props 
+
+Please consider that since you configure with TLS the WAS of TWS Engine also the Dynamic Agent can be impacted. 
+
+See technote 1689332.

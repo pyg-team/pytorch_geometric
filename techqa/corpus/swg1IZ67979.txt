@@ -1,0 +1,129 @@
+Title: IBM IZ67979: ISCLITE CUSTOMIZATION NEEDS TO BE ADDRESSED IN ADMINISTRATOR'S GUIDE - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS DOCUMENTATION ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  The ITM Administrator's Guide does not mention any consequences
+   when choosing a supported LDAP server to configure TEPS
+   authentication (Active Directory 2000/2003, IBM Tivoli Directory
+   Server 6) and then making customizations to parameters for the
+   repository in eWAS within ISCLite. Any customizations made
+   within ISCLite will be overwritten and cleared any time the TEPS
+   is reconfigured.
+   .
+   The location of the additional information should be placed in
+   Chapter 5. Enabling user authentication under the User
+   authentication through the portal server->TEPS/e administration
+   console section
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  To preserve any ISCLite (or manual changes to eWAS XML files),
+   choose the LDAP type of other during TEPS configuration. When
+   Other is chosen, the repository information is handled by eWAS
+   and is not affected by ITM directly.
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  The ITM Administrator's Guide does not mention any consequences
+   when choosing a supported LDAP server to configure TEPS
+   authentication (Active Directory 2000/2003, IBM Tivoli Directory
+   Server 6) and then making customizations to parameters for the
+   repository in eWAS within ISCLite. Any customizations made
+   within ISCLite will be overwritten and cleared any time the TEPS
+   is reconfigured.
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  This has been fixed in the IBM Tivoli Monitoring 6.2.2 Fix Pack
+   2 Administrator Guide.
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IZ67979
+   
+   
+ * REPORTED COMPONENT NAME
+   OMEG DIST INSTA
+   
+   
+ * REPORTED COMPONENT ID
+   5608A41CI
+   
+   
+ * REPORTED RELEASE
+   621
+   
+   
+ * STATUS
+   CLOSED DOC
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2010-01-12
+   
+   
+ * CLOSED DATE
+   2010-02-22
+   
+   
+ * LAST MODIFIED DATE
+   2010-02-22
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+FIX INFORMATION
+
+APPLICABLE COMPONENT LEVELS

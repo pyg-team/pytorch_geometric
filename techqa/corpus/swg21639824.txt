@@ -1,0 +1,35 @@
+Title: IBM Error applying an IBM Connections fix using the Update Installer - United States
+
+Text:
+ TECHNOTE (TROUBLESHOOTING)
+
+PROBLEM
+When applying IBM Connections fixes using the Update Installer, error occurs and the fix is not installed. Error codes include ADMA5008E, ADMA0063E, WASX7341W. The logs show messages similar to these: 
+
+ ADMA5008E: The EJBDeploy program failed on file /tmp/app4871266637227895414.ear. Exception: com.ibm.etools.ejbdeploy.EJBDeploymentException: Error executing EJBDeploy
+
+ADMA0063E: An error occurred during Enterprise JavaBeans (EJB) deployment. Exception: com.ibm.etools.ejbdeploy.EJBDeploymentException: Error executing EJBDeploy
+
+WASX7341W: No "save" was performed before the interactive scripting session exited; configuration changes will not be saved.
+
+
+CAUSE
+This is a known issue that occurs in WebSphere Application Server (WAS). It is caused by a caching issue that is specific to the Eclipse OSGI cache. The technote titled EJBDeploy command Exceptions on WebSphere Application Server and Eclipse OSGI cache purge [http://www-304.ibm.com/support/docview.wss?uid=swg21382867] issues has more technical details. Please note that even though the referenced WAS technote mentions AIX, the issue can occur in other operating systems running WAS, such as Linux or Windows.
+
+
+RESOLVING THE PROBLEM
+In many cases, re-attempting to apply the fix resolves the issue. Please re-try the fix installation first. If a second try fails, please follow these steps to resolve: 
+
+
+1. If the operating system is AIX or Linux, delete the profile ejbdeploy configuration directories:
+
+<default profile or dmgr profile>/ejbdeploy/configuration/
+
+and "possibly" these if they exist at the root of the UNIX file system:
+
+/ejbdeploy/configuration/
+~/.eclipse/configuration/
+
+2. Regardless of operating system, delete the server ejbdeploy/deploytool/itp/configuration directory except the "config.ini" file, located at $WAS_HOME/deploytool/itp/configuration/
+
+The itp/configuration directory is created the first time you run ejbdeploy and, if deleted, is recreated when you run ejbdeploy again.

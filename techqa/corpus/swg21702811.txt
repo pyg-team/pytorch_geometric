@@ -1,0 +1,14 @@
+Title: IBM mySAP Fixpack 7.1.1-TIV-ITM_SAP-FP0001 is available in Passport Advantage - United States
+
+Text:
+5724B97SOTR; CN0MJML TECHNOTE (FAQ)
+
+QUESTION
+ This fix pack 7.1.1-TIV-ITM_SAP-FP0001 is not available in FixCentral, where do you find it? 
+
+ANSWER
+Fixpack 7.1.1-TIV-ITM_SAP-FP0001 is available in Passport Advantage only.
+IBM Tivoli Composite Application Manager Agent for SAP Applications 7.1.1.1, Multilingual, Multiplatform (CN0MJML ) 
+
+RELATED INFORMATION
+#Agent for SAP Applications 7.1.1-TIV-ITM_SAP-FP0001 [http://www.ibm.com/support/docview.wss?uid=swg24037991]

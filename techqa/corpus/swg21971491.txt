@@ -1,0 +1,36 @@
+Title: IBM Installation of InfoSphere Optim Performance Manager (OPM) fails with 'CDPMA1114E A repository server operation failed' and DB2 Error SQLCODE=-723 - United States
+
+Text:
+OPM CDPMA1114E SQL 723 Linux TECHNOTE (FAQ)
+
+QUESTION
+ Why installation of InfoSphere Optim Performance Manager (OPM) returns 'CDPMA1114E A repository server operation failed' and DB2 Error SQLCODE=-723? 
+
+CAUSE
+This is a known issue that can occur if during the OPM installation the database directory has the default path selected.
+The install fails to run 'db2chglibpath' to set the path to the GSKit location
+The problem only happens when installing OPM 5.3.1 GA on Linux platform, and has been fixed in 5.3.1 APAR 2 (8391 driver) or later.
+
+
+ANSWER
+There are two options: 
+
+
+1. Workaround:
+Run the following command as a root user from the correct sqllib\bin directory.
+db2chglibpath --search=/DoNotCreate.*marker2_for_chglibpath --replace=<DB2_install_directory > <OPM_install_directory>
+
+Example :
+db2chglibpath --search=/DoNotCreate.*marker2_for_chglibpath --replace=/opt/ibm/db2/V10.5/lib64/gskit /opt/ibm/OPM/RepositoryServer/bin/fpesnap648_8363
+
+After running this command, restart OPM. 
+
+ 
+
+2. Install the latest OPM Driver available, for more details, please refer to the URLs below.
+
+RELATED INFORMATION
+ OPM Driver Details [http://www-01.ibm.com/support/docview.wss?uid=swg27024687]
+Getting fixes from IBM Fix Central [http://www-01.ibm.com/support/knowledgecenter/SS9PE5_5.3.1/com.ibm.datatools.perfmgmt.tshoot.doc/ts_fixes_fc.html]
+IBM Fix Central [www.ibm.com/support/fixcentral]
+How to install OPM driver [http://www-01.ibm.com/support/knowledgecenter/SS9PE5_5.3.1/com.ibm.datatools.perfmgmt.tshoot.doc/install_interim_fix.html]

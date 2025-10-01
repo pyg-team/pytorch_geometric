@@ -1,0 +1,184 @@
+Title: IBM IV44611: ISAMESSO ADAPTER NOT FUNCTIONING CORRECTLY WITH IMS CLUSTER - United States
+
+Text:
+ SUBSCRIBE
+You can track all active APARs for this component.
+
+
+
+APAR STATUS
+ * CLOSED AS PROGRAM ERROR.
+    
+   
+   
+
+ERROR DESCRIPTION
+ *  Description: When the ISAMESSO adapter service is setup to
+   point at a
+   load balancer or IHS server URL that is in front of a cluster
+   of IMS
+   servers, then requests from the adapter fail or don't have
+   expected
+   results.  The problem is with jsessionid cookie information not
+   being
+   maintained in the adapter requests.  When the add requests
+   fails, it
+   shows misleading response message of following, which is not
+   the reason
+   of failure.
+   
+   "ERROR User ID already registred to the server"
+   
+   The IMS/WAS server logs will show following corresponding root
+   cause of
+   the failure.
+   
+   6/12/13 15:03:34:426 CDT] 00000033 ProvisioningS I   SOAP
+   service
+   failed: Caught exception while getting registration status for
+   IMS user
+   '<domain name>\<username>'
+   encentuate.ims.result.ImsException: Session does not exist in
+   IMS.
+   
+   
+   Steps to Duplicate: Install/setup a 2-node IMS cluster with IHS
+   server
+   in front of the 2 nodes.  Then with the ISAMESSO adapter
+   service, set
+   the "ISAM ESSO Server DNS name or IP" and "ISAM ESSO Server
+   Port"
+   values on service form to point at the IHS server and not
+   directly at
+   one of the IMS servers.  Then submit add request and this will
+   fail, or
+   run reconcile, which will succeed, but return no accounts to
+   TIM server
+   
+   Desired Behavior: The ISAMESSO adapter should function
+   correctly when
+   pointing at IHS or load balancer hostname/IP and port that is
+   in front
+   of a cluster of IMS servers.
+   
+   Environment: ISAMESSO 5.1.11 adapter, IMS/ESSO 8.2, TIM 5.x/6.x
+   
+   Work around:  Configure the service form information of the
+   ISAMESSO
+   service in TIM to point directly at one of the IMS servers
+   itself.
+   
+   
+    
+   
+   
+
+LOCAL FIX
+ *  1016
+   
+   
+    
+   
+   
+
+PROBLEM SUMMARY
+ *  Adapter needs IMS cluster connection
+   
+   
+    
+   
+   
+
+PROBLEM CONCLUSION
+ *  Fix shipped in ESSO Adapter v6.02 and 5.1.1
+   2
+   
+   
+    
+   
+   
+
+TEMPORARY FIX
+
+COMMENTS
+
+APAR INFORMATION
+ * APAR NUMBER
+   IV44611
+   
+   
+ * REPORTED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * REPORTED COMPONENT ID
+   5724C34AG
+   
+   
+ * REPORTED RELEASE
+   510
+   
+   
+ * STATUS
+   CLOSED PER
+   
+   
+ * PE
+   NoPE
+   
+   
+ * HIPER
+   NoHIPER
+   
+   
+ * SPECIAL ATTENTION
+   NoSpecatt
+   
+   
+ * SUBMITTED DATE
+   2013-06-22
+   
+   
+ * CLOSED DATE
+   2013-09-28
+   
+   
+ * LAST MODIFIED DATE
+   2013-09-28
+   
+   
+
+ * APAR IS SYSROUTED FROM ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+ * APAR IS SYSROUTED TO ONE OR MORE OF THE FOLLOWING:
+   
+   
+   
+
+MODULES/MACROS
+ *  AGENT
+   
+   
+    
+   
+   
+
+FIX INFORMATION
+ * FIXED COMPONENT NAME
+   ITIM AGENTS
+   
+   
+ * FIXED COMPONENT ID
+   5724C34AG
+   
+   
+
+APPLICABLE COMPONENT LEVELS
+ * R510 PSY
+   UP
+   
+   
+ * R600 PSY
+   UP

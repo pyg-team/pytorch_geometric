@@ -1,0 +1,63 @@
+Title: IBM Installing DB2 Content Manager V8.3 Web Services on WebSphere Application Server V6 in a Network Deployment Environment - United States
+
+Text:
+Web Services; WAS ND 6; Deployment TECHNOTE (FAQ)
+
+QUESTION
+ Support for WebSphere(R) Application Server Version 6 Network Deployment is introduced for DB2(R) Content Manager Version 8.3 starting in Fix Pack 1. The primary supported method for installing DB2 Content Manager Version 8.3 on WebSphere Application Server Version 6 Network Deployment is to migrate both the deployment manager and the node containing the installed DB2 Content Manager Version 8.3 Web Services from WebSphere Application Server Version 5.1.1 to Version 6. 
+
+However, if you do not have a pre-existing installation of WebSphere Application Server Version 5.1.1, you might want to install DB2 Content Manager Version 8.3 with Fix Pack 1 (or later) directly on WebSphere Application Server Version 6 which is federated to a deployment manager. 
+
+CAUSE
+Because support for WebSphere Application Server Version 6 is only available starting from DB2 Content Manager Version 8.3 Fix Pack 1, installing and using the DB2 Content Manager Version 8.3 Web Services on WebSphere Application Server Version 6 (whether in a network deployment configuration or not) is not a supported configuration. The instructions included here can be used to complete the setup of the desired network deployment configuration.
+
+ANSWER
+Network deployment configurations consist of one or more application server nodes that are federated to a single deployment manager node. 
+
+When planning to install Fix Pack 1 (or later), a primary consideration is whether the application server node that is currently hosting the DB2 Content Manager V8.3 Web Services is currently managed by the WebSphere Application Server V6 deployment manager. If the node is not managed and is not currently federated to the deployment manager, then the Fix Pack 1 installation can be run according to the instructions contained in the Fix Pack 1 documentation and these instructions are not necessary. 
+
+After Fix Pack 1 has been applied, the node may be federated to the deployment manager. If the node hosting the DB2 Content Manager V8.3 Web Services is a managed node federated to the deployment manager at the time Fix Pack 1 is installed, then the instructions below should be used to ensure proper installation of Fix Pack 1 (or later).
+
+These instructions support the following network deployment configurations: 
+
+ * Deployment manager and DB2 Content Manager Version 8.3 Web Services with Fix Pack 1 (or later) installed on the application server node, coexisting on the same machine. 
+
+Dmgr & cmwebsvc coexist on the same machine [/support/docview.wss?uid=swg21250151&amp;aid=1]  * Deployment manager on one machine, and DB2 Content Manager Version 8.3 Web Services with Fix Pack 1 installed on the application server node, on a separate machine.
+
+Dmgr & cmwebsvc exist on separate machines [/support/docview.wss?uid=swg21250151&amp;aid=2] 
+Instructions: 
+
+NOTE: Ensure that a supported HTTP server is available and has a plug-in installed for the WebSphere Application Server Version 6 deployment manager. Any installed plug-in is configured automatically for the default profile in WebSphere Application Server Version 6 (which means that if the default profile has changed since generating an HTTP server plug-in, a plug-in must also be generated for the current default profile). Instructions can be found below in the link titled "Installing Web server plug-ins". While performing the steps, make sure to use the correct location of the plugin-cfg.xml file. It can be found at (substitute local path to WebSphere Application Server Version 6 ND install location for path to WAS V6 ND install location): 
+<path to WAS V6 ND install location> \profiles\dmgr\config\cells\plugin-cfg.xml 
+
+1. Start the deployment manager if it is not already started. The deployment manager can be started using the Start menu or startManager.bat on Windows(R), or startManager.sh on Unix(R) platforms. 
+
+Example (substitute the correct path to the deployment manager installation for path to WebSphere_ND): 
+Windows: <path to WebSphere_N D> \AppServer\bin\startManager.bat 
+Unix: <path to WebSphere_ND > /AppServer/bin/startManager.sh 
+
+2. Stop the Web Services server if it is currently running. The server can be stopped from the deployment manager administration console. In the administration console, first navigate to Servers->Application Servers. Then, check the box next to the cmwebsvc server and click stop. After the server has been stopped successfully, proceed to the next step. 
+
+3. Download the file in the attachments section, cmwebsvc.jacl, to a temporary folder. This file contains updated instructions for updating the Web Services configuration when it is installed on a managed application server node in WebSphere Application Server V6. In a network deployment configuration, the WebSphere Application Server V6 application server node and the deployment manager node may coexist on the same machine or may be on separate machines. The temporary folder should be located on the machine hosting the application server node, and for Unix, should have proper permissions set for read/execute (the same should be true for the downloaded cmwebsvc.jacl file). 
+
+4. Open a command line console, and change to the location of the Fix Pack 1 (or later) installer script installUpdate.bat (on Unix, the file is named installUpdate). Then, execute the installer script, using the following argument. Substitute the filesystem/network location of the cmwebsvc.jacl file which was downloaded in step one for path to cmwebsvc.jacl: 
+-W propWebSvcsJaclPath.string1=" path to cmwebsvc.jacl" 
+
+For example, on Windows, the installer might be run as follows: 
+>installUpdate.bat -W propWebSvcsJaclPath.string1="C:\temp\cmwebsvc.jacl" 
+
+On Unix: 
+>installUpdate -W propWebSvcsJaclPath.string1="/tmp/cmwebsvc.jacl" 
+
+5. After the graphical installation program launches, follow the instructions contained in the Fix Pack 1 (or later) documentation. For more information, see the link below titled "Running the DB2 Content Manager fix pack installation program". 
+
+cmwebsvc.jacl [/support/docview.wss?uid=swg21250151&aid=4] [/support/docview.wss?uid=swg21250151&aid=3] RELATED INFORMATION
+ Planning to install Web server plug-ins [http://publib.boulder.ibm.com/infocenter/wasinfo/v6r0/topic/com.ibm.websphere.nd.doc/info/ae/ae/tins_scenario5.html]
+Running the DB2 Content Manager fix pack installation p [http://publib.boulder.ibm.com/infocenter/cmgmt/v8r3m0/index.jsp?topic=/com.ibm.cmgmtreadmefp.doc/fp1installcm12.htm]
+Installing DB2 Content Manager V8.3 Web Services on Web [http://www.ibm.com/support/docview.wss?uid=swg27006743]
+
+
+
+
+
+Cross reference information Segment Product Component Platform Version Edition Enterprise Content Management Content Manager Web Services AIX, Linux, Solaris, UNIX, Windows 2000, Windows NT, Windows XP, Windows 2003 8.3 All Editions
