@@ -1,14 +1,8 @@
 import torch
-import torch.multiprocessing as mp
 
 from torch_geometric.llm.models import LLM, GRetriever
 from torch_geometric.nn import GAT
 from torch_geometric.testing import onlyRAG, withPackage
-
-try:
-    mp.set_start_method('spawn', force=True)
-except RuntimeError:
-    pass
 
 
 @onlyRAG
@@ -56,7 +50,6 @@ def test_g_retriever() -> None:
     # Test inference:
     pred = model.inference(question, x, edge_index, batch, edge_attr)
     assert len(pred) == 1
-    del model
 
 
 @onlyRAG
@@ -105,4 +98,3 @@ def test_g_retriever_many_tokens() -> None:
     # Test inference:
     pred = model.inference(question, x, edge_index, batch, edge_attr)
     assert len(pred) == 1
-    del model
