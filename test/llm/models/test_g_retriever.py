@@ -15,6 +15,7 @@ def test_g_retriever() -> None:
         model_name='Qwen/Qwen3-0.6B',
         num_params=1,
         dtype=torch.float16,
+        sys_prompt="You are an agent, answer the questions"
     )
 
     gnn = GAT(
@@ -62,6 +63,7 @@ def test_g_retriever_many_tokens() -> None:
         model_name='Qwen/Qwen3-0.6B',
         num_params=1,
         dtype=torch.float16,
+        sys_prompt="You are an agent, answer the questions"
     )
 
     gnn = GAT(
