@@ -1,10 +1,8 @@
-import gc
 import os
 import random
 import string
 
 import pytest
-import torch
 
 from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.datasets.web_qsp_dataset import KGQABaseDataset
