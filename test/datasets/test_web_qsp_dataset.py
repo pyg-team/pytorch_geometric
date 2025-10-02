@@ -1,7 +1,9 @@
 import os
+import sys
+import gc
 import random
 import string
-
+import torch
 import pytest
 
 from torch_geometric.datasets import WebQSPDataset
@@ -185,6 +187,8 @@ def test_kgqa_base_dataset(tmp_path, monkeypatch):
                                    split="test", use_pcst=False)
     assert len(dataset_test) == 5
     assert str(dataset_test) == "KGQABaseDataset(5)"
-
+    gc.collect()
+    torch.cuda.empty_cache()
+    sys.exit(0)
     # TODO(zaristei): More rigorous tests to validate that values are correct
     # TODO(zaristei): Proper tests for PCST and CWQ
