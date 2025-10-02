@@ -1,5 +1,6 @@
-import torch
 import pytest
+import torch
+
 from torch_geometric.llm.models import LLM, GRetriever
 from torch_geometric.nn import GAT
 from torch_geometric.testing import onlyRAG, withPackage
@@ -98,6 +99,7 @@ def test_g_retriever_many_tokens() -> None:
     # Test inference:
     pred = model.inference(question, x, edge_index, batch, edge_attr)
     assert len(pred) == 1
+
 
 @pytest.fixture(scope="function", autouse=True)
 def cleanup_after_test():
