@@ -10,12 +10,8 @@ from torch_geometric.testing import onlyRAG, withPackage
 @onlyRAG
 @withPackage('transformers', 'sentencepiece', 'accelerate')
 def test_g_retriever() -> None:
-    llm = LLM(
-        model_name='Qwen/Qwen3-0.6B',
-        num_params=1,
-        dtype=torch.float16,
-        sys_prompt="You're an agent, answer my questions."
-    )
+    llm = LLM(model_name='Qwen/Qwen3-0.6B', num_params=1, dtype=torch.float16,
+              sys_prompt="You're an agent, answer my questions.")
 
     gnn = GAT(
         in_channels=1024,
@@ -61,12 +57,8 @@ def test_g_retriever() -> None:
 @onlyRAG
 @withPackage('transformers', 'sentencepiece', 'accelerate')
 def test_g_retriever_many_tokens() -> None:
-    llm = LLM(
-        model_name='Qwen/Qwen3-0.6B',
-        num_params=1,
-        dtype=torch.float16,
-        sys_prompt="You're an agent, answer my questions."
-    )
+    llm = LLM(model_name='Qwen/Qwen3-0.6B', num_params=1, dtype=torch.float16,
+              sys_prompt="You're an agent, answer my questions.")
 
     gnn = GAT(
         in_channels=1024,
