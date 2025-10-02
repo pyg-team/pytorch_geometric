@@ -42,8 +42,8 @@ jobs:
           RAG_TEST=1 uv run --no-project pytest test/llm/models/test_sentence_transformer.py -m rag  --cov --cov-report=xml -v
           RAG_TEST=1 uv run --no-project pytest test/llm/utils/ -m rag  --cov --cov-report=xml -v
           RAG_TEST=1 uv run --no-project pytest test/llm/test_rag_loader.py -m rag  --cov --cov-report=xml -v
-          # RAG_TEST=1 uv run --no-project pytest test/llm/models/test_g_retriever.py -m rag  --cov --cov-report=xml -v
-          # RAG_TEST=1 uv run --no-project pytest test/datasets -m rag  --cov --cov-report=xml -v
+          RAG_TEST=1 uv run --no-project pytest test/llm/models/test_g_retriever.py -m rag  --cov --cov-report=xml -v
+          RAG_TEST=1 uv run --no-project pytest test/datasets -m rag  --cov --cov-report=xml -v
         shell: bash
         env:
           TOKENIZERS_PARALLELISM: "false"
