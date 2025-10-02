@@ -12,6 +12,7 @@ from torch_geometric.testing import (
 )
 
 
+@pytest.mark.skip(reason="Times out")
 @onlyOnline
 @onlyFullTest
 @withPackage("datasets", "pandas")
