@@ -190,6 +190,6 @@ def test_kgqa_base_dataset(tmp_path, monkeypatch):
     assert str(dataset_test) == "KGQABaseDataset(5)"
     gc.collect()
     torch.cuda.empty_cache()
-    sys.exit(0)
+    quit()
     # TODO(zaristei): More rigorous tests to validate that values are correct
     # TODO(zaristei): Proper tests for PCST and CWQ
