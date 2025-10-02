@@ -111,3 +111,4 @@ def cleanup_after_test():
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
         torch.cuda.synchronize()
+    torch.set_num_threads(1)
