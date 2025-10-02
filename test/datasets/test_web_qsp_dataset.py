@@ -8,7 +8,7 @@ from torch_geometric.testing import onlyOnline, onlyRAG, withPackage
 
 
 @onlyOnline
-@onlyRAG
+@onlyFullTest
 @withPackage("datasets", "pandas")
 def test_web_qsp_dataset(tmp_path):
     # Split for this dataset is 2826 train | 246 val | 1628 test
@@ -137,7 +137,6 @@ def create_mock_graphs(tmp_path: str, train_size: int, val_size: int,
 
 
 @onlyRAG
-@onlyOnline
 @withPackage("datasets", "pandas")
 def test_kgqa_base_dataset(tmp_path, monkeypatch):
 
