@@ -14,11 +14,12 @@ def test_llm() -> None:
     answer = ["yes!"]
 
     model = LLM(
-        model_name='HuggingFaceTB/SmolLM-360M',
+        model_name='Qwen/Qwen3-0.6B',
         num_params=1,
         dtype=torch.float16,
+        sys_prompt="You're an agent, answer my questions."
     )
-    assert str(model) == 'LLM(HuggingFaceTB/SmolLM-360M)'
+    assert str(model) == 'LLM(Qwen/Qwen3-0.6B)'
 
     loss = model(question, answer)
     assert isinstance(loss, Tensor)
