@@ -28,7 +28,7 @@ class GRetriever(torch.nn.Module):
         * :obj:`llm_to_use="Qwen/Qwen3-0.6B"`
         
 
-        This module should work with any HuggingFace Models.
+        This module should work with any HuggingFace model.
         See other models at `HuggingFace
         Models <https://huggingface.co/models>`_
         and let us know if you
