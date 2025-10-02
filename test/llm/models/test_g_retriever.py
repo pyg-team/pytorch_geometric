@@ -4,7 +4,11 @@ from torch_geometric.llm.models import LLM, GRetriever
 from torch_geometric.nn import GAT
 from torch_geometric.testing import onlyRAG, withPackage
 
-
+import torch.multiprocessing as mp
+try:
+    mp.set_start_method('spawn', force=True)
+except RuntimeError:
+    pass
 @onlyRAG
 @withPackage('transformers', 'sentencepiece', 'accelerate')
 def test_g_retriever() -> None:
