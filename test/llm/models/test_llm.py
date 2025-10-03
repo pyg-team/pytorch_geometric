@@ -36,7 +36,7 @@ def test_llm() -> None:
 @withPackage('transformers', 'accelerate')
 def test_llm_uncertainty() -> None:
     """Test LLM with uncertainty estimation."""
-    question = ['What is the capital of France?']
+    question = ['Who won the Nobel Prize in Physics in 2050?']
 
     # Test with uncertainty enabled
     model = LLM(

@@ -54,12 +54,12 @@ def _parse_decision_json(text: str) -> str:
 
 
 PAD_TOKEN_ID = 0
-PADDING_SIDE = 'left'
+PADDING_SIDE = "left"
 
 # legacy constants - used for Llama 2 style prompting
-BOS = '<s>[INST]'
-EOS_USER = '[/INST]'
-EOS = '[/s]'
+BOS = "<s>[INST]"
+EOS_USER = "[/INST]"
+EOS = "[/s]"
 
 
 def get_llm_kwargs(required_memory: int, dtype=torch.dtype) -> Dict[str, Any]:
@@ -75,15 +75,15 @@ def get_llm_kwargs(required_memory: int, dtype=torch.dtype) -> Dict[str, Any]:
     if sum(gpu_memory) < required_memory:
         gpu_memory = []  # If not enough VRAM, use pure CPU.
 
-    kwargs = dict(revision='main')
+    kwargs = dict(revision="main")
     if len(gpu_memory) > 0:
-        kwargs['max_memory'] = {
-            i: f'{memory}GiB'
+        kwargs["max_memory"] = {
+            i: f"{memory}GiB"
             for i, memory in enumerate(gpu_memory)
         }
-        kwargs['low_cpu_mem_usage'] = True
-        kwargs['device_map'] = 'auto'
-        kwargs['torch_dtype'] = dtype
+        kwargs["low_cpu_mem_usage"] = True
+        kwargs["device_map"] = "auto"
+        kwargs["torch_dtype"] = dtype
 
     return kwargs
 
@@ -124,9 +124,11 @@ class LLM(torch.nn.Module):
         self.model_name = model_name
 
         from transformers import AutoModelForCausalLM, AutoTokenizer
+
         if n_gpus is None:
             if num_params is None:
                 from huggingface_hub import get_safetensors_metadata
+
                 safetensors_metadata = get_safetensors_metadata(model_name)
                 param_count = safetensors_metadata.parameter_count
                 num_params = float(list(param_count.values())[0] // 10**9)
@@ -139,14 +141,14 @@ class LLM(torch.nn.Module):
             gpu_memory: List[int] = []
             for i in range(n_gpus):
                 gpu_memory.append(torch.cuda.mem_get_info(i)[0] // 1024**3)
-            kwargs = dict(revision='main')
-            kwargs['max_memory'] = {
-                i: f'{memory}GiB'
+            kwargs = dict(revision="main")
+            kwargs["max_memory"] = {
+                i: f"{memory}GiB"
                 for i, memory in enumerate(gpu_memory)
             }
-            kwargs['low_cpu_mem_usage'] = True
-            kwargs['device_map'] = 'auto'
-            kwargs['torch_dtype'] = dtype
+            kwargs["low_cpu_mem_usage"] = True
+            kwargs["device_map"] = "auto"
+            kwargs["torch_dtype"] = dtype
 
         print(f"Setting up '{model_name}' with configuration: {kwargs}")
         self.tokenizer = AutoTokenizer.from_pretrained(
@@ -179,22 +181,24 @@ class LLM(torch.nn.Module):
             self.sys_prompt = sys_prompt
         else:
             self.sys_prompt = ""
-        if 'max_memory' not in kwargs:  # Pure CPU:
+        if "max_memory" not in kwargs:  # Pure CPU:
             warnings.warn(
                 "LLM is being used on CPU, which may be slow. This decision "
                 "was made by a rough hueristic that assumes your GPU set up "
                 "does not have enough GPU RAM. This is done to avoid GPU OOM "
                 "errors. If you think this is a mistake, please initialize "
                 "your LLM with the n_gpus param to dictate how many gpus to "
-                "use for the LLM.", stacklevel=2)
-            self.device = torch.device('cpu')
+                "use for the LLM.",
+                stacklevel=2,
+            )
+            self.device = torch.device("cpu")
             self.autocast_context = nullcontext()
         else:
             self.device = self.llm.device
             if dtype == torch.float32:
                 self.autocast_context = nullcontext()
             else:
-                self.autocast_context = torch.amp.autocast('cuda', dtype=dtype)
+                self.autocast_context = torch.amp.autocast("cuda", dtype=dtype)
 
         # ---- Uncertainty config / backends (opt-in) ----------------------
         self.uncertainty_estim = bool(uncertainty_estim)
@@ -232,16 +236,18 @@ class LLM(torch.nn.Module):
                         HuggingFaceBackend,
                         OllamaBackend,
                     )
+
                     self._HFBackend = HuggingFaceBackend
                     self._OllamaBackend = OllamaBackend
                     self._AnthropicBackend = AnthropicBackend
                 except Exception:
-                    self._HFBackend = self._OllamaBackend = self._AnthropicBackend = None
+                    self._HFBackend = self._OllamaBackend = (
+                        self._AnthropicBackend) = None
             except Exception:
                 self.uncertainty_estim = False
                 warnings.warn(
-                    "Uncertainty requested but `hallucination_toolkit` not importable. "
-                    "Proceeding without uncertainty.",
+                    "Uncertainty requested but `hallucination_toolkit` not "
+                    "importable. Proceeding without uncertainty.",
                     stacklevel=2,
                 )
 
@@ -258,8 +264,8 @@ class LLM(torch.nn.Module):
         if not self.uncertainty_estim:
             return None
         backend_kind = str(self._uncfg.get("backend", "hf")).lower()
-        if backend_kind == "hf" and getattr(self, "_HFBackend",
-                                            None) is not None:
+        if (backend_kind == "hf"
+                and getattr(self, "_HFBackend", None) is not None):
             self._backend = self._HFBackend(
                 mode="transformers",
                 model_id=self.model_name,
@@ -267,11 +273,11 @@ class LLM(torch.nn.Module):
                 trust_remote_code=True,
                 **self._dec_backend_kwargs,
             )
-        elif backend_kind == "ollama" and getattr(self, "_OllamaBackend",
-                                                  None) is not None:
+        elif (backend_kind == "ollama"
+              and getattr(self, "_OllamaBackend", None) is not None):
             self._backend = self._OllamaBackend(**self._dec_backend_kwargs)
-        elif backend_kind == "anthropic" and getattr(self, "_AnthropicBackend",
-                                                     None) is not None:
+        elif (backend_kind == "anthropic"
+              and getattr(self, "_AnthropicBackend", None) is not None):
             self._backend = self._AnthropicBackend(**self._dec_backend_kwargs)
         else:
             self._backend = None
@@ -340,17 +346,23 @@ class LLM(torch.nn.Module):
             context = self.tokenizer(context, add_special_tokens=False)
 
         eos_user_tokens = self.tokenizer(EOS_USER, add_special_tokens=False)
-        bos_token = self.tokenizer(
+        bos_token = (self.tokenizer(
             BOS,
             add_special_tokens=False,
-            return_tensors='pt',
-        ).input_ids[0].to(self.device)
+            return_tensors="pt",
+        ).input_ids[0].to(self.device))
         bos_embeds = self.word_embedding(bos_token)
         pad_token = torch.tensor(self.tokenizer.pad_token_id,
                                  device=self.device)
         pad_embeds = self.word_embedding(pad_token).unsqueeze(0)
-        return (batch_size, questions, context, eos_user_tokens, bos_embeds,
-                pad_embeds)
+        return (
+            batch_size,
+            questions,
+            context,
+            eos_user_tokens,
+            bos_embeds,
+            pad_embeds,
+        )
 
     def _label_input_ids(
         self,
@@ -445,8 +457,14 @@ class LLM(torch.nn.Module):
         embedding: Optional[List[Tensor]] = None,
         answer: Optional[List[str]] = None,
     ) -> tuple:
-        (batch_size, question, context, eos_user_tokens, bos_embeds,
-         pad_embeds) = self._encode_inputs(question, context)
+        (
+            batch_size,
+            question,
+            context,
+            eos_user_tokens,
+            bos_embeds,
+            pad_embeds,
+        ) = self._encode_inputs(question, context)
 
         batch_label_input_ids = None
         if answer is not None:
@@ -480,8 +498,11 @@ class LLM(torch.nn.Module):
             )
 
         inputs_embeds, attention_mask, label_input_ids = self._pad_embeds(
-            pad_embeds, batch_inputs_embeds, batch_attention_mask,
-            batch_label_input_ids)
+            pad_embeds,
+            batch_inputs_embeds,
+            batch_attention_mask,
+            batch_label_input_ids,
+        )
 
         return inputs_embeds, attention_mask, label_input_ids
 
@@ -497,7 +518,9 @@ class LLM(torch.nn.Module):
                 f"HuggingFace model {self.model_name} is not using a "
                 "chat template, using Llama 2 style prompting. Please "
                 "consider using a more recent model and initialize the "
-                "LLM with `sys_prompt`.", stacklevel=2)
+                "LLM with `sys_prompt`.",
+                stacklevel=2,
+            )
             return self._get_embeds_old(question, context, embedding, answer)
         batch_label_input_ids = None
         if answer is not None:
@@ -535,11 +558,11 @@ class LLM(torch.nn.Module):
             else:
                 label_input_ids = None
 
-            bos_token = self.tokenizer(
+            bos_token = (self.tokenizer(
                 self.tokenizer.bos_token,
                 add_special_tokens=False,
-                return_tensors='pt',
-            ).input_ids[0].to(self.device)
+                return_tensors="pt",
+            ).input_ids[0].to(self.device))
 
             bos_embeds = self.word_embedding(bos_token)
 
@@ -569,8 +592,11 @@ class LLM(torch.nn.Module):
         pad_embeds = self.word_embedding(pad_token).unsqueeze(0)
 
         inputs_embeds, attention_mask, label_input_ids = self._pad_embeds(
-            pad_embeds, batch_inputs_embeds, batch_attention_mask,
-            batch_label_input_ids)
+            pad_embeds,
+            batch_inputs_embeds,
+            batch_attention_mask,
+            batch_label_input_ids,
+        )
 
         return inputs_embeds, attention_mask, label_input_ids
 
@@ -600,8 +626,8 @@ class LLM(torch.nn.Module):
         if self.uncertainty_estim and label_input_ids is not None:
             unc = self._compute_uncertainty(question, context)
             self._last_uncertainty = unc
-            if (self._uncfg.get("mask_refusals_in_loss", True)
-                    and len(unc) == len(question)):
+            if self._uncfg.get("mask_refusals_in_loss",
+                               True) and len(unc) == len(question):
                 for i, u in enumerate(unc):
                     if not u.decision_answer:
                         label_input_ids[i, :] = IGNORE_INDEX
@@ -630,7 +656,6 @@ class LLM(torch.nn.Module):
 
         Args:
             question (list[str]): The questions/prompts.
-            answer (list[str]): The answers/labels.
             context (list[str], optional): Additional context to give to the
                 LLM, such as textified knowledge graphs. (default: :obj:`None`)
             embedding (list[torch.Tensor], optional): RAG embedding
@@ -639,6 +664,12 @@ class LLM(torch.nn.Module):
                 both. (default: :obj:`None`)
             max_tokens (int, optional): How many tokens for the LLM to
                 generate. (default: :obj:`32`)
+            return_uncertainty (bool, optional): Whether to also return the
+                uncertainty estimates computed for each item. (default:
+                :obj:`False`)
+            abstain_on_low_ISR (bool, optional): Whether to replace outputs
+                with ``"[ABSTAIN]"`` when the ISR-driven decision flags the
+                answer as a refusal. (default: :obj:`False`)
         """
         inputs_embeds, attention_mask, _ = self._get_embeds(
             question, context, embedding)
@@ -669,4 +700,4 @@ class LLM(torch.nn.Module):
         return texts
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}({self.model_name})'
+        return f"{self.__class__.__name__}({self.model_name})"
