@@ -50,17 +50,13 @@ class TXT2KG():
             The size of the chunks in which the text data is processed
             (default: 512).
     """
-    def __init__(
-        self,
-        NVIDIA_NIM_MODEL: Optional[
-            str] = "nvidia/llama-3.1-nemotron-70b-instruct",
-        NVIDIA_API_KEY: Optional[str] = "",
-        ENDPOINT_URL: Optional[str] = "https://integrate.api.nvidia.com/v1",
-        local_LM: bool = False,
-        local_LM_model_name: Optional[str] = "VAGOsolutions/SauerkrautLM-v2-14b-DPO",
-        chunk_size: int = 512,
-        n_gpus=None
-    ) -> None:
+    def __init__(self, NVIDIA_NIM_MODEL: Optional[
+        str] = "nvidia/llama-3.1-nemotron-70b-instruct",
+                 NVIDIA_API_KEY: Optional[str] = "", ENDPOINT_URL: Optional[
+                     str] = "https://integrate.api.nvidia.com/v1",
+                 local_LM: bool = False, local_LM_model_name: Optional[
+                     str] = "VAGOsolutions/SauerkrautLM-v2-14b-DPO",
+                 chunk_size: int = 512, n_gpus=None) -> None:
         self.n_gpus = n_gpus
         self.local_LM = local_LM
         self.local_LM_model_name = local_LM_model_name

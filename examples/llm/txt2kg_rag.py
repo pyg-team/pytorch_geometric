@@ -347,11 +347,13 @@ def index_kg(args, context_docs):
         if args.use_local_txt2kg:
             if checkpoint_model_name != "local":
                 raise RuntimeError(
-                    "Error: stored triples were generated using a different model")
+                    "Error: stored triples were generated using a different model"
+                )
         else:
             if args.NV_NIM_MODEL.split('/')[-1] != checkpoint_model_name:
                 raise RuntimeError(
-                    "Error: stored triples were generated using a different model")
+                    "Error: stored triples were generated using a different model"
+                )
         saved_relevant_triples = torch.load(checkpoint_file,
                                             weights_only=False)
         kg_maker.relevant_triples = saved_relevant_triples
@@ -462,17 +464,19 @@ def make_dataset(args):
         if args.use_local_txt2kg:
             if stored_model_name != "local":
                 raise RuntimeError(
-                    "Error: stored triples were generated using a different model")
+                    "Error: stored triples were generated using a different model"
+                )
         else:
             if args.NV_NIM_MODEL.split('/')[-1] != stored_model_name:
                 raise RuntimeError(
-                    "Error: stored triples were generated using a different model")
+                    "Error: stored triples were generated using a different model"
+                )
 
         print(f" -> Saved triples generated with: {stored_model_name}")
         triples = torch.load(raw_triples_file)
     else:
         triples = index_kg(args, context_docs)
-        
+
     print("Number of triples in our GraphDB =", len(triples))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

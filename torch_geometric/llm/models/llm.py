@@ -1,7 +1,8 @@
+import json
+import re
 import warnings
 from contextlib import nullcontext
-from dataclasses import dataclass, asdict
-import json, re
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import torch
@@ -15,6 +16,7 @@ except ImportError:
 IGNORE_INDEX = -100
 MAX_TXT_LEN = 512
 MAX_NEW_TOKENS = 128
+
 
 # ---- Uncertainty (EDFL/B2T/ISR) glue ------------------------------------
 @dataclass
@@ -49,6 +51,8 @@ def _parse_decision_json(text: str) -> str:
     if "answer" in t and "refuse" not in t:
         return "answer"
     return "refuse"  # default-safe
+
+
 PAD_TOKEN_ID = 0
 PADDING_SIDE = 'left'
 
@@ -218,12 +222,16 @@ class LLM(torch.nn.Module):
         self._backend = None
         if self.uncertainty_estim:
             try:
-                from hallbayes import OpenAIPlanner, OpenAIItem
+                from hallbayes import OpenAIItem, OpenAIPlanner
 
                 self._OpenAIPlanner = OpenAIPlanner
                 self._OpenAIItem = OpenAIItem
                 try:
-                    from hallbayes import HuggingFaceBackend, OllamaBackend, AnthropicBackend
+                    from hallbayes import (
+                        AnthropicBackend,
+                        HuggingFaceBackend,
+                        OllamaBackend,
+                    )
                     self._HFBackend = HuggingFaceBackend
                     self._OllamaBackend = OllamaBackend
                     self._AnthropicBackend = AnthropicBackend
@@ -250,7 +258,8 @@ class LLM(torch.nn.Module):
         if not self.uncertainty_estim:
             return None
         backend_kind = str(self._uncfg.get("backend", "hf")).lower()
-        if backend_kind == "hf" and getattr(self, "_HFBackend", None) is not None:
+        if backend_kind == "hf" and getattr(self, "_HFBackend",
+                                            None) is not None:
             self._backend = self._HFBackend(
                 mode="transformers",
                 model_id=self.model_name,
@@ -258,9 +267,11 @@ class LLM(torch.nn.Module):
                 trust_remote_code=True,
                 **self._dec_backend_kwargs,
             )
-        elif backend_kind == "ollama" and getattr(self, "_OllamaBackend", None) is not None:
+        elif backend_kind == "ollama" and getattr(self, "_OllamaBackend",
+                                                  None) is not None:
             self._backend = self._OllamaBackend(**self._dec_backend_kwargs)
-        elif backend_kind == "anthropic" and getattr(self, "_AnthropicBackend", None) is not None:
+        elif backend_kind == "anthropic" and getattr(self, "_AnthropicBackend",
+                                                     None) is not None:
             self._backend = self._AnthropicBackend(**self._dec_backend_kwargs)
         else:
             self._backend = None
@@ -293,8 +304,7 @@ class LLM(torch.nn.Module):
                     n_samples=int(self._uncfg["n_samples"]),
                     m=int(self._uncfg["m"]),
                     skeleton_policy=str(self._uncfg["skeleton_policy"]),
-                )
-            )
+                ))
         metrics = planner.run(
             items,
             h_star=float(self._uncfg["h_star"]),
@@ -315,8 +325,7 @@ class LLM(torch.nn.Module):
                     q_conservative=float(m.q_conservative),
                     y_label=str(m.meta.get("y_label", "") if m.meta else ""),
                     rationale=str(m.rationale),
-                )
-            )
+                ))
         return outs
 
     # legacy function - used for Llama 2 style prompting
