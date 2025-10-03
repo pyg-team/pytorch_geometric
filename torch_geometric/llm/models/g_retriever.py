@@ -24,7 +24,7 @@ class GRetriever(torch.nn.Module):
 
     .. warning::
         This module has been tested with the following HuggingFace models
-        * :obj:`llm_to_use="meta-llama/Meta-Llama-3.1-8B-Instruct"
+        * :obj:`llm_to_use="meta-llama/Meta-Llama-3.1-8B-Instruct"`
         * :obj:`llm_to_use="Qwen/Qwen3-0.6B"`
 
 
