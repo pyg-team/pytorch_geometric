@@ -37,6 +37,7 @@ from .polynormer import Polynormer
 from torch_geometric.explain.algorithm.captum import (to_captum_input,
                                                       captum_output_to_dicts)
 from .attract_repel import ARLinkPredictor
+from .gnan import TensorGNAN
 
 __all__ = classes = [
     'MLP',
@@ -86,4 +87,5 @@ __all__ = classes = [
     'SGFormer',
     'Polynormer',
     'ARLinkPredictor',
+    'TensorGNAN',
 ]
