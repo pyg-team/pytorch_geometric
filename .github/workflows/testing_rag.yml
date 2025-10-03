@@ -38,7 +38,7 @@ jobs:
         run: |
           # todo replace with a single command that runs the full rag tests but passes
           # disabling webqsp and gretriever since they fail
-          RAG_TEST=1 uv run --no-project pytest test/llm/models/test_g_retriever.py -v --cov --cov-report=xml; [ $? -eq 139 ] || [ $? -eq 0 ]
+          RAG_TEST=1 uv run --no-project bash -c 'pytest test/llm/models/test_g_retriever.py --cov --cov-report=xml -v; E=$?; [[ $E == 0 || $E == 139 ]] && exit 0 || exit $E'
           RAG_TEST=1 uv run --no-project pytest test/datasets -m rag -v --cov --cov-report=xml; [ $? -eq 139 ] || [ $? -eq 0 ]
           RAG_TEST=1 uv run --no-project pytest test/llm/models/test_llm.py -m rag -v
           RAG_TEST=1 uv run --no-project pytest test/llm/models/test_sentence_transformer.py -m rag -v
