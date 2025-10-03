@@ -169,7 +169,9 @@ def destroy_process_group():
     if torch.distributed.is_initialized():
         torch.distributed.destroy_process_group()
 
+
 ggg = 0
+
 
 @onlyOnline
 @onlyLinux
@@ -195,19 +197,19 @@ def test_train(destroy_process_group, tmp_path, capfd):
     loaders = create_loader()
     model = create_model()
     cfg.params = params_count(model)
-    
+
     # --- minimal logger callback that collects logs ---
     class LoggerCallback(pl.Callback):
         def __init__(self):
             super().__init__()
             self.logged = []
 
-        def on_train_batch_end(self, trainer, pl_module, outputs, batch, batch_idx):
+        def on_train_batch_end(self, trainer, pl_module, outputs, batch,
+                               batch_idx):
             self.logged.append({"type": "train", "step": trainer.global_step})
 
-        def on_validation_batch_end(
-            self, trainer, pl_module, outputs, batch, batch_idx, dataloader_idx=0
-        ):
+        def on_validation_batch_end(self, trainer, pl_module, outputs, batch,
+                                    batch_idx, dataloader_idx=0):
             self.logged.append({"type": "val", "step": trainer.global_step})
 
     logger = LoggerCallback()
