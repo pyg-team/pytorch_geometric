@@ -37,7 +37,6 @@ def test_llm() -> None:
 def test_llm_uncertainty() -> None:
     """Test LLM with uncertainty estimation."""
     question = ['What is the capital of France?']
-    answer = ['Paris']
 
     # Test with uncertainty enabled
     model = LLM(

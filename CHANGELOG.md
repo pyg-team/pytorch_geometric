@@ -6,10 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 ## [Unreleased]
 
 ### Added
+
 - Added local LLM support for TXT2KG knowledge graph extraction ([#10479](https://github.com/pyg-team/pytorch_geometric/pull/10479))
 - Added uncertainty estimation test for LLM class ([#10479](https://github.com/pyg-team/pytorch_geometric/pull/10479))
 
 ### Fixed
+
 - Fixed LLM import path in TXT2KG from `torch_geometric.nn` to `torch_geometric.llm.models` ([#10479](https://github.com/pyg-team/pytorch_geometric/pull/10479))
 
 ## [2.7.0] - 2025-MM-DD
