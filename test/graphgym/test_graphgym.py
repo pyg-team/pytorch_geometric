@@ -169,7 +169,6 @@ def destroy_process_group():
     if torch.distributed.is_initialized():
         torch.distributed.destroy_process_group()
 
-ggg = 0
 
 @onlyOnline
 @onlyLinux
