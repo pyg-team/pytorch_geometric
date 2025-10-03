@@ -39,6 +39,8 @@ from torch_geometric.llm.models import (
     LLMJudge,
     SentenceTransformer,
 )
+# EDFL planner + universal backends (vendor these, or pip-install if you packaged them):
+# from hallucination_toolkit import OpenAIPlanner, OpenAIItem  # imported internally by LLM now
 from torch_geometric.llm.models.txt2kg import _chunk_text
 from torch_geometric.llm.utils.backend_utils import (
     create_graph_from_triples,
@@ -81,6 +83,11 @@ def parse_args():
         '--ENDPOINT_URL', type=str, default=DEFAULT_ENDPOINT_URL,
         help="The URL hosting your model, \
         in case you are not using the public NIM.")
+    parser.add_argument('--use_local_txt2kg', action="store_true",
+                        help="Use local LLM for TXT2KG instead of NVIDIA NIM")
+    parser.add_argument('--txt2kg_model', type=str,
+                        default="mistralai/Mistral-7B-Instruct-v0.3",
+                        help="Local model for TXT2KG")
     parser.add_argument(
         '--kg_chunk_size', type=int, default=KG_CHUNK_SIZE_DEFAULT,
         help="When splitting context documents for txt2kg,\
@@ -304,10 +311,19 @@ def get_data(args):
 
 
 def index_kg(args, context_docs):
-    kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
-                      NVIDIA_API_KEY=args.NV_NIM_KEY,
-                      ENDPOINT_URL=args.ENDPOINT_URL,
-                      chunk_size=args.kg_chunk_size)
+    if args.use_local_txt2kg:
+        kg_maker = TXT2KG(
+            local_LM=True,
+            local_LM_model_name=args.txt2kg_model,
+            chunk_size=args.kg_chunk_size,
+        )
+    else:
+        kg_maker = TXT2KG(
+            NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
+            NVIDIA_API_KEY=args.NV_NIM_KEY,
+            ENDPOINT_URL=args.ENDPOINT_URL,
+            chunk_size=args.kg_chunk_size,
+        )
     print(
         "Note that if the TXT2KG process is too slow for you're liking using "
         "the public NIM, consider deploying yourself using local_lm flag of "
@@ -328,9 +344,14 @@ def index_kg(args, context_docs):
         checkpoint_file = checkpoint_file[0]
         checkpoint_model_name = checkpoint_file.name.split('--')[0]
         # check if triples generation are using the correct model
-        if args.NV_NIM_MODEL.split('/')[-1] != checkpoint_model_name:
-            raise RuntimeError(
-                "Error: stored triples were generated using a different model")
+        if args.use_local_txt2kg:
+            if checkpoint_model_name != "local":
+                raise RuntimeError(
+                    "Error: stored triples were generated using a different model")
+        else:
+            if args.NV_NIM_MODEL.split('/')[-1] != checkpoint_model_name:
+                raise RuntimeError(
+                    "Error: stored triples were generated using a different model")
         saved_relevant_triples = torch.load(checkpoint_file,
                                             weights_only=False)
         kg_maker.relevant_triples = saved_relevant_triples
@@ -437,15 +458,21 @@ def make_dataset(args):
         raw_triples_file = raw_triples_file[0]
         stored_model_name = raw_triples_file.name.split('--')[0]
 
-        if args.NV_NIM_MODEL.split('/')[-1] != stored_model_name:
-            raise RuntimeError(
-                "Error: stored triples were generated using a different model")
+        # Check if stored triples match current model configuration
+        if args.use_local_txt2kg:
+            if stored_model_name != "local":
+                raise RuntimeError(
+                    "Error: stored triples were generated using a different model")
+        else:
+            if args.NV_NIM_MODEL.split('/')[-1] != stored_model_name:
+                raise RuntimeError(
+                    "Error: stored triples were generated using a different model")
 
         print(f" -> Saved triples generated with: {stored_model_name}")
         triples = torch.load(raw_triples_file)
     else:
         triples = index_kg(args, context_docs)
-
+        
     print("Number of triples in our GraphDB =", len(triples))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -574,6 +601,29 @@ def train(args, train_loader, val_loader):
     hidden_channels = args.gnn_hidden_channels
     num_gnn_layers = args.num_gnn_layers
 
+    def _uncertainty_kwargs():
+        return dict(
+            uncertainty_estim=True,
+            uncertainty_cfg={
+                "h_star": 0.05,
+                "isr_threshold": 1.0,
+                "m": 6,
+                "n_samples": 3,
+                "B_clip": 12.0,
+                "clip_mode": "one-sided",
+                "skeleton_policy": "auto",
+                "q_floor": None,
+                "temperature": 0.5,
+                "max_tokens_decision": 8,
+                "backend": "hf",  # or "ollama" / "anthropic"
+                "mask_refusals_in_loss": True,
+            },
+            decision_backend_kwargs=dict(
+                # HF backend (default): reuse the same model id; using a separate pipeline under the hood.
+                # If using Ollama or Anthropic instead, pass those credentials/args here.
+            ),
+        )
+
     if args.num_gnn_layers > 0:
         if args.gnn_model == "GAT":
             gnn = GAT(in_channels=768, hidden_channels=hidden_channels,
@@ -589,15 +639,29 @@ def train(args, train_loader, val_loader):
         gnn = None
 
     if args.llm_generator_mode == "full":
-        llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt,
-                  n_gpus=args.num_gpus)
+        llm = LLM(
+            model_name=args.llm_generator_name,
+            sys_prompt=sys_prompt,
+            n_gpus=args.num_gpus,
+            **_uncertainty_kwargs(),
+        )
     elif args.llm_generator_mode == "lora":
-        llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt,
-                  dtype=torch.float32, n_gpus=args.num_gpus)
+        llm = LLM(
+            model_name=args.llm_generator_name,
+            sys_prompt=sys_prompt,
+            dtype=torch.float32,
+            n_gpus=args.num_gpus,
+            **_uncertainty_kwargs(),
+        )
     else:
         # frozen
-        llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt,
-                  dtype=torch.float32, n_gpus=args.num_gpus).eval()
+        llm = LLM(
+            model_name=args.llm_generator_name,
+            sys_prompt=sys_prompt,
+            dtype=torch.float32,
+            n_gpus=args.num_gpus,
+            **_uncertainty_kwargs(),
+        ).eval()
         for _, p in llm.named_parameters():
             p.requires_grad = False
 

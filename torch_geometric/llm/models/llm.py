@@ -1,6 +1,8 @@
 import warnings
 from contextlib import nullcontext
-from typing import Any, Dict, List, Optional
+from dataclasses import dataclass, asdict
+import json, re
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -13,6 +15,40 @@ except ImportError:
 IGNORE_INDEX = -100
 MAX_TXT_LEN = 512
 MAX_NEW_TOKENS = 128
+
+# ---- Uncertainty (EDFL/B2T/ISR) glue ------------------------------------
+@dataclass
+class _Uncertainty:
+    decision_answer: bool
+    delta_bar: float
+    b2t: float
+    isr: float
+    roh_bound: float
+    q_avg: float
+    q_conservative: float
+    y_label: str
+    rationale: str
+
+
+def _parse_decision_json(text: str) -> str:
+    # Compatible with your toolkit's tiny-JSON head. (answer|refuse)
+    try:
+        obj = json.loads(text)
+        d = str(obj.get("decision", "")).strip().lower()
+        if d in ("answer", "refuse"):
+            return d
+    except Exception:
+        pass
+    m = re.search(r'{"\s*decision\s*"\s*:\s*"(answer|refuse)"}', text,
+                  flags=re.I)
+    if m:
+        return m.group(1).lower()
+    t = text.strip().lower()
+    if "refuse" in t and "answer" not in t:
+        return "refuse"
+    if "answer" in t and "refuse" not in t:
+        return "answer"
+    return "refuse"  # default-safe
 PAD_TOKEN_ID = 0
 PADDING_SIDE = 'left'
 
@@ -74,6 +110,10 @@ class LLM(torch.nn.Module):
         n_gpus: Optional[int] = None,
         dtype: Optional[torch.dtype] = torch.bfloat16,
         sys_prompt: Optional[str] = None,
+        # --- new ---
+        uncertainty_estim: bool = False,
+        uncertainty_cfg: Optional[Dict[str, Any]] = None,
+        decision_backend_kwargs: Optional[Dict[str, Any]] = None,
     ) -> None:
         super().__init__()
 
@@ -151,6 +191,133 @@ class LLM(torch.nn.Module):
                 self.autocast_context = nullcontext()
             else:
                 self.autocast_context = torch.amp.autocast('cuda', dtype=dtype)
+
+        # ---- Uncertainty config / backends (opt-in) ----------------------
+        self.uncertainty_estim = bool(uncertainty_estim)
+        self._uncfg: Dict[str, Any] = {
+            "h_star": 0.05,
+            "isr_threshold": 1.0,
+            "m": 6,
+            "n_samples": 3,
+            "B_clip": 12.0,
+            "clip_mode": "one-sided",
+            "skeleton_policy": "auto",
+            "q_floor": None,
+            "temperature": 0.5,
+            "max_tokens_decision": 8,
+            "backend": "hf",  # "hf" | "ollama" | "anthropic"
+            "mask_refusals_in_loss": True,
+        }
+        if uncertainty_cfg:
+            self._uncfg.update(uncertainty_cfg)
+        self._dec_backend_kwargs = decision_backend_kwargs or {}
+        self._last_uncertainty: Optional[List[_Uncertainty]] = None
+
+        # Try to import your planner/backends; fall back to a local adapter:
+        self._planner = None
+        self._backend = None
+        if self.uncertainty_estim:
+            try:
+                from hallbayes import OpenAIPlanner, OpenAIItem
+
+                self._OpenAIPlanner = OpenAIPlanner
+                self._OpenAIItem = OpenAIItem
+                try:
+                    from hallbayes import HuggingFaceBackend, OllamaBackend, AnthropicBackend
+                    self._HFBackend = HuggingFaceBackend
+                    self._OllamaBackend = OllamaBackend
+                    self._AnthropicBackend = AnthropicBackend
+                except Exception:
+                    self._HFBackend = self._OllamaBackend = self._AnthropicBackend = None
+            except Exception:
+                self.uncertainty_estim = False
+                warnings.warn(
+                    "Uncertainty requested but `hallucination_toolkit` not importable. "
+                    "Proceeding without uncertainty.",
+                    stacklevel=2,
+                )
+
+    # ---- helper: turn (question, context) into the string for decision ---
+    def _decision_user_text(self, q: str, ctx: Optional[str]) -> str:
+        if ctx and len(ctx) > 0:
+            return f"{ctx} - {q}"
+        return q
+
+    # ---- build the decision backend on first use -------------------------
+    def _get_decision_backend(self):
+        if self._backend is not None:
+            return self._backend
+        if not self.uncertainty_estim:
+            return None
+        backend_kind = str(self._uncfg.get("backend", "hf")).lower()
+        if backend_kind == "hf" and getattr(self, "_HFBackend", None) is not None:
+            self._backend = self._HFBackend(
+                mode="transformers",
+                model_id=self.model_name,
+                device_map="auto",
+                trust_remote_code=True,
+                **self._dec_backend_kwargs,
+            )
+        elif backend_kind == "ollama" and getattr(self, "_OllamaBackend", None) is not None:
+            self._backend = self._OllamaBackend(**self._dec_backend_kwargs)
+        elif backend_kind == "anthropic" and getattr(self, "_AnthropicBackend", None) is not None:
+            self._backend = self._AnthropicBackend(**self._dec_backend_kwargs)
+        else:
+            self._backend = None
+        return self._backend
+
+    # ---- compute EDFL/B2T/ISR metrics per item ---------------------------
+    def _compute_uncertainty(
+        self,
+        questions: List[str],
+        context: Optional[List[str]] = None,
+    ) -> List[_Uncertainty]:
+        backend = self._get_decision_backend()
+        Planner = getattr(self, "_OpenAIPlanner", None)
+        Item = getattr(self, "_OpenAIItem", None)
+        if backend is None or Planner is None or Item is None:
+            return []
+        planner = Planner(
+            backend=backend,
+            temperature=float(self._uncfg["temperature"]),
+            max_tokens_decision=int(self._uncfg["max_tokens_decision"]),
+            q_floor=self._uncfg["q_floor"],
+        )
+        items = []
+        for i, q in enumerate(questions):
+            ctx_i = None if context is None else context[i]
+            user_txt = self._decision_user_text(q, ctx_i)
+            items.append(
+                Item(
+                    prompt=user_txt,
+                    n_samples=int(self._uncfg["n_samples"]),
+                    m=int(self._uncfg["m"]),
+                    skeleton_policy=str(self._uncfg["skeleton_policy"]),
+                )
+            )
+        metrics = planner.run(
+            items,
+            h_star=float(self._uncfg["h_star"]),
+            isr_threshold=float(self._uncfg["isr_threshold"]),
+            B_clip=float(self._uncfg["B_clip"]),
+            clip_mode=str(self._uncfg["clip_mode"]),
+        )
+        outs: List[_Uncertainty] = []
+        for m in metrics:
+            outs.append(
+                _Uncertainty(
+                    decision_answer=bool(m.decision_answer),
+                    delta_bar=float(m.delta_bar),
+                    b2t=float(m.b2t),
+                    isr=float(m.isr),
+                    roh_bound=float(m.roh_bound),
+                    q_avg=float(m.q_avg),
+                    q_conservative=float(m.q_conservative),
+                    y_label=str(m.meta.get("y_label", "") if m.meta else ""),
+                    rationale=str(m.rationale),
+                )
+            )
+        return outs
 
     # legacy function - used for Llama 2 style prompting
     def _encode_inputs(
@@ -420,6 +587,16 @@ class LLM(torch.nn.Module):
         inputs_embeds, attention_mask, label_input_ids = self._get_embeds(
             question, context, embedding, answer)
 
+        # --- Uncertainty-aware training: mask labels for ISR<1 -------------
+        if self.uncertainty_estim and label_input_ids is not None:
+            unc = self._compute_uncertainty(question, context)
+            self._last_uncertainty = unc
+            if (self._uncfg.get("mask_refusals_in_loss", True)
+                    and len(unc) == len(question)):
+                for i, u in enumerate(unc):
+                    if not u.decision_answer:
+                        label_input_ids[i, :] = IGNORE_INDEX
+
         with self.autocast_context:
             outputs = self.llm(
                 inputs_embeds=inputs_embeds,
@@ -436,7 +613,10 @@ class LLM(torch.nn.Module):
         context: Optional[List[str]] = None,
         embedding: Optional[List[Tensor]] = None,
         max_tokens: Optional[int] = MAX_NEW_TOKENS,
-    ) -> List[str]:
+        # --- new ---
+        return_uncertainty: bool = False,
+        abstain_on_low_ISR: bool = False,
+    ) -> Union[List[str], Tuple[List[str], List[_Uncertainty]]]:
         r"""The inference pass.
 
         Args:
@@ -454,6 +634,11 @@ class LLM(torch.nn.Module):
         inputs_embeds, attention_mask, _ = self._get_embeds(
             question, context, embedding)
 
+        unc: List[_Uncertainty] = []
+        if self.uncertainty_estim:
+            unc = self._compute_uncertainty(question, context)
+            self._last_uncertainty = unc
+
         with self.autocast_context:
             outputs = self.llm.generate(
                 inputs_embeds=inputs_embeds,
@@ -464,7 +649,15 @@ class LLM(torch.nn.Module):
                 use_cache=True,
             )
 
-        return self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
+        texts = self.tokenizer.batch_decode(outputs, skip_special_tokens=True)
+        if self.uncertainty_estim and unc and abstain_on_low_ISR:
+            texts = [
+                t if u.decision_answer else "[ABSTAIN]"
+                for t, u in zip(texts, unc)
+            ]
+        if return_uncertainty and (self.uncertainty_estim and unc):
+            return texts, unc
+        return texts
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({self.model_name})'

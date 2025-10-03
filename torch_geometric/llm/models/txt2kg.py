@@ -43,6 +43,9 @@ class TXT2KG():
             than deploying your own private NIM endpoint. This flag
             is mainly recommended for dev/debug.
             (default: False).
+        local_LM_model_name : str, optional
+            Model name to load when `local_LM` is enabled.
+            (default: "VAGOsolutions/SauerkrautLM-v2-14b-DPO").
         chunk_size : int, optional
             The size of the chunks in which the text data is processed
             (default: 512).
@@ -54,9 +57,13 @@ class TXT2KG():
         NVIDIA_API_KEY: Optional[str] = "",
         ENDPOINT_URL: Optional[str] = "https://integrate.api.nvidia.com/v1",
         local_LM: bool = False,
+        local_LM_model_name: Optional[str] = "VAGOsolutions/SauerkrautLM-v2-14b-DPO",
         chunk_size: int = 512,
+        n_gpus=None
     ) -> None:
+        self.n_gpus = n_gpus
         self.local_LM = local_LM
+        self.local_LM_model_name = local_LM_model_name
         # Initialize the local LM flag and the NIM model info accordingly
         if self.local_LM:
             # If using a local LM, set the initd_LM flag to False
@@ -91,9 +98,12 @@ class TXT2KG():
         # call LLM on text
         chunk_start_time = time.time()
         if not self.initd_LM:
-            from torch_geometric.nn.nlp import LLM
-            LM_name = "VAGOsolutions/SauerkrautLM-v2-14b-DPO"
-            self.model = LLM(LM_name).eval()
+            from torch_geometric.llm.models import LLM
+            LM_name = self.local_LM_model_name
+            if self.n_gpus is not None:
+                self.model = LLM(LM_name, n_gpus=self.n_gpus).eval()
+            else:
+                self.model = LLM(LM_name).eval()
             self.initd_LM = True
         out_str = self.model.inference(question=[txt + '\n' + SYSTEM_PROMPT],
                                        max_tokens=self.chunk_size)[0]
