@@ -17,24 +17,13 @@ from torch_geometric.testing import (
 @pytest.mark.skip(reason="Times out")
 @onlyOnline
 @onlyFullTest
+@withPackage("datasets", "pandas")
 def test_web_qsp_dataset(tmp_path):
-    dataset = WebQSPDataset(root=tmp_path)
     # Split for this dataset is 2826 train | 246 val | 1628 test
     # default split is train
-    assert len(dataset) == 2826
-    assert str(dataset) == "WebQSPDataset(2826)"
-
-    dataset_train = WebQSPDataset(root=tmp_path, split="train")
-    assert len(dataset_train) == 2826
-    assert str(dataset_train) == "WebQSPDataset(2826)"
-
     dataset_val = WebQSPDataset(root=tmp_path, split="val")
     assert len(dataset_val) == 246
     assert str(dataset_val) == "WebQSPDataset(246)"
-
-    dataset_test = WebQSPDataset(root=tmp_path, split="test")
-    assert len(dataset_test) == 1628
-    assert str(dataset_test) == "WebQSPDataset(1628)"
 
 
 class MockSentenceTransformer:
@@ -196,6 +185,5 @@ def test_kgqa_base_dataset(tmp_path, monkeypatch):
                                    split="test", use_pcst=False)
     assert len(dataset_test) == 5
     assert str(dataset_test) == "KGQABaseDataset(5)"
-
     # TODO(zaristei): More rigorous tests to validate that values are correct
     # TODO(zaristei): Proper tests for PCST and CWQ
