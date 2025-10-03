@@ -49,6 +49,3 @@ jobs:
           TOKENIZERS_PARALLELISM: "false"
           OMP_NUM_THREADS: "1"
           MKL_NUM_THREADS: "1"
-        allow_failure:
-          exit_codes:
-            - 139
