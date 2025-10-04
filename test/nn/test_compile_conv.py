@@ -29,7 +29,7 @@ class MySAGEConv(torch.nn.Module):
 @withDevice
 @onlyLinux
 @onlyFullTest
-@withPackage('torch>=2.1.0')
+@withPackage('torch>=2.1.0', 'torch!=2.3.0', 'torch!=2.3.1')
 @pytest.mark.parametrize('Conv', [GCNConv, SAGEConv])
 def test_compile_conv(device, Conv):
     import torch._dynamo as dynamo
@@ -52,7 +52,7 @@ def test_compile_conv(device, Conv):
 @withDevice
 @onlyLinux
 @onlyFullTest
-@withPackage('torch==2.3')
+@withPackage('torch>=2.4.0')
 @pytest.mark.parametrize('Conv', [GCNConv, SAGEConv])
 def test_compile_conv_edge_index(device, Conv):
     import torch._dynamo as dynamo

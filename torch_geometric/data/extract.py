@@ -28,7 +28,10 @@ def extract_tar(
     """
     maybe_log(path, log)
     with tarfile.open(path, mode) as f:
-        f.extractall(folder, filter='data')
+        if sys.version_info >= (3, 12):
+            f.extractall(folder, filter='data')
+        else:
+            f.extractall(folder)
 
 
 def extract_zip(path: str, folder: str, log: bool = True) -> None:
