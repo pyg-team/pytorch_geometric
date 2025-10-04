@@ -3,16 +3,11 @@ import os
 import sys
 import typing
 import warnings
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional, Set, Tuple, TypeAlias, Union
 
 import numpy as np
 import torch
 from torch import Tensor
-
-try:
-    from typing import TypeAlias  # type: ignore
-except ImportError:
-    from typing_extensions import TypeAlias
 
 WITH_PT20 = int(torch.__version__.split('.')[0]) >= 2
 WITH_PT21 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 1
@@ -98,7 +93,7 @@ except Exception as e:
     WITH_CUDA_HASH_MAP = False
 
 if WITH_CPU_HASH_MAP:
-    CPUHashMap: TypeAlias = torch.classes.pyg.CPUHashMap
+    CPUHashMap: TypeAlias = torch.classes.pyg.CPUHashMap  # type: ignore[name-defined]  # noqa: E501
 else:
 
     class CPUHashMap:  # type: ignore
@@ -110,7 +105,7 @@ else:
 
 
 if WITH_CUDA_HASH_MAP:
-    CUDAHashMap: TypeAlias = torch.classes.pyg.CUDAHashMap
+    CUDAHashMap: TypeAlias = torch.classes.pyg.CUDAHashMap  # type: ignore[name-defined]  # noqa: E501
 else:
 
     class CUDAHashMap:  # type: ignore

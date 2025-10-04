@@ -1,7 +1,7 @@
 Installation
 ============
 
-:pyg:`PyG` is available for :python:`Python 3.9` to :python:`Python 3.13`.
+:pyg:`PyG` is available for :python:`Python 3.10` to :python:`Python 3.13`.
 
 .. note::
    We do not recommend installation as a root user on your system :python:`Python`.

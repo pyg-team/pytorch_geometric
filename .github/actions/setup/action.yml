@@ -3,7 +3,7 @@ name: Setup
 inputs:
   python-version:
     required: false
-    default: '3.9'
+    default: '3.10'
   torch-version:
     required: false
     default: '2.8.0'
@@ -47,12 +47,6 @@ runs:
       if: ${{ inputs.torch-version == 'nightly' }}
       run: |
         uv pip install --pre torch --extra-index-url https://download.pytorch.org/whl/nightly/${{ inputs.cuda-version }}
-      shell: bash
-
-    - name: Install compatible networkx
-      if: ${{ inputs.python-version == '3.9' }}
-      run: |
-        uv pip install "networkx<3.2"
       shell: bash
 
     - name: Check installation
