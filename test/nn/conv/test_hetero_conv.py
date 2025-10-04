@@ -178,6 +178,90 @@ def test_hetero_conv_with_dot_syntax_node_types():
     assert out_dict['author'].size() == (30, 64)
 
 
+def test_hetero_conv_jit_trace_friendly():
+    """Test the jit_trace_friendly wrapper for TensorBoard compatibility."""
+    data = HeteroData()
+    data['paper'].x = torch.randn(50, 32)
+    data['author'].x = torch.randn(30, 64)
+    data['paper', 'paper'].edge_index = get_random_edge_index(50, 50, 200)
+    data['paper', 'author'].edge_index = get_random_edge_index(50, 30, 100)
+    data['author', 'paper'].edge_index = get_random_edge_index(30, 50, 100)
+
+    conv = HeteroConv({
+        ('paper', 'to', 'paper'): GCNConv(-1, 64),
+        ('author', 'to', 'paper'): SAGEConv((-1, -1), 64),
+        ('paper', 'to', 'author'): GATConv((-1, -1), 64, add_self_loops=False),
+    })
+
+    # Initialize lazy modules
+    _ = conv(data.x_dict, data.edge_index_dict)
+
+    # Prepare list-based inputs
+    x_list = list(data.x_dict.values())
+    x_dict_keys = list(data.x_dict.keys())
+    edge_index_list = list(data.edge_index_dict.values())
+    edge_index_dict_keys = list(data.edge_index_dict.keys())
+
+    # Create wrapper
+    wrapper = conv.jit_trace_friendly(x_dict_keys, edge_index_dict_keys)
+    assert str(wrapper).startswith('HeteroConvWrapper')
+
+    # Test forward pass
+    out_list = wrapper(x_list, edge_index_list)
+    assert isinstance(out_list, list)
+    assert len(out_list) == 2  # Two destination node types
+
+    # Test that output matches original conv
+    out_dict = conv(data.x_dict, data.edge_index_dict)
+    out_keys = sorted(out_dict.keys())
+    for i, key in enumerate(out_keys):
+        assert torch.allclose(out_list[i], out_dict[key])
+
+    # Test torch.jit.trace compatibility
+    traced = torch.jit.trace(wrapper, (x_list, edge_index_list))
+    traced_out = traced(x_list, edge_index_list)
+    assert isinstance(traced_out, list)
+    assert len(traced_out) == len(out_list)
+    for i in range(len(out_list)):
+        assert torch.allclose(traced_out[i], out_list[i], atol=1e-6)
+
+
+@withPackage('tensorboard')
+def test_hetero_conv_tensorboard():
+    """Test TensorBoard add_graph with HeteroConv wrapper."""
+    from torch.utils.tensorboard import SummaryWriter
+
+    data = HeteroData()
+    data['paper'].x = torch.randn(50, 32)
+    data['author'].x = torch.randn(30, 64)
+    data['paper', 'paper'].edge_index = get_random_edge_index(50, 50, 200)
+    data['paper', 'author'].edge_index = get_random_edge_index(50, 30, 100)
+
+    conv = HeteroConv({
+        ('paper', 'to', 'paper'): GCNConv(-1, 64),
+        ('paper', 'to', 'author'): SAGEConv((-1, -1), 64),
+    })
+
+    # Initialize lazy modules
+    _ = conv(data.x_dict, data.edge_index_dict)
+
+    # Prepare list-based inputs
+    x_list = list(data.x_dict.values())
+    x_dict_keys = list(data.x_dict.keys())
+    edge_index_list = list(data.edge_index_dict.values())
+    edge_index_dict_keys = list(data.edge_index_dict.keys())
+
+    # Create wrapper and test with TensorBoard
+    wrapper = conv.jit_trace_friendly(x_dict_keys, edge_index_dict_keys)
+
+    writer = SummaryWriter()
+    try:
+        writer.add_graph(wrapper, (x_list, edge_index_list))
+        # If we get here without exception, the test passes
+    finally:
+        writer.close()
+
+
 @withDevice
 @onlyLinux
 @withPackage('torch>=2.1.0')

@@ -1,5 +1,5 @@
 import warnings
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 import torch
 from torch import Tensor
@@ -49,6 +49,28 @@ class HeteroConv(torch.nn.Module):
 
         print(list(out_dict.keys()))
         >>> ['paper', 'author']
+
+    For TensorBoard visualization or :meth:`torch.jit.trace` compatibility,
+    use the :meth:`jit_trace_friendly` method:
+
+    .. code-block:: python
+
+        from torch.utils.tensorboard import SummaryWriter
+
+        # Prepare list-based inputs
+        x_list = list(x_dict.values())
+        x_dict_keys = list(x_dict.keys())
+        edge_index_list = list(edge_index_dict.values())
+        edge_index_dict_keys = list(edge_index_dict.keys())
+
+        # Create JIT-friendly wrapper
+        wrapper = hetero_conv.jit_trace_friendly(x_dict_keys,
+                                                  edge_index_dict_keys)
+
+        # Now compatible with TensorBoard and torch.jit.trace
+        writer = SummaryWriter()
+        writer.add_graph(wrapper, (x_list, edge_index_list))
+        writer.close()
 
     Args:
         convs (Dict[Tuple[str, str, str], MessagePassing]): A dictionary
@@ -168,5 +190,113 @@ class HeteroConv(torch.nn.Module):
 
         return out_dict
 
+    def jit_trace_friendly(
+        self,
+        x_dict_keys: List[NodeType],
+        edge_index_dict_keys: List[EdgeType],
+    ) -> 'HeteroConvWrapper':
+        r"""Returns a JIT trace-friendly wrapper for this module.
+
+        This method creates a wrapper that accepts lists of tensors instead of
+        dictionaries with tuple keys, making it compatible with
+        :meth:`torch.jit.trace` and :meth:`torch.utils.tensorboard.SummaryWriter.add_graph`.
+
+        Args:
+            x_dict_keys (List[str]): The ordered list of node types
+                corresponding to the node feature tensors.
+            edge_index_dict_keys (List[Tuple[str, str, str]]): The ordered
+                list of edge types corresponding to the edge index tensors.
+
+        Returns:
+            HeteroConvWrapper: A wrapper module that can be traced by
+                :meth:`torch.jit.trace`.
+
+        Example:
+            >>> from torch_geometric.nn import HeteroConv, GCNConv
+            >>> conv = HeteroConv({
+            ...     ('paper', 'cites', 'paper'): GCNConv(-1, 64),
+            ...     ('author', 'writes', 'paper'): GCNConv((-1, -1), 64),
+            ... })
+            >>> x_dict_keys = ['paper', 'author']
+            >>> edge_index_dict_keys = [('paper', 'cites', 'paper'),
+            ...                          ('author', 'writes', 'paper')]
+            >>> wrapper = conv.jit_trace_friendly(x_dict_keys,
+            ...                                    edge_index_dict_keys)
+            >>> # Now you can use torch.jit.trace or TensorBoard's add_graph
+            >>> traced = torch.jit.trace(wrapper, (x_list, edge_index_list))
+        """
+        return HeteroConvWrapper(self, x_dict_keys, edge_index_dict_keys)
+
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}(num_relations={len(self.convs)})'
+
+
+class HeteroConvWrapper(torch.nn.Module):
+    r"""A wrapper for :class:`HeteroConv` that is compatible with
+    :meth:`torch.jit.trace`.
+
+    This wrapper converts list-based inputs to dictionary-based inputs
+    internally, allowing the module to be traced by :meth:`torch.jit.trace`
+    and visualized with :meth:`torch.utils.tensorboard.SummaryWriter.add_graph`.
+
+    .. note::
+        This class is typically created via
+        :meth:`HeteroConv.jit_trace_friendly` and should not be instantiated
+        directly.
+
+    Args:
+        hetero_conv (HeteroConv): The :class:`HeteroConv` module to wrap.
+        x_dict_keys (List[str]): The ordered list of node types.
+        edge_index_dict_keys (List[Tuple[str, str, str]]): The ordered list
+            of edge types.
+    """
+    def __init__(
+        self,
+        hetero_conv: HeteroConv,
+        x_dict_keys: List[NodeType],
+        edge_index_dict_keys: List[EdgeType],
+    ):
+        super().__init__()
+        self.hetero_conv = hetero_conv
+        self.x_dict_keys = x_dict_keys
+        self.edge_index_dict_keys = edge_index_dict_keys
+
+    def forward(
+        self,
+        x_list: List[Tensor],
+        edge_index_list: List[Tensor],
+    ) -> List[Tensor]:
+        r"""Forward pass that converts lists to dicts and back.
+
+        Args:
+            x_list (List[Tensor]): List of node feature tensors, ordered
+                according to :attr:`x_dict_keys`.
+            edge_index_list (List[Tensor]): List of edge index tensors,
+                ordered according to :attr:`edge_index_dict_keys`.
+
+        Returns:
+            List[Tensor]: List of output node feature tensors, ordered
+                according to the unique destination node types in
+                :attr:`edge_index_dict_keys`.
+        """
+        # Reconstruct dictionaries from lists
+        x_dict = {key: tensor for key, tensor in zip(self.x_dict_keys, x_list)}
+        edge_index_dict = {
+            key: tensor
+            for key, tensor in zip(self.edge_index_dict_keys, edge_index_list)
+        }
+
+        # Call the original HeteroConv forward method
+        out_dict = self.hetero_conv(x_dict, edge_index_dict)
+
+        # Convert output dict back to list (maintain consistent ordering)
+        out_keys = sorted(out_dict.keys())
+        out_list = [out_dict[key] for key in out_keys]
+
+        return out_list
+
+    def __repr__(self) -> str:
+        return (f'{self.__class__.__name__}('
+                f'hetero_conv={self.hetero_conv}, '
+                f'num_node_types={len(self.x_dict_keys)}, '
+                f'num_edge_types={len(self.edge_index_dict_keys)})')
