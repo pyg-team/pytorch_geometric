@@ -179,31 +179,31 @@ def test_sequential_to_hetero():
 def test_sequential_no_double_execution():
     # Test for issue #10393: Sequential should not cause double execution
     # when initialized from a script with a valid Python identifier name
-    import sys
-    
+    pass
+
     # Track execution count using a module-level variable
     execution_count = [0]
-    
+
     def increment_counter(x):
         execution_count[0] += 1
         return x
-    
+
     x = torch.randn(4, 16)
-    
+
     # Create Sequential model with a lambda that increments counter
     model = Sequential('x', [(increment_counter, 'x -> y')])
-    
+
     # The counter should only be incremented once during forward pass
     # not during model initialization
     assert execution_count[0] == 0, \
         "Sequential initialization should not execute the forward pass"
-    
+
     # Now execute forward pass
-    output = model(x)
+    model(x)
     assert execution_count[0] == 1, \
         "Forward pass should execute exactly once"
-    
+
     # Execute again to verify it works correctly
-    output = model(x)
+    model(x)
     assert execution_count[0] == 2, \
         "Second forward pass should execute exactly once"
