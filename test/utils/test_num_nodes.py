@@ -35,9 +35,10 @@ def test_maybe_num_nodes_dict():
 def test_maybe_num_nodes_dict_empty_edge_index():
     # Test with empty edge indices (regression test for bug fix)
     edge_index_dict = {
-        ('user', 'rates', 'movie'): torch.tensor([[], []], dtype=torch.long),
-        ('user', 'follows', 'user'): torch.tensor([[0, 1], [1, 2]],
-                                                   dtype=torch.long),
+        ('user', 'rates', 'movie'):
+        torch.tensor([[], []], dtype=torch.long),
+        ('user', 'follows', 'user'):
+        torch.tensor([[0, 1], [1, 2]], dtype=torch.long),
     }
 
     result = maybe_num_nodes_dict(edge_index_dict)
@@ -55,5 +56,5 @@ def test_maybe_num_nodes_dict_empty_edge_index():
     # Test with provided num_nodes_dict and empty edges
     num_nodes_dict = {'movie': 10}
     result_with_provided = maybe_num_nodes_dict(edge_index_dict,
-                                                 num_nodes_dict)
+                                                num_nodes_dict)
     assert result_with_provided == {'user': 3, 'movie': 10}
