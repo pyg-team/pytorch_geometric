@@ -197,9 +197,10 @@ class HeteroConv(torch.nn.Module):
     ) -> 'HeteroConvWrapper':
         r"""Returns a JIT trace-friendly wrapper for this module.
 
-        This method creates a wrapper that accepts lists of tensors instead of
-        dictionaries with tuple keys, making it compatible with
-        :meth:`torch.jit.trace` and :meth:`torch.utils.tensorboard.SummaryWriter.add_graph`.
+        This method creates a wrapper that accepts lists of tensors instead
+        of dictionaries with tuple keys, making it compatible with
+        :meth:`torch.jit.trace` and
+        :meth:`torch.utils.tensorboard.SummaryWriter.add_graph`.
 
         Args:
             x_dict_keys (List[str]): The ordered list of node types
@@ -236,8 +237,9 @@ class HeteroConvWrapper(torch.nn.Module):
     :meth:`torch.jit.trace`.
 
     This wrapper converts list-based inputs to dictionary-based inputs
-    internally, allowing the module to be traced by :meth:`torch.jit.trace`
-    and visualized with :meth:`torch.utils.tensorboard.SummaryWriter.add_graph`.
+    internally, allowing the module to be traced by
+    :meth:`torch.jit.trace` and visualized with
+    :meth:`torch.utils.tensorboard.SummaryWriter.add_graph`.
 
     .. note::
         This class is typically created via

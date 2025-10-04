@@ -1,4 +1,5 @@
-"""Example: Using HeteroConv with TensorBoard Visualization
+"""Example: Using HeteroConv with TensorBoard Visualization.
+
 ==========================================================
 
 This example demonstrates how to use the `jit_trace_friendly` wrapper
@@ -74,7 +75,7 @@ def main():
     print("Testing forward pass...")
     with torch.no_grad():
         out_list = wrapped_conv(x_list, edge_index_list)
-        print(f"✅ Forward pass successful!")
+        print("✅ Forward pass successful!")
         print(f"   Output list length: {len(out_list)}")
         print(f"   Output shapes: {[o.shape for o in out_list]}")
 
@@ -99,7 +100,7 @@ def main():
         # Verify traced model works
         with torch.no_grad():
             traced_model(x_list, edge_index_list)
-            print(f"✅ Traced model forward pass successful!")
+            print("✅ Traced model forward pass successful!")
     except Exception as e:
         print(f"❌ Error: {e}")
 
