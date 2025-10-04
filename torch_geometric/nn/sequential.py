@@ -247,9 +247,9 @@ class Sequential(torch.nn.Module):
             uid = '%06x' % random.randrange(16**6)
             jinja_prefix = f'{self.__module__}_{self.__class__.__name__}_{uid}'
 
-            # Filter out modules that would cause re-execution of the script:
+            # Filter out modules that would cause re-execution:
             # - '__main__' is the script being executed
-            # - Modules not in sys.modules yet would be imported for the first time
+            # - Modules not in sys.modules would be imported first time
             modules_to_import = []
             if (self._caller_module != '__main__'
                     and self._caller_module in sys.modules):
