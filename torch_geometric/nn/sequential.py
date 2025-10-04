@@ -246,12 +246,21 @@ class Sequential(torch.nn.Module):
             root_dir = osp.dirname(osp.realpath(__file__))
             uid = '%06x' % random.randrange(16**6)
             jinja_prefix = f'{self.__module__}_{self.__class__.__name__}_{uid}'
+            
+            # Filter out modules that would cause re-execution of the script:
+            # - '__main__' is the script being executed
+            # - Modules not in sys.modules yet would be imported for the first time
+            modules_to_import = []
+            if (self._caller_module != '__main__' and 
+                self._caller_module in sys.modules):
+                modules_to_import.append(self._caller_module)
+            
             module = module_from_template(
                 module_name=jinja_prefix,
                 template_path=osp.join(root_dir, 'sequential.jinja'),
                 tmp_dirname='sequential',
                 # Keyword arguments:
-                modules=[self._caller_module],
+                modules=modules_to_import,
                 signature=self.signature,
                 children=self._children,
             )
