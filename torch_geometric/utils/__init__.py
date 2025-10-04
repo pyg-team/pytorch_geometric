@@ -58,6 +58,7 @@ from ._trim_to_layer import trim_to_layer
 from .ppr import get_ppr
 from ._train_test_split_edges import train_test_split_edges
 from .influence import total_influence
+from .cycle import find_max_weight_cycle, find_all_cycles
 
 __all__ = [
     'scatter',
@@ -151,6 +152,8 @@ __all__ = [
     'get_ppr',
     'train_test_split_edges',
     'total_influence',
+    'find_max_weight_cycle',
+    'find_all_cycles',
 ]
 
 # `structured_negative_sampling_feasible` is a long name and thus destroys the
