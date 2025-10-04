@@ -1,5 +1,4 @@
-"""
-Example: Using HeteroConv with TensorBoard Visualization
+"""Example: Using HeteroConv with TensorBoard Visualization
 ==========================================================
 
 This example demonstrates how to use the `jit_trace_friendly` wrapper
@@ -10,10 +9,11 @@ Issue: https://github.com/pyg-team/pytorch_geometric/issues/10421
 """
 
 import torch
+from torch.utils.tensorboard import SummaryWriter
+
 import torch_geometric.transforms as T
 from torch_geometric.datasets import OGB_MAG
 from torch_geometric.nn import GATConv, GCNConv, HeteroConv, Linear, SAGEConv
-from torch.utils.tensorboard import SummaryWriter
 
 
 # Define a heterogeneous GNN model
@@ -22,14 +22,15 @@ class HeteroGNN(torch.nn.Module):
         super().__init__()
         self.convs = torch.nn.ModuleList()
         for _ in range(num_layers):
-            conv = HeteroConv({
-                ('paper', 'cites', 'paper'):
-                GCNConv(-1, hidden_channels),
-                ('author', 'writes', 'paper'):
-                SAGEConv((-1, -1), hidden_channels),
-                ('paper', 'rev_writes', 'author'):
-                GATConv((-1, -1), hidden_channels, add_self_loops=False),
-            }, aggr='sum')
+            conv = HeteroConv(
+                {
+                    ('paper', 'cites', 'paper'):
+                    GCNConv(-1, hidden_channels),
+                    ('author', 'writes', 'paper'):
+                    SAGEConv((-1, -1), hidden_channels),
+                    ('paper', 'rev_writes', 'author'):
+                    GATConv((-1, -1), hidden_channels, add_self_loops=False),
+                }, aggr='sum')
             self.convs.append(conv)
         self.lin = Linear(hidden_channels, out_channels)
 
@@ -67,7 +68,7 @@ def main():
     print("\nCreating JIT-friendly wrapper...")
     single_conv = model.convs[0]
     wrapped_conv = single_conv.jit_trace_friendly(x_dict_keys,
-                                                   edge_index_dict_keys)
+                                                  edge_index_dict_keys)
 
     # Test forward pass
     print("Testing forward pass...")
@@ -97,7 +98,7 @@ def main():
 
         # Verify traced model works
         with torch.no_grad():
-            traced_out = traced_model(x_list, edge_index_list)
+            traced_model(x_list, edge_index_list)
             print(f"✅ Traced model forward pass successful!")
     except Exception as e:
         print(f"❌ Error: {e}")

@@ -188,9 +188,12 @@ def test_hetero_conv_jit_trace_friendly():
     data['author', 'paper'].edge_index = get_random_edge_index(30, 50, 100)
 
     conv = HeteroConv({
-        ('paper', 'to', 'paper'): GCNConv(-1, 64),
-        ('author', 'to', 'paper'): SAGEConv((-1, -1), 64),
-        ('paper', 'to', 'author'): GATConv((-1, -1), 64, add_self_loops=False),
+        ('paper', 'to', 'paper'):
+        GCNConv(-1, 64),
+        ('author', 'to', 'paper'):
+        SAGEConv((-1, -1), 64),
+        ('paper', 'to', 'author'):
+        GATConv((-1, -1), 64, add_self_loops=False),
     })
 
     # Initialize lazy modules
