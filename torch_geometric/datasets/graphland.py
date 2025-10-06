@@ -460,17 +460,14 @@ class GraphLandDataset(InMemoryDataset):
         )
         features = torch.tensor(features, dtype=torch.float)
 
-        num_mask = np.zeros(shape=(features.shape[1], ), dtype=bool)
+        num_mask = torch.zeros(features.shape[1], dtype=torch.bool)
         num_mask[:num_features.shape[1]] = True
-        num_mask = torch.tensor(num_mask, dtype=torch.bool)
 
-        frac_mask = np.zeros(shape=(features.shape[1], ), dtype=bool)
+        frac_mask = torch.zeros(features.shape[1], dtype=torch.bool)
         frac_mask[num_features.shape[1]:-cat_features.shape[1]] = True
-        frac_mask = torch.tensor(frac_mask, dtype=torch.bool)
 
-        cat_mask = np.zeros(shape=(features.shape[1], ), dtype=bool)
+        cat_mask = torch.zeros(features.shape[1], dtype=torch.bool)
         cat_mask[-cat_features.shape[1]:] = True
-        cat_mask = torch.tensor(cat_mask, dtype=torch.bool)
 
         # >>> update split masks
         train_mask = raw_data['masks']['train'] & labeled_mask
@@ -559,17 +556,14 @@ class GraphLandDataset(InMemoryDataset):
         )
         features = torch.tensor(features, dtype=torch.float)
 
-        num_mask = np.zeros(shape=(features.shape[1], ), dtype=bool)
+        num_mask = torch.zeros(features.shape[1], dtype=torch.bool)
         num_mask[:num_features.shape[1]] = True
-        num_mask = torch.tensor(num_mask, dtype=torch.bool)
 
-        frac_mask = np.zeros(shape=(features.shape[1], ), dtype=bool)
+        frac_mask = torch.zeros(features.shape[1], dtype=torch.bool)
         frac_mask[num_features.shape[1]:-cat_features.shape[1]] = True
-        frac_mask = torch.tensor(frac_mask, dtype=torch.bool)
 
-        cat_mask = np.zeros(shape=(features.shape[1], ), dtype=bool)
+        cat_mask = torch.zeros(features.shape[1], dtype=torch.bool)
         cat_mask[-cat_features.shape[1]:] = True
-        cat_mask = torch.tensor(cat_mask, dtype=torch.bool)
 
         # >>> construct Data objects
         edge_index = raw_data['edges'].T
@@ -583,7 +577,8 @@ class GraphLandDataset(InMemoryDataset):
         train_label_mask = torch.tensor(train_label_mask, dtype=torch.bool)
 
         train_node_id = np.where(train_graph_mask)[0]
-        train_node_id = torch.tensor(train_node_id, dtype=torch.long)
+        train_node_id = torch.tensor(train_node_id,
+                                     dtype=torch.long)  # type: ignore
 
         train_edge_index, _ = subgraph(
             train_graph_mask,
@@ -610,7 +605,8 @@ class GraphLandDataset(InMemoryDataset):
         val_label_mask = torch.tensor(val_label_mask, dtype=torch.bool)
 
         val_node_id = np.where(val_graph_mask)[0]
-        val_node_id = torch.tensor(val_node_id, dtype=torch.long)
+        val_node_id = torch.tensor(val_node_id,
+                                   dtype=torch.long)  # type: ignore
 
         val_edge_index, _ = subgraph(
             val_graph_mask,
@@ -638,7 +634,8 @@ class GraphLandDataset(InMemoryDataset):
         test_label_mask = torch.tensor(test_label_mask, dtype=torch.bool)
 
         test_node_id = np.where(test_graph_mask)[0]
-        test_node_id = torch.tensor(test_node_id, dtype=torch.long)
+        test_node_id = torch.tensor(test_node_id,
+                                    dtype=torch.long)  # type: ignore
 
         test_edge_index, _ = subgraph(
             test_graph_mask,
