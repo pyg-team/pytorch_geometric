@@ -15,9 +15,26 @@ from torch_geometric.data import (
 from torch_geometric.transforms import ToUndirected
 from torch_geometric.utils import subgraph
 
+GRAPHLAND_DATASETS = {
+    'hm-categories': 'multiclass_classification',
+    'pokec-regions': 'multiclass_classification',
+    'web-topics': 'multiclass_classification',
+    'tolokers-2': 'binary_classification',
+    'city-reviews': 'binary_classification',
+    'artnet-exp': 'binary_classification',
+    'web-fraud': 'binary_classification',
+    'hm-prices': 'regression',
+    'avazu-ctr': 'regression',
+    'city-roads-M': 'regression',
+    'city-roads-L': 'regression',
+    'twitch-views': 'regression',
+    'artnet-views': 'regression',
+    'web-traffic': 'regression',
+}
+
 
 def _load_yaml(path: str) -> dict:
-    import yaml
+    import yaml  # type: ignore
     with open(path) as f:
         return yaml.safe_load(f)
 
@@ -209,22 +226,7 @@ class GraphLandDataset(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
     ) -> None:
-        assert name in [
-            'hm-categories',
-            'pokec-regions',
-            'web-topics',
-            'tolokers-2',
-            'city-reviews',
-            'artnet-exp',
-            'web-fraud',
-            'hm-prices',
-            'avazu-ctr',
-            'city-roads-M',
-            'city-roads-L',
-            'twitch-views',
-            'artnet-views',
-            'web-traffic',
-        ], f'Unsupported dataset name: {name}'
+        assert name in GRAPHLAND_DATASETS, f'Unsupported dataset name: {name}'
 
         assert split in ['RL', 'RH', 'TH', 'THI'], \
             f'Unsupported split name: {split}'
@@ -268,6 +270,7 @@ class GraphLandDataset(InMemoryDataset):
 
         self.name = name
         self.split = split
+        self.task = GRAPHLAND_DATASETS[name]
         self._num_transform = numerical_features_transform
         self._frac_transform = fraction_features_transform
         self._cat_transform = categorical_features_transform

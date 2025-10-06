@@ -63,10 +63,10 @@ def test_inductive_graphland(name: str):
     )
     assert len(dataset) == 3
 
-    train_data, val_data, test_data = dataset
-    assert num_nodes == test_data.num_nodes == test_data.node_id.shape[0]
-    assert num_edges == test_data.num_edges
+    data_train, data_val, data_test = dataset
+    assert num_nodes == data_test.num_nodes == data_test.node_id.shape[0]
+    assert num_edges == data_test.num_edges
 
-    assert not torch.isnan(train_data.y[train_data.mask]).any().item()
-    assert not torch.isnan(val_data.y[val_data.mask]).any().item()
-    assert not torch.isnan(test_data.y[test_data.mask]).any().item()
+    assert not torch.isnan(data_train.y[data_train.mask]).any().item()
+    assert not torch.isnan(data_val.y[data_val.mask]).any().item()
+    assert not torch.isnan(data_test.y[data_test.mask]).any().item()
