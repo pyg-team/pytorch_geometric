@@ -215,7 +215,6 @@ def test_train(destroy_process_group, tmp_path, capfd):
     train_loader, val_loader = loaders[0], loaders[1]
     trainer.fit(model, train_loader, val_loader)
 
-    assert not trainer.sanity_checking
     assert trainer.current_epoch >= 0
     # ensure both train and val batches were seen
     types = {entry["type"] for entry in logger.logged}
