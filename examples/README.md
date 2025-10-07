@@ -32,6 +32,8 @@ For examples on co-training LLMs with GNNs, see the examples under [`examples/ll
 
 - [Kumo.ai x NVIDIA GNN+LLM Webinar](https://www.youtube.com/watch?v=uRIA8e7Y_vs)
 
+We recommend looking into [PyTorch documentation](https://docs.pytorch.org/tutorials/beginner/dist_overview.html) for examples on setting up model parralel GNNs.
+
 ### Scale to Trillions of Edges with cuGraph
 
 [cuGraph](https://github.com/rapidsai/cugraph) is a collection of packages focused on GPU-accelerated graph analytics including support for property graphs and scaling up to thousands of GPUs. cuGraph supports the creation and manipulation of graphs followed by the execution of scalable fast graph algorithms. It is part of the [RAPIDS](https://rapids.ai) accelerated data science framework.
