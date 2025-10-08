@@ -1,3 +1,10 @@
+if __name__ == "__main__" and __package__ is None:
+    raise RuntimeError(
+        "Direct execution of 'rag_loader.py' is not supported.\n"
+        "Please run this module from the repository root using:\n"
+        "    python -m torch_geometric.llm.rag_loader"
+    )
+
 from abc import abstractmethod
 from typing import Any, Callable, Dict, Optional, Protocol, Tuple, Union
 
