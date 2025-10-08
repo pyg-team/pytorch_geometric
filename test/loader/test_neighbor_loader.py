@@ -1024,3 +1024,75 @@ def test_temporal_neighbor_loader_single_link():
     assert batch['a'].num_nodes == 10
     assert batch['b'].num_nodes == 10
     assert batch['c'].num_nodes == 0
+
+
+@onlyNeighborSampler
+@withPackage('pyg_lib')
+def test_temporal_neighbor_loader_manual_sampling():
+    data = HeteroData()
+    num_nodes = 5
+
+    data['user'].x = (torch.arange(1,
+                                   num_nodes + 1).repeat_interleave(3).reshape(
+                                       num_nodes, 3))
+    data['user'].time = torch.arange(0, num_nodes * 2, 2).long()
+
+    data['item'].x = (torch.arange(
+        1, num_nodes + 1).repeat_interleave(3).reshape(num_nodes, 3) * 10)
+    data['item'].time = torch.arange(1, num_nodes * 2 + 1, 2).long()
+
+    data['user', 'buys', 'item'].edge_index = torch.tensor([[
+        0,
+        0,
+        0,
+        1,
+        2,
+        2,
+        2,
+        3,
+        3,
+        3,
+        4,
+    ], [
+        0,
+        1,
+        2,
+        0,
+        1,
+        2,
+        3,
+        2,
+        3,
+        4,
+        4,
+    ]], dtype=torch.long)
+
+    data['item', 'rev_buys',
+         'user'].edge_index = (data['user', 'buys', 'item'].edge_index.flip(0))
+
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[1, 1],
+        input_nodes='user',
+        input_time=torch.full(size=(num_nodes, ),
+                              fill_value=data['item'].time.max().item(),
+                              dtype=torch.long),
+        time_attr="time",
+    )
+
+    input_nodes = torch.tensor([0, 3], dtype=torch.long)
+    sampled_data_no_time = loader(input_nodes)
+
+    assert sampled_data_no_time['user'].x.size(0) >= 2
+
+    seed_time_max = 6
+
+    input_nodes = torch.tensor([0, 3], dtype=torch.long)
+    input_time = torch.tensor([seed_time_max, seed_time_max], dtype=torch.long)
+    sampled_data_with_time = loader(input_nodes, input_time)
+
+    sampled_user_times = sampled_data_with_time['user'].time
+    sampled_item_times = sampled_data_with_time['item'].time
+
+    assert torch.all(sampled_user_times <= seed_time_max)
+    assert torch.all(sampled_item_times <= seed_time_max)
