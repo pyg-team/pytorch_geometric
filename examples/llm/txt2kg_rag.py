@@ -14,6 +14,7 @@ import yaml
 
 try:
     import wandb
+
     wandb_available = True
 except ImportError:
     wandb_available = False
@@ -39,6 +40,10 @@ from torch_geometric.llm.models import (
     LLMJudge,
     SentenceTransformer,
 )
+# EDFL planner + universal backends (vendor these,
+# or pip-install if you packaged them):
+# from hallucination_toolkit import OpenAIPlanner, OpenAIItem  # imported
+# internally by LLM now
 from torch_geometric.llm.models.txt2kg import _chunk_text
 from torch_geometric.llm.utils.backend_utils import (
     create_graph_from_triples,
@@ -70,92 +75,162 @@ max_chars_in_train_answer = 128
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--gnn_model', type=str, default="GAT",
-                        choices=["GAT", "SGFormer"],
-                        help="The GNN model to use. Default is GAT.")
-    parser.add_argument('--NV_NIM_MODEL', type=str,
-                        default=NV_NIM_MODEL_DEFAULT,
-                        help="The NIM LLM to use for TXT2KG for LLMJudge")
-    parser.add_argument('--NV_NIM_KEY', type=str, help="NVIDIA API key")
     parser.add_argument(
-        '--ENDPOINT_URL', type=str, default=DEFAULT_ENDPOINT_URL,
+        "--gnn_model",
+        type=str,
+        default="GAT",
+        choices=["GAT", "SGFormer"],
+        help="The GNN model to use. Default is GAT.",
+    )
+    parser.add_argument(
+        "--NV_NIM_MODEL",
+        type=str,
+        default=NV_NIM_MODEL_DEFAULT,
+        help="The NIM LLM to use for TXT2KG for LLMJudge",
+    )
+    parser.add_argument("--NV_NIM_KEY", type=str, help="NVIDIA API key")
+    parser.add_argument(
+        "--ENDPOINT_URL",
+        type=str,
+        default=DEFAULT_ENDPOINT_URL,
         help="The URL hosting your model, \
-        in case you are not using the public NIM.")
+        in case you are not using the public NIM.",
+    )
     parser.add_argument(
-        '--kg_chunk_size', type=int, default=KG_CHUNK_SIZE_DEFAULT,
+        "--use_local_txt2kg",
+        action="store_true",
+        help="Use local LLM for TXT2KG instead of NVIDIA NIM",
+    )
+    parser.add_argument(
+        "--txt2kg_model",
+        type=str,
+        default="mistralai/Mistral-7B-Instruct-v0.3",
+        help="Local model for TXT2KG",
+    )
+    parser.add_argument(
+        "--kg_chunk_size",
+        type=int,
+        default=KG_CHUNK_SIZE_DEFAULT,
         help="When splitting context documents for txt2kg,\
-        the maximum number of characters per chunk.")
-    parser.add_argument('--gnn_hidden_channels', type=int,
-                        default=GNN_HID_CHANNELS_DEFAULT,
-                        help="Hidden channels for GNN")
-    parser.add_argument('--num_gnn_layers', type=int,
-                        default=GNN_LAYERS_DEFAULT,
-                        help="Number of GNN layers")
-    parser.add_argument('--lr', type=float, default=LR_DEFAULT,
-                        help="Learning rate")
-    parser.add_argument('--epochs', type=int, default=EPOCHS_DEFAULT,
-                        help="Number of epochs")
-    parser.add_argument('--batch_size', type=int, default=BATCH_SIZE_DEFAULT,
-                        help="Batch size")
-    parser.add_argument('--eval_batch_size', type=int,
-                        default=EVAL_BATCH_SIZE_DEFAULT,
-                        help="Evaluation batch size")
-    parser.add_argument('--llm_generator_name', type=str,
-                        default=LLM_GENERATOR_NAME_DEFAULT,
-                        help="The LLM to use for Generation")
+        the maximum number of characters per chunk.",
+    )
     parser.add_argument(
-        '--llm_generator_mode', type=str, default=LLM_GEN_MODE_DEFAULT,
-        choices=["frozen", "lora",
-                 "full"], help="Whether to freeze the Generator LLM,\
-                        use LORA, or fully finetune")
-    parser.add_argument('--dont_save_model', action="store_true",
-                        help="Whether to skip model saving.")
-    parser.add_argument('--log_steps', type=int, default=30,
+        "--gnn_hidden_channels",
+        type=int,
+        default=GNN_HID_CHANNELS_DEFAULT,
+        help="Hidden channels for GNN",
+    )
+    parser.add_argument(
+        "--num_gnn_layers",
+        type=int,
+        default=GNN_LAYERS_DEFAULT,
+        help="Number of GNN layers",
+    )
+    parser.add_argument("--lr", type=float, default=LR_DEFAULT,
+                        help="Learning rate")
+    parser.add_argument("--epochs", type=int, default=EPOCHS_DEFAULT,
+                        help="Number of epochs")
+    parser.add_argument("--batch_size", type=int, default=BATCH_SIZE_DEFAULT,
+                        help="Batch size")
+    parser.add_argument(
+        "--eval_batch_size",
+        type=int,
+        default=EVAL_BATCH_SIZE_DEFAULT,
+        help="Evaluation batch size",
+    )
+    parser.add_argument(
+        "--llm_generator_name",
+        type=str,
+        default=LLM_GENERATOR_NAME_DEFAULT,
+        help="The LLM to use for Generation",
+    )
+    parser.add_argument(
+        "--llm_generator_mode",
+        type=str,
+        default=LLM_GEN_MODE_DEFAULT,
+        choices=["frozen", "lora", "full"],
+        help="Whether to freeze the Generator LLM,\
+                        use LORA, or fully finetune",
+    )
+    parser.add_argument(
+        "--dont_save_model",
+        action="store_true",
+        help="Whether to skip model saving.",
+    )
+    parser.add_argument("--log_steps", type=int, default=30,
                         help="Log to wandb every N steps")
-    parser.add_argument('--wandb_project', type=str, default="techqa",
-                        help="Weights & Biases project name")
-    parser.add_argument('--wandb', action="store_true",
+    parser.add_argument(
+        "--wandb_project",
+        type=str,
+        default="techqa",
+        help="Weights & Biases project name",
+    )
+    parser.add_argument("--wandb", action="store_true",
                         help="Enable wandb logging")
     parser.add_argument(
-        '--num_gpus', type=int, default=None,
+        "--num_gpus",
+        type=int,
+        default=None,
         help="Number of GPUs to use. If not specified,"
-        "will determine automatically based on model size.")
-    parser.add_argument('--regenerate_dataset', action="store_true",
-                        help="Regenerate the dataset")
+        "will determine automatically based on model size.",
+    )
     parser.add_argument(
-        '--doc_parsing_mode', type=str, default=None,
-        choices=["paragraph",
-                 "file"], help="How to parse documents: 'paragraph' splits "
+        "--regenerate_dataset",
+        action="store_true",
+        help="Regenerate the dataset",
+    )
+    parser.add_argument(
+        "--doc_parsing_mode",
+        type=str,
+        default=None,
+        choices=["paragraph", "file"],
+        help="How to parse documents: 'paragraph' splits "
         "files by paragraphs, 'file' treats each file as"
         "one document. "
-        "This will override any value set in the config file.")
+        "This will override any value set in the config file.",
+    )
     parser.add_argument(
-        '--k_for_docs', type=int, default=None,
+        "--k_for_docs",
+        type=int,
+        default=None,
         help="Number of docs to retrieve for each question. "
-        "This will override any value set in the config file.")
+        "This will override any value set in the config file.",
+    )
     parser.add_argument(
-        '--doc_chunk_size', type=int, default=None,
+        "--doc_chunk_size",
+        type=int,
+        default=None,
         help="The chunk size to use VectorRAG (document retrieval). "
-        "This will override any value set in the config file.")
+        "This will override any value set in the config file.",
+    )
     parser.add_argument(
-        '--dataset', type=str, default="techqa", help="Dataset folder name, "
+        "--dataset",
+        type=str,
+        default="techqa",
+        help="Dataset folder name, "
         "should contain corpus and train.json files."
         "extracted triples, processed dataset, "
         "document retriever, and model checkpoints "
-        "will be saved in the dataset folder")
+        "will be saved in the dataset folder",
+    )
     parser.add_argument(
-        '--skip_graph_rag', action="store_true",
+        "--skip_graph_rag",
+        action="store_true",
         help="Skip the graph RAG step. "
-        "Used to compare the performance of Vector+Graph RAG vs Vector RAG.")
+        "Used to compare the performance of Vector+Graph RAG vs Vector RAG.",
+    )
     parser.add_argument(
-        '--use_x_percent_corpus', default=100.0, type=float,
+        "--use_x_percent_corpus",
+        default=100.0,
+        type=float,
         help="Debug flag that allows user to only use a random percentage "
-        "of available knowledge base corpus for RAG")
+        "of available knowledge base corpus for RAG",
+    )
     args = parser.parse_args()
 
     assert args.NV_NIM_KEY, "NVIDIA API key is required for TXT2KG and eval"
-    assert args.use_x_percent_corpus <= 100 and \
-        args.use_x_percent_corpus > 0, "Please provide a value in (0,100]"
+    assert (args.use_x_percent_corpus <= 100 and args.use_x_percent_corpus
+            > 0), "Please provide a value in (0,100]"
     if args.skip_graph_rag:
         print("Skipping graph RAG step, setting GNN layers to 0...")
         args.num_gnn_layers = 0
@@ -169,7 +244,9 @@ def parse_args():
         if config is not None:
             # Use a loop to check and apply config values for each parameter
             config_params = [
-                'doc_parsing_mode', 'doc_chunk_size', 'k_for_docs'
+                "doc_parsing_mode",
+                "doc_chunk_size",
+                "k_for_docs",
             ]
             for param in config_params:
                 if param in config and getattr(args, param) is None:
@@ -214,7 +291,7 @@ def _process_and_chunk_text(text, chunk_size, doc_parsing_mode):
     if multiple paragraphs are detected.
     """
     if doc_parsing_mode == "paragraph":
-        paragraphs = re.split(r'\n{2,}', text)
+        paragraphs = re.split(r"\n{2,}", text)
     else:
         # doc_parsing_mode == 'file' or doc_parsing_mode is None
         paragraphs = [text]
@@ -258,9 +335,11 @@ def get_data(args):
             if not os.path.exists(args.dataset):
                 os.mkdir(args.dataset)
             import zipfile
-            with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+
+            with zipfile.ZipFile(zip_path, "r") as zip_ref:
                 zip_ref.extractall(args.dataset)
             import shutil
+
             shutil.copy(json_path, os.path.join(args.dataset, "train.json"))
         elif user_input.lower() == "n" or user_input.lower() == "no":
             sys.exit("No selected, no data to work with... exiting.")
@@ -285,9 +364,11 @@ def get_data(args):
                 raise ValueError(f"Bad extraction for {file_path}, expecting "
                                  f"text only but got {doc_type}")
             text_contexts.extend(
-                _process_and_chunk_text(data[0]["metadata"]["content"],
-                                        args.doc_chunk_size,
-                                        args.doc_parsing_mode))
+                _process_and_chunk_text(
+                    data[0]["metadata"]["content"],
+                    args.doc_chunk_size,
+                    args.doc_parsing_mode,
+                ))
     else:
         for file_path in glob(os.path.join(args.dataset, "corpus", "*")):
             with open(file_path, "r+") as f:
@@ -304,19 +385,29 @@ def get_data(args):
 
 
 def index_kg(args, context_docs):
-    kg_maker = TXT2KG(NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
-                      NVIDIA_API_KEY=args.NV_NIM_KEY,
-                      ENDPOINT_URL=args.ENDPOINT_URL,
-                      chunk_size=args.kg_chunk_size)
+    if args.use_local_txt2kg:
+        kg_maker = TXT2KG(
+            local_LM=True,
+            local_LM_model_name=args.txt2kg_model,
+            chunk_size=args.kg_chunk_size,
+        )
+    else:
+        kg_maker = TXT2KG(
+            NVIDIA_NIM_MODEL=args.NV_NIM_MODEL,
+            NVIDIA_API_KEY=args.NV_NIM_KEY,
+            ENDPOINT_URL=args.ENDPOINT_URL,
+            chunk_size=args.kg_chunk_size,
+        )
     print(
         "Note that if the TXT2KG process is too slow for you're liking using "
         "the public NIM, consider deploying yourself using local_lm flag of "
-        "TXT2KG or using https://build.nvidia.com/nvidia/llama-3_1-nemotron-70b-instruct "  # noqa
+        "TXT2KG or using "
+        "https://build.nvidia.com/nvidia/llama-3_1-nemotron-70b-instruct "
         "to deploy to a private endpoint, which you can pass to this script "
         "w/ --ENDPOINT_URL flag.")
-    print(
-        "Guide for deploying NIM: https://developer.nvidia.com/blog/a-simple-guide-to-deploying-generative-ai-with-nvidia-nim/"  # noqa
-    )
+    print("Guide for deploying NIM: "
+          "https://developer.nvidia.com/blog/"
+          "a-simple-guide-to-deploying-generative-ai-with-nvidia-nim/")
     total_tqdm_count = len(context_docs)
     initial_tqdm_count = 0
     checkpoint_file = list(Path(args.dataset).glob("*--*--checkpoint_kg.pt"))
@@ -326,11 +417,16 @@ def index_kg(args, context_docs):
     if len(checkpoint_file) == 1:
         print("Restoring KG from checkpoint")
         checkpoint_file = checkpoint_file[0]
-        checkpoint_model_name = checkpoint_file.name.split('--')[0]
+        checkpoint_model_name = checkpoint_file.name.split("--")[0]
         # check if triples generation are using the correct model
-        if args.NV_NIM_MODEL.split('/')[-1] != checkpoint_model_name:
-            raise RuntimeError(
-                "Error: stored triples were generated using a different model")
+        if args.use_local_txt2kg:
+            if checkpoint_model_name != "local":
+                raise RuntimeError(
+                    "Error: stored triples generated using a different model")
+        else:
+            if args.NV_NIM_MODEL.split("/")[-1] != checkpoint_model_name:
+                raise RuntimeError(
+                    "Error: stored triples generated using a different model")
         saved_relevant_triples = torch.load(checkpoint_file,
                                             weights_only=False)
         kg_maker.relevant_triples = saved_relevant_triples
@@ -340,16 +436,19 @@ def index_kg(args, context_docs):
 
     chkpt_interval = 10
     chkpt_count = 0
-    for context_doc in tqdm(context_docs, total=total_tqdm_count,
-                            initial=initial_tqdm_count,
-                            desc="Extracting KG triples"):
+    for context_doc in tqdm(
+            context_docs,
+            total=total_tqdm_count,
+            initial=initial_tqdm_count,
+            desc="Extracting KG triples",
+    ):
         kg_maker.add_doc_2_KG(txt=context_doc)
         chkpt_count += 1
         if chkpt_count == chkpt_interval:
             chkpt_count = 0
             path = args.dataset + "/{m}--{t}--checkpoint_kg.pt"
-            model = kg_maker.NIM_MODEL.split(
-                '/')[-1] if not kg_maker.local_LM else "local"
+            model = (kg_maker.NIM_MODEL.split("/")[-1]
+                     if not kg_maker.local_LM else "local")
             path = path.format(m=model,
                                t=datetime.now().strftime("%Y%m%d_%H%M%S"))
             torch.save(kg_maker.relevant_triples, path)
@@ -361,12 +460,13 @@ def index_kg(args, context_docs):
     triples = list(dict.fromkeys(triples))
     raw_triples_path = args.dataset + "/{m}--{t}--raw_triples.pt"
 
-    model_name = kg_maker.NIM_MODEL.split(
-        '/')[-1] if not kg_maker.local_LM else "local"
+    model_name = (kg_maker.NIM_MODEL.split("/")[-1]
+                  if not kg_maker.local_LM else "local")
     torch.save(
         triples,
         raw_triples_path.format(m=model_name,
-                                t=datetime.now().strftime("%Y%m%d_%H%M%S")))
+                                t=datetime.now().strftime("%Y%m%d_%H%M%S")),
+    )
 
     for old_checkpoint_file in Path(
             args.dataset).glob("*--*--checkpoint_kg.pt"):
@@ -379,8 +479,8 @@ def update_data_lists(args, data_lists):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     # creating the embedding model
     sent_trans_batch_size = 256
-    model = SentenceTransformer(
-        model_name=ENCODER_MODEL_NAME_DEFAULT).to(device).eval()
+    model = (SentenceTransformer(
+        model_name=ENCODER_MODEL_NAME_DEFAULT).to(device).eval())
     model_kwargs = {
         "output_device": device,
         "batch_size": int(sent_trans_batch_size / 4),
@@ -435,11 +535,17 @@ def make_dataset(args):
         raise RuntimeError("Error: multiple raw_triples files found")
     if len(raw_triples_file) == 1:
         raw_triples_file = raw_triples_file[0]
-        stored_model_name = raw_triples_file.name.split('--')[0]
+        stored_model_name = raw_triples_file.name.split("--")[0]
 
-        if args.NV_NIM_MODEL.split('/')[-1] != stored_model_name:
-            raise RuntimeError(
-                "Error: stored triples were generated using a different model")
+        # Check if stored triples match current model configuration
+        if args.use_local_txt2kg:
+            if stored_model_name != "local":
+                raise RuntimeError(
+                    "Error: stored triples generated using a different model")
+        else:
+            if args.NV_NIM_MODEL.split("/")[-1] != stored_model_name:
+                raise RuntimeError(
+                    "Error: stored triples generated using a different model")
 
         print(f" -> Saved triples generated with: {stored_model_name}")
         triples = torch.load(raw_triples_file)
@@ -457,18 +563,23 @@ def make_dataset(args):
     print("Creating the graph data from raw triples...")
     # create the graph data from raw triples
     graph_data = create_graph_from_triples(
-        triples=triples, embedding_model=model.encode,
+        triples=triples,
+        embedding_model=model.encode,
         embedding_method_kwargs={
             "batch_size": min(len(triples), sent_trans_batch_size),
-            "verbose": True
-        }, pre_transform=preprocess_triplet)
+            "verbose": True,
+        },
+        pre_transform=preprocess_triplet,
+    )
 
     print("Creating the graph and feature stores...")
     # creating the graph and feature stores
     fs, gs = create_remote_backend_from_graph_data(
-        graph_data=graph_data, path="backend",
+        graph_data=graph_data,
+        path="backend",
         graph_db=NeighborSamplingRAGGraphStore,
-        feature_db=KNNRAGFeatureStore).load()
+        feature_db=KNNRAGFeatureStore,
+    ).load()
     """
     NOTE: these retriever hyperparams are very important.
     Tuning may be needed for custom data...
@@ -477,7 +588,7 @@ def make_dataset(args):
     model_kwargs = {
         "output_device": device,
         "batch_size": int(sent_trans_batch_size / 4),
-        "verbose": True
+        "verbose": True,
     }
 
     doc_retriever_path = os.path.join(args.dataset, "document_retriever.pt")
@@ -490,10 +601,12 @@ def make_dataset(args):
             vector_retriever.k_for_docs = args.k_for_docs
     else:
         print("Creating document retriever...")
-        vector_retriever = DocumentRetriever(context_docs,
-                                             k_for_docs=args.k_for_docs,
-                                             model=model.encode,
-                                             model_kwargs=model_kwargs)
+        vector_retriever = DocumentRetriever(
+            context_docs,
+            k_for_docs=args.k_for_docs,
+            model=model.encode,
+            model_kwargs=model_kwargs,
+        )
         vector_retriever.save(doc_retriever_path)
 
     subgraph_filter = make_pcst_filter(
@@ -501,8 +614,9 @@ def make_dataset(args):
         model,
         topk=5,  # nodes
         topk_e=5,  # edges
-        cost_e=.5,  # edge cost
-        num_clusters=10)  # num clusters
+        cost_e=0.5,  # edge cost
+        num_clusters=10,
+    )  # num clusters
 
     # number of neighbors for each seed node selected by KNN
     fanout = 100
@@ -521,10 +635,12 @@ def make_dataset(args):
     print("Now to retrieve context for each query from "
           "our Vector and Graph DBs...")
 
-    query_loader = RAGQueryLoader(graph_data=(fs, gs),
-                                  subgraph_filter=subgraph_filter,
-                                  vector_retriever=vector_retriever,
-                                  config=query_loader_config)
+    query_loader = RAGQueryLoader(
+        graph_data=(fs, gs),
+        subgraph_filter=subgraph_filter,
+        vector_retriever=vector_retriever,
+        config=query_loader_config,
+    )
 
     # pre-process the dataset
     total_data_list = []
@@ -547,15 +663,17 @@ def make_dataset(args):
     # stats
     print("Min # of Retrieved Triples =", min(extracted_triple_sizes))
     print("Max # of Retrieved Triples =", max(extracted_triple_sizes))
-    print("Average # of Retrieved Triples =",
-          sum(extracted_triple_sizes) / len(extracted_triple_sizes))
+    print(
+        "Average # of Retrieved Triples =",
+        sum(extracted_triple_sizes) / len(extracted_triple_sizes),
+    )
 
     # 60:20:20 split
-    data_lists["train"] = total_data_list[:int(.6 * len(total_data_list))]
-    data_lists["validation"] = total_data_list[int(.6 * len(total_data_list)
-                                                   ):int(.8 *
+    data_lists["train"] = total_data_list[:int(0.6 * len(total_data_list))]
+    data_lists["validation"] = total_data_list[int(0.6 * len(total_data_list)
+                                                   ):int(0.8 *
                                                          len(total_data_list))]
-    data_lists["test"] = total_data_list[int(.8 * len(total_data_list)):]
+    data_lists["test"] = total_data_list[int(0.8 * len(total_data_list)):]
 
     dataset_name = os.path.basename(args.dataset)
     dataset_path = os.path.join(args.dataset, f"{dataset_name}.pt")
@@ -568,36 +686,87 @@ def make_dataset(args):
 
 def train(args, train_loader, val_loader):
     if args.wandb:
-        wandb.init(project=args.wandb_project,
-                   name=f"run_{datetime.now().strftime('%Y-%m-%d_%H:%M')}",
-                   config=vars(args))
+        wandb.init(
+            project=args.wandb_project,
+            name=f"run_{datetime.now().strftime('%Y-%m-%d_%H:%M')}",
+            config=vars(args),
+        )
     hidden_channels = args.gnn_hidden_channels
     num_gnn_layers = args.num_gnn_layers
 
+    def _uncertainty_kwargs():
+        return dict(
+            uncertainty_estim=True,
+            uncertainty_cfg={
+                "h_star": 0.05,
+                "isr_threshold": 1.0,
+                "m": 6,
+                "n_samples": 3,
+                "B_clip": 12.0,
+                "clip_mode": "one-sided",
+                "skeleton_policy": "auto",
+                "q_floor": None,
+                "temperature": 0.5,
+                "max_tokens_decision": 8,
+                "backend": "hf",  # or "ollama" / "anthropic"
+                "mask_refusals_in_loss": True,
+            },
+            decision_backend_kwargs=dict(
+                # HF backend (default): reuse the same model id; using a
+                # separate pipeline under the hood.
+                # If using Ollama or Anthropic instead, pass those
+                # credentials/args here.
+            ),
+        )
+
     if args.num_gnn_layers > 0:
         if args.gnn_model == "GAT":
-            gnn = GAT(in_channels=768, hidden_channels=hidden_channels,
-                      out_channels=1024, num_layers=num_gnn_layers, heads=4)
+            gnn = GAT(
+                in_channels=768,
+                hidden_channels=hidden_channels,
+                out_channels=1024,
+                num_layers=num_gnn_layers,
+                heads=4,
+            )
         elif args.gnn_model == "SGFormer":
-            gnn = SGFormer(in_channels=768, hidden_channels=hidden_channels,
-                           out_channels=1024, trans_num_heads=1,
-                           trans_dropout=0.5, gnn_num_layers=num_gnn_layers,
-                           gnn_dropout=0.5)
+            gnn = SGFormer(
+                in_channels=768,
+                hidden_channels=hidden_channels,
+                out_channels=1024,
+                trans_num_heads=1,
+                trans_dropout=0.5,
+                gnn_num_layers=num_gnn_layers,
+                gnn_dropout=0.5,
+            )
         else:
             raise ValueError(f"Invalid GNN model: {args.gnn_model}")
     else:
         gnn = None
 
     if args.llm_generator_mode == "full":
-        llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt,
-                  n_gpus=args.num_gpus)
+        llm = LLM(
+            model_name=args.llm_generator_name,
+            sys_prompt=sys_prompt,
+            n_gpus=args.num_gpus,
+            **_uncertainty_kwargs(),
+        )
     elif args.llm_generator_mode == "lora":
-        llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt,
-                  dtype=torch.float32, n_gpus=args.num_gpus)
+        llm = LLM(
+            model_name=args.llm_generator_name,
+            sys_prompt=sys_prompt,
+            dtype=torch.float32,
+            n_gpus=args.num_gpus,
+            **_uncertainty_kwargs(),
+        )
     else:
         # frozen
-        llm = LLM(model_name=args.llm_generator_name, sys_prompt=sys_prompt,
-                  dtype=torch.float32, n_gpus=args.num_gpus).eval()
+        llm = LLM(
+            model_name=args.llm_generator_name,
+            sys_prompt=sys_prompt,
+            dtype=torch.float32,
+            n_gpus=args.num_gpus,
+            **_uncertainty_kwargs(),
+        ).eval()
         for _, p in llm.named_parameters():
             p.requires_grad = False
 
@@ -617,17 +786,20 @@ def train(args, train_loader, val_loader):
     else:
         params = [p for _, p in model.named_parameters() if p.requires_grad]
         lr = args.lr
-        optimizer = torch.optim.AdamW([{
-            'params': params,
-            'lr': lr,
-            'weight_decay': 0.05
-        }], betas=(0.9, 0.95))
+        optimizer = torch.optim.AdamW(
+            [{
+                "params": params,
+                "lr": lr,
+                "weight_decay": 0.05
+            }],
+            betas=(0.9, 0.95),
+        )
 
         num_oom_errors = 0
         for epoch in range(args.epochs):
             model.train()
             epoch_loss = 0
-            epoch_str = f'Epoch: {epoch + 1}|{args.epochs}'
+            epoch_str = f"Epoch: {epoch + 1}|{args.epochs}"
             loader = tqdm(train_loader, desc=epoch_str)
             for step, batch in enumerate(loader):
                 new_qs = []
@@ -636,7 +808,8 @@ def train(args, train_loader, val_loader):
                     new_qs.append(
                         prompt_template.format(
                             question=q,
-                            context="\n".join(batch.text_context[i])))
+                            context="\n".join(batch.text_context[i]),
+                        ))
                 batch.question = new_qs
 
                 if args.skip_graph_rag:
@@ -646,37 +819,44 @@ def train(args, train_loader, val_loader):
                 try:
                     loss = get_loss(model, batch)
                     loss.backward()
-                    clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
+                    clip_grad_norm_(optimizer.param_groups[0]["params"], 0.1)
                     if (step + 1) % 2 == 0:
-                        adjust_learning_rate(optimizer.param_groups[0], lr,
-                                             step / len(train_loader) + epoch,
-                                             args.epochs)
+                        adjust_learning_rate(
+                            optimizer.param_groups[0],
+                            lr,
+                            step / len(train_loader) + epoch,
+                            args.epochs,
+                        )
                     optimizer.step()
                     epoch_loss += float(loss.detach())
 
                     if args.wandb and (step + 1) % args.log_steps == 0:
                         wandb.log({
                             "train/loss": float(loss.detach()),
-                            "train/lr": optimizer.param_groups[0]['lr'],
+                            "train/lr": optimizer.param_groups[0]["lr"],
                         })
 
                     if (step + 1) % 2 == 0:
-                        lr = optimizer.param_groups[0]['lr']
+                        lr = optimizer.param_groups[0]["lr"]
                 except torch.cuda.OutOfMemoryError:
                     torch.cuda.empty_cache()
-                    print("Sequence length of last batch: ",
-                          model.seq_length_stats[-1])
+                    print(
+                        "Sequence length of last batch: ",
+                        model.seq_length_stats[-1],
+                    )
                     # TODO: Implement CPU fallback (WIP)
                     num_oom_errors += 1
             print("Sequence length stats: ")
-            print("seq_len avg: ",
-                  sum(model.seq_length_stats) / len(model.seq_length_stats))
+            print(
+                "seq_len avg: ",
+                sum(model.seq_length_stats) / len(model.seq_length_stats),
+            )
             print("seq_len min: ", min(model.seq_length_stats))
             print("seq_len max: ", max(model.seq_length_stats))
             print("Percent of OOM errors: ",
                   num_oom_errors / len(train_loader))
             train_loss = epoch_loss / len(train_loader)
-            print(epoch_str + f', Train Loss: {train_loss:4f}')
+            print(epoch_str + f", Train Loss: {train_loss:4f}")
 
             # Eval Step
             val_loss = 0
@@ -689,7 +869,8 @@ def train(args, train_loader, val_loader):
                         new_qs.append(
                             prompt_template.format(
                                 question=q,
-                                context="\n".join(batch.text_context[i])))
+                                context="\n".join(batch.text_context[i]),
+                            ))
                     batch.question = new_qs
                     if args.skip_graph_rag:
                         batch.desc = ""
@@ -702,7 +883,7 @@ def train(args, train_loader, val_loader):
                     wandb.log({
                         "val/loss": val_loss,
                         "train/epoch_loss": train_loss,
-                        "epoch": epoch + 1
+                        "epoch": epoch + 1,
                     })
 
         if args.wandb:
@@ -736,8 +917,8 @@ def test(model, test_loader, args):
         test_batch.question = new_qs
         if args.skip_graph_rag:
             test_batch.desc = ""
-        preds = (inference_step(model, test_batch,
-                                max_out_tokens=max_chars_in_train_answer / 2))
+        preds = inference_step(model, test_batch,
+                               max_out_tokens=max_chars_in_train_answer / 2)
         for question, pred, label in zip(raw_qs, preds, test_batch.label):
             eval_tuples.append((question, pred, label))
     for question, pred, label in tqdm(eval_tuples, desc="Eval"):
@@ -749,7 +930,7 @@ def test(model, test_loader, args):
     print("Improvement of this estimation process is WIP...")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # for reproducibility
     seed_everything(50)
 
@@ -780,13 +961,27 @@ if __name__ == '__main__':
         data_lists = make_dataset(args)
     batch_size = args.batch_size
     eval_batch_size = args.eval_batch_size
-    train_loader = DataLoader(data_lists["train"], batch_size=batch_size,
-                              drop_last=True, pin_memory=True, shuffle=True)
-    val_loader = DataLoader(data_lists["validation"],
-                            batch_size=eval_batch_size, drop_last=False,
-                            pin_memory=True, shuffle=False)
-    test_loader = DataLoader(data_lists["test"], batch_size=eval_batch_size,
-                             drop_last=False, pin_memory=True, shuffle=False)
+    train_loader = DataLoader(
+        data_lists["train"],
+        batch_size=batch_size,
+        drop_last=True,
+        pin_memory=True,
+        shuffle=True,
+    )
+    val_loader = DataLoader(
+        data_lists["validation"],
+        batch_size=eval_batch_size,
+        drop_last=False,
+        pin_memory=True,
+        shuffle=False,
+    )
+    test_loader = DataLoader(
+        data_lists["test"],
+        batch_size=eval_batch_size,
+        drop_last=False,
+        pin_memory=True,
+        shuffle=False,
+    )
 
     model = train(args, train_loader, val_loader)
     test(model, test_loader, args)
