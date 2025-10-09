@@ -68,7 +68,7 @@ class MovieLens(InMemoryDataset):
 
     def process(self) -> None:
         import pandas as pd
-        from sentence_transformers import SentenceTransformer
+        from torch_geometric.llm.models import SentenceTransformer
 
         data = HeteroData()
 
@@ -79,9 +79,10 @@ class MovieLens(InMemoryDataset):
         genres = torch.from_numpy(genres).to(torch.float)
 
         model = SentenceTransformer(self.model_name)
+        if torch.cuda.is_available():
+            model = model.cuda()
         with torch.no_grad():
-            emb = model.encode(df['title'].values, show_progress_bar=True,
-                               convert_to_tensor=True).cpu()
+            emb = model.encode(text=df['title'].values).cpu()
 
         data['movie'].x = torch.cat([emb, genres], dim=-1)
 
