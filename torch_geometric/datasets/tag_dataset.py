@@ -230,13 +230,15 @@ class TAGDataset(InMemoryDataset):
                                             filename='node-text.csv.gz',
                                             log=True)
         self.text = list(read_csv(raw_text_path)['text'])
-        print('downloading llm explanations')
-        llm_explanation_path = download_google_url(
-            id=self.llm_explanation_id[self.name], folder=f'{self.root}/raw',
-            filename='node-gpt-response.csv.gz', log=True)
-        self.llm_explanation = list(read_csv(llm_explanation_path)['text'])
-        print('downloading llm predictions')
-        fs.cp(f'{self.llm_prediction_url}/{self.name}.csv', self.raw_dir)
+        if self.name in self.llm_explanation_id:
+            print('downloading llm explanations')
+            llm_explanation_path = download_google_url(
+                id=self.llm_explanation_id[self.name],
+                folder=f'{self.root}/raw', filename='node-gpt-response.csv.gz',
+                log=True)
+            self.llm_explanation = list(read_csv(llm_explanation_path)['text'])
+            print('downloading llm predictions')
+            fs.cp(f'{self.llm_prediction_url}/{self.name}.csv', self.raw_dir)
 
     def process(self) -> None:
         # process Title and Abstraction

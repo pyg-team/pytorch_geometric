@@ -91,7 +91,7 @@ class TXT2KG():
         # call LLM on text
         chunk_start_time = time.time()
         if not self.initd_LM:
-            from torch_geometric.nn.nlp import LLM
+            from torch_geometric.llm import LLM
             LM_name = "VAGOsolutions/SauerkrautLM-v2-14b-DPO"
             self.model = LLM(LM_name).eval()
             self.initd_LM = True
