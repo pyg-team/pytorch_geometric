@@ -68,7 +68,7 @@ rag=[
 ]
 test=[
     "onnx",
-    "onnxruntime",
+    "onnxruntime<=1.22.1",
     "onnxscript",
     "pytest",
     "pytest-cov",
