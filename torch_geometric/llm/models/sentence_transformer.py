@@ -117,7 +117,7 @@ class SentenceTransformer(torch.nn.Module):
     Args:
         text (List[str]): List of strings to embed.
         batch_size (int, optional): How many strings to process.
-            Defaults to processing all at once, but this may lead to 
+            Defaults to processing all at once, but this may lead to
             OOM errors. (default: obj:`None`)
         output_device (Union[torch.device, str], optional):
             By default outputs cpu pytorch tensor, but can choose
