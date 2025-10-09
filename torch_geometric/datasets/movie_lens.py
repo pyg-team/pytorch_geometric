@@ -68,6 +68,7 @@ class MovieLens(InMemoryDataset):
 
     def process(self) -> None:
         import pandas as pd
+
         from torch_geometric.llm.models import SentenceTransformer
 
         data = HeteroData()
