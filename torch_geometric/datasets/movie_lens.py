@@ -79,7 +79,7 @@ class MovieLens(InMemoryDataset):
         genres = df['genres'].str.get_dummies('|').values
         genres = torch.from_numpy(genres).to(torch.float)
 
-        model = SentenceTransformer(self.model_name)
+        model = SentenceTransformer(model_name=self.model_name)
         if torch.cuda.is_available():
             model = model.cuda()
         with torch.no_grad():
