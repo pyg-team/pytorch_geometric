@@ -42,7 +42,7 @@ class MovieLens(InMemoryDataset):
         root: str,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
-        model_name: Optional[str] = 'all-MiniLM-L6-v2',
+        model_name: Optional[str] = 'Alibaba-NLP/gte-modernbert-base',
         force_reload: bool = False,
     ) -> None:
         self.model_name = model_name
