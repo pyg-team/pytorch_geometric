@@ -112,8 +112,8 @@ class SentenceTransformer(torch.nn.Module):
         output_device: Optional[Union[torch.device, str]] = None,
         verbose=False,
     ) -> Tensor:
-        r"""
-        Main function for users. Takes in strings and outputs embedding tensor.
+        r"""Main function for users. Takes in strings and outputs embedding tensor.
+
         Args:
             text (List[str]): List of strings to embed.
             batch_size (int, optional): How many strings to process.
