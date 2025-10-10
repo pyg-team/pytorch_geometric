@@ -65,7 +65,8 @@ class DocumentRetriever(VectorRetriever):
             List[str]: Documents retrieved from the vector database.
         """
         if isinstance(query, str):
-            query_enc = self.encoder(query, **self.model_kwargs)
+            with torch.no_grad():
+                query_enc = self.encoder(query, **self.model_kwargs)
         else:
             query_enc = query
 
