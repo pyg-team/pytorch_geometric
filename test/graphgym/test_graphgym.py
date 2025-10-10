@@ -210,12 +210,12 @@ def test_train(destroy_process_group, tmp_path, capfd):
             self.logged.append({"type": "val", "step": trainer.global_step})
 
     logger = LoggerCallback()
-    trainer = pl.Trainer(max_epochs=1, max_steps=4, callbacks=[logger],
+    trainer = pl.Trainer(max_epochs=2, max_steps=4, callbacks=[logger],
                          log_every_n_steps=1, enable_progress_bar=False)
     train_loader, val_loader = loaders[0], loaders[1]
     trainer.fit(model, train_loader, val_loader)
 
-    assert trainer.current_epoch >= 0
+    assert trainer.current_epoch > 0
     # ensure both train and val batches were seen
     types = {entry["type"] for entry in logger.logged}
     assert "val" in types, "Validation did not run"
