@@ -137,10 +137,14 @@ class TAGDataset(InMemoryDataset):
         self.token_on_disk = token_on_disk
         self.tokenize_batch_size = tokenize_batch_size
         self._token = self.tokenize_graph(self.tokenize_batch_size)
-        self._llm_explanation_token = self.tokenize_graph(
-            self.tokenize_batch_size, text_type='llm_explanation')
-        self._all_token = self.tokenize_graph(self.tokenize_batch_size,
-                                              text_type='all')
+        if self.name in self.llm_explanation_id:
+            self._llm_explanation_token = self.tokenize_graph(
+                self.tokenize_batch_size, text_type='llm_explanation')
+            self._all_token = self.tokenize_graph(self.tokenize_batch_size,
+                                                  text_type='all')
+        else:
+            self._llm_explanation_token = None
+            self._all_token = None
         self.__num_classes__ = dataset.num_classes
 
     @property
@@ -170,14 +174,16 @@ class TAGDataset(InMemoryDataset):
 
     @property
     def llm_explanation_token(self) -> Dict[str, Tensor]:
-        if self._llm_explanation_token is None:  # lazy load
+        if self._llm_explanation_token is None and \
+                self.name in self.llm_explanation_id:
             self._llm_explanation_token = self.tokenize_graph(
                 text_type='llm_explanation')
         return self._llm_explanation_token
 
     @property
     def all_token(self) -> Dict[str, Tensor]:
-        if self._all_token is None:  # lazy load
+        if self._all_token is None and \
+                self.name in self.llm_explanation_id:
             self._all_token = self.tokenize_graph(text_type='all')
         return self._all_token
 
@@ -278,6 +284,14 @@ class TAGDataset(InMemoryDataset):
             for i, pred in enumerate(preds):
                 pl[i][:len(pred)] = torch.tensor(
                     pred[:self.llm_prediction_topk], dtype=torch.long) + 1
+
+            if self.llm_explanation is None or pl is None:
+                raise ValueError(
+                    "The TAGDataset only have ogbn-arxiv LLM explanations"
+                    "and predictions in default. The llm explanation and"
+                    "prediction of each node is not specified.Please pass in"
+                    "'llm_explanation' and 'llm_prediction' when"
+                    "convert your dataset to Text Attribute Graph Dataset")
         elif self.name in self.llm_explanation_id:
             self.download()
         else:
@@ -285,13 +299,6 @@ class TAGDataset(InMemoryDataset):
                 'The dataset is not ogbn-arxiv,'
                 'please pass in your llm explanation list to `llm_explanation`'
                 'and llm prediction list to `llm_prediction`')
-        if self.llm_explanation is None or pl is None:
-            raise ValueError(
-                "The TAGDataset only have ogbn-arxiv LLM explanations"
-                "and predictions in default. The llm explanation and"
-                "prediction of each node is not specified."
-                "Please pass in 'llm_explanation' and 'llm_prediction' when"
-                "convert your dataset to Text Attribute Graph Dataset")
 
     def save_node_text(self, text: List[str]) -> None:
         node_text_path = osp.join(self.root, 'raw', 'node-text.csv.gz')

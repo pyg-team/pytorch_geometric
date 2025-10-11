@@ -60,7 +60,8 @@ def main(args):
     token_on_disk = args.token_on_disk
     num_em_iters = args.num_em_iters
     start_time = time.time()
-    train_without_ext_pred = args.train_without_ext_pred
+    train_without_ext_pred = args.train_without_ext_pred and \
+        dataset_name == 'products'
     ext_pred = None
     pretrain_augmented = False
     ext_pseudo_labels = None
@@ -407,7 +408,7 @@ if __name__ == '__main__':
     parser.add_argument("--dataset", type=str, default='products',
                         help='arxiv or products')
     parser.add_argument(
-        "--text_type", type=str, default='llm_explanation',
+        "--text_type", type=str, default='raw_text',
         help="type of text, support raw_text, llm_explanation,"
         "all for arxiv and raw_text for products")
     parser.add_argument("--pl_ratio", type=float, default=0.5,
