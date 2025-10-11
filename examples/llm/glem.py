@@ -404,7 +404,7 @@ if __name__ == '__main__':
                         help='number of runs')
     parser.add_argument('--num_em_iters', type=int, default=1,
                         help='number of iterations')
-    parser.add_argument("--dataset", type=str, default='arxiv',
+    parser.add_argument("--dataset", type=str, default='products',
                         help='arxiv or products')
     parser.add_argument(
         "--text_type", type=str, default='llm_explanation',
