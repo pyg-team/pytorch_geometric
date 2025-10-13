@@ -408,7 +408,8 @@ def make_pcst_filter(triples: List[Tuple[str, str,
         :return: Retrieved graph/query data
         """
         # PCST relies on numpy and pcst_fast pypi libs, hence to("cpu")
-        q_emb = model.encode([query]).to("cpu")
+        with torch.no_grad():
+            q_emb = model.encode([query]).to("cpu")
         textual_nodes = [(int(i), full_textual_nodes[i])
                          for i in graph["node_idx"]]
         textual_nodes = DataFrame(textual_nodes,
