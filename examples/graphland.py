@@ -106,14 +106,13 @@ def run_experiment(name: str, split: str) -> None:
         split=split,
         name=name,
         to_undirected=True,
-    )
+    ).to(device)
     model = Model(
         in_channels=dataset[0].x.shape[1],
         hidden_channels=256,
         out_channels=(_get_num_classes(dataset)
                       if dataset.task != 'regression' else 1),
     ).to(device)
-    dataset = dataset.to(device)
     optimizer = optim.Adam(model.parameters(), lr=1e-3)
 
     best_metrics = {part: -float('inf') for part in ['train', 'val', 'test']}
