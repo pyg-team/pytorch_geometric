@@ -17,11 +17,13 @@ def test_softmax():
     out = softmax(src, index)
     assert out.tolist() == [0.5, 0.5, 1, 1]
     assert softmax(src, ptr=ptr).tolist() == out.tolist()
+    assert softmax(src, index=index, ptr=ptr).tolist() == out.tolist()
 
     src = src.view(-1, 1)
     out = softmax(src, index)
     assert out.tolist() == [[0.5], [0.5], [1], [1]]
     assert softmax(src, ptr=ptr).tolist() == out.tolist()
+    assert softmax(src, index=index, ptr=ptr).tolist() == out.tolist()
 
     jit = torch.jit.script(softmax)
     assert torch.allclose(jit(src, index), out)
