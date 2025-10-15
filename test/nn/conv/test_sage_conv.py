@@ -126,7 +126,7 @@ def test_multi_aggr_sage_conv(aggr_kwargs):
 
 @withDevice
 @onlyLinux
-@withPackage('torch>=2.1.0')
+@withPackage('torch>=2.1.0', 'torch!=2.3.0', 'torch!=2.3.1')
 def test_compile_multi_aggr_sage_conv(device):
     import torch._dynamo as dynamo
 
