@@ -52,3 +52,5 @@ External Resources
 * Mashaan Alshammari: **GCN and SGC in** :pytorch:`null` **PyTorch** [:youtube:`null` `Youtube <https://youtu.be/PQT2QblNegY>`__, :github:`null` `GitHub <https://github.com/mashaan14/YouTube-channel/blob/main/notebooks/2023_12_13_GCN_and_SGC.ipynb>`__],
 
 * Mashaan Alshammari: **GCN Variants SGC and ASGC in** :pytorch:`null` **PyTorch** [:youtube:`null` `Youtube <https://youtu.be/ZNMV5i84fmM>`__, :github:`null` `GitHub <https://github.com/mashaan14/YouTube-channel/blob/main/notebooks/2024_01_31_SGC_and_ASGC.ipynb>`__]
+
+* Yuta Sato: **city2graph** - A GNN library for GeoAI with :pyg:`null` **PyG** [:github:`null` `GitHub <https://github.com/c2g-dev/city2graph>`__, `Documentation <https://city2graph.net>`__]
