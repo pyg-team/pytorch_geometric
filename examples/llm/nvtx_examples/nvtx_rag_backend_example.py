@@ -12,8 +12,8 @@ from torch_geometric.datasets.web_qsp_dataset import (
     preprocess_triplet,
     retrieval_via_pcst,
 )
+from torch_geometric.llm import SentenceTransformer
 from torch_geometric.loader import rag_loader
-from torch_geometric.nn.nlp import SentenceTransformer
 from torch_geometric.profile.nvtx import nvtxit
 
 sys.path.append('..')
