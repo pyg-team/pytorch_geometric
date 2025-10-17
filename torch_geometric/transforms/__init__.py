@@ -63,6 +63,7 @@ from .generate_mesh_normals import GenerateMeshNormals
 from .delaunay import Delaunay
 from .to_superpixels import ToSLIC
 from .grid_sampling import GridSampling
+from .add_tokengt_laplacian_node_ids import AddTokenGTLaplacianNodeIds 
 
 general_transforms = [
     'BaseTransform',
@@ -112,6 +113,7 @@ graph_transforms = [
     'AddGPSE',
     'FeaturePropagation',
     'HalfHop',
+    'AddTokenGTLaplacianNodeIds',
 ]
 
 vision_transforms = [
