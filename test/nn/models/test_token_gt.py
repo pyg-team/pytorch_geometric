@@ -7,7 +7,6 @@ from torch_geometric.nn import TokenGT
 @pytest.mark.parametrize("node_id_mode", ["orf", "laplacian"])
 @pytest.mark.parametrize("use_two_graphs", [True, False])
 def test_token_gt_basic(node_id_mode, use_two_graphs):
-    """Test basic TokenGT functionality with different node_id_mode and edge types."""
     d_p = 4
     embedding_dim = 8
 
@@ -19,7 +18,8 @@ def test_token_gt_basic(node_id_mode, use_two_graphs):
         edge_attr = torch.randint(1, 3, (5, 1))
         ptr = torch.tensor([0, 3, 5])
         batch = torch.tensor([0, 0, 0, 1, 1])
-        node_ids = torch.rand(num_nodes, d_p) if node_id_mode == "laplacian" else None
+        node_ids = torch.rand(num_nodes,
+                              d_p) if node_id_mode == "laplacian" else None
     else:
         # Single graph with 5 nodes
         num_nodes = 5
@@ -28,7 +28,8 @@ def test_token_gt_basic(node_id_mode, use_two_graphs):
         edge_attr = torch.randint(1, 3, (5, 1))
         ptr = torch.tensor([0, 5])
         batch = torch.tensor([0, 0, 0, 0, 0])
-        node_ids = torch.rand(num_nodes, d_p) if node_id_mode == "laplacian" else None
+        node_ids = torch.rand(num_nodes,
+                              d_p) if node_id_mode == "laplacian" else None
 
     model = TokenGT(
         num_atoms=3,
@@ -41,9 +42,8 @@ def test_token_gt_basic(node_id_mode, use_two_graphs):
         num_attention_heads=1,
     )
 
-    node_emb, edge_emb, graph_emb = model(
-        x, edge_index, edge_attr, ptr, batch, node_ids
-    )
+    node_emb, edge_emb, graph_emb = model(x, edge_index, edge_attr, ptr, batch,
+                                          node_ids)
     assert node_emb.shape == (num_nodes, embedding_dim)
     assert edge_emb.shape == (5, embedding_dim)
     if use_two_graphs:
@@ -72,7 +72,8 @@ def test_laplacian_node_ids_required():
     batch = torch.tensor([0, 0, 0, 0, 0])
 
     with pytest.raises(
-        AssertionError, match="node_ids must be provided when node_id_mode is laplacian"
+            AssertionError,
+            match="node_ids must be provided when node_id_mode is laplacian",
     ):
         model(x, edge_index, edge_attr, ptr, batch, node_ids=None)
 
@@ -99,4 +100,5 @@ def test_d_p_inconsistency():
     node_ids_wrong_d_p = torch.rand(5, 3)  # Should be 5, not 3
 
     with pytest.raises(AssertionError, match="node_ids must have 5 channels"):
-        model(x, edge_index, edge_attr, ptr, batch, node_ids=node_ids_wrong_d_p)
+        model(x, edge_index, edge_attr, ptr, batch,
+              node_ids=node_ids_wrong_d_p)

@@ -3,23 +3,21 @@ import os.path as osp
 
 import torch
 import torch.nn as nn
-from torch.amp import autocast, GradScaler
+from torch.amp import GradScaler, autocast
+from tqdm import tqdm
 
+from torch_geometric.data import Data
 from torch_geometric.datasets import PCQM4Mv2
 from torch_geometric.loader import DataLoader
 from torch_geometric.logging import init_wandb, log
 from torch_geometric.nn import TokenGT
-from torch_geometric.transforms import AddTokenGTLaplacianNodeIds
-from torch_geometric.data import Data
+from torch_geometric.transforms import AddTokenGTLaplacianNodeIds, Compose
 from torch_geometric.transforms.base_transform import BaseTransform
-from torch_geometric.transforms import Compose
-from tqdm import tqdm
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--d_p", type=int, default=64)
-parser.add_argument(
-    "--node_id_mode", type=str, default="laplacian", choices=["orf", "laplacian"]
-)
+parser.add_argument("--node_id_mode", type=str, default="laplacian",
+                    choices=["orf", "laplacian"])
 parser.add_argument("--embedding_dim", type=int, default=768)
 parser.add_argument("--num_attention_heads", type=int, default=32)
 parser.add_argument("--num_encoder_layers", type=int, default=12)
@@ -31,8 +29,10 @@ parser.add_argument("--epochs", type=int, default=50)
 parser.add_argument("--batch_size", type=int, default=400)
 parser.add_argument("--warmup_steps", type=int, default=2000)
 parser.add_argument("--lap_node_id_eig_dropout", type=float, default=0.2)
-parser.add_argument("--lap_node_id_sign_flip", action="store_true", default=True)
-parser.add_argument("--encoder_normalize_before", action="store_true", default=True)
+parser.add_argument("--lap_node_id_sign_flip", action="store_true",
+                    default=True)
+parser.add_argument("--encoder_normalize_before", action="store_true",
+                    default=True)
 parser.add_argument("--wandb", action="store_true")
 parser.add_argument("--fp16", action="store_true")
 args = parser.parse_args()
@@ -70,18 +70,15 @@ class LinearSchedulerWithWarmup:
         else:
             # Linear decay
             progress = (self.last_epoch - self.num_warmup_steps) / (
-                self.num_training_steps - self.num_warmup_steps
-            )
-            return self.base_lr * (
-                self.min_lr_ratio + (1 - self.min_lr_ratio) * (1 - progress)
-            )
+                self.num_training_steps - self.num_warmup_steps)
+            return self.base_lr * (self.min_lr_ratio +
+                                   (1 - self.min_lr_ratio) * (1 - progress))
 
 
 def convert_to_single_emb(x, offset: int = 512):
     feature_num = x.size(1) if len(x.size()) > 1 else 1
-    feature_offset = torch.arange(
-        0, feature_num * offset, offset, dtype=torch.long, device=x.device
-    )
+    feature_offset = torch.arange(0, feature_num * offset, offset,
+                                  dtype=torch.long, device=x.device)
     x = x + feature_offset
     return x
 
@@ -130,7 +127,8 @@ class TokenGTGraphRegression(nn.Module):
         self.lm = nn.Linear(embedding_dim, 1)
 
     def forward(self, x, edge_index, edge_attr, ptr, batch, node_ids):
-        _, _, graph_emb = self._token_gt(x, edge_index, edge_attr, ptr, batch, node_ids)
+        _, _, graph_emb = self._token_gt(x, edge_index, edge_attr, ptr, batch,
+                                         node_ids)
         return self.lm(graph_emb)
 
 
@@ -209,7 +207,7 @@ def test():
 
 
 init_wandb(
-    name=f"TokenGT-PCQM4M",
+    name="TokenGT-PCQM4M",
     d_p=args.d_p,
     embedding_dim=args.embedding_dim,
     num_attention_heads=args.num_attention_heads,
@@ -233,10 +231,10 @@ path = osp.join(osp.dirname(osp.realpath(__file__)), "..", "data", "PCQM4M")
 train_dataset = PCQM4Mv2(path, split="train", transform=transform)
 test_dataset = PCQM4Mv2(path, split="val", transform=transform)
 
-train_loader = DataLoader(
-    train_dataset, batch_size=args.batch_size, shuffle=True, num_workers=4
-)
-test_loader = DataLoader(test_dataset, batch_size=args.batch_size, num_workers=4)
+train_loader = DataLoader(train_dataset, batch_size=args.batch_size,
+                          shuffle=True, num_workers=4)
+test_loader = DataLoader(test_dataset, batch_size=args.batch_size,
+                         num_workers=4)
 
 model = TokenGTGraphRegression(
     num_atoms=512 * 9,
@@ -260,9 +258,8 @@ total_params = sum(p.numel() for p in model.parameters())
 print(f"Total parameters: {total_params}")
 
 criterion = nn.L1Loss(reduction="mean")
-optimizer = torch.optim.AdamW(
-    model.parameters(), lr=args.lr, weight_decay=args.weight_decay
-)
+optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr,
+                              weight_decay=args.weight_decay)
 
 total_training_steps = len(train_loader) * args.epochs
 scheduler = LinearSchedulerWithWarmup(
@@ -278,9 +275,8 @@ for epoch in range(1, args.epochs + 1):
     if test_loss < best_test_loss:
         best_test_loss = test_loss
     current_lr = optimizer.param_groups[0]["lr"]
-    log(Epoch=epoch, Loss=train_loss, Train=train_loss, Test=test_loss, LR=current_lr)
-    print(
-        f"Epoch {epoch:03d}: Train Loss: {train_loss:.4f}, Test Loss: {test_loss:.4f}, LR: {current_lr:.6f}"
-    )
+    log(Epoch=epoch, Loss=train_loss, Train=train_loss, Test=test_loss,
+        LR=current_lr)
+    print(f"Epoch {epoch:03d}: Train={train_loss:.4f}, Test={test_loss:.4f}")
 
 print(f"Best test loss: {best_test_loss:.4f}")

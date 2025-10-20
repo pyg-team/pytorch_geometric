@@ -1,9 +1,10 @@
+import torch
+import torch.nn.functional as F
 from torch import Tensor
+
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms.base_transform import BaseTransform
-import torch.nn.functional as F
-import torch
 from torch_geometric.utils._to_dense_adj import to_dense_adj
 from torch_geometric.utils.laplacian import get_laplacian
 
@@ -13,8 +14,8 @@ class AddTokenGTLaplacianNodeIds(BaseTransform):
     r"""Adds Laplacian node identifiers to a given input graph as described
     in the `"Pure Transformers are Powerful Graph Learners"
     <https://arxiv.org/pdf/2207.02505>`_ paper
-    (functional name: :obj:`add_token_gt_laplacian_node_ids`). Use as `pre_transform`
-    to avoid unnecessary re-calculating of eigenvectors.
+    (functional name: :obj:`add_token_gt_laplacian_node_ids`). Use as
+    `pre_transform` to avoid unnecessary re-calculating of eigenvectors.
 
     Args:
         d_p (int): Dimension of node identifiers. If d_p is smaller than the
@@ -22,7 +23,6 @@ class AddTokenGTLaplacianNodeIds(BaseTransform):
             the d_p smallest eigenvalues are used. If d_p is larger than the
             number of nodes in the graph, we zero pad channels.
     """
-
     def __init__(self, d_p: int):
         self._d_p = d_p
 
@@ -36,11 +36,10 @@ class AddTokenGTLaplacianNodeIds(BaseTransform):
         # Adapt lap_eigvec dimension to d_p
         lap_dim = lap_eigvec.size(-1)
         if self._d_p > lap_dim:
-            lap_eigvec = F.pad(
-                lap_eigvec, (0, self._d_p - lap_dim), value=float("0")
-            )  # [sum(n_node), Dl]
+            lap_eigvec = F.pad(lap_eigvec, (0, self._d_p - lap_dim),
+                               value=float("0"))  # [sum(n_node), Dl]
         else:
-            lap_eigvec = lap_eigvec[:, : self._d_p]  # [sum(n_node), Dl]
+            lap_eigvec = lap_eigvec[:, :self._d_p]  # [sum(n_node), Dl]
 
         F.normalize(lap_eigvec, p=2, dim=1)
 
