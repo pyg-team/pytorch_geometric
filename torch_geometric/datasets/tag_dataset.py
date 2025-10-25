@@ -137,14 +137,13 @@ class TAGDataset(InMemoryDataset):
         self.token_on_disk = token_on_disk
         self.tokenize_batch_size = tokenize_batch_size
         self._token = self.tokenize_graph(self.tokenize_batch_size)
+        self._llm_explanation_token = None
+        self._all_token = None
         if self.name in self.llm_explanation_id:
             self._llm_explanation_token = self.tokenize_graph(
                 self.tokenize_batch_size, text_type='llm_explanation')
             self._all_token = self.tokenize_graph(self.tokenize_batch_size,
                                                   text_type='all')
-        else:
-            self._llm_explanation_token = None
-            self._all_token = None
         self.__num_classes__ = dataset.num_classes
 
     @property
