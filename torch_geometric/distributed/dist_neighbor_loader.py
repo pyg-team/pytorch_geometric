@@ -1,6 +1,7 @@
 from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import torch
+from warnings import warn
 
 from torch_geometric.distributed import (
     DistContext,
@@ -61,6 +62,16 @@ class DistNeighborLoader(NodeLoader, DistLoader):
         device: Optional[torch.device] = None,
         **kwargs,
     ):
+        warn(
+            "`torch_geometric.distributed` has been deprecated since 2.7.0 and will "
+            "no longer be maintained. For distributed training, refer to our "
+            "tutorials on distributed training at "
+            "https://pytorch-geometric.readthedocs.io/en/latest/tutorial/distributed.html "  # noqa: E501
+            "or cuGraph examples at "
+            "https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples",  # noqa: E501
+            stacklevel=2,
+            category=DeprecationWarning,
+        )
         assert isinstance(data[0], LocalFeatureStore)
         assert isinstance(data[1], LocalGraphStore)
         assert concurrency >= 1, "RPC concurrency must be greater than 1"
