@@ -53,14 +53,6 @@ class DistLoader:
         dist_sampler: DistNeighborSampler = None,
         **kwargs,
     ):
-        warn(
-            "`torch_geometric.distributed` has been deprecated since 2.7.0 and will "
-            "no longer be maintained. For distributed training, refer to our "
-            "tutorials on distributed training at "
-            "https://pytorch-geometric.readthedocs.io/en/latest/tutorial/distributed.html "  # noqa: E501
-            "or cuGraph examples at "
-            "https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples",  # noqa: E501
-        )
         if master_addr is None and os.environ.get('MASTER_ADDR') is not None:
             master_addr = os.environ['MASTER_ADDR']
         if master_addr is None:
