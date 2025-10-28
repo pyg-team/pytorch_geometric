@@ -1,7 +1,7 @@
 from typing import Callable, Dict, List, Optional, Tuple, Union
+from warnings import warn
 
 import torch
-from warnings import warn
 
 from torch_geometric.distributed import (
     DistContext,
