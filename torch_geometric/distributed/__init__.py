@@ -1,5 +1,3 @@
-from warnings import warn
-
 from .dist_context import DistContext
 from .local_feature_store import LocalFeatureStore
 from .local_graph_store import LocalGraphStore
