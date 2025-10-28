@@ -2,7 +2,7 @@ import itertools
 import logging
 import math
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
-
+from warnings import warn
 import numpy as np
 import torch
 import torch.multiprocessing as mp
@@ -81,6 +81,14 @@ class DistNeighborSampler:
         device: Optional[torch.device] = None,
         **kwargs,
     ):
+        warn(
+            "`torch_geometric.distributed` has been deprecated since 2.7.0 and will "
+            "no longer be maintained. For distributed training, refer to our "
+            "tutorials on distributed training at "
+            "https://pytorch-geometric.readthedocs.io/en/latest/tutorial/distributed.html "  # noqa: E501
+            "or cuGraph examples at "
+            "https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples",  # noqa: E501
+        )
         self.current_ctx = current_ctx
 
         self.feature_store, self.graph_store = data
