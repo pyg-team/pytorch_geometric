@@ -83,12 +83,12 @@ class DistNeighborSampler:
         **kwargs,
     ):
         warn(
-            "`torch_geometric.distributed` has been deprecated since 2.7.0 and will "
-            "no longer be maintained. For distributed training, refer to our "
+            "`torch_geometric.distributed` has been deprecated since 2.7.0 and will " # noqa: E501
+            "no longer be maintained. For distributed training, refer to our " # noqa: E501
             "tutorials on distributed training at "
-            "https://pytorch-geometric.readthedocs.io/en/latest/tutorial/distributed.html "  # noqa: E501
+            "https://pytorch-geometric.readthedocs.io/en/latest/tutorial/distributed.html " # noqa: E501
             "or cuGraph examples at "
-            "https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples",  # noqa: E501
+            "https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples", # noqa: E501
         )
         self.current_ctx = current_ctx
 
