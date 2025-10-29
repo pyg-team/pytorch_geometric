@@ -89,8 +89,8 @@ class DistNeighborLoader(NodeLoader, DistLoader):
             )
         else:
             warn(
-                "`torch_geometric.distributed` has been deprecated since 2.7.0 and will " # noqa: E501
-                "no longer be maintained. For distributed training, refer to our " # noqa: E501
+                "`torch_geometric.distributed` has been deprecated since 2.7.0 and will "  # noqa: E501
+                "no longer be maintained. For distributed training, refer to our "  # noqa: E501
                 "tutorials on distributed training at "
                 "https://pytorch-geometric.readthedocs.io/en/latest/tutorial/distributed.html "  # noqa: E501
                 "or cuGraph examples at "
