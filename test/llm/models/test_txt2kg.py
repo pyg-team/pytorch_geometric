@@ -12,7 +12,7 @@ from torch_geometric.llm.models.txt2kg import (
     _multiproc_helper,
     _parse_n_check_triples,
 )
-from torch_geometric.testing import onlyOnline
+from torch_geometric.testing import onlyOnline, withPackage
 
 
 @pytest.mark.parametrize("text, chunk_size, expected", [
@@ -90,6 +90,7 @@ def test_multiproc_helper_creates_output_file():
 
 
 @onlyOnline
+@withPackage("transformers")
 def test_chunk_to_triples_str_local_no_external_import():
     class FakeLLM:
         def __init__(self, name):
@@ -113,6 +114,7 @@ def test_chunk_to_triples_str_local_no_external_import():
 
 
 @onlyOnline
+@withPackage("transformers")
 def test_add_doc_and_save():
     model = TXT2KG(local_LM=True)
 
