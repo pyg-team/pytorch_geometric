@@ -43,7 +43,7 @@ def main(args):
     gpu = args.gpu
     dataset_name = args.dataset
     text_type = args.text_type if args.dataset == 'arxiv' else 'raw_text'
-    root = osp.join('data', 'OGB')
+    root = osp.join('data', 'ogb')
     hf_model = args.hf_model
     pl_ratio = args.pl_ratio
     gnn_lr = args.gnn_lr
