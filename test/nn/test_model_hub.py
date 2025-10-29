@@ -83,13 +83,13 @@ def test_save_pretrained_with_push_to_hub(model, tmp_path):
     )
 
 
-# @withPackage('huggingface_hub')
-# def test_from_pretrained(model, tmp_path):
-#     save_directory = f'{str(tmp_path / REPO_NAME)}'
-#     model.save_pretrained(save_directory)
+@withPackage('huggingface_hub')
+def test_from_pretrained(model, tmp_path):
+    save_directory = f'{str(tmp_path / REPO_NAME)}'
+    model.save_pretrained(save_directory)
 
-#     model = model.from_pretrained(save_directory)
-#     assert isinstance(model, DummyModel)
+    model = model.from_pretrained(save_directory)
+    assert isinstance(model, DummyModel)
 
 
 @withPackage('huggingface_hub')
