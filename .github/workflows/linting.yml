@@ -25,7 +25,7 @@ jobs:
       # Skip workflow if only certain files have been changed.
       - name: Get changed files
         id: changed-files-specific
-        uses: tj-actions/changed-files@v46
+        uses: tj-actions/changed-files@v47
         with:
           files: |
             benchmark/**
@@ -50,4 +50,4 @@ jobs:
       - name: Check type hints
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          uv run --no-project mypy --cache-dir=/dev/null
+          mypy -v --cache-dir=/dev/null

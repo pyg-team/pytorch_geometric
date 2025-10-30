@@ -10,7 +10,7 @@ from torch_geometric.config_store import (
     register,
     to_dataclass,
 )
-from torch_geometric.testing import minPython, withPackage
+from torch_geometric.testing import withPackage
 from torch_geometric.transforms import AddSelfLoops
 
 
@@ -45,7 +45,6 @@ def test_to_dataclass():
                         "AddSelfLoops')")
 
 
-@minPython('3.10')
 def test_map_annotation():
     mapping = {int: Any}
     assert map_annotation(dict[str, int], mapping) == dict[str, Any]

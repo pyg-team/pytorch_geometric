@@ -15,6 +15,13 @@ class PoolingStrategy(Enum):
 
 
 class SentenceTransformer(torch.nn.Module):
+    r"""A wrapper around a Sentence-Transformer from HuggingFace.
+
+    Args:
+        model_name (str): The HuggingFace model name, *e.g.*, :obj:`"BERT"`.
+        pooling_strategy (str, optional): The pooling strategy to use
+            for generating node embeddings. (default: :obj:`"mean"`)
+    """
     def __init__(
         self,
         model_name: str,
@@ -105,6 +112,19 @@ class SentenceTransformer(torch.nn.Module):
         output_device: Optional[Union[torch.device, str]] = None,
         verbose=False,
     ) -> Tensor:
+        r"""Main function for users. Converts strings to embeddings.
+
+        Args:
+            text (List[str]): List of strings to embed.
+            batch_size (int, optional): How many strings to process.
+                Defaults to processing all at once, but this may lead to
+                OOM errors. (default: obj:`None`)
+            output_device (Union[torch.device, str], optional):
+                By default outputs cpu pytorch tensor, but can choose
+                to output to specific cuda devices. (default: obj:`None`)
+            verbose (bool, optional): Controls the verbosity of outputs.
+                (default: obj:`False`)
+        """
         is_empty = len(text) == 0
         text = ['dummy'] if is_empty else text
 

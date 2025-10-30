@@ -174,7 +174,7 @@ def extract_name(
 class MoleculeGPTDataset(InMemoryDataset):
     r"""The dataset from the `"MoleculeGPT: Instruction Following Large
     Language Models for Molecular Property Prediction"
-    <https://ai4d3.github.io/papers/34.pdf>`_ paper.
+    <https://ai4d3.github.io/2023/papers/34.pdf>`_ paper.
 
     Args:
         root (str): Root directory where the dataset should be saved.
