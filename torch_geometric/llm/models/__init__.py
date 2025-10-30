@@ -1,7 +1,5 @@
 from .sentence_transformer import (  # noqa
-    SentenceTransformer,  # noqa
-    mean_pooling,  # noqa
-    last_pooling,  # noqa
+    SentenceTransformer, mean_pooling, last_pooling,
 )
 from .vision_transformer import VisionTransformer  # noqa
 from .llm import LLM  # noqa
