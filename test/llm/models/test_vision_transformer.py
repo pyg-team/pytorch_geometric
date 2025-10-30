@@ -1,11 +1,10 @@
 import torch
 
 from torch_geometric.llm.models import VisionTransformer
-from torch_geometric.testing import onlyFullTest, withCUDA, withPackage
+from torch_geometric.testing import withCUDA, withPackage
 
 
 @withCUDA
-@onlyFullTest
 @withPackage('transformers')
 def test_vision_transformer(device):
     model = VisionTransformer(

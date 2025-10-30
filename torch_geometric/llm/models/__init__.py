@@ -1,15 +1,19 @@
-from .sentence_transformer import SentenceTransformer
-from .vision_transformer import VisionTransformer
-from .llm import LLM
-from .txt2kg import TXT2KG
-from .llm_judge import LLMJudge
-from .g_retriever import GRetriever
-from .molecule_gpt import MoleculeGPT
-from .glem import GLEM
-from .protein_mpnn import ProteinMPNN
-from .git_mol import GITMol
+from .sentence_transformer import (  # noqa
+    SentenceTransformer,  # noqa
+    mean_pooling,  # noqa
+    last_pooling,  # noqa
+)
+from .vision_transformer import VisionTransformer  # noqa
+from .llm import LLM  # noqa
+from .txt2kg import TXT2KG  # noqa
+from .llm_judge import LLMJudge  # noqa
+from .g_retriever import GRetriever  # noqa
+from .molecule_gpt import MoleculeGPT  # noqa
+from .glem import GLEM  # noqa
+from .protein_mpnn import ProteinMPNN  # noqa
+from .git_mol import GITMol  # noqa
 
-__all__ = classes = [
+classes = [
     'SentenceTransformer',
     'VisionTransformer',
     'LLM',
@@ -21,3 +25,10 @@ __all__ = classes = [
     'ProteinMPNN',
     'GITMol',
 ]
+
+functions = [
+    'mean_pooling',
+    'last_pooling',
+]
+
+__all__ = classes + functions
