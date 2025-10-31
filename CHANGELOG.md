@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
+## [2.8.0] - YYYY-MM-DD
+
+### Added
+
+### Changed
+
+- Improved `.llm` code coverage ([#10516](https://github.com/pyg-team/pytorch_geometric/pull/10516))
+
+### Deprecated
+
+### Fixed
+
+### Removed
+
 ## [2.7.0] - 2025-10-14
 
 ### Fixed
