@@ -187,11 +187,11 @@ If :conda:`null` :obj:`conda` does not pick up the correct CUDA version of :pyg:
 
    conda install pyg=*=*cu* -c pyg
 
-Enabling Accelerated CugraphX GNNs (Ex. CuGraphRGCNConv)
---------------------------------------------------------
+Enabling Accelerated cuGraph GNNs
+---------------------------------
 
-Currently the only way to enable these is to use the `NVIDIA PyG Container <https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pyg/tags>_`.
-This functionality will soon be enabled through CUDNN which is an essential part of any PyTorch build. We still recommend using the NVIDIA PyG Container regardless to have the fastest most stable build of the NVIDIA CUDA stack combined with PyTorch and PyG.
+Currently, NVIDIA recommends `NVIDIA PyG Container <https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pyg/tags>_` to use cuGraph integration in PyG.
+This functionality is planned to be enabled through cuDNN which is part of PyTorch builds. We still recommend using the NVIDIA PyG Container regardless to have the fastest and most stable build of the NVIDIA CUDA stack combined with PyTorch and PyG.
 
 
 Frequently Asked Questions
