@@ -11,9 +11,11 @@ from torch_geometric.testing import onlyCUDA, withPackage
 @pytest.mark.parametrize('bias', [True, False])
 @pytest.mark.parametrize('bipartite', [True, False])
 @pytest.mark.parametrize('concat', [True, False])
+@pytest.mark.parametrize('edge_attr', [True, False])
 @pytest.mark.parametrize('heads', [1, 2, 3])
 @pytest.mark.parametrize('max_num_neighbors', [8, None])
-def test_gat_conv_equality(bias, bipartite, concat, heads, max_num_neighbors):
+def test_gat_conv_equality(bias, bipartite, concat, edge_attr, heads,
+                           max_num_neighbors):
     in_channels, out_channels = 5, 2
     kwargs = dict(bias=bias, concat=concat)
 
@@ -32,17 +34,27 @@ def test_gat_conv_equality(bias, bipartite, concat, heads, max_num_neighbors):
         conv2.lin.weight.data[:, :] = conv1.lin.weight.data
         conv2.att.data[:heads * out_channels] = conv1.att_src.data.flatten()
         conv2.att.data[heads * out_channels:] = conv1.att_dst.data.flatten()
+    if edge_attr and not bipartite:
+        e_attrs = torch.randn(size=(edge_index.size(1), 10))
+        out1 = conv1(x, edge_index, edge_attr=e_attrs)
 
-    if bipartite:
-        out1 = conv1((x, x[:size[1]]), edge_index)
+        out2 = conv2(
+            x,
+            EdgeIndex(edge_index, sparse_size=size),
+            max_num_neighbors=max_num_neighbors,
+            edge_attr=e_attrs,
+        )
     else:
-        out1 = conv1(x, edge_index)
+        if bipartite:
+            out1 = conv1((x, x[:size[1]]), edge_index)
+        else:
+            out1 = conv1(x, edge_index)
 
-    out2 = conv2(
-        x,
-        EdgeIndex(edge_index, sparse_size=size),
-        max_num_neighbors=max_num_neighbors,
-    )
+        out2 = conv2(
+            x,
+            EdgeIndex(edge_index, sparse_size=size),
+            max_num_neighbors=max_num_neighbors,
+        )
     assert torch.allclose(out1, out2, atol=1e-3)
 
     grad_output = torch.rand_like(out1)
