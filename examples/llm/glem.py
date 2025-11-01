@@ -42,6 +42,7 @@ def get_n_params(model):
 def main(args):
     gpu = args.gpu
     dataset_name = args.dataset
+    text_type = args.text_type if args.dataset == 'arxiv' else 'raw_text'
     root = osp.join('data', 'ogb')
     hf_model = args.hf_model
     pl_ratio = args.pl_ratio
@@ -59,7 +60,8 @@ def main(args):
     token_on_disk = args.token_on_disk
     num_em_iters = args.num_em_iters
     start_time = time.time()
-    train_without_ext_pred = args.train_without_ext_pred
+    train_with_ext_pred = not args.train_without_ext_pred and \
+        dataset_name == 'products'
     ext_pred = None
     pretrain_augmented = False
     ext_pseudo_labels = None
@@ -68,7 +70,7 @@ def main(args):
     print(f'Running on: {torch.cuda.get_device_name({gpu})}')
     torch.cuda.empty_cache()
 
-    if not train_without_ext_pred:
+    if train_with_ext_pred:
         ext_pred_path = download_google_url(
             id='15sO2m7BeW7C1Upmdw3Cx1JS__6nxTAzY',
             folder='data/ogb/ogbn_products/ext_preds',
@@ -85,7 +87,7 @@ def main(args):
 
     tag_dataset = TAGDataset(root, dataset, hf_model,
                              token_on_disk=token_on_disk)
-    text_dataset = tag_dataset.to_text_dataset()
+    text_dataset = tag_dataset.to_text_dataset(text_type)
     print(tag_dataset.num_classes, tag_dataset.raw_file_names)
 
     num_classes = tag_dataset.num_classes
@@ -261,7 +263,7 @@ def main(args):
     if pretrain_phase == 'gnn':
         model.gnn = model.gnn.to(device)
         print('pretraining gnn to generate pseudo labels')
-        if not train_without_ext_pred:
+        if train_with_ext_pred:
             pretrain_loader = graph_train_loader
         preds_filename = 'gnn_pretrain'
     elif pretrain_phase == 'lm':
@@ -271,7 +273,7 @@ def main(args):
         pretrain_loader = text_pretrain_loader
         test_loader = text_test_loader
         pretrain_opt = lm_opt
-        if not train_without_ext_pred:
+        if train_with_ext_pred:
             pretrain_loader = text_train_loader
         preds_filename = 'lm_pretrain'
 
@@ -405,6 +407,10 @@ if __name__ == '__main__':
                         help='number of iterations')
     parser.add_argument("--dataset", type=str, default='products',
                         help='arxiv or products')
+    parser.add_argument(
+        "--text_type", type=str, default='raw_text',
+        help="type of text, support raw_text, llm_explanation,"
+        "all for arxiv and raw_text for products")
     parser.add_argument("--pl_ratio", type=float, default=0.5,
                         help="pseudo labels ratio")
     parser.add_argument('--hf_model', type=str, default='prajjwal1/bert-tiny',

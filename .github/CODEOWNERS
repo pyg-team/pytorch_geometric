@@ -16,6 +16,8 @@
 
 /docs/ @rusty1s @akihironitta
 
+/torch_geometric/nn/conv/cugraph @tingyu66
+
 /examples/llm @puririshi98
 
 /torch_geometric/llm @puririshi98

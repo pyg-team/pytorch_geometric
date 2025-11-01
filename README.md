@@ -4,14 +4,21 @@
 
 ______________________________________________________________________
 
-[![PyPI Version][pypi-image]][pypi-url]
-[![Testing Status][testing-image]][testing-url]
-[![Linting Status][linting-image]][linting-url]
-[![Docs Status][docs-image]][docs-url]
-[![Contributing][contributing-image]][contributing-url]
-[![Slack][slack-image]][slack-url]
+<div align="center">
 
-**[Documentation](https://pytorch-geometric.readthedocs.io)** | **[PyG 1.0 Paper](https://arxiv.org/abs/1903.02428)** | **[PyG 2.0 Paper](https://arxiv.org/abs/2507.16991)** | **[Colab Notebooks](https://pytorch-geometric.readthedocs.io/en/latest/get_started/colabs.html)** | **[External Resources](https://pytorch-geometric.readthedocs.io/en/latest/external/resources.html)** | **[OGB Examples](https://github.com/snap-stanford/ogb/tree/master/examples)**
+[![PyPI Version][pypi-image]][pypi-url]
+[![PyPI Download][pypi-download-image]][pypi-download-url]
+[![Slack][slack-image]][slack-url]
+[![Contributing][contributing-image]][contributing-url]
+
+**[Documentation](https://pytorch-geometric.readthedocs.io)** |
+**[PyG 1.0 Paper](https://arxiv.org/abs/1903.02428)** |
+**[PyG 2.0 Paper](https://arxiv.org/abs/2507.16991)** |
+**[Colab Notebooks](https://pytorch-geometric.readthedocs.io/en/latest/get_started/colabs.html)** |
+**[External Resources](https://pytorch-geometric.readthedocs.io/en/latest/external/resources.html)** |
+**[OGB Examples](https://github.com/snap-stanford/ogb/tree/master/examples)**
+
+</div>
 
 **PyG** *(PyTorch Geometric)* is a library built upon [PyTorch](https://pytorch.org/) to easily write and train Graph Neural Networks (GNNs) for a wide range of applications related to structured data.
 
@@ -334,7 +341,7 @@ These approaches have been implemented in PyG, and can benefit from the above GN
 
 ## Installation
 
-PyG is available for Python 3.9 to Python 3.13.
+PyG is available for Python 3.10 to Python 3.13.
 
 From **PyG 2.3** onwards, you can install and use PyG **without any external library** required except for PyTorch.
 For this, simply run
@@ -459,15 +466,11 @@ If you notice anything unexpected, please open an [issue](https://github.com/pyg
 If you have any questions or are missing a specific feature, feel free [to discuss them with us](https://github.com/pyg-team/pytorch_geometric/discussions).
 We are motivated to constantly make PyG even better.
 
-[contributing-image]: https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat
+[contributing-image]: https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat&color=4B26A4
 [contributing-url]: https://github.com/pyg-team/pytorch_geometric/blob/master/.github/CONTRIBUTING.md
-[docs-image]: https://readthedocs.org/projects/pytorch-geometric/badge/?version=latest
-[docs-url]: https://pytorch-geometric.readthedocs.io/en/latest
-[linting-image]: https://github.com/pyg-team/pytorch_geometric/actions/workflows/linting.yml/badge.svg
-[linting-url]: https://github.com/pyg-team/pytorch_geometric/actions/workflows/linting.yml
-[pypi-image]: https://badge.fury.io/py/torch-geometric.svg
+[pypi-download-image]: https://img.shields.io/pypi/dm/torch_geometric?color=4B26A4
+[pypi-download-url]: https://pepy.tech/projects/torch_geometric
+[pypi-image]: https://img.shields.io/pypi/pyversions/torch-geometric?color=4B26A4
 [pypi-url]: https://pypi.python.org/pypi/torch-geometric
-[slack-image]: https://img.shields.io/badge/slack-pyg-brightgreen
+[slack-image]: https://img.shields.io/badge/slack-join-white.svg?logo=slack&color=4B26A4
 [slack-url]: https://data.pyg.org/slack.html
-[testing-image]: https://github.com/pyg-team/pytorch_geometric/actions/workflows/testing.yml/badge.svg
-[testing-url]: https://github.com/pyg-team/pytorch_geometric/actions/workflows/testing.yml
