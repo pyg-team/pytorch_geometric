@@ -40,8 +40,3 @@ jobs:
         run: |
           FULL_TEST=1 uv run --no-project pytest --cov --cov-report=xml --durations 10
         shell: bash
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v5
-        with:
-          fail_ci_if_error: false
