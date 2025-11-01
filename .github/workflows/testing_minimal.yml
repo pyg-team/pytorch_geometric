@@ -60,4 +60,4 @@ jobs:
         if: steps.changed-files-specific.outputs.only_changed != 'true'
         timeout-minutes: 15
         run: |
-          uv run --no-project pytest --cov --cov-report=xml --durations 10
+          uv run --no-project pytest --durations 10

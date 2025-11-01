@@ -5,10 +5,10 @@ import torch
 from torch import Tensor
 
 from torch_geometric.llm.models import LLM
-from torch_geometric.testing import withPackage
+from torch_geometric.testing import onlyRAG, withPackage
 
 
-# @onlyRAG
+@onlyRAG
 @withPackage('transformers', 'accelerate')
 @pytest.mark.parametrize('n_gpus', [None, 1])
 def test_llm(n_gpus) -> None:

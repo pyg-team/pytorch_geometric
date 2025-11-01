@@ -10,7 +10,8 @@ def sample_documents():
     """Fixture providing sample documents for testing."""
     return [
         "This is the first test document.",
-        "This is the second test document.", "This is the third test document."
+        "This is the second test document.",
+        "This is the third test document.",
     ]
 
 
@@ -25,7 +26,7 @@ def sample_model():
         torch.zeros(1, 384),
         torch.ones(1, 384),
         torch.ones(1, 384) * 2,
-        torch.ones(1, 384) * 1
+        torch.ones(1, 384) * 1,
     ]
 
     return mock_model
