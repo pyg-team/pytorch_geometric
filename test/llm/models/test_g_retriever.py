@@ -8,7 +8,7 @@ from torch_geometric.testing import onlyRAG, withPackage
 
 
 @onlyRAG
-@withPackage('transformers', 'sentencepiece', 'accelerate')
+@withPackage('transformers', 'sentencepiece', 'accelerate', 'peft')
 def test_g_retriever() -> None:
     llm = LLM(model_name='Qwen/Qwen3-0.6B', dtype=torch.float32,
               sys_prompt="You're an agent, answer my questions.")
@@ -25,6 +25,7 @@ def test_g_retriever() -> None:
     model = GRetriever(
         llm=llm,
         gnn=gnn,
+        use_lora=True,
     )
     assert str(model) == ('GRetriever(\n'
                           '  llm=LLM(Qwen/Qwen3-0.6B),\n'
@@ -55,7 +56,7 @@ def test_g_retriever() -> None:
 
 
 @onlyRAG
-@withPackage('transformers', 'sentencepiece', 'accelerate')
+@withPackage('transformers', 'sentencepiece', 'accelerate', 'peft')
 def test_g_retriever_many_tokens() -> None:
     llm = LLM(model_name='Qwen/Qwen3-0.6B', dtype=torch.float32,
               sys_prompt="You're an agent, answer my questions.")
@@ -73,6 +74,7 @@ def test_g_retriever_many_tokens() -> None:
         llm=llm,
         gnn=gnn,
         mlp_out_tokens=2,
+        use_lora=True,
     )
     assert str(model) == ('GRetriever(\n'
                           '  llm=LLM(Qwen/Qwen3-0.6B),\n'
