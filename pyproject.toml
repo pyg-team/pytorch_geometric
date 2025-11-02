@@ -4,7 +4,7 @@ build-backend="flit_core.buildapi"
 
 [project]
 name="torch-geometric"
-version="2.7.0"
+version="2.8.0"
 authors=[
     {name="Matthias Fey", email="matthias@pyg.org"},
 ]
