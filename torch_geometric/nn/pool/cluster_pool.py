@@ -20,8 +20,7 @@ class UnpoolInfo(NamedTuple):
 
 class ClusterPooling(torch.nn.Module):
     r"""The cluster pooling operator from the `"Edge-Based Graph Component
-    Pooling" <https://mlg-europe.github.io/2024/papers/40/CameraReady/ECML_PKDD_2024%20Graph_Cluster_Pooling.pdf>`_ paper.
-
+    Pooling" <https://arxiv.org/abs/2409.11856>`_ paper.
     :class:`ClusterPooling` computes a score for each edge.
     Based on the selected edges, graph clusters are calculated and compressed
     to one node using the injective :obj:`"sum"` aggregation function.
