@@ -6,6 +6,7 @@ from torch_geometric.llm.models import GLEM
 from torch_geometric.llm.models.glem import deal_nan
 from torch_geometric.loader import DataLoader, NeighborLoader
 from torch_geometric.nn.models import GraphSAGE
+from torch_geometric.testing import withPackage
 
 
 def test_deal_nan_tensor_replaces_nans():
@@ -103,12 +104,14 @@ def glem_model():
     return model
 
 
+@withPackage('transformers', 'sentencepiece', 'accelerate')
 def test_glem_initialization(glem_model):
     assert glem_model.lm is not None
     assert glem_model.gnn is not None
     assert glem_model.lm.num_labels == 3
 
 
+@withPackage('transformers', 'sentencepiece', 'accelerate')
 @pytest.mark.parametrize('is_augmented', [True, False])
 def test_glem_pretrain(glem_model, tiny_graph_data, dummy_text_data,
                        is_augmented):
@@ -143,6 +146,7 @@ def test_glem_pretrain(glem_model, tiny_graph_data, dummy_text_data,
     )
 
 
+@withPackage('transformers', 'sentencepiece', 'accelerate')
 @pytest.mark.parametrize('is_augmented', [True, False])
 def test_glem_train(glem_model, tiny_graph_data, dummy_text_data,
                     is_augmented):
@@ -183,6 +187,7 @@ def test_glem_train(glem_model, tiny_graph_data, dummy_text_data,
     assert loss >= 0
 
 
+@withPackage('transformers', 'sentencepiece', 'accelerate')
 def test_glem_inference(glem_model, tiny_graph_data, dummy_text_data):
     # Test LM inference
     preds = glem_model.inference('lm', dummy_text_data, verbose=True)
@@ -198,6 +203,7 @@ def test_glem_inference(glem_model, tiny_graph_data, dummy_text_data):
     assert not torch.isnan(preds).any()
 
 
+@withPackage('transformers', 'sentencepiece', 'accelerate')
 def test_glem_loss_function(glem_model):
     logits = torch.tensor([[1.0, 0.0, 0.0], [0.0, 1.0, 0.0]],
                           requires_grad=True)
