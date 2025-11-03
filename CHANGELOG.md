@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Improved `.llm` code coverage ([#10516](https://github.com/pyg-team/pytorch_geometric/pull/10516))
+
 ### Deprecated
 
 ### Removed
@@ -16,20 +18,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Fixed
 
 ### Security
-
-## [2.8.0] - YYYY-MM-DD
-
-### Added
-
-### Changed
-
-- Improved `.llm` code coverage ([#10516](https://github.com/pyg-team/pytorch_geometric/pull/10516))
-
-### Deprecated
-
-### Fixed
-
-### Removed
 
 ## [2.7.0] - 2025-10-14
 
