@@ -144,8 +144,6 @@ class PyGModelHubMixin(ModelHubMixin):
         revision,
         cache_dir,
         force_download,
-        proxies,
-        resume_download,
         local_files_only,
         token,
         dataset_name='',
@@ -165,8 +163,6 @@ class PyGModelHubMixin(ModelHubMixin):
                 revision=revision,
                 cache_dir=cache_dir,
                 force_download=force_download,
-                proxies=proxies,
-                resume_download=resume_download,
                 token=token,
                 local_files_only=local_files_only,
             )
@@ -239,8 +235,6 @@ class PyGModelHubMixin(ModelHubMixin):
         return super().from_pretrained(
             pretrained_model_name_or_path,
             force_download=force_download,
-            resume_download=resume_download,
-            proxies=proxies,
             use_auth_token=token,
             cache_dir=cache_dir,
             local_files_only=local_files_only,
