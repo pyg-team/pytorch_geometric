@@ -42,6 +42,7 @@ jobs:
           uv run --no-project bash -c 'pytest test/datasets/ -m rag --cov --cov-report=xml -v; E=$?; [[ $E == 0 || $E == 139 ]] && exit 0 || exit $E'
           uv run --no-project pytest test/llm/models/test_llm.py -m rag -v
           uv run --no-project pytest test/llm/models/test_sentence_transformer.py -m rag -v
+          uv run --no-project pytest test/llm/models/test_txt2kg.py -m rag -v
           uv run --no-project pytest test/llm/utils/ -m rag -v
           uv run --no-project pytest test/llm/test_rag_loader.py -m rag -v
         shell: bash
