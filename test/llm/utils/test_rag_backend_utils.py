@@ -2,7 +2,6 @@ import os
 import tempfile
 from typing import List, Tuple
 
-import pandas as pd
 import torch
 
 from torch_geometric.data import Data
@@ -14,6 +13,7 @@ from torch_geometric.llm.utils.backend_utils import (
     preprocess_triplet,
     retrieval_via_pcst,
 )
+from torch_geometric.testing import withPackage
 
 
 def test_preprocess_triplet():
@@ -40,7 +40,9 @@ def test_batch_knn():
 """Test retrieval_via_pcst"""
 
 
+@withPackage('pandas')
 def create_mock_data(num_nodes=3, num_edges=2):
+    import pandas as pd
     x = torch.randn(num_nodes, 16)
     edge_index = torch.tensor([[0, 1], [1, 2]], dtype=torch.long)
     edge_attr = torch.randn(num_edges, 16)
@@ -62,7 +64,10 @@ def create_mock_data(num_nodes=3, num_edges=2):
                 edge_idx=edge_idx), textual_nodes, textual_edges
 
 
+@withPackage('pandas')
 def test_empty_graph():
+    import pandas as pd
+
     # w/o node and edge
     bad_data = Data(x=None, edge_index=None, edge_attr=None)
     textual_nodes = pd.DataFrame({'node_id': [], 'text': []})
