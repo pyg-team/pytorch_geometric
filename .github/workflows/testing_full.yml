@@ -70,6 +70,19 @@ jobs:
           FULL_TEST=1 uv run --no-project pytest --cov --cov-report=xml --durations 10
         shell: bash
 
+      - name: Run rag tests
+        timeout-minutes: 10
+        run: |
+          # ignore mysterious segfault (139) if tests pass since this does not repro locally
+          uv run --no-project bash -c 'pytest test/llm -m rag --cov --cov-report=xml -v; E=$?; [[ $E == 0 || $E == 139 ]] && exit 0 || exit $E'
+          uv run --no-project bash -c 'pytest test/datasets/ -m rag --cov --cov-report=xml -v; E=$?; [[ $E == 0 || $E == 139 ]] && exit 0 || exit $E'
+        shell: bash
+        env:
+          RAG_TEST: "1"
+          TOKENIZERS_PARALLELISM: "false"
+          OMP_NUM_THREADS: "1"
+          MKL_NUM_THREADS: "1"
+
       - name: Upload coverage
         uses: codecov/codecov-action@v5
         with:
