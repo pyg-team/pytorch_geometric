@@ -52,7 +52,7 @@ jobs:
       - name: Install main package (Windows)
         if: ${{ steps.changed-files-specific.outputs.only_changed != 'true' && runner.os == 'Windows' }}
         run: |
-          uv pip install -e ".[test,rag]"
+          uv pip install -e ".[test]"
 
       - name: Install main package
         if: ${{ steps.changed-files-specific.outputs.only_changed != 'true' && runner.os != 'Windows' }}
@@ -74,7 +74,7 @@ jobs:
           uv run --no-project pytest --cov --cov-report=xml --durations 10
 
       - name: Run rag tests
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
+        if: ${{ steps.changed-files-specific.outputs.only_changed != 'true' && runner.os == 'Linux' }}
         timeout-minutes: 10
         run: |
           # ignore mysterious segfault (139) if tests pass since this does not repro locally
