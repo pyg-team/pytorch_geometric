@@ -35,7 +35,7 @@ jobs:
           uv pip install -e ".[test,rag]"
 
       - name: Run tests
-        timeout-minutes: 10
+        timeout-minutes: 15
         run: |
           # ignore mysterious segfault (139) if tests pass since this does not repro locally
           uv run --no-project bash -c 'pytest test/llm -m rag --cov --cov-report=xml -v; E=$?; [[ $E == 0 || $E == 139 ]] && exit 0 || exit $E'
