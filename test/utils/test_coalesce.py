@@ -1,9 +1,17 @@
 from typing import List, Optional, Tuple
 
+import pytest
 import torch
 from torch import Tensor
 
 from torch_geometric.utils import coalesce
+
+
+def test_coalesce_overflow():
+    edge_index = torch.tensor([[0, 1], [1, 0]])
+    with pytest.raises(ValueError,
+                       match="'coalesce' will result in an overflow"):
+        coalesce(edge_index, num_nodes=1e10)
 
 
 def test_coalesce():
