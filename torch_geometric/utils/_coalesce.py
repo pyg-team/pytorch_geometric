@@ -131,9 +131,10 @@ def coalesce(  # noqa: F811
     num_edges = edge_index[0].size(0)
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
-    torch._check(
+    torch._check_with(
+        ValueError,
         num_nodes * num_nodes <= torch_geometric.typing.MAX_INT64,
-        "'coalesce' will result in an overflow",
+        lambda: "'coalesce' will result in an overflow",
     )
 
     idx = edge_index[0].new_empty(num_edges + 1)
