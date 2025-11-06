@@ -19,10 +19,6 @@ else:
 MISSING = '???'
 
 
-def _overflow_message() -> str:
-    return "'coalesce' will result in an overflow"
-
-
 @overload
 def coalesce(
     edge_index: Tensor,
@@ -136,10 +132,10 @@ def coalesce(  # noqa: F811
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
     if not torch.jit.is_scripting():
-        torch._check(num_nodes * num_nodes <= torch_geometric.typing.MAX_INT64,
-                     _overflow_message)
+        torch._check_value(num_nodes *
+                           num_nodes <= torch_geometric.typing.MAX_INT64)
     elif num_nodes * num_nodes > torch_geometric.typing.MAX_INT64:
-        raise RuntimeError(_overflow_message())
+        raise ValueError("'coalesce' will result in an overflow")
 
     idx = edge_index[0].new_empty(num_edges + 1)
     idx[0] = -1

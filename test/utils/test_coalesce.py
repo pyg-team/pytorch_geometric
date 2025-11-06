@@ -9,9 +9,13 @@ from torch_geometric.utils import coalesce
 
 def test_coalesce_overflow():
     edge_index = torch.tensor([[0, 1], [1, 0]])
-    with pytest.raises(RuntimeError,
-                       match="'coalesce' will result in an overflow"):
+    with pytest.raises(ValueError):
         coalesce(edge_index, num_nodes=1e10)
+
+    torch._dynamo.config.capture_dynamic_output_shape_ops = True
+    coalesce_compiled = torch.compile(coalesce, fullgraph=True)
+    with pytest.raises(torch._dynamo.exc.TorchRuntimeError):
+        coalesce_compiled(edge_index, num_nodes=1e10)
 
 
 def test_coalesce():
