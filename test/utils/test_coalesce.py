@@ -9,7 +9,7 @@ from torch_geometric.utils import coalesce
 
 def test_coalesce_overflow():
     edge_index = torch.tensor([[0, 1], [1, 0]])
-    with pytest.raises(ValueError,
+    with pytest.raises(RuntimeError,
                        match="'coalesce' will result in an overflow"):
         coalesce(edge_index, num_nodes=1e10)
 
