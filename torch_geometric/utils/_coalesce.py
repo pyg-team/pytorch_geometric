@@ -131,11 +131,12 @@ def coalesce(  # noqa: F811
     num_edges = edge_index[0].size(0)
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
-    if not torch.jit.is_scripting():
+    if torch.jit.is_scripting():
+        if num_nodes * num_nodes > torch_geometric.typing.MAX_INT64:
+            raise ValueError("'coalesce' will result in an overflow")
+    else:
         torch._check_value(num_nodes *
                            num_nodes <= torch_geometric.typing.MAX_INT64)
-    elif num_nodes * num_nodes > torch_geometric.typing.MAX_INT64:
-        raise ValueError("'coalesce' will result in an overflow")
 
     idx = edge_index[0].new_empty(num_edges + 1)
     idx[0] = -1
@@ -166,7 +167,7 @@ def coalesce(  # noqa: F811
     mask = idx[1:] > idx[:-1]
 
     # Only perform expensive merging in case there exists duplicates:
-    if not torch.compiler.is_compiling() and mask.all():
+    if not torch_geometric.is_compiling() and mask.all():
         if edge_attr is None or isinstance(edge_attr, Tensor):
             return edge_index, edge_attr
         if isinstance(edge_attr, (list, tuple)):
