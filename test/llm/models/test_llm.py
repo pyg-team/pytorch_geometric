@@ -6,7 +6,7 @@ from torch import Tensor
 
 from torch_geometric.llm.models import LLM
 from torch_geometric.llm.models.llm import get_llm_kwargs
-from torch_geometric.testing import onlyRAG, withPackage
+from torch_geometric.testing import withPackage
 
 
 def test_get_llm_kwargs():
@@ -14,7 +14,6 @@ def test_get_llm_kwargs():
     assert kwargs == {'revision': 'main'}
 
 
-@onlyRAG
 @withPackage('transformers', 'accelerate')
 @pytest.mark.parametrize('sys_prompt',
                          ['You are an agent, answer my questions.', None])

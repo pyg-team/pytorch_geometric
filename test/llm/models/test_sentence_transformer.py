@@ -6,11 +6,10 @@ from torch_geometric.llm.models.sentence_transformer import (
     last_pooling,
     mean_pooling,
 )
-from torch_geometric.testing import onlyRAG, withCUDA, withPackage
+from torch_geometric.testing import withCUDA, withPackage
 
 
 @withCUDA
-@onlyRAG
 @withPackage('transformers')
 @pytest.mark.parametrize('batch_size', [None, 1])
 @pytest.mark.parametrize('verbose', [True, False])
