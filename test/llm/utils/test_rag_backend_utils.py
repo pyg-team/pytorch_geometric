@@ -13,6 +13,7 @@ from torch_geometric.llm.utils.backend_utils import (
     preprocess_triplet,
     retrieval_via_pcst,
 )
+from torch_geometric.testing import onlyLinux
 
 
 def test_preprocess_triplet():
@@ -62,6 +63,7 @@ def create_mock_data(num_nodes=3, num_edges=2):
                 edge_idx=edge_idx), textual_nodes, textual_edges
 
 
+@onlyLinux
 def test_empty_graph():
     import pandas as pd
 
@@ -115,6 +117,7 @@ def create_mock_graph_and_triples():
     return triples, graph
 
 
+@onlyLinux
 def test_apply_retrieval_via_pcst_isolated_node():
     triples, graph = create_mock_graph_and_triples()
     model = MockSentenceTransformer()
