@@ -2,7 +2,6 @@ import pytest
 import torch
 
 from torch_geometric.llm.utils.vectorrag import DocumentRetriever
-from torch_geometric.testing import onlyRAG
 
 
 @pytest.fixture
@@ -45,7 +44,6 @@ def test_save_load(sample_documents, sample_model, tmp_path):
     assert retriever.model == loaded_retriever.model
 
 
-@onlyRAG
 def test_query(sample_documents, sample_model):
     """Test query functionality of DocumentRetriever."""
     retriever = DocumentRetriever(sample_documents, model=sample_model)

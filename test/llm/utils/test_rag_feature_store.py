@@ -6,7 +6,6 @@ import torch
 from torch_geometric.data import Data
 from torch_geometric.llm.utils.feature_store import KNNRAGFeatureStore
 from torch_geometric.sampler import SamplerOutput
-from torch_geometric.testing.decorators import onlyRAG
 
 
 class TestKNNRAGFeatureStore:
@@ -41,7 +40,6 @@ class TestKNNRAGFeatureStore:
 
         return store
 
-    @onlyRAG
     def test_retrieve_seed_nodes_single_query(self):
         """Test retrieve_seed_nodes with a single query."""
         store = self.create_feature_store()
@@ -77,7 +75,6 @@ class TestKNNRAGFeatureStore:
             assert torch.equal(result, expected_indices)
             assert torch.equal(query_enc, mock_query_enc)
 
-    @onlyRAG
     def test_retrieve_seed_nodes_multiple_queries(self):
         """Test retrieve_seed_nodes with multiple queries."""
         store = self.create_feature_store()

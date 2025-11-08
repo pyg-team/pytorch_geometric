@@ -13,7 +13,6 @@ from torch_geometric.llm.utils.backend_utils import (
     preprocess_triplet,
     retrieval_via_pcst,
 )
-from torch_geometric.testing import onlyRAG
 
 
 def test_preprocess_triplet():
@@ -22,7 +21,6 @@ def test_preprocess_triplet():
     assert processed == ('alice', 'works with', 'bob')
 
 
-@onlyRAG
 def test_batch_knn():
     query_embeddings = torch.randn(2, 64)
     candidate_embeddings = torch.randn(10, 64)
@@ -41,7 +39,6 @@ def test_batch_knn():
 """Test retrieval_via_pcst"""
 
 
-@onlyRAG
 def create_mock_data(num_nodes=3, num_edges=2):
     import pandas as pd
     x = torch.randn(num_nodes, 16)
@@ -65,7 +62,6 @@ def create_mock_data(num_nodes=3, num_edges=2):
                 edge_idx=edge_idx), textual_nodes, textual_edges
 
 
-@onlyRAG
 def test_empty_graph():
     import pandas as pd
 
@@ -82,7 +78,6 @@ def test_empty_graph():
     assert desc.strip() == 'node_id,text\n\nsrc,edge_attr,dst'
 
 
-@onlyRAG
 def test_topk_zero():
     data, textual_nodes, textual_edges = create_mock_data()
     q_emb = torch.randn(1, 16)
@@ -120,7 +115,6 @@ def create_mock_graph_and_triples():
     return triples, graph
 
 
-@onlyRAG
 def test_apply_retrieval_via_pcst_isolated_node():
     triples, graph = create_mock_graph_and_triples()
     model = MockSentenceTransformer()
