@@ -13,6 +13,7 @@ from torch_geometric.llm.models.txt2kg import (
     _multiproc_helper,
     _parse_n_check_triples,
 )
+from torch_geometric.testing import onlyLinux
 
 # ────────────────────────
 # Fixtures
@@ -104,6 +105,7 @@ def test_llm_then_python_parse():
 # ────────────────────────
 
 
+@onlyLinux
 def test_txt2kg_cloud_mode(mock_cloud_llm):
     kg = TXT2KG(NVIDIA_API_KEY="fake-key", local_LM=False)
     kg.add_doc_2_KG("Paris is the capital of France.")
@@ -122,6 +124,7 @@ def test_txt2kg_local_mode(mock_local_llm):
     assert triples == []
 
 
+@onlyLinux
 def test_txt2kg_with_qa_pair(mock_cloud_llm):
     kg = TXT2KG(NVIDIA_API_KEY="fake", local_LM=False)
     qa = ("What is Paris?", "Capital of France")
@@ -131,6 +134,7 @@ def test_txt2kg_with_qa_pair(mock_cloud_llm):
     assert kg.relevant_triples[qa] == []
 
 
+@onlyLinux
 def test_txt2kg_duplicate_qa_warning(capfd, mock_cloud_llm):
     kg = TXT2KG(NVIDIA_API_KEY="fake", local_LM=False)
     qa = ("Q", "A")
@@ -141,6 +145,7 @@ def test_txt2kg_duplicate_qa_warning(capfd, mock_cloud_llm):
     assert "Warning: QA_Pair was already added" in captured.out
 
 
+@onlyLinux
 def test_txt2kg_save_kg(mock_cloud_llm):
     kg = TXT2KG(NVIDIA_API_KEY="fake", local_LM=False)
     kg.add_doc_2_KG("Test document.")
