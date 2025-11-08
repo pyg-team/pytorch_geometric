@@ -89,7 +89,7 @@ class Twitch(InMemoryDataset):
         force_reload: bool = False,
     ) -> None:
         self.name = name
-        assert self.name in ['DE', 'EN', 'ES', 'FR', 'PT', 'RU']
+        assert self.name in ['DE', 'ENGB', 'ES', 'FR', 'PTBR', 'RU']
         super().__init__(root, transform, pre_transform,
                          force_reload=force_reload)
         self.load(self.processed_paths[0])
@@ -104,10 +104,14 @@ class Twitch(InMemoryDataset):
 
     @property
     def raw_file_names(self) -> List[str]:
+        if self.name == 'DE':
+            feature_name = f'musae_{self.name}.json'
+        else:
+            feature_name = f'musae_{self.name}_features.json'
         return [
             f'twitch/{self.name}/{x}' for x in [
                 f'musae_{self.name}_edges.csv',
-                f'musae_{self.name}_features.json',
+                feature_name,
                 f'musae_{self.name}_target.csv',
             ]
         ]
