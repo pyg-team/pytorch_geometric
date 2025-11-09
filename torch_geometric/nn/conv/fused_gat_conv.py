@@ -12,8 +12,8 @@ class FusedGATConv(GATConv):  # pragma: no cover
     r"""The fused graph attention operator from the
     `"Understanding GNN Computational Graph: A Coordinated Computation, IO, and
     Memory Perspective"
-    <https://proceedings.mlsys.org/paper/2022/file/
-    9a1158154dfa42caddbd0694a4e9bdc8-Paper.pdf>`_ paper.
+    <https://proceedings.mlsys.org/paper_files/paper/2022/file/
+    b559156047e50cf316207249d0b5a6c5-Paper.pdf>`_ paper.
 
     :class:`FusedGATConv` is an optimized version of
     :class:`~torch_geometric.nn.conv.GATConv` based on the :obj:`dgNN` package

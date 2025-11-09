@@ -26,7 +26,7 @@ def pad_or_truncate(embeddings: Tensor, max_seq_len: int,
 class MoleculeGPT(torch.nn.Module):
     r"""The MoleculeGPT model from the `"MoleculeGPT: Instruction
     Following Large Language Models for Molecular Property Prediction"
-    <https://ai4d3.github.io/papers/34.pdf>`_ paper.
+    <https://ai4d3.github.io/2023/papers/34.pdf>`_ paper.
 
     Args:
         llm (LLM): The LLM to use.
