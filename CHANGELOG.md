@@ -87,7 +87,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Deprecated
 
-- Removing deprecated parameters `proxi` and `resume_download` used in `from_pretrained` functions ([#10521](https://github.com/pyg-team/pytorch_geometric/pull/10521)
 - Deprecated `torch_geometric.distributed` ([#10411](https://github.com/pyg-team/pytorch_geometric/pull/10411))
 
 ### Fixed
@@ -102,6 +101,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/).
 
 ### Removed
 
+- Removed `proxies` and `resume_download` arguments from `PyGModelHubMixin` ([#10521](https://github.com/pyg-team/pytorch_geometric/pull/10521)
 - Dropped support for Python 3.9 ([#10461](https://github.com/pyg-team/pytorch_geometric/pull/10461))
 - Dropped support for PyTorch 1.12 ([#10248](https://github.com/pyg-team/pytorch_geometric/pull/10248))
 - Dropped support for PyTorch 1.11 ([#10247](https://github.com/pyg-team/pytorch_geometric/pull/10247))
