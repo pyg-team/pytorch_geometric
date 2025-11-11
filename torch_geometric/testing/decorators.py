@@ -209,18 +209,6 @@ def withPackage(*args: str) -> Callable:
     return decorator
 
 
-def onlyRAG(func: Callable) -> Callable:
-    r"""A decorator to specify that this function belongs to the RAG test
-    suite.
-    """
-    import pytest
-    func = pytest.mark.rag(func)
-    return pytest.mark.skipif(
-        not is_rag_test(),
-        reason="RAG tests are disabled",
-    )(func)
-
-
 def withCUDA(func: Callable) -> Callable:
     r"""A decorator to test both on CPU and CUDA (if available)."""
     import pytest
