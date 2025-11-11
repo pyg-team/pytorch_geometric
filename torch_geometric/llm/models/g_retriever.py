@@ -151,7 +151,7 @@ class GRetriever(torch.nn.Module):
             # Handle questions without node features:
             batch_unique = batch.unique()
             batch_size = len(question)
-            if len(batch_unique) <= batch_size:
+            if len(batch_unique) < batch_size:
                 xs = [
                     xs[i] if i in batch_unique else None
                     for i in range(batch_size)
@@ -215,7 +215,7 @@ class GRetriever(torch.nn.Module):
             # Handle questions without node features:
             batch_unique = batch.unique()
             batch_size = len(question)
-            if len(batch_unique) <= batch_size:
+            if len(batch_unique) < batch_size:
                 xs = [
                     xs[i] if i in batch_unique else None
                     for i in range(batch_size)
