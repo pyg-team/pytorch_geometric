@@ -43,7 +43,7 @@ def get_llm_kwargs(required_memory: int, dtype=torch.dtype) -> Dict[str, Any]:
         }
         kwargs['low_cpu_mem_usage'] = True
         kwargs['device_map'] = 'auto'
-        kwargs['dtype'] = dtype
+        kwargs['torch_dtype'] = dtype
 
     return kwargs
 
