@@ -27,8 +27,9 @@ class SimplE(KGEModel):
     .. note::
 
         For an example of using the :class:`SimplE` model, see
-        `examples/contrib/simplE.py
-        <link>`_. [TODO: ADD THE SIMPLE EXAMPLE]
+        `examples/contrib/simple_fb15k_237.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
+        contrib/simple_fb15k_237.py>`_.
 
     Args:
         num_nodes (int): The number of nodes/entities in the graph.
