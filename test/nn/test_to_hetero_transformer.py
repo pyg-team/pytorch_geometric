@@ -563,9 +563,6 @@ def test_to_hetero_lazy_cuda():
         idx = torch.arange(data[node_type].num_nodes, device='cuda')
         edge_index = torch.stack([idx, idx])
         data[(node_type, 'self', node_type)].edge_index = edge_index
-        data[(node_type, 'self', node_type)].edge_attr = torch.zeros(
-            idx.numel(), 10, device='cuda'
-    )
 
     model = to_hetero(Model(), data.metadata())
     out_dict = model(data.x_dict, data.edge_index_dict, data.edge_attr_dict)
