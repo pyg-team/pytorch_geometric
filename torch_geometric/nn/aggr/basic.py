@@ -65,7 +65,7 @@ class MinAggregation(Aggregation):
 
 
 class MulAggregation(Aggregation):
-    r"""An aggregation operator that multiplies features across a set of
+    r"""An aggregation operator that multiples features across a set of
     elements.
 
     .. math::
