@@ -62,7 +62,7 @@ class SelectOutput:
         self.weight = weight
 
 
-SelectOutput = torch.compile(SelectOutput)
+SelectOutput = torch.export(SelectOutput)
 
 
 class Select(torch.nn.Module):
