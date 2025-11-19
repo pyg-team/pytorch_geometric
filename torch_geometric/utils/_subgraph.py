@@ -229,7 +229,6 @@ def bipartite_subgraph(
         dst_node_mask = dst_subset
         dst_subset = dst_subset.nonzero_static(size=dst_size).view(-1)
 
-
     edge_mask = src_node_mask[edge_index[0]] & dst_node_mask[edge_index[1]]
     edge_index = edge_index[:, edge_mask]
     edge_attr = edge_attr[edge_mask] if edge_attr is not None else None
