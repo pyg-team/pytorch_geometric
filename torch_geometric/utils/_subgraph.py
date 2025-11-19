@@ -138,7 +138,7 @@ def subgraph(
     else:
         num_nodes = subset.size(0)
         node_mask = subset
-        subset = node_mask.nonzero().view(-1)
+        subset = node_mask.nonzero_static(size=num_nodes).view(-1)
 
     edge_mask = node_mask[edge_index[0]] & node_mask[edge_index[1]]
     edge_index = edge_index[:, edge_mask]
@@ -219,7 +219,7 @@ def bipartite_subgraph(
     else:
         src_size = src_subset.size(0)
         src_node_mask = src_subset
-        src_subset = src_subset.nonzero().view(-1)
+        src_subset = src_subset.nonzero_static(size=src_size).view(-1)
 
     if dst_subset.dtype != torch.bool:
         dst_size = int(edge_index[1].max()) + 1 if size is None else size[1]
@@ -227,7 +227,8 @@ def bipartite_subgraph(
     else:
         dst_size = dst_subset.size(0)
         dst_node_mask = dst_subset
-        dst_subset = dst_subset.nonzero().view(-1)
+        dst_subset = dst_subset.nonzero_static(size=dst_size).view(-1)
+
 
     edge_mask = src_node_mask[edge_index[0]] & dst_node_mask[edge_index[1]]
     edge_index = edge_index[:, edge_mask]

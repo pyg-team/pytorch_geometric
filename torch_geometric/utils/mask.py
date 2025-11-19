@@ -57,7 +57,7 @@ def index_to_mask(index: Tensor, size: Optional[int] = None) -> Tensor:
     index = index.view(-1)
     size = int(index.max()) + 1 if size is None else size
     mask = index.new_zeros(size, dtype=torch.bool)
-    mask[index] = True
+    mask.scatter_(0, index, True)
     return mask
 
 
