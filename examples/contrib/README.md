@@ -10,3 +10,4 @@ Modules included here might be moved to the main library in the future.
 | [`rbcd_attack_poisoning.py`](./rbcd_attack_poisoning.py)                           | An example of the RBCD (Resource-Based Critical Data) attack with data poisoning strategies |
 | [`pgm_explainer_node_classification.py`](./pgm_explainer_node_classification.py)   | An example of the PGM (Probabilistic Graphical Model) explainer for node classification     |
 | [`pgm_explainer_graph_classification.py`](./pgm_explainer_graph_classification.py) | An example of the PGM (Probabilistic Graphical Model) explainer for graph classification    |
+| [`simple_fb15k_237.py`](./simple_fb15k_237.py)                                     | An example of the SimplE knowledge graph embedding model on FB15k-237 dataset               |
