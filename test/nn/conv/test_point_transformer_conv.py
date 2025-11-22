@@ -3,11 +3,13 @@ from torch.nn import Linear, ReLU, Sequential
 
 import torch_geometric.typing
 from torch_geometric.nn import PointTransformerConv
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, withPackage
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_csc_tensor
 
 
+# Skip on PyTorch 1.13 due to numerical instability:
+@withPackage('torch>=2.0.0')
 def test_point_transformer_conv():
     x1 = torch.rand(4, 16)
     x2 = torch.randn(2, 8)

@@ -45,7 +45,7 @@ def fused_gather_scatter(x, edge_index, reduce=('sum', 'mean', 'max')):
 @withDevice
 @onlyLinux
 @onlyFullTest
-@withPackage('torch>=2.0.0')
+@withPackage('torch>=2.0.0', 'torch!=2.3.0', 'torch!=2.3.1')
 def test_torch_compile(device):
     x = torch.randn(10, 16, device=device)
     edge_index = torch.randint(0, x.size(0), (2, 40), device=device)

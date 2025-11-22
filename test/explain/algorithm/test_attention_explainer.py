@@ -1,6 +1,9 @@
+import os
+
 import pytest
 import torch
 
+import torch_geometric.typing
 from torch_geometric.explain import (
     AttentionExplainer,
     Explainer,
@@ -180,6 +183,10 @@ edge_attr = torch.randn(edge_index.size(1), 5)
 batch = torch.tensor([0, 0, 0, 1, 1, 2, 2, 2])
 
 
+@pytest.mark.skipif(
+    os.name == 'nt' and torch_geometric.typing.WITH_PT24,
+    reason="Unknown heap corruption issue on Windows with PyTorch 2.4",
+)
 @pytest.mark.parametrize('index', [None, 2, torch.arange(3)])
 def test_attention_explainer(index, check_explanation):
     explainer = Explainer(
@@ -216,6 +223,10 @@ def test_attention_explainer_supports(explanation_type, node_mask_type):
         )
 
 
+@pytest.mark.skipif(
+    os.name == 'nt' and torch_geometric.typing.WITH_PT24,
+    reason="Unknown heap corruption issue on Windows with PyTorch 2.4",
+)
 def test_attention_explainer_attentive_fp(check_explanation):
     model = AttentiveFP(3, 16, 1, edge_dim=5, num_layers=2, num_timesteps=2)
 
@@ -235,6 +246,10 @@ def test_attention_explainer_attentive_fp(check_explanation):
     check_explanation(explanation, None, explainer.edge_mask_type)
 
 
+@pytest.mark.skipif(
+    os.name == 'nt' and torch_geometric.typing.WITH_PT24,
+    reason="Unknown heap corruption issue on Windows with PyTorch 2.4",
+)
 @pytest.mark.parametrize('index', [None, 2, torch.arange(3)])
 def test_attention_explainer_hetero(index, hetero_data,
                                     check_explanation_hetero):
