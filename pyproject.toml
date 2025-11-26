@@ -204,6 +204,8 @@ filterwarnings = [
     "ignore:.*did not already require gradients, required_grads has been set automatically:UserWarning",
     # Filter `pytorch_lightning` warnings:
     "ignore:GPU available but not used:UserWarning",
+    # Filter `torch.jit.script` deprication warnings:
+    "ignore:.*torch.jit.script.*is deprecated.*:DeprecationWarning",
     "error::DeprecationWarning",
     # TODO(rishipuri98): Remove usage of `torch_geometric.distributed` from `torch_geometric.llm`
     "ignore:.*torch_geometric.distributed.*:DeprecationWarning",
