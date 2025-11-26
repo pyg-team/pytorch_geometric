@@ -135,20 +135,23 @@ class TransformerConv(MessagePassing):
             self.lin_edge = Linear(edge_dim, heads * out_channels, bias=False)
         else:
             self.lin_edge = self.register_parameter('lin_edge', None)
-
-        if concat:
-            self.lin_skip = Linear(in_channels[1], heads * out_channels,
-                                   bias=bias)
-            if self.beta:
-                self.lin_beta = Linear(3 * heads * out_channels, 1, bias=False)
+        if root_weight:
+            if concat:
+                self.lin_skip = Linear(in_channels[1], heads * out_channels,
+                                       bias=bias)
+                if self.beta:
+                    self.lin_beta = Linear(3 * heads * out_channels, 1, bias=False)
+                else:
+                    self.lin_beta = self.register_parameter('lin_beta', None)
             else:
-                self.lin_beta = self.register_parameter('lin_beta', None)
+                self.lin_skip = Linear(in_channels[1], out_channels, bias=bias)
+                if self.beta:
+                    self.lin_beta = Linear(3 * out_channels, 1, bias=False)
+                else:
+                    self.lin_beta = self.register_parameter('lin_beta', None)
         else:
-            self.lin_skip = Linear(in_channels[1], out_channels, bias=bias)
-            if self.beta:
-                self.lin_beta = Linear(3 * out_channels, 1, bias=False)
-            else:
-                self.lin_beta = self.register_parameter('lin_beta', None)
+            self.lin_skip = self.register_parameter('lin_skip', None)
+            self.lin_beta = self.register_parameter('lin_beta', None)
 
         self.reset_parameters()
 
@@ -159,7 +162,8 @@ class TransformerConv(MessagePassing):
         self.lin_value.reset_parameters()
         if self.edge_dim:
             self.lin_edge.reset_parameters()
-        self.lin_skip.reset_parameters()
+        if self.root_weight:
+            self.lin_skip.reset_parameters()
         if self.beta:
             self.lin_beta.reset_parameters()
 
