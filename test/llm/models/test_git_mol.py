@@ -30,7 +30,7 @@ def test_git_mol():
     ]
     captions = [
         'The molecule is the (R)-(-)-enantiomer of columbianetin.',
-        'Ethoxybenzene is an aromatic ether.'
+        'Ethoxybenzene is an aromatic ether.',
     ]
     images = torch.randn(2, 3, 224, 224)
     loss = model(x, edge_index, batch, edge_attr, smiles, images, captions)
