@@ -211,11 +211,10 @@ class GraphLandDataset(InMemoryDataset):
         root: str,
         name: str,
         split: str,
-        numerical_features_transform: Optional[
-            str] = 'quantile_transform_normal',
-        fraction_features_transform: Optional[str] = None,
+        numerical_features_transform: Optional[str] = 'default',
+        fraction_features_transform: Optional[str] = 'default',
         categorical_features_transform: Optional[str] = 'one_hot_encoding',
-        regression_targets_transform: Optional[str] = 'standard_scaler',
+        regression_targets_transform: Optional[str] = 'default',
         numerical_features_nan_imputation_strategy: Optional[
             str] = 'most_frequent',
         fraction_features_nan_imputation_strategy: Optional[
@@ -238,6 +237,17 @@ class GraphLandDataset(InMemoryDataset):
                 'web-trafic',
             ], ('Temporal split is not available for city-reviews, '
                 'city-roads-M, city-roads-L, web-trafic.')
+
+        if numerical_features_transform == 'default':
+            numerical_features_transform = 'quantile_transform_normal'
+
+        if fraction_features_transform == 'default':
+            fraction_features_transform = (  #
+                'quantile_transform_normal'
+                if name in ['artnet-views', 'avazu-ctr'] else None)
+
+        if regression_targets_transform == 'default':
+            regression_targets_transform = 'standard_scaler'
 
         if numerical_features_transform is not None:
             assert numerical_features_transform in [
