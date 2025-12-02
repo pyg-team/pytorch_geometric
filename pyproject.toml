@@ -206,7 +206,7 @@ filterwarnings = [
     "ignore:GPU available but not used:UserWarning",
     "error::DeprecationWarning",
     # Filter `torch.jit.script` deprication warnings:
-    "ignore:.*torch\\.jit\\.script.*:DeprecationWarning",
+    "ignore:.*torch.jit.script.*:DeprecationWarning",
     # TODO(rishipuri98): Remove usage of `torch_geometric.distributed` from `torch_geometric.llm`
     "ignore:.*torch_geometric.distributed.*:DeprecationWarning",
 ]
