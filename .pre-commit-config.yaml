@@ -82,7 +82,7 @@ repos:
         args: [--fix, --exit-non-zero-on-fix]
 
   - repo: https://github.com/executablebooks/mdformat
-    rev: 1.0.0
+    rev: 0.7.22
     hooks:
       - id: mdformat
         name: Format Markdown
