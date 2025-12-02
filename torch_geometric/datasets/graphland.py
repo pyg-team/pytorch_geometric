@@ -56,42 +56,53 @@ class GraphLandDataset(InMemoryDataset):
         numerical_features_transform (str, optional): A transform applied to
             numerical features (:obj:`None`, :obj:`"standard_scaler"`,
             :obj:`"min_max_scaler"`, :obj:`"quantile_transform_normal"`,
-            :obj:`"quantile_transform_uniform"`). Since numerical features can
-            have widely different scales and distributions, it is typically
-            useful to apply some transform to them before passing them to a
-            neural model. This transform is applied to all numerical features
-            except for those that are also categorized as fraction features.
-            (default :obj:`"quantile_transform_normal"`)
+            :obj:`"quantile_transform_uniform"`, :obj:`"default"`).
+            Since numerical features can have widely different scales and
+            distributions, it is typically useful to apply some transform
+            to them before passing them to a neural model. This transform
+            is applied to all numerical features except for those that are
+            also categorized as fraction features. The :obj:`"default"` value
+            selects a dataset-specific transform from the other options that
+            was determined to be a safe and likely optimal choice for this
+            dataset based on experiments with various GNNs.
+            (default: :obj:`"default"`)
         fraction_features_transform (str, optional): A transform applied to
             fraction features (:obj:`None`, :obj:`"standard_scaler"`,
             :obj:`"min_max_scaler"`, :obj:`"quantile_transform_normal"`,
-            :obj:`"quantile_transform_uniform"`). Fraction features are a
-            subset of numerical features that have the meaning of fractions
-            and are thus always in :obj:`[0, 1]` range. Since their range is
-            bounded, it is not neccessary but may still be useful to apply
-            some transform to them before passing them to a neural model.
-            (default :obj:`None`)
+            :obj:`"quantile_transform_uniform"`, :obj:`"default"`). Fraction
+            features are a subset of numerical features that have the meaning
+            of fractions and are thus always in :obj:`[0, 1]` range. Since
+            their range is bounded, it is not neccessary but may still be
+            useful to apply some transform to them before passing them to a
+            neural model. The :obj:`"default"` value selects a dataset-specific
+            transform from the other options that was determined to be a safe
+            and likely optimal choice for this dataset based on experiments
+            with various GNNs. (default: :obj:`"default"`)
         categorical_features_transform (str, optional): A transform applied to
             categorical features (:obj:`None`, :obj:`"one_hot_encoding"`).
             It is most often useful to apply one-hot encoding to categorical
             features before passing them to a neural model.
-            (default :obj:`one_hot_encoding`)
+            (default: :obj:`"one_hot_encoding"`)
         regression_targets_transform (str, optional): A transform applied to
             regression targets (:obj:`None`, :obj:`"standard_scaler"`,
-            :obj:`"min_max_scaler"`). Depending on their range, it may or may
-            not be useful to apply a transform to regression targets before
-            fitting a neural model to them. This argument does not affect
-            classification datasets. (default :obj:`"standard_scaler"`)
+            :obj:`"min_max_scaler"`, :obj:`"default"`). Depending on their
+            range, it may or may not be useful to apply a transform to
+            regression targets before fitting a neural model to them.
+            The :obj:`"default"` value selects a dataset-specific transform
+            from the other options that was determined to be a safe and likely
+            optimal choice for this dataset based on experiments with various
+            GNNs. This argument does not affect classification datasets.
+            (default: :obj:`"default"`)
         numerical_features_nan_imputation_strategy (str, optional): Defines
             which value to fill NaNs in numerical features with
             (:obj:`None`, :obj:`"mean"`, :obj:`"median"`,
             :obj:`"most_frequent"`). This imputation strategy is applied to
             all numerical features except for those that are also categorized
-            as fraction features. (default :obj:`"most_frequent"`)
+            as fraction features. (default: :obj:`"most_frequent"`)
         fraction_features_nan_imputation_strategy (str, optional): Defines
             which value to fill NaNs in fraction features with (:obj:`None`,
             :obj:`"mean"`, :obj:`"median"`, :obj:`"most_frequent"`).
-            (default :obj:`"most_frequent"`)
+            (default: :obj:`"most_frequent"`)
         to_undirected (bool, optional): Whether to convert a directed graph
             to an undirected one. Does not affect undirected graphs.
             (default: :obj:`False`)
