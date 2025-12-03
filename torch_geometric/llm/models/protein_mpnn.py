@@ -156,7 +156,7 @@ class Decoder(MessagePassing):
 
 
 class ProteinMPNN(torch.nn.Module):
-    r"""The ProteinMPNN model from the `"Robust deep learning--based
+    r"""The ProteinMPNN model from the `"Robust deep learning based
     protein sequence design using ProteinMPNN"
     <https://www.biorxiv.org/content/10.1101/2022.06.03.494563v1>`_ paper.
 
