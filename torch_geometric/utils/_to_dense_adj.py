@@ -70,7 +70,7 @@ def to_dense_adj(
     perm = batch.argsort()
     batch = batch[perm]
     new_index_map = torch.empty_like(perm)
-    new_index_map[perm] = torch.arange(perm.size(0))
+    new_index_map[perm] = torch.arange(perm.size(0), device=perm.device)
     edge_index = new_index_map[edge_index]
 
     one = batch.new_ones(batch.size(0))
