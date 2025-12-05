@@ -16,8 +16,8 @@ from torch_geometric.llm.large_graph_indexer import (
 )
 from torch_geometric.llm.models import SentenceTransformer
 from torch_geometric.llm.utils.backend_utils import (
+    preprocess_triplet,
     retrieval_via_pcst,
-    preprocess_triplet
 )
 
 
