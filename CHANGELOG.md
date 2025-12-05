@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fixed `to_dense_adj` function by ordering the node idices by batch ([#10535](https://github.com/pyg-team/pytorch_geometric/pull/10535))
+
 ### Security
 
 ## [2.7.0] - 2025-10-14
