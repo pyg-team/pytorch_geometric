@@ -19,8 +19,8 @@ from torch_geometric.typing import WITH_PT20
 
 # create possible nodes and edges for graph
 strkeys = string.ascii_letters + string.digits
-NODE_POOL = list({"".join(random.sample(strkeys, 10)) for i in range(1000)})
-EDGE_POOL = list({"".join(random.sample(strkeys, 10)) for i in range(50)})
+NODE_POOL = list({"".join(random.sample(strkeys, 10)).lower() for i in range(1000)})
+EDGE_POOL = list({"".join(random.sample(strkeys, 10)).lower() for i in range(50)})
 
 
 def featurize(s: str) -> int:
