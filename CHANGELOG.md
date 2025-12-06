@@ -84,6 +84,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Added `edge_attr` in `CuGraphGATConv` ([#10383](https://github.com/pyg-team/pytorch_geometric/pull/10383))
 - Adapt `dgcnn_classification` example to work with `ModelNet` and `MedShapeNet` Datasets ([#9823](https://github.com/pyg-team/pytorch_geometric/pull/9823))
 - Chained exceptions explicitly instead of implicitly ([#10242](https://github.com/pyg-team/pytorch_geometric/pull/10242))
 - Updated cuGraph examples to use buffered sampling which keeps data in memory and is significantly faster than the deprecated buffered sampling ([#10079](https://github.com/pyg-team/pytorch_geometric/pull/10079))
@@ -114,6 +115,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Removed
 
+- Removed `proxies` and `resume_download` arguments from `PyGModelHubMixin` ([#10521](https://github.com/pyg-team/pytorch_geometric/pull/10521)
 - Dropped support for Python 3.9 ([#10461](https://github.com/pyg-team/pytorch_geometric/pull/10461))
 - Dropped support for PyTorch 1.13 - 2.5 ([#00000](https://github.com/pyg-team/pytorch_geometric/pull/00000))
 - Dropped support for PyTorch 1.12 ([#10248](https://github.com/pyg-team/pytorch_geometric/pull/10248))
