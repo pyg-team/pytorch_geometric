@@ -233,7 +233,7 @@ class GCNConv(MessagePassing):
                              f"does not support bipartite message passing. "
                              f"Please try other layers such as 'SAGEConv' or "
                              f"'GraphConv' instead")
-            
+
         if edge_weight is not None and (edge_weight < 0).any().item():
             raise ValueError(f"'{self.__class__.__name__}' does not support "
                              f"negative edge weights as input. Please try "
