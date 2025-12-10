@@ -47,18 +47,17 @@ def res_gconv_norm(  # noqa: F811
 
         # Implementation from https://github.com/jiechenjiechen/GNP
         # GNP/utils.py scale_A_by_spectral_radius(A)
-        absA = torch.absolute(adj_t)
+        adj_t = adj_t.to_dense()
+        absA = adj_t.abs()
         m, n = absA.shape
-        row_sum = absA @ torch.ones(n, 1, dtype=adj_t.dtype,
-                                    device=adj_t.device)
-        col_sum = torch.ones(1, m, dtype=adj_t.dtype,
-                             device=adj_t.device) @ absA
+        row_sum = absA @ torch.ones(n, 1, dtype=absA.dtype, device=absA.device)
+        col_sum = torch.ones(1, m, dtype=absA.dtype, device=absA.device) @ absA
         gamma = torch.min(torch.max(row_sum), torch.max(col_sum))
 
         # deg_inv_sqrt = deg.pow_(-0.5)
         # deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0.)
         adj_t = adj_t * (1. / gamma.item())
-
+        adj_t = SparseTensor.from_dense(adj_t)
         # torch_sparse.mul(adj_t, deg_inv_sqrt.view(-1, 1))
         # adj_t = torch_sparse.mul(adj_t, deg_inv_sqrt.view(1, -1))
         return adj_t
@@ -161,9 +160,9 @@ class ResGConv(MessagePassing):
     _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
 
-    def __init__(self, channels: int, layer: int = None,
-                 shared_weights: bool = False, add_self_loops: bool = False,
-                 cached: bool = False, normalize: bool = True, **kwargs):
+    def __init__(self, channels: int, shared_weights: bool = False,
+                 add_self_loops: bool = False, cached: bool = False,
+                 normalize: bool = True, **kwargs):
 
         kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
@@ -176,9 +175,8 @@ class ResGConv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-        self.U = Linear(channels,
-                        channels)  # Parameter(torch.empty(channels, channels))
-        self.W = Linear(channels, channels)  # weight_initializer='glorot')
+        self.U = Linear(channels, channels)
+        self.W = Linear(channels, channels)
 
         self.reset_parameters()
 
@@ -194,6 +192,7 @@ class ResGConv(MessagePassing):
             if isinstance(edge_index, Tensor):
                 cache = self._cached_edge_index
                 if cache is None:
+                    print("X size self.nodeim", x.size(self.node_dim))
                     edge_index, edge_weight = res_gconv_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim), False,
                         self.add_self_loops, self.flow, dtype=x.dtype)
@@ -216,7 +215,8 @@ class ResGConv(MessagePassing):
         wx = self.W(x)
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
-
+        print("X shape")
+        print(x.shape)
         awx = self.propagate(edge_index, x=wx, edge_weight=edge_weight)
         out = awx
         out = out + self.U(x)
@@ -224,7 +224,7 @@ class ResGConv(MessagePassing):
         return out
 
     def message(self, x_j: Tensor, edge_weight: OptTensor) -> Tensor:
-        return edge_weight.view(-1, 1) * x_j  # x_j if edge_weight is None else
+        return x_j if edge_weight is None else edge_weight.view(-1, 1) * x_j
 
     def message_and_aggregate(self, adj_t: Adj, x: Tensor) -> Tensor:
         return spmm(adj_t, x, reduce=self.aggr)
