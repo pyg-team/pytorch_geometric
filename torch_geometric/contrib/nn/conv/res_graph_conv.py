@@ -45,12 +45,22 @@ def res_gconv_norm(  # noqa: F811
         if add_self_loops:
             adj_t = torch_sparse.fill_diag(adj_t, fill_value)
 
-        deg = torch_sparse.sum(adj_t, dim=1)
-        deg_inv_sqrt = deg.pow_(-0.5)
-        deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0.)
-        adj_t = torch_sparse.mul(adj_t, deg_inv_sqrt.view(-1, 1))
-        adj_t = torch_sparse.mul(adj_t, deg_inv_sqrt.view(1, -1))
+        # Implementation from https://github.com/jiechenjiechen/GNP
+        # GNP/utils.py scale_A_by_spectral_radius(A)
+        absA = torch.absolute(adj_t)
+        m, n = absA.shape
+        row_sum = absA @ torch.ones(n, 1, dtype=adj_t.dtype,
+                                    device=adj_t.device)
+        col_sum = torch.ones(1, m, dtype=adj_t.dtype,
+                             device=adj_t.device) @ absA
+        gamma = torch.min(torch.max(row_sum), torch.max(col_sum))
 
+        # deg_inv_sqrt = deg.pow_(-0.5)
+        # deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0.)
+        adj_t = adj_t * (1. / gamma.item())
+
+        # torch_sparse.mul(adj_t, deg_inv_sqrt.view(-1, 1))
+        # adj_t = torch_sparse.mul(adj_t, deg_inv_sqrt.view(1, -1))
         return adj_t
 
     if is_torch_sparse_tensor(edge_index):
@@ -58,19 +68,29 @@ def res_gconv_norm(  # noqa: F811
 
         if edge_index.layout == torch.sparse_csc:
             raise NotImplementedError("Sparse CSC matrices are not yet "
-                                      "supported in 'gcn_norm'")
+                                      "supported in 'res_gconv_norm'")
 
         adj_t = edge_index
         if add_self_loops:
             adj_t, _ = add_self_loops_fn(adj_t, None, fill_value, num_nodes)
 
         edge_index, value = to_edge_index(adj_t)
-        col, row = edge_index[0], edge_index[1]
 
-        deg = scatter(value, col, 0, dim_size=num_nodes, reduce='sum')
-        deg_inv_sqrt = deg.pow_(-0.5)
-        deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
-        value = deg_inv_sqrt[row] * value * deg_inv_sqrt[col]
+        # col, row = edge_index[0], edge_index[1]
+        # deg = scatter(value, col, 0, dim_size=num_nodes, reduce='sum')
+        # deg_inv_sqrt = deg.pow_(-0.5)
+        # deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
+        # value = deg_inv_sqrt[row] * value * deg_inv_sqrt[col]
+        # Implementation from https://github.com/jiechenjiechen/GNP
+        # GNP/utils.py scale_A_by_spectral_radius(A)
+        absA = torch.absolute(adj_t)
+        m, n = absA.shape
+        row_sum = absA @ torch.ones(n, 1, dtype=adj_t.dtype,
+                                    device=adj_t.device)
+        col_sum = torch.ones(1, m, dtype=adj_t.dtype,
+                             device=adj_t.device) @ absA
+        gamma = torch.min(torch.max(row_sum), torch.max(col_sum))
+        value = value / gamma
 
         return set_sparse_value(adj_t, value), None
 
@@ -86,11 +106,12 @@ def res_gconv_norm(  # noqa: F811
                                  device=edge_index.device)
 
     row, col = edge_index[0], edge_index[1]
-    idx = col if flow == 'source_to_target' else row
-    deg = scatter(edge_weight, idx, dim=0, dim_size=num_nodes, reduce='sum')
-    deg_inv_sqrt = deg.pow_(-0.5)
-    deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
-    edge_weight = deg_inv_sqrt[row] * edge_weight * deg_inv_sqrt[col]
+    gamma_row = scatter(torch.abs(edge_weight), row, dim_size=num_nodes,
+                        reduce='sum')
+    gamma_col = scatter(torch.abs(edge_weight), col, dim_size=num_nodes,
+                        reduce='sum')
+    gamma = min(max(gamma_row), max(gamma_col))
+    edge_weight = edge_weight / gamma
 
     return edge_index, edge_weight
 
@@ -142,7 +163,7 @@ class ResGConv(MessagePassing):
 
     def __init__(self, channels: int, layer: int = None,
                  shared_weights: bool = False, add_self_loops: bool = False,
-                 cached: bool = False, normalize: bool = False, **kwargs):
+                 cached: bool = False, normalize: bool = True, **kwargs):
 
         kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
@@ -155,8 +176,9 @@ class ResGConv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-        self.U = Linear(channels, channels)
-        self.W = Linear(channels, channels)
+        self.U = Linear(channels,
+                        channels)  # Parameter(torch.empty(channels, channels))
+        self.W = Linear(channels, channels)  # weight_initializer='glorot')
 
         self.reset_parameters()
 
@@ -166,7 +188,7 @@ class ResGConv(MessagePassing):
         self._cached_adj_t = None
 
     def forward(self, x: Tensor, edge_index: Adj,
-                edge_weight: OptTensor = None, A: Tensor = None) -> Tensor:
+                edge_weight: OptTensor = None) -> Tensor:
 
         if self.normalize:
             if isinstance(edge_index, Tensor):
