@@ -1,15 +1,13 @@
 from __future__ import annotations
 
 import math
-from typing import Optional, Tuple
 
 import torch
-from torch import nn, Tensor
+from torch import Tensor, nn
 
 
 class KeypointAttention(nn.Module):
-    r"""
-    Single-headed keypoint attention over nodes with 3D coordinates.
+    r"""Single-headed keypoint attention over nodes with 3D coordinates.
 
     Given:
         - node features x ∈ ℝ^{N × d}
@@ -32,13 +30,12 @@ class KeypointAttention(nn.Module):
     This is suitable for EquiBind-style keypoints: learnable global summaries
     used for subsequent Kabsch alignment.
     """
-
     def __init__(
         self,
         num_keypoints: int,
         node_dim: int,
-        attn_dim: Optional[int] = None,
-        out_dim: Optional[int] = None,
+        attn_dim: int | None = None,
+        out_dim: int | None = None,
     ) -> None:
         super().__init__()
 
@@ -63,9 +60,8 @@ class KeypointAttention(nn.Module):
         nn.init.xavier_uniform_(self.value_proj.weight)
         nn.init.zeros_(self.value_proj.bias)
 
-    def forward(self, x: Tensor, pos: Tensor) -> Tuple[Tensor, Tensor, Tensor]:
-        r"""
-        Args:
+    def forward(self, x: Tensor, pos: Tensor) -> tuple[Tensor, Tensor, Tensor]:
+        r"""Args:
             x:   Node features of shape [N, d].
             pos: Node coordinates of shape [N, 3].
 
@@ -83,22 +79,22 @@ class KeypointAttention(nn.Module):
                 f"x and pos must have the same number of nodes, got {x.size(0)} and {pos.size(0)}"
             )
 
-        N = x.size(0)
-        K = self.num_keypoints
+        x.size(0)
+        self.num_keypoints
 
         # Keys and values from node features
-        keys = self.key_proj(x)            # [N, attn_dim]
-        values = self.value_proj(x)        # [N, out_dim]
+        keys = self.key_proj(x)  # [N, attn_dim]
+        values = self.value_proj(x)  # [N, out_dim]
 
         # Learnable queries
-        Q = self.query                     # [K, attn_dim]
+        Q = self.query  # [K, attn_dim]
 
         # Attention scores and weights: [K, N]
         scores = Q @ keys.transpose(-1, -2) / math.sqrt(self.attn_dim)
         attn = torch.softmax(scores, dim=-1)
 
         # Keypoint features and positions
-        kp_feat = attn @ values            # [K, out_dim]
-        kp_pos = attn @ pos                # [K, 3]
+        kp_feat = attn @ values  # [K, out_dim]
+        kp_pos = attn @ pos  # [K, 3]
 
         return kp_pos, kp_feat, attn

@@ -1,5 +1,4 @@
-"""
-Loss functions for the EquiBind-Rigid model.
+"""Loss functions for the EquiBind-Rigid model.
 
 Defines a simple coordinate-regression objective combining:
 
@@ -14,14 +13,7 @@ and torsion losses for simplicity.
 
 from __future__ import annotations
 
-import torch
-from torch import Tensor
-
-from equibind_pyg.geometry.metrics import (
-    rmsd,
-    kabsch_rmsd,
-    centroid_distance,
-)
+from equibind_pyg.geometry.metrics import centroid_distance, kabsch_rmsd, rmsd
 
 
 def compute_loss(
@@ -31,8 +23,7 @@ def compute_loss(
     lambda_kabsch: float = 1.0,
     lambda_centroid: float = 0.1,
 ) -> dict:
-    """
-    Compute training losses for a rigid docking prediction.
+    """Compute training losses for a rigid docking prediction.
 
     Args:
         out: Dict returned by `EquiBindRigid`, containing:
@@ -54,18 +45,15 @@ def compute_loss(
         "HeteroData must contain ground truth coordinates in data.ligand_pos_bound"
     )
 
-    pred = out["ligand_pos_pred"]          # [N_l, 3]
-    target = data.ligand_pos_bound         # [N_l, 3]
+    pred = out["ligand_pos_pred"]  # [N_l, 3]
+    target = data.ligand_pos_bound  # [N_l, 3]
 
     rmsd_loss = rmsd(pred, target)
     kabsch_loss = kabsch_rmsd(pred, target)
     centroid_loss = centroid_distance(pred, target)
 
-    total = (
-        lambda_rmsd * rmsd_loss
-        + lambda_kabsch * kabsch_loss
-        + lambda_centroid * centroid_loss
-    )
+    total = (lambda_rmsd * rmsd_loss + lambda_kabsch * kabsch_loss +
+             lambda_centroid * centroid_loss)
 
     return {
         "total": total,

@@ -1,5 +1,4 @@
-"""
-Kabsch rigid alignment utilities.
+"""Kabsch rigid alignment utilities.
 
 Implements the Kabsch algorithm to compute the optimal rotation and
 translation aligning one point cloud to another in 3D, and helpers
@@ -10,15 +9,12 @@ SE(3) transforms, but is written generically for reuse.
 
 from __future__ import annotations
 
-from typing import Tuple
-
 import torch
 from torch import Tensor
 
 
-def _ensure_batch(points: Tensor) -> Tuple[Tensor, bool]:
-    """
-    Ensure input points have shape [B, N, 3].
+def _ensure_batch(points: Tensor) -> tuple[Tensor, bool]:
+    """Ensure input points have shape [B, N, 3].
 
     Args:
         points: Tensor of shape [N, 3] or [B, N, 3].
@@ -37,9 +33,9 @@ def _ensure_batch(points: Tensor) -> Tuple[Tensor, bool]:
         raise ValueError(f"Expected [N, 3] or [B, N, 3], got {points.shape}")
 
 
-def kabsch(src: Tensor, tgt: Tensor, eps: float = 1e-7) -> Tuple[Tensor, Tensor]:
-    """
-    Compute the optimal rotation R and translation t (Kabsch algorithm)
+def kabsch(src: Tensor, tgt: Tensor,
+           eps: float = 1e-7) -> tuple[Tensor, Tensor]:
+    """Compute the optimal rotation R and translation t (Kabsch algorithm)
     that aligns `src` onto `tgt` in the least-squares sense.
 
     Convention:
@@ -82,14 +78,14 @@ def kabsch(src: Tensor, tgt: Tensor, eps: float = 1e-7) -> Tuple[Tensor, Tensor]
 
     # SVD: H = U @ diag(S) @ Vh
     U, S, Vh = torch.linalg.svd(H)
-    V = Vh.transpose(-1, -2)     # [B, 3, 3]
-    Ut = U.transpose(-1, -2)     # [B, 3, 3]
+    V = Vh.transpose(-1, -2)  # [B, 3, 3]
+    Ut = U.transpose(-1, -2)  # [B, 3, 3]
 
     # Rotation: R = V @ U^T
-    R = torch.matmul(V, Ut)      # [B, 3, 3]
+    R = torch.matmul(V, Ut)  # [B, 3, 3]
 
     # Enforce det(R) = +1 (proper rotation)
-    det_R = torch.det(R)         # [B]
+    det_R = torch.det(R)  # [B]
     mask = det_R < 0
     if mask.any():
         # Flip last column of V for those batches
@@ -98,16 +94,15 @@ def kabsch(src: Tensor, tgt: Tensor, eps: float = 1e-7) -> Tuple[Tensor, Tensor]
         R = torch.matmul(V_corrected, Ut)
 
     # Translation: tgt_centroid = src_centroid @ R^T + t
-    Rt = R.transpose(-1, -2)                            # [B, 3, 3]
-    t = (tgt_centroid - torch.matmul(src_centroid, Rt)) # [B, 1, 3]
-    t = t.squeeze(-2)                                   # [B, 3]
+    Rt = R.transpose(-1, -2)  # [B, 3, 3]
+    t = (tgt_centroid - torch.matmul(src_centroid, Rt))  # [B, 1, 3]
+    t = t.squeeze(-2)  # [B, 3]
 
     return R, t
 
 
 def apply_transform(points: Tensor, R: Tensor, t: Tensor) -> Tensor:
-    """
-    Apply a rigid transformation defined by (R, t) to a set of points.
+    """Apply a rigid transformation defined by (R, t) to a set of points.
 
     Uses the same convention as `kabsch`:
 
@@ -133,7 +128,8 @@ def apply_transform(points: Tensor, R: Tensor, t: Tensor) -> Tensor:
             f"Batch sizes must match: points {pts_b.size(0)}, R {R.size(0)}, t {t.size(0)}"
         )
 
-    transformed = torch.matmul(pts_b, R.transpose(-1, -2)) + t.unsqueeze(-2)  # [B, N, 3]
+    transformed = torch.matmul(pts_b, R.transpose(-1, -2)) + t.unsqueeze(
+        -2)  # [B, N, 3]
 
     if pts_was_2d:
         return transformed.squeeze(0)
@@ -141,8 +137,7 @@ def apply_transform(points: Tensor, R: Tensor, t: Tensor) -> Tensor:
 
 
 def kabsch_align(src: Tensor, tgt: Tensor) -> Tensor:
-    """
-    Align `src` to `tgt` using the Kabsch algorithm and return the aligned
+    """Align `src` to `tgt` using the Kabsch algorithm and return the aligned
     source point sets.
 
     Args:

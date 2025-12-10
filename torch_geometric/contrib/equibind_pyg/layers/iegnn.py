@@ -1,17 +1,15 @@
 from __future__ import annotations
 
 import math
-from typing import Tuple
 
 import torch
-from torch import nn, Tensor
+from torch import Tensor, nn
 
 from .egnn import EGNNLayer
 
 
 class IEGNNLayer(nn.Module):
-    r"""
-    Interaction-EGNN (IEGNN) layer over a pair of graphs: ligand and receptor.
+    r"""Interaction-EGNN (IEGNN) layer over a pair of graphs: ligand and receptor.
 
     This block applies:
 
@@ -33,7 +31,6 @@ class IEGNNLayer(nn.Module):
         cross_attn_dim: Dimension for cross-attention queries/keys.
         aggr:           Aggregation method for EGNN ("mean", "sum", etc.).
     """
-
     def __init__(
         self,
         node_dim: int,
@@ -95,8 +92,7 @@ class IEGNNLayer(nn.Module):
         k_x: Tensor,
         v_x: Tensor,
     ) -> Tensor:
-        r"""
-        Single-headed dot-product attention:
+        r"""Single-headed dot-product attention:
 
             attn = softmax( Q K^T / sqrt(d_k) )
             ctx  = attn V
@@ -116,8 +112,8 @@ class IEGNNLayer(nn.Module):
         d_k = Q.size(-1)
 
         scores = Q @ K.transpose(-1, -2) / math.sqrt(d_k)  # [N_q, N_k]
-        attn = torch.softmax(scores, dim=-1)               # [N_q, N_k]
-        ctx = attn @ V                                     # [N_q, d_v]
+        attn = torch.softmax(scores, dim=-1)  # [N_q, N_k]
+        ctx = attn @ V  # [N_q, d_v]
         return ctx
 
     # --------------------------------------------------------------------- #
@@ -132,9 +128,8 @@ class IEGNNLayer(nn.Module):
         rec_x: Tensor,
         rec_pos: Tensor,
         rec_edge_index: Tensor,
-    ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
-        r"""
-        Args:
+    ) -> tuple[Tensor, Tensor, Tensor, Tensor]:
+        r"""Args:
             lig_x:          Ligand node features [N_l, node_dim].
             lig_pos:        Ligand coordinates [N_l, 3].
             lig_edge_index: Ligand intra-graph edges [2, E_l].
@@ -154,21 +149,25 @@ class IEGNNLayer(nn.Module):
         rec_K = self.rec_k(rec_x)  # [N_r, cross_attn_dim]
         rec_V = self.rec_v(rec_x)  # [N_r, node_dim]
 
-        lig_ctx_from_rec = self._cross_attend(lig_Q, rec_K, rec_V)  # [N_l, node_dim]
+        lig_ctx_from_rec = self._cross_attend(lig_Q, rec_K,
+                                              rec_V)  # [N_l, node_dim]
 
         # Cross-graph messages: ligand -> receptor
         rec_Q = self.rec_q(rec_x)  # [N_r, cross_attn_dim]
         lig_K = self.lig_k(lig_x)  # [N_l, cross_attn_dim]
         lig_V = self.lig_v(lig_x)  # [N_l, node_dim]
 
-        rec_ctx_from_lig = self._cross_attend(rec_Q, lig_K, lig_V)  # [N_r, node_dim]
+        rec_ctx_from_lig = self._cross_attend(rec_Q, lig_K,
+                                              lig_V)  # [N_r, node_dim]
 
         # Fuse cross-graph context into node features
-        lig_concat = torch.cat([lig_x, lig_ctx_from_rec], dim=-1)  # [N_l, 2 * node_dim]
-        rec_concat = torch.cat([rec_x, rec_ctx_from_lig], dim=-1)  # [N_r, 2 * node_dim]
+        lig_concat = torch.cat([lig_x, lig_ctx_from_rec],
+                               dim=-1)  # [N_l, 2 * node_dim]
+        rec_concat = torch.cat([rec_x, rec_ctx_from_lig],
+                               dim=-1)  # [N_r, 2 * node_dim]
 
-        lig_x_updated = self.lig_cross_mlp(lig_concat)             # [N_l, node_dim]
-        rec_x_updated = self.rec_cross_mlp(rec_concat)             # [N_r, node_dim]
+        lig_x_updated = self.lig_cross_mlp(lig_concat)  # [N_l, node_dim]
+        rec_x_updated = self.rec_cross_mlp(rec_concat)  # [N_r, node_dim]
 
         # EGNN updates for each graph (features + coordinates)
         lig_x_out, lig_pos_out = self.lig_egnn(

@@ -1,18 +1,13 @@
 from __future__ import annotations
 
-from typing import Dict, Optional
-
-import torch
-from torch import nn, Tensor
-
+from equibind_pyg.geometry.kabsch import kabsch
 from equibind_pyg.layers.iegnn import IEGNNLayer
 from equibind_pyg.layers.keypoint_attention import KeypointAttention
-from equibind_pyg.geometry.kabsch import kabsch, apply_transform
+from torch import Tensor, nn
 
 
 class EquiBindRigid(nn.Module):
-    r"""
-    Rigid EquiBind model in PyTorch Geometric.
+    r"""Rigid EquiBind model in PyTorch Geometric.
 
     High-level pipeline:
         1. Run L IEGNN layers over ligand + receptor graphs.
@@ -41,7 +36,6 @@ class EquiBindRigid(nn.Module):
                         If provided and different from node_dim, a Linear
                         embedding layer is created in __init__.
     """
-
     def __init__(
         self,
         node_dim: int = 128,
@@ -50,8 +44,8 @@ class EquiBindRigid(nn.Module):
         edge_mlp_dim: int = 64,
         coord_mlp_dim: int = 64,
         cross_attn_dim: int = 64,
-        lig_in_dim: Optional[int] = None,
-        rec_in_dim: Optional[int] = None,
+        lig_in_dim: int | None = None,
+        rec_in_dim: int | None = None,
     ) -> None:
         super().__init__()
 
@@ -82,8 +76,7 @@ class EquiBindRigid(nn.Module):
                 edge_mlp_dim=edge_mlp_dim,
                 coord_mlp_dim=coord_mlp_dim,
                 cross_attn_dim=cross_attn_dim,
-            )
-            for _ in range(num_layers)
+            ) for _ in range(num_layers)
         ])
 
         # Keypoint attention
@@ -100,9 +93,8 @@ class EquiBindRigid(nn.Module):
             out_dim=node_dim,
         )
 
-    def forward(self, data) -> Dict[str, Tensor]:
-        r"""
-        Forward pass for a batch of heterogeneous protein–ligand graphs.
+    def forward(self, data) -> dict[str, Tensor]:
+        r"""Forward pass for a batch of heterogeneous protein–ligand graphs.
 
         Args:
             data: A `HeteroData` object containing:
@@ -140,7 +132,8 @@ class EquiBindRigid(nn.Module):
             lig_x = self.lig_embed(lig_x)
         elif lig_x.size(-1) != self.node_dim:
             # Fallback for synthetic/test data where alloc not done in __init__
-            self.lig_embed = nn.Linear(lig_x.size(-1), self.node_dim).to(lig_x.device)
+            self.lig_embed = nn.Linear(lig_x.size(-1),
+                                       self.node_dim).to(lig_x.device)
             lig_x = self.lig_embed(lig_x)
 
         # Receptor embedding:
@@ -148,7 +141,8 @@ class EquiBindRigid(nn.Module):
             rec_x = self.rec_embed(rec_x)
         elif rec_x.size(-1) != self.node_dim:
             # Fallback for synthetic/test data
-            self.rec_embed = nn.Linear(rec_x.size(-1), self.node_dim).to(rec_x.device)
+            self.rec_embed = nn.Linear(rec_x.size(-1),
+                                       self.node_dim).to(rec_x.device)
             rec_x = self.rec_embed(rec_x)
 
         # 3) Stacked IEGNN layers

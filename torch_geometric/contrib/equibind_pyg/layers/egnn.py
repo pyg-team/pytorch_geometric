@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-from typing import Optional
-
 import torch
-from torch import nn, Tensor
-from torch_geometric.nn import MessagePassing
+from torch import Tensor, nn
 from torch_scatter import scatter
+
+from torch_geometric.nn import MessagePassing
 
 
 class EGNNLayer(MessagePassing):
-    r"""
-    E(n)-Equivariant GNN layer (EGNN-style) for 3D point clouds.
+    r"""E(n)-Equivariant GNN layer (EGNN-style) for 3D point clouds.
 
     This layer jointly updates node features `x` and coordinates `pos`
     while guaranteeing SE(3) equivariance:
@@ -33,7 +31,6 @@ class EGNNLayer(MessagePassing):
         coord_mlp_dim:   Hidden dimension for the coordinate MLP.
         aggr:            Aggregation type for messages ("mean", "sum", "max").
     """
-
     def __init__(
         self,
         in_dim: int,
@@ -76,10 +73,9 @@ class EGNNLayer(MessagePassing):
         x: Tensor,
         pos: Tensor,
         edge_index: Tensor,
-        batch: Optional[Tensor] = None,
+        batch: Tensor | None = None,
     ) -> tuple[Tensor, Tensor]:
-        r"""
-        Args:
+        r"""Args:
             x:          Node features of shape [N, in_dim].
             pos:        Node coordinates of shape [N, 3].
             edge_index: Edge indices of shape [2, E] (source=row, target=col).
@@ -93,16 +89,17 @@ class EGNNLayer(MessagePassing):
         row, col = edge_index  # row: target i, col: source j
 
         # Relative coordinates and squared distances
-        rel = pos[row] - pos[col]                     # [E, 3]
-        dist2 = (rel**2).sum(dim=-1, keepdim=True)   # [E, 1]
+        rel = pos[row] - pos[col]  # [E, 3]
+        dist2 = (rel**2).sum(dim=-1, keepdim=True)  # [E, 1]
 
         # Edge messages
-        edge_input = torch.cat([x[row], x[col], dist2], dim=-1)  # [E, 2*in_dim+1]
-        m_ij = self.edge_mlp(edge_input)                         # [E, edge_mlp_dim]
+        edge_input = torch.cat([x[row], x[col], dist2],
+                               dim=-1)  # [E, 2*in_dim+1]
+        m_ij = self.edge_mlp(edge_input)  # [E, edge_mlp_dim]
 
         # Coordinate update
-        coord_coef = self.coord_mlp(m_ij)                        # [E, 1]
-        rel_weighted = rel * coord_coef                          # [E, 3]
+        coord_coef = self.coord_mlp(m_ij)  # [E, 1]
+        rel_weighted = rel * coord_coef  # [E, 3]
 
         # Aggregate per target node i
         delta_pos = scatter(
@@ -130,7 +127,8 @@ class EGNNLayer(MessagePassing):
             reduce=self.aggr,
         )  # [N, edge_mlp_dim]
 
-        node_input = torch.cat([x, agg_m], dim=-1)   # [N, in_dim + edge_mlp_dim]
-        x_out = self.node_mlp(node_input)            # [N, out_dim]
+        node_input = torch.cat([x, agg_m],
+                               dim=-1)  # [N, in_dim + edge_mlp_dim]
+        x_out = self.node_mlp(node_input)  # [N, out_dim]
 
         return x_out, pos_out

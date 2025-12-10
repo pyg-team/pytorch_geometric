@@ -31,4 +31,4 @@ All layers and geometry utilities are available under:
 torch_geometric.contrib.equibind_pyg.layers
 torch_geometric.contrib.equibind_pyg.models
 torch_geometric.contrib.equibind_pyg.geometry
-
+```
