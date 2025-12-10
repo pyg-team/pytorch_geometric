@@ -1,5 +1,4 @@
-"""
-COFT Highlighting Example
+"""COFT Highlighting Example
 =========================
 
 This example demonstrates how to use the COFT module for
@@ -15,7 +14,7 @@ Run:
     python examples/coft_highlighting.py
 """
 
-from torch_geometric.llm.models import LLM, Granularity, COFT
+from torch_geometric.llm.models import COFT, LLM, Granularity
 
 
 # -------------------------------------------------------------------------

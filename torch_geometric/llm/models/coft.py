@@ -1,10 +1,11 @@
-import re
 import math
-from typing import List, Dict, Set, Tuple
+import re
+from enum import Enum
+from typing import Dict, List, Set, Tuple
 
 import torch
+
 from .llm import LLM
-from enum import Enum
 
 
 class Granularity(Enum):
@@ -124,7 +125,6 @@ class COFT:
                 - "min_info": Minimal LLM loss considered.
                 - "max_info": Maximum LLM loss considered.
         """
-
         default_cfg = {
             "min_len": 0,
             "max_len": 3000,

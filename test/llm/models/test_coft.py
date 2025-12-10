@@ -1,13 +1,12 @@
+import pytest
 import torch
 import torch.nn as nn
-import pytest
 
-from torch_geometric.llm.models import LLM, Granularity, COFT
+from torch_geometric.llm.models import COFT, LLM, Granularity
 
 
 class FakeLLM(LLM):
-    """
-    A minimal fake LLM that returns deterministic numeric scores.
+    """A minimal fake LLM that returns deterministic numeric scores.
     Loss = 0.1 * len(answer[0])
     """
     def __init__(self):
