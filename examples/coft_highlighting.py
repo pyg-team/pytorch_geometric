@@ -27,8 +27,8 @@ from torch_geometric.llm import LLM
 # -------------------------------------------------------------------------
 def build_demo_kg():
     triplets = [
-        ("Q3", "R1", "Q1"),   # fruit ↔ apple
-        ("Q1", "R1", "Q2"),   # apple ↔ banana
+        ("Q3", "R1", "Q1"),  # fruit ↔ apple
+        ("Q1", "R1", "Q2"),  # apple ↔ banana
     ]
     alias = {
         "Q1": ["apple", "red apple"],
@@ -68,26 +68,30 @@ def main():
     # Sentence-level highlight (default)
     # ------------------------------------------------------------------
     print("\n=== Sentence-Level Highlight ===\n")
-    sent_hl = coft.highlight(query, reference, granularity=Granularity.SENTENCE, selector_cfg=selector_cfg)
+    sent_hl = coft.highlight(
+        query, reference, granularity=Granularity.SENTENCE, selector_cfg=selector_cfg
+    )
     print(sent_hl)
 
     # ------------------------------------------------------------------
     # Word-level highlight
     # ------------------------------------------------------------------
     print("\n=== Word-Level Highlight ===\n")
-    word_hl = coft.highlight(query, reference, granularity=Granularity.WORD, selector_cfg=selector_cfg)
+    word_hl = coft.highlight(
+        query, reference, granularity=Granularity.WORD, selector_cfg=selector_cfg
+    )
     print(word_hl)
 
     # ------------------------------------------------------------------
     # Paragraph-level highlight
     # ------------------------------------------------------------------
     para_text = (
-        "Apple paragraph text.\n"
-        "Banana paragraph text.\n"
-        "Fruit paragraph text."
+        "Apple paragraph text.\n" "Banana paragraph text.\n" "Fruit paragraph text."
     )
     print("\n=== Paragraph-Level Highlight ===\n")
-    para_hl = coft.highlight("fruit", para_text, granularity=Granularity.PARAGRAPH, selector_cfg=selector_cfg)
+    para_hl = coft.highlight(
+        "fruit", para_text, granularity=Granularity.PARAGRAPH, selector_cfg=selector_cfg
+    )
     print(para_hl)
 
 

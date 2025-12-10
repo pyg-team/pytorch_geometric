@@ -11,6 +11,7 @@ class FakeLLM(LLM):
     A minimal fake LLM that returns deterministic numeric scores.
     Loss = 0.1 * len(answer[0])
     """
+
     def __init__(self):
         nn.Module.__init__(self)
         self.model_name = "fake-llm"
