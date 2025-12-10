@@ -1,3 +1,5 @@
+from .coft import COFT
+from .coft import Granularity
 from .sentence_transformer import SentenceTransformer
 from .vision_transformer import VisionTransformer
 from .llm import LLM
@@ -10,6 +12,8 @@ from .protein_mpnn import ProteinMPNN
 from .git_mol import GITMol
 
 __all__ = classes = [
+    'COFT',
+    'Granularity',
     'SentenceTransformer',
     'VisionTransformer',
     'LLM',
