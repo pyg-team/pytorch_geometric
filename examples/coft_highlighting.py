@@ -42,9 +42,6 @@ def build_demo_kg():
 # Example execution
 # -------------------------------------------------------------------------
 def main():
-    # tokenizer = AutoTokenizer.from_pretrained("sshleifer/tiny-gpt2")
-    # model = AutoModelForCausalLM.from_pretrained("sshleifer/tiny-gpt2")
-    # llm = LLM(model=model, tokenizer=tokenizer)
     llm = LLM("Qwen/Qwen2.5-0.5B-Instruct")
 
     triplets, alias = build_demo_kg()

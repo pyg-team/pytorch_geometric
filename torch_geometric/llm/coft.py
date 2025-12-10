@@ -14,25 +14,21 @@ class Granularity(Enum):
 
 
 class COFT:
-    """
-    COFT (Coarse-to-Fine Highlighting)
-
-    This module highlights key lexical units in a reference text to reduce
-    hallucinations in LLM reasoning. It consists of three components:
-    
-    - recaller: extracts entity candidates using KG alias matching
-    - scorer: computes contextual weights for each entity
-    - selector: selects highlighted spans under dynamic thresholds
+    r"""The COFT model from the `"Coarse-to-Fine Highlighting:
+    Reducing Knowledge Hallucination in Large Language Models"
+    <https://arxiv.org/pdf/2410.15116>`_ paper.
 
     Args:
-        llm (LLM): Backend language model used for token self-information scoring.
-        triplets (List[Tuple[str, str, str]]): Knowledge graph relations.
-        entity_alias (Dict[str, List[str]]): Mapping from entity IDs to surface forms.
+        llm (LLM): The LLM instance to use.
+        triplets (Iterable[Tuple[str, str, str]]): The knowledge graph triplets
+            in the format (head, relation, tail).
+        entity_alias (Dict[str, Iterable[str]]): A dictionary mapping entity IDs
+            to their surface form aliases.
 
-    Example::
-        coft = COFT(llm, triplets, alias)
-        out = coft(query="What is apple rich in?", reference=text)
-        print(out)
+    .. note::
+        For an example of using :class:`COFT`, see
+        `examples/llm/coft.py <https://github.com/pyg-team/
+        pytorch_geometric/blob/master/examples/llm/coft.py>`_.
     """
 
     def __init__(self, llm: LLM,
@@ -94,7 +90,25 @@ class COFT:
     # ================================================================
     def highlight(self, query: str, reference: str,
                   granularity: Granularity = Granularity.SENTENCE,
-                  selector_cfg=None):
+                  selector_cfg=None
+    ) -> str:
+        r"""The highlight pass to select important text segments.
+
+        Args:
+            query (str): The input question or prompt.
+            reference (str): The text to highlight.
+            granularity (Granularity, optional): The level of highlighting
+                granularity (WORD, SENTENCE, or PARAGRAPH).
+                (default: :obj:`Granularity.SENTENCE`)
+            min_len (int, optional): The minimum text length threshold for
+                scaling the selection ratio. (default: :obj:`200`)
+            max_len (int, optional): The maximum text length threshold for
+                scaling the selection ratio. (default: :obj:`3000`)
+            min_info (float, optional): The minimum information (loss)
+                threshold. (default: :obj:`1.0`)
+            max_info (float, optional): The maximum information (loss)
+                threshold. (default: :obj:`6.0`)
+        """
 
         default_cfg = {
             "min_len": 0,
