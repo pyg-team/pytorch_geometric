@@ -1,4 +1,4 @@
-"""COFT Highlighting Example
+"""COFT Highlighting Example.
 =========================
 
 This example demonstrates how to use the COFT module for
