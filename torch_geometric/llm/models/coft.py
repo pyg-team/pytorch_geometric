@@ -1,9 +1,9 @@
 import re
 import math
-from typing import List, Dict, Set, Tuple, Iterable
+from typing import List, Dict, Set, Tuple
 
 import torch
-from torch_geometric.llm import LLM
+from .llm import LLM
 from enum import Enum
 
 
@@ -14,7 +14,7 @@ class Granularity(Enum):
 
 
 class COFT:
-    r"""The COFT model from the `"Coarse-to-Fine Highlighting:
+    """The COFT model from the `"Coarse-to-Fine Highlighting:
     Reducing Knowledge Hallucination in Large Language Models"
     <https://arxiv.org/pdf/2410.15116>`_ paper.
 
@@ -22,7 +22,7 @@ class COFT:
         llm (LLM): The LLM instance to use.
         triplets (Iterable[Tuple[str, str, str]]): The knowledge graph triplets
             in the format (head, relation, tail).
-        entity_alias (Dict[str, Iterable[str]]): A dictionary mapping entity IDs
+        entity_alias (Dict[str, Iterable[str]]): A dictionary mapping entity ID
             to their surface form aliases.
 
     .. note::
@@ -30,7 +30,6 @@ class COFT:
         `examples/llm/coft.py <https://github.com/pyg-team/
         pytorch_geometric/blob/master/examples/llm/coft.py>`_.
     """
-
     def __init__(
         self,
         llm: LLM,
@@ -53,7 +52,8 @@ class COFT:
         self.surface_to_qids_lower = {}
         for qid, surfaces in entity_alias.items():
             for s in surfaces:
-                self.surface_to_qids_lower.setdefault(s.lower(), []).append(qid)
+                self.surface_to_qids_lower.setdefault(s.lower(),
+                                                      []).append(qid)
 
         # Build adjacency CSR
         src = []
@@ -101,9 +101,7 @@ class COFT:
 
         self.last_loss = 0.0
 
-    # ================================================================
     # Public API
-    # ================================================================
     def highlight(
         self,
         query: str,
@@ -111,7 +109,7 @@ class COFT:
         granularity: Granularity = Granularity.SENTENCE,
         selector_cfg=None,
     ) -> str:
-        r"""The highlight pass to select important text segments.
+        """The highlight pass to select important text segments.
 
         Args:
             query (str): The input question or prompt.
@@ -119,14 +117,12 @@ class COFT:
             granularity (Granularity, optional): The level of highlighting
                 granularity (WORD, SENTENCE, or PARAGRAPH).
                 (default: :obj:`Granularity.SENTENCE`)
-            min_len (int, optional): The minimum text length threshold for
-                scaling the selection ratio. (default: :obj:`200`)
-            max_len (int, optional): The maximum text length threshold for
-                scaling the selection ratio. (default: :obj:`3000`)
-            min_info (float, optional): The minimum information (loss)
-                threshold. (default: :obj:`1.0`)
-            max_info (float, optional): The maximum information (loss)
-                threshold. (default: :obj:`6.0`)
+            selector_cfg (dict, optional):
+                Optional configuration to override default selection thresholds
+                - "min_len": Minimal text length before scaling kicks in.
+                - "max_len": Maximum text length for threshold scaling.
+                - "min_info": Minimal LLM loss considered.
+                - "max_info": Maximum LLM loss considered.
         """
 
         default_cfg = {
@@ -144,11 +140,10 @@ class COFT:
             return reference
 
         weights = self._score_entities(query, reference, candidates)
-        return self._select_and_format(reference, weights, self.last_loss, granularity)
+        return self._select_and_format(reference, weights, self.last_loss,
+                                       granularity)
 
-    # ================================================================
-    # Phase 1: Recaller
-    # ================================================================
+    # Recaller
     def _recall_candidates(self, text: str) -> Set[str]:
         tokens = re.findall(r"\b\w+\b", text.lower())
         found = set()
@@ -156,7 +151,7 @@ class COFT:
         # token n-grams up to 4
         for n in range(1, 5):
             for i in range(len(tokens) - n + 1):
-                gram = " ".join(tokens[i : i + n])
+                gram = " ".join(tokens[i:i + n])
                 if n == 1 and gram in self.stop_words:
                     continue
                 if gram in self.surface_to_qids_lower:
@@ -182,13 +177,12 @@ class COFT:
             result.update(self.qid_to_surfaces[qid])
         return result
 
-    # ================================================================
-    # Phase 2: TF-ISF
-    # ================================================================
+    # TF-ISF
     def _count_phrase(self, tokens, phrase_tokens):
         L = len(tokens)
         P = len(phrase_tokens)
-        return sum(1 for i in range(L - P + 1) if tokens[i : i + P] == phrase_tokens)
+        return sum(1 for i in range(L - P + 1)
+                   if tokens[i:i + P] == phrase_tokens)
 
     def _tf_isf(self, entity: str, sentences: List[str]) -> float:
         e_tokens = entity.lower().split()
@@ -210,9 +204,7 @@ class COFT:
         isf = math.log2(N / (f_eS + 1))
         return (sum(tf_vals) / len(tf_vals)) * isf
 
-    # ================================================================
-    # Phase 3: LLM relevance
-    # ================================================================
+    # LLM relevance
     def _get_entity_relevance(self, query: str, entity: str) -> float:
         loss = self.llm(question=[query], answer=[entity])
         val = float(loss.item())
@@ -222,19 +214,18 @@ class COFT:
         loss = self.llm(question=[query], answer=[reference])
         self.last_loss = float(loss.item())
 
-    # ================================================================
-    # Phase 4: Score entities
-    # ================================================================
     def _token_exists(self, ref_tokens, e_tokens):
         L = len(ref_tokens)
         P = len(e_tokens)
-        return any(ref_tokens[i : i + P] == e_tokens for i in range(L - P + 1))
+        return any(ref_tokens[i:i + P] == e_tokens for i in range(L - P + 1))
 
     def _score_entities(self, query: str, reference: str, entities):
 
         self._update_global_loss(query, reference)
 
-        sentences = [s.strip() for s in re.split(r"[.!?]\s*", reference) if s.strip()]
+        sentences = [
+            s.strip() for s in re.split(r"[.!?]\s*", reference) if s.strip()
+        ]
 
         ref_tokens = reference.lower().split()
         weights = {}
@@ -254,20 +245,18 @@ class COFT:
 
         return weights
 
-    # ================================================================
     # Highlight helpers
-    # ================================================================
     def _sentence_contains(self, sentence: str, entity: str):
         s_tokens = sentence.lower().replace("*", "").split()
         e_tokens = entity.lower().split()
         return self._token_exists(s_tokens, e_tokens)
 
-    # === non-destructive word-level highlight ===
+    # non-destructive word-level highlight
     def _highlight_word_level(self, reference, selected):
         matches = []
 
         for e in selected:
-            pattern = re.compile(re.escape(e), flags=re.IGNORECASE)
+            pattern = re.compile(rf"\b{re.escape(e)}\b", flags=re.IGNORECASE)
             for m in pattern.finditer(reference):
                 matches.append((m.start(), m.end(), m.group(0)))
 
@@ -283,9 +272,7 @@ class COFT:
 
         return "".join(out)
 
-    # ================================================================
-    # Phase 5: Selector + formatting
-    # ================================================================
+    # Selector + formatting
     def _select_and_format(self, reference, weights, scorer_loss, granularity):
 
         if not weights:
@@ -297,13 +284,14 @@ class COFT:
         def clip(v, lo, hi):
             return max(lo, min(v, hi))
 
-        tau_len = clip((L - cfg["min_len"]) / (cfg["max_len"] - cfg["min_len"]), 0, 1)
-        tau_info = clip(
-            (scorer_loss - cfg["min_info"]) / (cfg["max_info"] - cfg["min_info"]), 0, 1
-        )
+        tau_len = clip(
+            (L - cfg["min_len"]) / (cfg["max_len"] - cfg["min_len"]), 0, 1)
+        tau_info = clip((scorer_loss - cfg["min_info"]) /
+                        (cfg["max_info"] - cfg["min_info"]), 0, 1)
         tau = 0.5 * (tau_len + tau_info)
 
-        sorted_items = sorted(weights.items(), key=lambda x: x[1], reverse=True)
+        sorted_items = sorted(weights.items(), key=lambda x: x[1],
+                              reverse=True)
 
         k = max(2, int(len(sorted_items) * tau))
         selected = {ent for ent, _ in sorted_items[:k]}
@@ -315,25 +303,15 @@ class COFT:
         # === Sentence level ===
         if granularity == Granularity.SENTENCE:
             parts = re.split(r"(?<=[.!?])\s+", reference)
-            return " ".join(
-                (
-                    f"**{s}**"
-                    if any(self._sentence_contains(s, e) for e in selected)
-                    else s
-                )
-                for s in parts
-            )
+            return " ".join((f"**{s}**" if any(
+                self._sentence_contains(s, e) for e in selected) else s)
+                            for s in parts)
 
         # === Paragraph level ===
         if granularity == Granularity.PARAGRAPH:
             parts = reference.split("\n")
-            return "\n".join(
-                (
-                    f"**{p}**"
-                    if any(self._sentence_contains(p, e) for e in selected)
-                    else p
-                )
-                for p in parts
-            )
+            return "\n".join((f"**{p}**" if any(
+                self._sentence_contains(p, e) for e in selected) else p)
+                             for p in parts)
 
         return reference

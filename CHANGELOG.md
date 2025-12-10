@@ -871,6 +871,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Added the `MaskLabel` module and a corresponding masked label propagation example ([#4197](https://github.com/pyg-team/pytorch_geometric/pull/4197))
 - Added temporal sampling support to `NeighborLoader` ([#4025](https://github.com/pyg-team/pytorch_geometric/pull/4025))
 - Added an example for unsupervised heterogeneous graph learning based on "Deep Multiplex Graph Infomax" ([#3189](https://github.com/pyg-team/pytorch_geometric/pull/3189))
+- Added COFT (Coarse-to-Fine Highlighting) module for entity-based context selection and highlighting. (#XXXX)
 
 ### Changed
 

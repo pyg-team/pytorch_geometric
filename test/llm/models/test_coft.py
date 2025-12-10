@@ -2,8 +2,7 @@ import torch
 import torch.nn as nn
 import pytest
 
-from torch_geometric.llm.coft import Granularity, COFT
-from torch_geometric.llm import LLM
+from torch_geometric.llm.models import LLM, Granularity, COFT
 
 
 class FakeLLM(LLM):
@@ -11,7 +10,6 @@ class FakeLLM(LLM):
     A minimal fake LLM that returns deterministic numeric scores.
     Loss = 0.1 * len(answer[0])
     """
-
     def __init__(self):
         nn.Module.__init__(self)
         self.model_name = "fake-llm"
@@ -40,21 +38,17 @@ def test_recall(coft):
 
 
 def test_sentence_highlight(coft):
-    text = (
-        "apple is nice. banana is sweet. apple again. "
-        "banana also good. apple delicious."
-    )
+    text = ("apple is nice. banana is sweet. apple again. "
+            "banana also good. apple delicious.")
     out = coft.highlight("fruit", text)
     assert "**" in out
 
 
 def test_word_highlight(coft):
-    out = coft.highlight(
-        "fruit",
-        "banana and apple",
-        granularity=Granularity.WORD,
-    )
-    assert ("**apple**" in out) or ("**banana**" in out)
+    out = coft.highlight("fruit", "banana and apple pineapple",
+                         granularity=Granularity.WORD)
+    print(out)
+    assert "**apple**" in out or "**banana**" in out
 
 
 def test_paragraph_highlight(coft):
