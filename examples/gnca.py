@@ -110,7 +110,7 @@ class StateCache:
         """
         Args:
             size (int): The number of states to keep in the cache.
-            initial_state (torch.Tensor): The seed state (e.g., sphere) 
+            initial_state (torch.Tensor): The seed state (e.g., sphere).
         """
         self.size = size
         # Store initial_state that we can use for resets
