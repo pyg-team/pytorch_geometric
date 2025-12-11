@@ -47,6 +47,7 @@ def res_gconv_norm(  # noqa: F811
 
         # Implementation from https://github.com/jiechenjiechen/GNP
         # GNP/utils.py scale_A_by_spectral_radius(A)
+
         adj_t = adj_t.to_dense()
         absA = adj_t.abs()
         m, n = absA.shape
@@ -54,12 +55,8 @@ def res_gconv_norm(  # noqa: F811
         col_sum = torch.ones(1, m, dtype=absA.dtype, device=absA.device) @ absA
         gamma = torch.min(torch.max(row_sum), torch.max(col_sum))
 
-        # deg_inv_sqrt = deg.pow_(-0.5)
-        # deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0.)
         adj_t = adj_t * (1. / gamma.item())
         adj_t = SparseTensor.from_dense(adj_t)
-        # torch_sparse.mul(adj_t, deg_inv_sqrt.view(-1, 1))
-        # adj_t = torch_sparse.mul(adj_t, deg_inv_sqrt.view(1, -1))
         return adj_t
 
     if is_torch_sparse_tensor(edge_index):
@@ -75,13 +72,9 @@ def res_gconv_norm(  # noqa: F811
 
         edge_index, value = to_edge_index(adj_t)
 
-        # col, row = edge_index[0], edge_index[1]
-        # deg = scatter(value, col, 0, dim_size=num_nodes, reduce='sum')
-        # deg_inv_sqrt = deg.pow_(-0.5)
-        # deg_inv_sqrt.masked_fill_(deg_inv_sqrt == float('inf'), 0)
-        # value = deg_inv_sqrt[row] * value * deg_inv_sqrt[col]
         # Implementation from https://github.com/jiechenjiechen/GNP
         # GNP/utils.py scale_A_by_spectral_radius(A)
+
         absA = torch.absolute(adj_t)
         m, n = absA.shape
         row_sum = absA @ torch.ones(n, 1, dtype=adj_t.dtype,
