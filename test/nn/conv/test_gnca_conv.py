@@ -6,9 +6,7 @@ from torch_geometric.nn import GNCAConv
 from gnca.model import GNCAModel
 
 def test_gnca_conv_basic():
-    """
-    Checksif the layer works on one small graph with NO edge attributes.
-    """
+    """Checks the layer works on a graph without edge attributes."""
     in_channels, out_channels = 16, 32
     # test graph...
     edge_index = torch.tensor([
@@ -32,9 +30,7 @@ def test_gnca_conv_basic():
 
 
 def test_gnca_conv_w_edge_features():
-    """
-    Checks if the layer handles edge attributes correctly!
-    """
+    """Checks if the layer handles edge attributes correctly!"""
     in_channels, out_channels = 16, 32
     edge_dim = 4 # test edge features
     
@@ -54,9 +50,7 @@ def test_gnca_conv_w_edge_features():
 
 
 def test_gnca_conv_jit_script():
-    """
-    Checks against TorchScript (JIT).
-    """
+    """Checks against TorchScript (JIT)."""
     in_channels, out_channels = 8, 16
     conv = GNCAConv(in_channels, out_channels)
     

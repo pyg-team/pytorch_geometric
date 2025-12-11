@@ -1,4 +1,5 @@
 import argparse
+import gc
 import os
 import os.path as osp
 import sys
@@ -27,19 +28,17 @@ class GNCAModel(nn.Module):
     r"""The full Graph Neural Cellular Automata model architecture.
 
     This model implements the three-part update rule described in 
-    Appendix A.2 of the paper:
-    
-    1. Pre-processing: :math:`h_i \leftarrow \text{MLP}_{\text{pre}}(s_i)`
-    2. Message Passing: :math:`h_i \leftarrow h_i \, \| \, \sum_{j \in \mathcal{N}(i)} \text{ReLU}(\mathbf{W} h_j + \mathbf{b})`
-    3. Post-processing: :math:`s_i' \leftarrow \text{MLP}_{\text{post}}(h_i)`
+    Appendix A.2 of the paper
 
     Args:
-        input_channels (int): Dimensionality of the input state space (e.g., 2 for 2D coords).
+        input_channels (int): Dimensionality of the input state space
         output_channels (int): Dimensionality of the output state space.
-        hidden_channels (int, optional): Number of hidden units in the MLPs and 
-            convolution layer. (default: :obj:`256`)
-        output_activation (str, optional): The activation to apply to the final output.
-            Options: :obj:`"tanh"` (for continuous bounded states), :obj:`"sigmoid"` 
+        hidden_channels (int, optional): Number of hidden units in the MLPs 
+             and convolution layer. (default: :obj:`256`)
+        output_activation (str, optional): The activation to apply to 
+            apply to the final output.
+            Options: :obj:`"tanh"` (continuous bounded states), 
+            :obj:`"sigmoid"` 
             (for binary states), or :obj:`None`. (default: :obj:`"tanh"`)
     """
     def __init__(self, 
@@ -61,10 +60,12 @@ class GNCAModel(nn.Module):
         # 2. Message Passing Layer (The GNCAConv)
         # Input size is hidden_channels (from mlp_pre).
         # Output size of the convolution message is hidden_channels.
-        self.conv = GNCAConv(hidden_channels, hidden_channels, edge_dim=edge_dim)
+        self.conv = GNCAConv(hidden_channels, hidden_channels,
+                             edge_dim=edge_dim)
         
         # 3. Post-processing MLP
-        # Input is 2 * hidden_channels because GNCAConv concatenates [self || neighbor_agg]
+        # Input  2 * hidden_channels because GNCAConv concats 
+        # [self || neighbor_agg]
         self.mlp_post = nn.Sequential(
             nn.Linear(2 * hidden_channels, hidden_channels),
             nn.ReLU(),
@@ -73,16 +74,14 @@ class GNCAModel(nn.Module):
 
         self.output_activation = output_activation
 
-    def forward(self, x, edge_index, edge_attr: Optional[torch.Tensor] = None):
-        r"""
-        Calculates the update delta (i.e. next state for the cellular automaton).
+    def forward(self, x, edge_index, 
+                edge_attr: Optional[torch.Tensor] = None):
+        r"""Calculates the update delta.
 
         Args:
-            x (Tensor): Node feature matrix :math:`(|\mathcal{V}|, F_{in})`.
-            edge_index (LongTensor): Graph edge connectivity :math:`(2, |\mathcal{E}|)`.
-
-        Returns:
-            Tensor: The output node features :math:`(|\mathcal{V}|, F_{out})`.
+            x (Tensor): Node features.
+            edge_index (LongTensor): Edge connectivity.
+            edge_attr (Tensor, optional): Edge features.
         """
         # 1. Pre-process current state into hidden representation
         h = self.mlp_pre(x)
@@ -94,7 +93,7 @@ class GNCAModel(nn.Module):
         # 3. Post-process to get the update/next state
         out = self.mlp_post(h)
 
-        # 4. Apply specific output activation based on the task (Appendix A.2)
+        # 4. Apply specific output activation based on the task
         if self.output_activation == 'tanh':
             return torch.tanh(out)
         elif self.output_activation == 'sigmoid':
@@ -104,16 +103,14 @@ class GNCAModel(nn.Module):
 
 
 class StateCache:
-    """
-    Stores states of GNCA model for replay memory
-    This lets the model learn from previous states and prevents catastrophic forgetting
+    r"""Stores states of GNCA model for replay memory.
+    Lets the model learn from previous states.
     """
     def __init__(self, size, initial_state):
         """
         Args:
             size (int): The number of states to keep in the cache.
-            initial_state (torch.Tensor): The seed state (e.g., sphere or noise) 
-                                          used to initialize and reset the pool.
+            initial_state (torch.Tensor): The seed state (e.g., sphere) 
         """
         self.size = size
         # Store initial_state that we can use for resets
@@ -152,7 +149,8 @@ class StateCache:
             self.cache[idx] = new_states[i].detach().clone()
             
         # Replace one random sample with the initial seed
-        # prevents model from "drifting too far" and forgetting how to grow from beginning
+        # prevents model from "drifting too far" and 
+        # forgetting how to grow from beginning
         replace_idx = torch.randint(0, len(self.cache), (1,)).item()
         self.cache[replace_idx] = self.init_state.detach().clone()
 
@@ -180,7 +178,7 @@ def get_bunny_data(device) -> Tuple[torch.Tensor, torch.Tensor]:
     return pos, edge_index
 
 def sphericalize_state(target_pos):
-    """Init points as a hollow sphere "seed" state"""
+    """Init points as a hollow sphere seed state."""
     norms = target_pos.norm(p=2, dim=1, keepdim=True)
     norms = torch.where(norms == 0, torch.ones_like(norms), norms)
     return target_pos / norms
@@ -209,7 +207,7 @@ def train():
     N_EPOCHS = 2000
     
     # data setup
-    target_pos, edge_index = get_data() # final 3D target shape
+    target_pos, edge_index = get_bunny_data() # final 3D target shape
     target_pos = target_pos.to(device)
     edge_index = edge_index.to(device)
     num_nodes = target_pos.size(0)
@@ -223,7 +221,9 @@ def train():
     batched_edge_index = torch.cat(edge_indices_list, dim=1).to(device)
 
     # setup model (hidden=128 to reduce memory)
-    model = GNCAModel(input_channels=3, output_channels=3, hidden_channels=128, output_activation='tanh').to(device)
+    model = GNCAModel(input_channels=3, output_channels=3, 
+                        hidden_channels=128, 
+                        output_activation='tanh').to(device)
     
     # Zero-init last layer helps training stability
     # Forces the model to start as "Identity" (Delta=0)
@@ -244,7 +244,7 @@ def train():
     # this is the "cache" from the paper
     pool = StateCache(POOL_SIZE, seed_state) 
     
-    print(f"STARTING TRAINING ON {device} (Accumulating {ACCUM_STEPS} steps)...", flush=True)
+    print(f"STARTING TRAINING ON {device}", flush=True)
     
     optimizer.zero_grad()
     
@@ -255,7 +255,7 @@ def train():
         for _ in range(ACCUM_STEPS):
             batch_idx, current_states = pool.sample(PHYSICAL_BATCH_SIZE)
             current_states = current_states.to(device)
-            # at least one sample in every batch is the original starting seed 
+            # at least one sample in every batch is the original starting seed
             # (so it doesn't forget how to grow from beginning)
             current_states[0] = seed_state.clone() 
             
@@ -263,7 +263,7 @@ def train():
             x = current_states
             
             # unroll the model for a random number of steps between 10 and 20
-            # this is the "growth" part of the model (simulating forward evolution)
+            # this is the "growth" part of the model
             for _ in range(steps):
                 x_flat = x.view(-1, 3)
                 delta_flat = model(x_flat, batched_edge_index) # prediction
@@ -271,8 +271,9 @@ def train():
                 x = x + delta
                 x = torch.clamp(x, -1.0, 1.0)
                 
-            loss = F.mse_loss(x, target_pos.unsqueeze(0).expand(PHYSICAL_BATCH_SIZE, -1, -1))
-            loss = loss / ACCUM_STEPS 
+            target_batch = target_pos.unsqueeze(0).expand(args.batch_size,
+                                                          -1, -1)
+            loss = F.mse_loss(x, target_batch) / args.accum_steps
             loss.backward() # backpropagate the loss through the model (over all steps)
             
             epoch_loss += loss.item()
@@ -286,8 +287,9 @@ def train():
         # Logging checkpoints
         if epoch % 50 == 0 or epoch < 10:
             delta_mag = delta.abs().mean().item()
-            # keep an eye on delta mean (if it gets too big, it means the model is diverging)
-            print(f"Epoch {epoch} | Loss: {epoch_loss:.6f} | Delta Mean: {delta_mag:.6f}", flush=True)
+            # keep an eye on delta mean (if it gets too big, it means 
+            # the model is diverging)
+            print(f"Epoch {epoch} | Loss: {epoch_loss:.6f}", flush=True)
             
             if epoch % 50 == 0:
                 os.makedirs('checkpoints', exist_ok=True)
@@ -312,15 +314,17 @@ def visualize():
     target_pos, edge_index = get_bunny_data(device)
     
     # normalize target exactly as in the training
-    target_mean = pos.mean(dim=0)
-    target_scale = pos.abs().max()
+    target_mean = target_pos.mean(dim=0)
+    target_scale = target_pos.abs().max()
     
     # Initial seed (collapsed state)
-    # I.e. very close to zero (the mean) but slightly biased in the direction of pos
-    current_state = ((pos - target_mean) / target_scale) * 0.01
+    # Very close to zero but slightly biased in the direction of pos
+    current_state = ((target_pos - target_mean) / target_scale) * 0.01
     
-    model = GNCAModel(input_channels=3, output_channels=3, output_activation='tanh')
-    model.load_state_dict(torch.load('checkpoints/bunny_gnca.pt', map_location=device))
+    model = GNCAModel(input_channels=3, output_channels=3, 
+                        output_activation='tanh')
+    model.load_state_dict(torch.load('checkpoints/bunny_gnca.pt', 
+                                    map_location=device))
     model.eval()
     
     # Setup Plot
@@ -352,7 +356,8 @@ def visualize():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--train', action='store_true', help='Run training')
-    parser.add_argument('--visualize', action='store_true', help='Run visualization')
+    parser.add_argument('--visualize', action='store_true', 
+                        help='Run visualization')
     parser.add_argument('--epochs', type=int, default=2000)
     parser.add_argument('--lr', type=float, default=0.001)
     parser.add_argument('--batch_size', type=int, default=1)
