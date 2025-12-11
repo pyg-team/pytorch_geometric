@@ -88,6 +88,37 @@ def test_res_gconv_norm():
     assert torch.equal(edge_index_out, expected_edge_index)
     assert torch.equal(edge_weight_out, expected_edge_weight)
 
+    # finally, we test that adding self loops to
+    # a graph without self loops is correctly handled
+    edge_index = torch.tensor([[1, 0], [0, 1]])
+    edge_weight = torch.tensor([0.0, -1.0])
+    assert not is_torch_sparse_tensor(edge_index)
+    expected_edge_index = torch.tensor([[0, 1, 0, 1], [0, 0, 1, 1]])
+    expected_edge_weight = 0.5 * torch.tensor([1.0, 0.0, -1.0, 1.0])
+    expected_edge_index, expected_edge_weight = sort_edge_index(
+        expected_edge_index, expected_edge_weight)
+    edge_index_out, edge_weight_out = res_gconv_norm(edge_index, edge_weight,
+                                                     add_self_loops=True)
+    edge_index_out, edge_weight_out = sort_edge_index(edge_index_out,
+                                                      edge_weight_out)
+    assert torch.equal(edge_index_out, expected_edge_index)
+    assert torch.allclose(expected_edge_weight, edge_weight_out)
+    # and for a graph that already contains self loops,
+    # nothing happens.
+    edge_index = torch.tensor([[0, 1, 0, 1], [0, 0, 1, 1]])
+    edge_weight = torch.tensor([1.0, 0.0, -1.0, 1.0])
+    assert not is_torch_sparse_tensor(edge_index)
+    expected_edge_index = torch.tensor([[0, 1, 0, 1], [0, 0, 1, 1]])
+    expected_edge_weight = 0.5 * torch.tensor([1.0, 0.0, -1.0, 1.0])
+    expected_edge_index, expected_edge_weight = sort_edge_index(
+        expected_edge_index, expected_edge_weight)
+    edge_index_out, edge_weight_out = res_gconv_norm(edge_index, edge_weight,
+                                                     add_self_loops=True)
+    edge_index_out, edge_weight_out = sort_edge_index(edge_index_out,
+                                                      edge_weight_out)
+    assert torch.equal(edge_index_out, expected_edge_index)
+    assert torch.allclose(expected_edge_weight, edge_weight_out)
+
 
 @pytest.fixture
 def res_gconv_factory():
@@ -182,6 +213,7 @@ def test_res_gconv(res_gconv_factory, normalize, bias_u, bias_w,
         assert torch.allclose(out2, expected_output_ww)
 
     # the following tests that the caching is working correctly
+    # copied from test_gcn2_conv.py
     layer.cached = True
     layer(x, edge_index)
     if normalize:
@@ -209,49 +241,3 @@ def test_res_gconv(res_gconv_factory, normalize, bias_u, bias_w,
 
     # finally, a quick test for the string
     assert str(layer) == f'ResGConv({1}, bias_u={bias_u}, bias_w={bias_w})'
-
-
-"""
-def test_gcn2_conv():
-    x = torch.randn(4, 16)
-    x_0 = torch.randn(4, 16)
-    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
-    value = torch.rand(edge_index.size(1))
-    adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
-    adj2 = to_torch_csc_tensor(edge_index, value, size=(4, 4))
-
-    conv = GCN2Conv(16, alpha=0.2)
-    assert str(conv) == 'GCN2Conv(16, alpha=0.2, beta=1.0)'
-    out1 = conv(x, x_0, edge_index)
-    assert out1.size() == (4, 16)
-    assert torch.allclose(conv(x, x_0, adj1.t()), out1, atol=1e-6)
-    out2 = conv(x, x_0, edge_index, value)
-    assert out2.size() == (4, 16)
-    assert torch.allclose(conv(x, x_0, adj2.t()), out2, atol=1e-6)
-
-    if torch_geometric.typing.WITH_TORCH_SPARSE:
-        adj3 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
-        adj4 = SparseTensor.from_edge_index(edge_index, value, (4, 4))
-        assert torch.allclose(conv(x, x_0, adj3.t()), out1, atol=1e-6)
-        assert torch.allclose(conv(x, x_0, adj4.t()), out2, atol=1e-6)
-
-    if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x, x_0, edge_index), out1, atol=1e-6)
-        assert torch.allclose(jit(x, x_0, edge_index, value), out2, atol=1e-6)
-
-        if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x, x_0, adj3.t()), out1, atol=1e-6)
-            assert torch.allclose(jit(x, x_0, adj4.t()), out2, atol=1e-6)
-
-    conv.cached = True
-    conv(x, x_0, edge_index)
-    assert conv._cached_edge_index is not None
-    assert torch.allclose(conv(x, x_0, edge_index), out1, atol=1e-6)
-    assert torch.allclose(conv(x, x_0, adj1.t()), out1, atol=1e-6)
-
-    if torch_geometric.typing.WITH_TORCH_SPARSE:
-        conv(x, x_0, adj3.t())
-        assert conv._cached_adj_t is not None
-        assert torch.allclose(conv(x, x_0, adj3.t()), out1, atol=1e-6)
-"""
