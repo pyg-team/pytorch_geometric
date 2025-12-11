@@ -171,12 +171,14 @@ class ResGConv(MessagePassing):
         self.cached = cached
         self.normalize = normalize
         self.add_self_loops = add_self_loops
+        self.bias_u = bias_u
+        self.bias_w = bias_w
 
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-        self.U = Linear(channels, channels, bias=bias_u)
-        self.W = Linear(channels, channels, bias=bias_w)
+        self.U = Linear(self.channels, self.channels, bias=self.bias_u)
+        self.W = Linear(self.channels, self.channels, bias=self.bias_w)
 
         self.reset_parameters()
 
@@ -214,7 +216,6 @@ class ResGConv(MessagePassing):
                     edge_index = cache
 
         wx = self.W(x)
-
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
         awx = self.propagate(edge_index, x=wx, edge_weight=edge_weight)
         out = awx
@@ -229,4 +230,5 @@ class ResGConv(MessagePassing):
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.channels}, ')
+        return (f'{self.__class__.__name__}({self.channels}, '
+                f'bias_u={self.bias_u}, bias_w={self.bias_w})')
