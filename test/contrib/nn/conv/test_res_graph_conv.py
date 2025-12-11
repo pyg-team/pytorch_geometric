@@ -55,28 +55,40 @@ def test_res_gconv_norm():
 
 @pytest.fixture
 def res_gconv_factory():
-    def _create_layer(channels: int = 1, shared_weights: bool = False,
-                      add_self_loops: bool = False, cached: bool = False,
-                      normalize: bool = True, **kwargs):
+    def _create_layer(channels: int = 1, linear_fill: float = 1.0,
+                      bias_fill: float = 1.0, bias_u: bool = False,
+                      bias_w: bool = False, add_self_loops: bool = False,
+                      cached: bool = False, normalize: bool = True, **kwargs):
         """Fixture providing a res_gconv layer with fixed
         weights for testing.
         """
-        layer = ResGConv(channels=channels, shared_weights=shared_weights,
+        layer = ResGConv(channels=channels, bias_u=bias_u, bias_w=bias_w,
                          add_self_loops=add_self_loops, cached=cached,
                          normalize=normalize, **kwargs)
         with torch.no_grad():
-            layer.U.weight.fill_(1.0)
+            layer.U.weight.fill_(linear_fill)
             if layer.U.bias is not None:
-                layer.U.bias.zero_()
-            layer.W.weight.fill_(1.0)
+                layer.U.bias.fill_(bias_fill)
+            layer.W.weight.fill_(linear_fill)
             if layer.W.bias is not None:
-                layer.W.bias.zero_()
+                layer.W.bias.fill_(bias_fill)
         return layer
 
     return _create_layer
 
 
-def test_res_gconv(res_gconv_factory):
+@pytest.mark.parametrize("normalize,bias_u,bias_w,expected_output", [
+    (True, False, False, 2.0),
+    (True, True, True, 4.0),
+    (True, False, True, 3.0),
+    (True, True, False, 3.0),
+    (False, False, False, 3.0),
+    (False, True, True, 6.0),
+    (False, False, True, 5.0),
+    (False, True, False, 4.0),
+])
+def test_res_gconv(res_gconv_factory, normalize, bias_u, bias_w,
+                   expected_output):
     # test the branch where
     # isinstance(edge_index, Tensor)
     #
@@ -87,26 +99,16 @@ def test_res_gconv(res_gconv_factory):
     # above. First let's test it for the unnormalized
     # case, where the output should simply be
     # :math:`\mathbf{XU} + \mathbf{AXW}`
-    layer = res_gconv_factory(normalize=False)
+    layer = res_gconv_factory(normalize=normalize, bias_u=bias_u,
+                              bias_w=bias_w)
     x = torch.ones(2, 1)
     edge_index = torch.tensor([[0, 1, 0, 1], [0, 0, 1, 1]])
     edge_weight = torch.tensor([1.0, 1.0, 1.0, 1.0])
     out1 = layer(x, edge_index, edge_weight)
     out2 = layer(x, edge_index)
     # test against the output calculated by hand
-    assert torch.allclose(out1, 3.0 * x)
-    assert torch.allclose(out2, 3.0 * x)
-    # let's do the same using the normalized option
-    # such that the output should now be
-    # :math:`\mathbf{XU} + \mathbf{\hat{A}XW}`
-    layer = res_gconv_factory()
-    x = torch.ones(2, 1)
-    edge_index = torch.tensor([[0, 1, 0, 1], [0, 0, 1, 1]])
-    edge_weight = torch.tensor([1.0, 1.0, 1.0, 1.0])
-    out1 = layer(x, edge_index, edge_weight)
-    out2 = layer(x, edge_index, edge_weight)
-    assert torch.allclose(out1, 2.0 * x)
-    assert torch.allclose(out2, 2.0 * x)
+    assert torch.allclose(out1, expected_output * x)
+    assert torch.allclose(out2, expected_output * x)
 
     # test the branch where
     # isinstance(edge_index, SparseTensor)
@@ -118,27 +120,32 @@ def test_res_gconv(res_gconv_factory):
     # above. First let's test it for the unnormalized
     # case, where the output should simply be
     # :math:`\mathbf{XU} + \mathbf{AXW}`
-    layer = res_gconv_factory(normalize=False)
-    x = torch.ones(2, 1)
-    edge_index = torch.tensor([[0, 1, 0, 1], [0, 0, 1, 1]])
-    adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(2, 2))
-    edge_weight = torch.tensor([1.0, 1.0, 1.0, 1.0])
-    out1 = layer(x, adj, edge_weight)
-    out2 = layer(x, adj)
-    assert torch.allclose(out1, 3.0 * x)
-    assert torch.allclose(out2, 3.0 * x)
-    # let's do the same using the normalized option
-    # such that the output should now be
-    # :math:`\mathbf{XU} + \mathbf{\hat{A}XW}`
-    layer = res_gconv_factory()
-    x = torch.ones(2, 1)
-    edge_index = torch.tensor([[0, 1, 0, 1], [0, 0, 1, 1]])
-    adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(2, 2))
-    edge_weight = torch.tensor([1.0, 1.0, 1.0, 1.0])
-    out1 = layer(x, adj, edge_weight)
-    out2 = layer(x, adj, edge_weight)
-    assert torch.allclose(out1, 2.0 * x)
-    assert torch.allclose(out2, 2.0 * x)
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        layer = res_gconv_factory(normalize=normalize, bias_u=bias_u,
+                                  bias_w=bias_w)
+        x = torch.ones(2, 1)
+        edge_index = torch.tensor([[0, 1, 0, 1], [0, 0, 1, 1]])
+        adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(2, 2))
+        edge_weight = torch.tensor([1.0, 1.0, 1.0, 1.0])
+        out1 = layer(x, adj, edge_weight)
+        out2 = layer(x, adj)
+        assert torch.allclose(out1, expected_output * x)
+        assert torch.allclose(out2, expected_output * x)
+
+    # the following tests that the caching is working correctly
+    layer.cached = True
+    layer(x, edge_index)
+    if normalize:
+        assert layer._cached_edge_index is not None
+    else:
+        assert layer._cached_edge_index is None
+
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        layer(x, adj)
+        if normalize:
+            assert layer._cached_adj_t is not None
+        else:
+            assert layer._cached_edge_index is None
 
 
 """

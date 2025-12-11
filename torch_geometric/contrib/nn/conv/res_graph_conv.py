@@ -160,9 +160,9 @@ class ResGConv(MessagePassing):
     _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
 
-    def __init__(self, channels: int, shared_weights: bool = False,
-                 add_self_loops: bool = False, cached: bool = False,
-                 normalize: bool = True, **kwargs):
+    def __init__(self, channels: int, bias_u: bool = False,
+                 bias_w: bool = False, add_self_loops: bool = False,
+                 cached: bool = False, normalize: bool = True, **kwargs):
 
         kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
@@ -175,13 +175,15 @@ class ResGConv(MessagePassing):
         self._cached_edge_index = None
         self._cached_adj_t = None
 
-        self.U = Linear(channels, channels)
-        self.W = Linear(channels, channels)
+        self.U = Linear(channels, channels, bias=bias_u)
+        self.W = Linear(channels, channels, bias=bias_w)
 
         self.reset_parameters()
 
     def reset_parameters(self):
         super().reset_parameters()
+        self.U.reset_parameters()
+        self.W.reset_parameters()
         self._cached_edge_index = None
         self._cached_adj_t = None
 
@@ -192,7 +194,6 @@ class ResGConv(MessagePassing):
             if isinstance(edge_index, Tensor):
                 cache = self._cached_edge_index
                 if cache is None:
-                    print("X size self.nodeim", x.size(self.node_dim))
                     edge_index, edge_weight = res_gconv_norm(  # yapf: disable
                         edge_index, edge_weight, x.size(self.node_dim), False,
                         self.add_self_loops, self.flow, dtype=x.dtype)
@@ -215,8 +216,6 @@ class ResGConv(MessagePassing):
         wx = self.W(x)
 
         # propagate_type: (x: Tensor, edge_weight: OptTensor)
-        print("X shape")
-        print(x.shape)
         awx = self.propagate(edge_index, x=wx, edge_weight=edge_weight)
         out = awx
         out = out + self.U(x)
@@ -230,5 +229,4 @@ class ResGConv(MessagePassing):
         return spmm(adj_t, x, reduce=self.aggr)
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.channels}, '
-                f'alpha={self.alpha}, beta={self.beta})')
+        return (f'{self.__class__.__name__}({self.channels}, ')
