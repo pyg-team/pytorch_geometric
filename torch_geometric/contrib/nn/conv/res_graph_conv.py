@@ -128,21 +128,21 @@ class ResGConv(MessagePassing):
 
     Args:
         channels (int): Size of each input and output sample.
+            bias_u (bool, optional): If set to :obj:`False`, the layer will not
+            learn an additive bias together with :math:`\mathbf{U}`.
+            (default: obj:`True`)
         bias_u (bool, optional): If set to :obj:`False`, the layer will not
-        learn an additive bias together with :math:`\mathbf{U}`.
-        (default: obj:`True`)
-        bias_u (bool, optional): If set to :obj:`False`, the layer will not
-        learn an additive bias together with :math:`\mathbf{U}`.
-        (default: obj:`True`)
+            learn an additive bias together with :math:`\mathbf{U}`.
+            (default: obj:`True`)
         add_self_loops (bool, optional): If set to :obj:`True`, will add
-        self-loops to the input graph. (default: :obj:`False`)
+            self-loops to the input graph. (default: :obj:`False`)
         cached (bool, optional): If set to :obj:`True`, the layer will cache
-        the computation of :math:`\mathbf{\hat{A}} = \mathbf{A}/\gamma` on
-        first execution, and will use the cached version for further
-        executions. This parameter should only be set to :obj:`True` in
-        transductive learning scenarios. (default: :obj:`False`)
+            the computation of :math:`\mathbf{\hat{A}} = \mathbf{A}/\gamma` on
+            first execution, and will use the cached version for further
+            executions. This parameter should only be set to :obj:`True` in
+            transductive learning scenarios. (default: :obj:`False`)
         normalize (bool, optional): Whether to apply normalization
-        by :math:`\gamma`. (default: :obj:`True`)
+            by :math:`\gamma`. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
