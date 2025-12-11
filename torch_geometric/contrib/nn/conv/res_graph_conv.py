@@ -212,10 +212,8 @@ class ResGConv(MessagePassing):
                 else:
                     edge_index = cache
 
-        # the heart of the ResGConv layer
-        # the linear layer, followed by the message passing
-        # and the addition of the skip connection
         wx = self.W(x)
+        # propagate_type: (x: Tensor, edge_weight: OptTensor)
         awx = self.propagate(edge_index, x=wx, edge_weight=edge_weight)
         out = awx + self.U(x)
 
