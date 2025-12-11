@@ -286,9 +286,6 @@ def train():
         
         # Logging checkpoints
         if epoch % 50 == 0 or epoch < 10:
-            delta_mag = delta.abs().mean().item()
-            # keep an eye on delta mean (if it gets too big, it means 
-            # the model is diverging)
             print(f"Epoch {epoch} | Loss: {epoch_loss:.6f}", flush=True)
             
             if epoch % 50 == 0:
