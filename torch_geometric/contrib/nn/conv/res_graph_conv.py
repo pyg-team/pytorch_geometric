@@ -119,9 +119,11 @@ class ResGConv(MessagePassing):
     r"""The graph convolutional operator with residual skip connections from
     the `"Graph Neural Preconditioners for Iterative Solutions of Sparse
     Linear Systems" <https://arxiv.org/pdf/2406.00809>`_ paper.
+
     .. math::
         \text{Res-GCONV}(\mathbf{X}) = \text{ReLU}\left(\mathbf{XU} +
         \mathbf{\hat{A}XW}\right)
+
     where
     :math:`\mathbf{\hat{A}}\in \mathbb{R}^{n\times n}` denotes the weighted
     adjacency matrix
@@ -133,26 +135,27 @@ class ResGConv(MessagePassing):
 
     Args:
         channels (int): Size of each input and output sample.
-        layer (int, optional): The layer :math:`\ell` in which this module is
-            executed. (default: :obj:`None`)
-        shared_weights (bool, optional): If set to :obj:`False`, will use
-            different weight matrices for the smoothed representation and the
-            initial residual ("GCNII*"). (default: :obj:`True`)
+        bias_u (bool, optional): If set to :obj:`False`, the layer will not
+        learn an additive bias together with :math:`\mathbf{U}`.
+        (default: obj:`True`)
+        bias_u (bool, optional): If set to :obj:`False`, the layer will not
+        learn an additive bias together with :math:`\mathbf{U}`.
+        (default: obj:`True`)
+        add_self_loops (bool, optional): If set to :obj:`True`, will add
+        self-loops to the input graph. (default: :obj:`False`)
         cached (bool, optional): If set to :obj:`True`, the layer will cache
-            the computation of :math:`\mathbf{\hat{A}} = \mathbf{A}/\gamma` on
-            first execution, and will use the
-            cached version for further executions.
-            This parameter should only be set to :obj:`True` in transductive
-            learning scenarios. (default: :obj:`False`)
-        normalize (bool, optional): Whether to apply normalization by
-        :math:`\gamma`. (default: :obj:`True`)
+        the computation of :math:`\mathbf{\hat{A}} = \mathbf{A}/\gamma` on
+        first execution, and will use the cached version for further
+        executions. This parameter should only be set to :obj:`True` in
+        transductive learning scenarios. (default: :obj:`False`)
+        normalize (bool, optional): Whether to apply normalization
+        by :math:`\gamma`. (default: :obj:`True`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
 
     Shapes:
         - **input:**
           node features :math:`(|\mathcal{V}|, F)`,
-          initial node features :math:`(|\mathcal{V}|, F)`,
           edge indices :math:`(2, |\mathcal{E}|)`,
           edge weights :math:`(|\mathcal{E}|)` *(optional)*
         - **output:** node features :math:`(|\mathcal{V}|, F)`
@@ -160,9 +163,9 @@ class ResGConv(MessagePassing):
     _cached_edge_index: Optional[OptPairTensor]
     _cached_adj_t: Optional[SparseTensor]
 
-    def __init__(self, channels: int, bias_u: bool = False,
-                 bias_w: bool = False, add_self_loops: bool = False,
-                 cached: bool = False, normalize: bool = True, **kwargs):
+    def __init__(self, channels: int, bias_u: bool = True, bias_w: bool = True,
+                 add_self_loops: bool = False, cached: bool = False,
+                 normalize: bool = True, **kwargs):
 
         kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
@@ -216,7 +219,6 @@ class ResGConv(MessagePassing):
                     edge_index = cache
 
         wx = self.W(x)
-        # propagate_type: (x: Tensor, edge_weight: OptTensor)
         awx = self.propagate(edge_index, x=wx, edge_weight=edge_weight)
         out = awx
         out = out + self.U(x)
