@@ -1,8 +1,10 @@
+from typing import Optional
+
 import torch
 from torch import Tensor
 from torch.nn import Linear, ReLU
+
 from torch_geometric.nn.conv import MessagePassing
-from typing import Optional
 
 
 class GNCAConv(MessagePassing):
@@ -11,7 +13,7 @@ class GNCAConv(MessagePassing):
     <https://arxiv.org/abs/2110.14237>`_ paper, with optional edge features.
 
     .. math::
-        \mathbf{x}^{\prime}_i = \mathbf{x}_i \, \| \, 
+        \mathbf{x}^{\prime}_i = \mathbf{x}_i \, \| \,
         \sum_{j \in \mathcal{N}(i)}
         \mathrm{ReLU}(\mathbf{W} \mathbf{x}_j + \mathbf{b})
 
@@ -25,8 +27,8 @@ class GNCAConv(MessagePassing):
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
-    def __init__(self, in_channels: int, out_channels: int,
-                 edge_dim: int = 0, aggr: str = 'add', **kwargs):
+    def __init__(self, in_channels: int, out_channels: int, edge_dim: int = 0,
+                 aggr: str = 'add', **kwargs):
         super().__init__(aggr=aggr, **kwargs)
 
         self.in_channels = in_channels
