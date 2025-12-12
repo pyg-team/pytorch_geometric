@@ -114,12 +114,10 @@ def rearev_train(root, batch_size, epochs, num_layers, num_instructions,
     print("Training...")
     for epoch in range(epochs):
         avg_loss = train(model, loader, optimizer, device)
-        print(
-            "Epoch "
-            f"{epoch+1} "
-            f"Training Loss: {avg_loss:.4f} "
-            f"Val Hit@1: {test(model, val_loader, device):.4f}"
-        )
+        print("Epoch "
+              f"{epoch+1} "
+              f"Training Loss: {avg_loss:.4f} "
+              f"Val Hit@1: {test(model, val_loader, device):.4f}")
 
     print("Saving model...")
     config = {

@@ -1,4 +1,6 @@
-"""Use WebQSP subgraphs to run ReaRev reasoning and feed the reasoning paths to a LLM."""
+"""Use WebQSP subgraphs to run ReaRev reasoning and feed the reasoning
+paths to a LLM.
+"""
 import argparse
 from typing import Any, Dict, List
 
@@ -77,7 +79,8 @@ def top_k_paths(probs: torch.Tensor, batch: Data,
 
             for seed in seeds:
                 if seed == target:
-                    if best_path is None: best_path = [seed]
+                    if best_path is None:
+                        best_path = [seed]
                     continue
                 try:
                     path = nx.shortest_path(g, seed, target)
@@ -114,8 +117,8 @@ def top_k_paths(probs: torch.Tensor, batch: Data,
 def verbalize_paths(batch: Data, raw_paths: List[List[Dict]]) -> List[str]:
     contexts = []
 
-        nodes_txt = flatten_nested(batch.node_text)
-        edges_txt = flatten_nested(batch.edge_text)
+    nodes_txt = flatten_nested(batch.node_text)
+    edges_txt = flatten_nested(batch.edge_text)
 
     for paths in raw_paths:
         lines = []
@@ -159,8 +162,7 @@ def inference_step(model, llm, batch, top_k=3):
         "Please keep the answer as simple as possible and return all the "
         "possible answers as a list.\n\n"
         "Reasoning Paths: {context}\n"
-        "Question: {question}"
-    )
+        "Question: {question}")
 
     questions = batch.question_text
     prompts = [
