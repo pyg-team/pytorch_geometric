@@ -3,7 +3,6 @@ import shutil
 from typing import Optional
 
 import torch
-from datasets import load_dataset
 from tqdm import tqdm
 
 from torch_geometric.data import Data, InMemoryDataset
@@ -36,6 +35,8 @@ class WebQSPDatasetReaRev(InMemoryDataset):
         return [f"rearev_{self.split}.pt"]
 
     def process(self):
+        from datasets import load_dataset
+
         dataset = load_dataset("rmanluo/RoG-webqsp", split=self.split)
 
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -44,7 +45,8 @@ class WebQSPDatasetReaRev(InMemoryDataset):
         data_list = []
         for i, sample in enumerate(
                 tqdm(dataset, desc=f"Processing {self.split}")):
-            if self.limit and i >= self.limit: break
+            if self.limit and i >= self.limit:
+                break
             data = self._process_sample(sample, encoder, device)
             if data is not None:
                 data_list.append(data)
@@ -72,7 +74,8 @@ class WebQSPDatasetReaRev(InMemoryDataset):
             dst.extend([v, u])
             rels.extend([r, f"inv_{r}"])
 
-        if not nodes: return None
+        if not nodes:
+            return None
 
         with torch.no_grad():
             x = encoder.encode(nodes).cpu()

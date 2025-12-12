@@ -10,7 +10,7 @@ from torch_geometric.nn.models import ReaRev
 
 
 def get_loss(model, batch):
-    """Get batch normalized KL divergence loss"""
+    """Get batch normalized KL divergence loss."""
     probs = model(batch.question_tokens, batch.question_mask, batch.x,
                   batch.edge_index, batch.edge_type, batch.edge_attr,
                   batch.seed_mask, batch.batch).view(-1)
@@ -24,7 +24,8 @@ def get_loss(model, batch):
     denom = ans_per_graph.clamp(min=1.0)
     teacher = y / denom[batch.batch]
 
-    # Using reduction="batchmean" directly will divide by all nodes, so we manually normalize by batch
+    # Using reduction="batchmean" directly will divide by all nodes.
+    # Manually normalize by batch instead.
     kl_per_node = F.kl_div(log_probs, teacher, reduction="none")
     kl_per_graph = torch.zeros(num_graphs, device=probs.device)
     kl_per_graph = kl_per_graph.scatter_add_(0, batch.batch, kl_per_node)
@@ -50,7 +51,7 @@ def train(model, loader, optimizer, device):
 
 @torch.no_grad()
 def test(model, loader, device):
-    """Compute Hit@1 average"""
+    """Compute Hit@1 average."""
     model.eval()
     hits1 = 0
     total_graphs = 0
@@ -114,7 +115,10 @@ def rearev_train(root, batch_size, epochs, num_layers, num_instructions,
     for epoch in range(epochs):
         avg_loss = train(model, loader, optimizer, device)
         print(
-            f"Epoch {epoch+1} Training Loss: {avg_loss:.4f} Val Hit@1: {test(model, val_loader, device):.4f}"
+            "Epoch "
+            f"{epoch+1} "
+            f"Training Loss: {avg_loss:.4f} "
+            f"Val Hit@1: {test(model, val_loader, device):.4f}"
         )
 
     print("Saving model...")

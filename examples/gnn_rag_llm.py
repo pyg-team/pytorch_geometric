@@ -1,7 +1,4 @@
-"""This example uses the subgraphs from the validation set of the WebQSP dataset,
-feeds the subgraph to a trained ReaRev model, builds the reasoning paths
-and uses a LLM to answer the sample question from the validation set.
-"""
+"""Use WebQSP subgraphs to run ReaRev reasoning and feed the reasoning paths to a LLM."""
 import argparse
 from typing import Any, Dict, List
 
@@ -15,18 +12,19 @@ from torch_geometric.loader import DataLoader as PyGDataLoader
 from torch_geometric.nn.models import ReaRev
 
 
+def flatten_nested(items):
+    return [element for sublist in items for element in sublist]
+
+
 def top_k_paths(probs: torch.Tensor, batch: Data,
                 top_k: int = 3) -> List[List[Dict[str, Any]]]:
     probs = probs.view(-1).cpu()
     batch_idx, edge_index = batch.batch.cpu(), batch.edge_index.cpu()
     seed_mask = batch.seed_mask.cpu()
 
-    flatten = lambda l: [item for sublist in l for item in sublist
-                         ] if l and isinstance(l[0], list) else l
-    all_node_texts = flatten(batch.node_text)
-    edges_txt = flatten(batch.edge_text)
+    all_node_texts = flatten_nested(batch.node_text)
+    edges_txt = flatten_nested(batch.edge_text)
 
-    # We'll make the graph undirected, and not worry about inverse relations for verabalization
     g = nx.Graph()
     edges = list(zip(edge_index[0].tolist(), edge_index[1].tolist()))
     for i, (u, v) in enumerate(edges):
@@ -116,17 +114,16 @@ def top_k_paths(probs: torch.Tensor, batch: Data,
 def verbalize_paths(batch: Data, raw_paths: List[List[Dict]]) -> List[str]:
     contexts = []
 
-    flatten = lambda l: [item for sublist in l for item in sublist
-                         ] if l and isinstance(l[0], list) else l
-    nodes_txt = flatten(batch.node_text)
-    edges_txt = flatten(batch.edge_text)
+        nodes_txt = flatten_nested(batch.node_text)
+        edges_txt = flatten_nested(batch.edge_text)
 
     for paths in raw_paths:
         lines = []
         for p in paths:
-            nodes, edges, score = p['nodes'], p['edges'], p['score']
+            nodes, edges = p['nodes'], p['edges']
 
-            if any(n >= len(nodes_txt) for n in nodes): continue
+            if any(n >= len(nodes_txt) for n in nodes):
+                continue
 
             if not edges:
                 lines.append(f"Entity: {nodes_txt[nodes[0]]}")
@@ -157,12 +154,13 @@ def inference_step(model, llm, batch, top_k=3):
     raw_paths = top_k_paths(probs, batch, top_k)
     path_ctx = verbalize_paths(batch, raw_paths)
 
-    prompt_template = """Based on the reasoning paths, please answer the given question. Please
-    keep the answer as simple as possible and return all the possible answers
-    as a list.
-
-    Reasoning Paths: {context}
-    Question: {question}"""
+    prompt_template = (
+        "Based on the reasoning paths, please answer the given question. "
+        "Please keep the answer as simple as possible and return all the "
+        "possible answers as a list.\n\n"
+        "Reasoning Paths: {context}\n"
+        "Question: {question}"
+    )
 
     questions = batch.question_text
     prompts = [

@@ -1,5 +1,3 @@
-from typing import Optional
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -56,23 +54,23 @@ class ReaRevReasoning(MessagePassing):
         edge_attr: Tensor,
         edge_type: Tensor,
         instruction: Tensor,
-        size: Optional[tuple] = None,
     ) -> Tensor:
         r"""Forward pass.
 
         Args:
-            x (torch.Tensor): Node features of shape :obj:`(num_nodes, hidden_channels)`.
+            x (torch.Tensor): Node features of shape
+                :obj:`(num_nodes, hidden_channels)`.
             edge_index (torch.Tensor or SparseTensor): Edge connectivity.
-            p (torch.Tensor): Node probabilities of shape :obj:`(num_nodes, 1)`.
+            p (torch.Tensor): Node probabilities of shape
+                :obj:`(num_nodes, 1)`.
             edge_attr (torch.Tensor): Edge attributes of shape
                 :obj:`(num_edges, edge_attr_dim)`.
             edge_type (torch.Tensor): Edge types of shape :obj:`(num_edges,)`.
             instruction (torch.Tensor): Instruction embeddings of shape
                 :obj:`(num_nodes, num_instructions, hidden_channels)`.
-            size (tuple, optional): The size of the graph. (default: :obj:`None`)
 
         Returns:
-            torch.Tensor: Updated node features of shape
+            torch.Tensor: Updated features of shape
                 :obj:`(num_nodes, hidden_channels)`.
         """
         aggr_messages = self.propagate(
@@ -107,7 +105,8 @@ class ReaRevReasoning(MessagePassing):
         """
         edge_proj_out = self.edge_proj(edge_attr)
         # instruction_i is used to lift expanded instructions to the edge level
-        # instruction_j could be used equivalently, only references the graph in the batch
+        # instruction_j could be used equivalently, only references the graph
+        # in the batch
         message = F.relu(instruction_i * edge_proj_out.unsqueeze(1))
         weighted = message * p_j.view(-1, 1, 1)
 
@@ -226,14 +225,14 @@ class ReaRev(torch.nn.Module):
             edge_type (torch.Tensor): Edge types of shape :obj:`(num_edges,)`.
             edge_attr (torch.Tensor): Edge attributes of shape
                 :obj:`(num_edges, edge_attr_dim)`.
-            seed_mask (torch.Tensor): Boolean mask indicating seed nodes of shape
-                :obj:`(num_nodes,)`.
-            batch (torch.Tensor): Batch vector assigning each node to a graph of
+            seed_mask (torch.Tensor): Boolean mask indicating seed nodes of
                 shape :obj:`(num_nodes,)`.
+            batch (torch.Tensor): Batch vector assigning each node to a graph
+                of shape :obj:`(num_nodes,)`.
 
         Returns:
-            torch.Tensor: Node probabilities of shape :obj:`(num_nodes, 1)` after
-            the final reasoning iteration, normalized per graph.
+            torch.Tensor: Node probabilities of shape :obj:`(num_nodes, 1)`
+            after the final reasoning iteration, normalized per graph.
         """
         batch_size = question_tokens.size(0)
 
@@ -270,7 +269,8 @@ class ReaRev(torch.nn.Module):
             token_scores = token_scores.masked_fill(question_mask == 0, -1e9)
             token_weights = F.softmax(token_scores, dim=1)
 
-            # Here token_weights and question_proj_tokens are non-graph tensors so we can use torch.bmm
+            # token_weights/question_proj_tokens are non-graph tensors,
+            # so we can use torch.bmm
             instruction_k = torch.bmm(token_weights.unsqueeze(1),
                                       question_proj_tokens).squeeze(1)
             generated_instructions.append(instruction_k)

@@ -1,6 +1,7 @@
-"""This example builds a full KG from the WebQSP val dataset
-then matches node entities to the full KG, builds a subgraph
-and feeds the subgraph to a trained ReaRev model to get the reasoning paths
+"""Build a full KG from the WebQSP val dataset.
+
+Then matches node entities to the full KG, builds a subgraph and feeds the
+subgraph to a trained ReaRev model to get the reasoning paths.
 """
 import argparse
 import os
@@ -15,6 +16,10 @@ from torch_geometric.datasets import WebQSPDatasetReaRev
 from torch_geometric.llm.models import SentenceTransformer
 from torch_geometric.nn.models import ReaRev
 from torch_geometric.utils import k_hop_subgraph
+
+
+def flatten_nested(items):
+    return [element for sublist in items for element in sublist]
 
 
 def build_full_kg(datasets):
@@ -63,7 +68,9 @@ def build_full_kg(datasets):
                         r_txts.append(f"rel_{rid}")
                         r2id[f"rel_{rid}"] = rid
 
-                if (key := (g_src, g_dst, rid)) in seen: continue
+                key = (g_src, g_dst, rid)
+                if key in seen:
+                    continue
                 seen.add(key)
 
                 edges[0].append(g_src)
@@ -85,7 +92,6 @@ def build_full_kg(datasets):
 
 
 def build_subgraph(full_kg, anchors, depth=2, max_nodes=1000, max_edges=10000):
-    if not anchors: return Data(), {}
 
     sub, idx, _, mask = k_hop_subgraph(anchors, depth, full_kg.edge_index,
                                        relabel_nodes=True,
@@ -168,12 +174,10 @@ def top_k_paths(probs: torch.Tensor, batch: Data,
     edge_index = batch.edge_index.cpu()
     seed_mask = batch.seed_mask.cpu()
 
-    flatten = lambda l: [item for sublist in l for item in sublist
-                         ] if l and isinstance(l[0], list) else l
-    all_node_texts = flatten(batch.node_text)
+    all_node_texts = flatten_nested(batch.node_text)
 
     if hasattr(batch, 'edge_text') and batch.edge_text is not None:
-        edges_txt = flatten(batch.edge_text)
+        edges_txt = flatten_nested(batch.edge_text)
     else:
         edges_txt = [""] * edge_index.size(1)
 
@@ -232,7 +236,8 @@ def top_k_paths(probs: torch.Tensor, batch: Data,
 
             for seed in seeds:
                 if seed == target:
-                    if best_path is None: best_path = [seed]
+                    if best_path is None:
+                        best_path = [seed]
                     continue
                 try:
                     path = nx.shortest_path(g, seed, target)
@@ -269,21 +274,20 @@ def top_k_paths(probs: torch.Tensor, batch: Data,
 def verbalize_paths(batch: Data, raw_paths: List[List[Dict]]) -> List[str]:
     contexts = []
 
-    flatten = lambda l: [item for sublist in l for item in sublist
-                         ] if l and isinstance(l[0], list) else l
-    nodes_txt = flatten(batch.node_text)
+    nodes_txt = flatten_nested(batch.node_text)
 
     if hasattr(batch, 'edge_text') and batch.edge_text is not None:
-        edges_txt = flatten(batch.edge_text)
+        edges_txt = flatten_nested(batch.edge_text)
     else:
         edges_txt = []
 
     for paths in raw_paths:
         lines = []
         for p in paths:
-            nodes, edges, score = p['nodes'], p['edges'], p['score']
+            nodes, edges = p['nodes'], p['edges']
 
-            if any(n >= len(nodes_txt) for n in nodes): continue
+            if any(n >= len(nodes_txt) for n in nodes):
+                continue
 
             if not edges:
                 lines.append(f"Entity: {nodes_txt[nodes[0]]}")
@@ -312,8 +316,7 @@ def build_and_save_full_kg(
     splits: Optional[List[str]] = None,
     limit: Optional[int] = None,
 ) -> Tuple[Data, Dict[str, int], Dict[str, int]]:
-    """Build the union KG across splits and persist it for later inference.
-    """
+    """Build the union KG across splits and persist it for later inference."""
     splits = splits or ["train", "validation", "test"]
     datasets = [
         WebQSPDatasetReaRev(root=root, split=split, limit=limit)
@@ -334,9 +337,8 @@ def build_and_save_full_kg(
 
 
 class GNNRAGInferencePipeline:
-    """Minimal inference wrapper that reuses the
-    helpers for subgraph building and path verbalization.
-    """
+    """Minimal inference wrapper that reuses helpers for subgraph building
+    and path verbalization."""
     def __init__(
         self,
         model_path: str,
