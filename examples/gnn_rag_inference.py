@@ -1,5 +1,4 @@
-"""
-This example uses the subgraphs from the validation set of the WebQSP dataset,
+"""This example uses the subgraphs from the validation set of the WebQSP dataset,
 feeds the subgraph to a trained ReaRev model, builds the reasoning paths
 and uses a LLM to answer the sample question from the validation set.
 """
@@ -8,19 +7,22 @@ from typing import Any, Dict, List
 
 import networkx as nx
 import torch
-from torch_geometric.datasets import WebQSPDatasetReaRev
-from torch_geometric.loader import DataLoader as PyGDataLoader
+
 from torch_geometric.data import Data
-from torch_geometric.llm.models import LLM
 from torch_geometric.datasets import WebQSPDatasetReaRev
+from torch_geometric.llm.models import LLM
+from torch_geometric.loader import DataLoader as PyGDataLoader
 from torch_geometric.nn.models import ReaRev
 
-def top_k_paths(probs: torch.Tensor, batch: Data, top_k: int = 3) -> List[List[Dict[str, Any]]]:
+
+def top_k_paths(probs: torch.Tensor, batch: Data,
+                top_k: int = 3) -> List[List[Dict[str, Any]]]:
     probs = probs.view(-1).cpu()
     batch_idx, edge_index = batch.batch.cpu(), batch.edge_index.cpu()
     seed_mask = batch.seed_mask.cpu()
 
-    flatten = lambda l: [item for sublist in l for item in sublist] if l and isinstance(l[0], list) else l
+    flatten = lambda l: [item for sublist in l for item in sublist
+                         ] if l and isinstance(l[0], list) else l
     all_node_texts = flatten(batch.node_text)
     edges_txt = flatten(batch.edge_text)
 
@@ -32,11 +34,8 @@ def top_k_paths(probs: torch.Tensor, batch: Data, top_k: int = 3) -> List[List[D
 
         if g.has_edge(u, v):
             existing_idx = g[u][v].get('idx')
-            existing_rel = (
-                edges_txt[existing_idx]
-                if existing_idx is not None and existing_idx < len(edges_txt)
-                else ""
-            )
+            existing_rel = (edges_txt[existing_idx] if existing_idx is not None
+                            and existing_idx < len(edges_txt) else "")
             # Display non-inverse edges for verbalization
             if existing_rel.startswith("inv_") and not rel.startswith("inv_"):
                 g[u][v]['idx'] = i
@@ -65,7 +64,7 @@ def top_k_paths(probs: torch.Tensor, batch: Data, top_k: int = 3) -> List[List[D
         local_probs = probs[nodes]
         k = min(top_k, local_probs.numel())
         scores, local_top_idx = torch.topk(local_probs, k)
-        
+
         seeds = nodes[seed_mask[nodes] == 1.0].tolist()
         if not seeds:
             q_text = batch.question_text[i]
@@ -79,35 +78,46 @@ def top_k_paths(probs: torch.Tensor, batch: Data, top_k: int = 3) -> List[List[D
             best_path, min_len = None, float('inf')
 
             for seed in seeds:
-                if seed == target: 
+                if seed == target:
                     if best_path is None: best_path = [seed]
                     continue
                 try:
                     path = nx.shortest_path(g, seed, target)
                     if len(path) < min_len:
                         best_path, min_len = path, len(path)
-                except nx.NetworkXNoPath: continue
-            
+                except nx.NetworkXNoPath:
+                    continue
+
             if best_path and len(best_path) > 1:
                 edge_idxs = []
                 for u, v in zip(best_path, best_path[1:]):
                     edge_data = g.get_edge_data(u, v)
                     if isinstance(edge_data, dict) and 'idx' in edge_data:
-                         edge_idxs.append(edge_data['idx'])
+                        edge_idxs.append(edge_data['idx'])
                     else:
-                         edge_idxs.append(list(edge_data.values())[0]['idx'])
-                graph_paths.append({"score": score.item(), "nodes": best_path, "edges": edge_idxs})
+                        edge_idxs.append(list(edge_data.values())[0]['idx'])
+                graph_paths.append({
+                    "score": score.item(),
+                    "nodes": best_path,
+                    "edges": edge_idxs
+                })
             else:
-                graph_paths.append({"score": score.item(), "nodes": [target], "edges": []})
-        
+                graph_paths.append({
+                    "score": score.item(),
+                    "nodes": [target],
+                    "edges": []
+                })
+
         paths_data.append(graph_paths)
 
     return paths_data
 
+
 def verbalize_paths(batch: Data, raw_paths: List[List[Dict]]) -> List[str]:
     contexts = []
-    
-    flatten = lambda l: [item for sublist in l for item in sublist] if l and isinstance(l[0], list) else l
+
+    flatten = lambda l: [item for sublist in l for item in sublist
+                         ] if l and isinstance(l[0], list) else l
     nodes_txt = flatten(batch.node_text)
     edges_txt = flatten(batch.edge_text)
 
@@ -115,7 +125,7 @@ def verbalize_paths(batch: Data, raw_paths: List[List[Dict]]) -> List[str]:
         lines = []
         for p in paths:
             nodes, edges, score = p['nodes'], p['edges'], p['score']
-            
+
             if any(n >= len(nodes_txt) for n in nodes): continue
 
             if not edges:
@@ -124,25 +134,26 @@ def verbalize_paths(batch: Data, raw_paths: List[List[Dict]]) -> List[str]:
 
             parts = []
             for i, edge_idx in enumerate(edges):
-                rel = edges_txt[edge_idx] if edge_idx < len(edges_txt) else "unknown"
+                rel = edges_txt[edge_idx] if edge_idx < len(
+                    edges_txt) else "unknown"
                 parts.append(f"{nodes_txt[nodes[i]]} --[{rel}]-->")
-            
+
             parts.append(nodes_txt[nodes[-1]])
             lines.append(f"{''.join(parts)}")
 
-        contexts.append("\n".join(lines) if lines else "No relevant paths found.")
+        contexts.append(
+            "\n".join(lines) if lines else "No relevant paths found.")
 
     return contexts
+
 
 @torch.no_grad()
 def inference_step(model, llm, batch, top_k=3):
     model.eval()
-    
-    probs = model(
-        batch.question_tokens, batch.question_mask, batch.x, 
-        batch.edge_index, batch.edge_type, batch.edge_attr, 
-        batch.seed_mask, batch.batch
-    )
+
+    probs = model(batch.question_tokens, batch.question_mask, batch.x,
+                  batch.edge_index, batch.edge_type, batch.edge_attr,
+                  batch.seed_mask, batch.batch)
     raw_paths = top_k_paths(probs, batch, top_k)
     path_ctx = verbalize_paths(batch, raw_paths)
 
@@ -150,15 +161,15 @@ def inference_step(model, llm, batch, top_k=3):
     keep the answer as simple as possible and return all the possible answers
     as a list.
 
-    Reasoning Paths: {context} 
+    Reasoning Paths: {context}
     Question: {question}"""
-    
+
     questions = batch.question_text
     prompts = [
         prompt_template.format(question=q, context=ctx)
         for q, ctx in zip(questions, path_ctx)
     ]
-    
+
     return {
         "questions": questions,
         "context_paths": path_ctx,
@@ -170,10 +181,10 @@ def inference_step(model, llm, batch, top_k=3):
 
 def display_results(res, title: str):
     print(f"\n{title}")
-    print("\n" + "="*80)
-    for q, context, truth, pred in zip(
-        res["questions"], res["context_paths"], res["ground_truth"], res["predicted_answers"]
-    ):
+    print("\n" + "=" * 80)
+    for q, context, truth, pred in zip(res["questions"], res["context_paths"],
+                                       res["ground_truth"],
+                                       res["predicted_answers"]):
         truth_str = ", ".join(truth) if isinstance(truth, list) else truth
 
         pred_clean = pred.split("Reasoning Paths:")[0].strip()
@@ -194,25 +205,23 @@ def display_results(res, title: str):
         print("=" * 80 + "\n")
 
 
-
 def main(root, model_path, inference_limit, llm_model_name):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Use examples from the validation set for inference
-    val_dataset = WebQSPDatasetReaRev(root=root, split="validation", limit=inference_limit)
+    val_dataset = WebQSPDatasetReaRev(root=root, split="validation",
+                                      limit=inference_limit)
     val_loader = PyGDataLoader(val_dataset, batch_size=1, shuffle=False)
-    
+
     # Load trained model
     checkpoint = torch.load(model_path)
     config = checkpoint['config']
     state_dict = checkpoint['state_dict']
     model = ReaRev(**config).to(device)
     model.load_state_dict(state_dict)
-    
-    sys_prompt = (
-    "You are an expert assistant that answers questions. "
-    "Just give the answer, without explanation."
-    )
+
+    sys_prompt = ("You are an expert assistant that answers questions. "
+                  "Just give the answer, without explanation.")
     llm = LLM(model_name=llm_model_name, sys_prompt=sys_prompt).eval()
 
     # Run inference on examples from the validation set
@@ -223,12 +232,20 @@ def main(root, model_path, inference_limit, llm_model_name):
         res = inference_step(model, llm, example, top_k=3)
         display_results(res, f"Inference {i+1}")
 
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Train and evaluate ReaRev on WebQSP.")
-    parser.add_argument("--root", type=str, default="./data/webqsp", help="Dataset root directory.")
-    parser.add_argument("--inference_limit", type=int, default=10, help="Number of examples to load.")
-    parser.add_argument("--model_path", type=str, default="../outputs/rearev/rearev.pth", help="Path to the trained model.")
-    parser.add_argument("--llm_model_name", type=str, default="Qwen/Qwen2.5-3B-Instruct", help="LLM model name.")
+    parser = argparse.ArgumentParser(
+        description="Train and evaluate ReaRev on WebQSP.")
+    parser.add_argument("--root", type=str, default="./data/webqsp",
+                        help="Dataset root directory.")
+    parser.add_argument("--inference_limit", type=int, default=10,
+                        help="Number of examples to load.")
+    parser.add_argument("--model_path", type=str,
+                        default="../outputs/rearev/rearev.pth",
+                        help="Path to the trained model.")
+    parser.add_argument("--llm_model_name", type=str,
+                        default="Qwen/Qwen2.5-3B-Instruct",
+                        help="LLM model name.")
     args = parser.parse_args()
 
     main(

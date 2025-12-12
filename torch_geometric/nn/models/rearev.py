@@ -5,7 +5,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear
-from torch_geometric.nn import global_add_pool, MessagePassing
+
+from torch_geometric.nn import MessagePassing, global_add_pool
 from torch_geometric.typing import Adj
 from torch_geometric.utils import softmax as pyg_softmax
 
@@ -37,7 +38,8 @@ class ReaRevReasoning(MessagePassing):
         self.num_instructions = num_instructions
 
         self.edge_proj = Linear(edge_attr_dim, hidden_channels)
-        self.fuse_proj = Linear((2 * num_instructions + 1) * hidden_channels, hidden_channels)
+        self.fuse_proj = Linear((2 * num_instructions + 1) * hidden_channels,
+                                hidden_channels)
 
         self.reset_parameters()
 
@@ -45,7 +47,6 @@ class ReaRevReasoning(MessagePassing):
         r"""Resets all learnable parameters of the module."""
         nn.init.xavier_uniform_(self.edge_proj.weight)
         nn.init.xavier_uniform_(self.fuse_proj.weight)
-
 
     def forward(
         self,
@@ -86,7 +87,6 @@ class ReaRevReasoning(MessagePassing):
         fused_out = self.fuse_proj(torch.cat([x, aggr_messages], dim=1))
         return F.relu(fused_out)
 
-
     def message(
         self,
         p_j: Tensor,
@@ -111,7 +111,7 @@ class ReaRevReasoning(MessagePassing):
         message = F.relu(instruction_i * edge_proj_out.unsqueeze(1))
         weighted = message * p_j.view(-1, 1, 1)
 
-        is_inverse_edge = (edge_type == 1).view(-1,1,1)
+        is_inverse_edge = (edge_type == 1).view(-1, 1, 1)
         forward_msg = weighted.masked_fill(is_inverse_edge, 0)
         inverse_msg = weighted.masked_fill(~is_inverse_edge, 0)
         return torch.stack([forward_msg, inverse_msg], dim=1)
@@ -158,22 +158,25 @@ class ReaRev(torch.nn.Module):
         self.question_proj = nn.Linear(question_embed_dim, hidden_channels)
 
         self.instruction_init = nn.Parameter(torch.randn(hidden_channels))
-        self.instruction_score_vec = nn.Parameter(torch.randn(hidden_channels, 1))
+        self.instruction_score_vec = nn.Parameter(
+            torch.randn(hidden_channels, 1))
         self.token_score_proj = nn.Linear(hidden_channels, 1)
         self.W_k = nn.ModuleList([
-            nn.Linear(4 * hidden_channels, hidden_channels) for _ in range(num_instructions)
+            nn.Linear(4 * hidden_channels, hidden_channels)
+            for _ in range(num_instructions)
         ])
 
         self.layers = nn.ModuleList([
-            ReaRevReasoning(
-                hidden_channels=hidden_channels,
-                edge_attr_dim=edge_attr_dim,
-                num_instructions=num_instructions
-            ) for _ in range(num_layers)
+            ReaRevReasoning(hidden_channels=hidden_channels,
+                            edge_attr_dim=edge_attr_dim,
+                            num_instructions=num_instructions)
+            for _ in range(num_layers)
         ])
 
-        self.reset_linear = nn.Linear(hidden_channels * 4, hidden_channels, bias=False)
-        self.gate_linear = nn.Linear(hidden_channels * 4, hidden_channels, bias=False)
+        self.reset_linear = nn.Linear(hidden_channels * 4, hidden_channels,
+                                      bias=False)
+        self.gate_linear = nn.Linear(hidden_channels * 4, hidden_channels,
+                                     bias=False)
 
         self.prob_proj = nn.Linear(hidden_channels, 1)
 
@@ -246,7 +249,8 @@ class ReaRev(torch.nn.Module):
 
         # Initialize instructions
         generated_instructions = []
-        prev_instruction = self.instruction_init.unsqueeze(0).expand(batch_size, -1)
+        prev_instruction = self.instruction_init.unsqueeze(0).expand(
+            batch_size, -1)
 
         for k in range(self.num_ins):
             context = torch.cat(
@@ -260,13 +264,15 @@ class ReaRev(torch.nn.Module):
             )
             instruction_query = self.W_k[k](context)
 
-            token_interaction = instruction_query.unsqueeze(1) * question_proj_tokens
+            token_interaction = instruction_query.unsqueeze(
+                1) * question_proj_tokens
             token_scores = self.token_score_proj(token_interaction).squeeze(-1)
             token_scores = token_scores.masked_fill(question_mask == 0, -1e9)
             token_weights = F.softmax(token_scores, dim=1)
 
             # Here token_weights and question_proj_tokens are non-graph tensors so we can use torch.bmm
-            instruction_k = torch.bmm(token_weights.unsqueeze(1), question_proj_tokens).squeeze(1)
+            instruction_k = torch.bmm(token_weights.unsqueeze(1),
+                                      question_proj_tokens).squeeze(1)
             generated_instructions.append(instruction_k)
             prev_instruction = instruction_k
 
@@ -294,9 +300,8 @@ class ReaRev(torch.nn.Module):
                 break
 
             seed_rep = global_add_pool(x * seed_weight, batch)
-            seed_rep_expanded = seed_rep.unsqueeze(1).expand(-1, self.num_ins, -1).reshape(
-                -1, self.hidden_channels
-            )
+            seed_rep_expanded = seed_rep.unsqueeze(1).expand(
+                -1, self.num_ins, -1).reshape(-1, self.hidden_channels)
             instruction_flat = instruction_stack.view(-1, self.hidden_channels)
             fusion_inputs = torch.cat(
                 [
@@ -310,7 +315,10 @@ class ReaRev(torch.nn.Module):
 
             reset_out = self.reset_linear(fusion_inputs)
             gate_out = torch.sigmoid(self.gate_linear(fusion_inputs))
-            instruction_stack = gate_out * reset_out + (1 - gate_out) * instruction_flat
-            instruction_stack = instruction_stack.view(batch_size, self.num_ins, self.hidden_channels)
+            instruction_stack = gate_out * reset_out + (
+                1 - gate_out) * instruction_flat
+            instruction_stack = instruction_stack.view(batch_size,
+                                                       self.num_ins,
+                                                       self.hidden_channels)
 
         return p

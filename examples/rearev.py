@@ -1,20 +1,19 @@
 import argparse
-import os
 
 import torch
 import torch.nn.functional as F
 from torch.optim import Adam
-from torch_geometric.loader import DataLoader as PyGDataLoader
+
 from torch_geometric.datasets import WebQSPDatasetReaRev
+from torch_geometric.loader import DataLoader as PyGDataLoader
 from torch_geometric.nn.models import ReaRev
+
 
 def get_loss(model, batch):
     """Get batch normalized KL divergence loss"""
-    probs = model(
-        batch.question_tokens, batch.question_mask, batch.x, 
-        batch.edge_index, batch.edge_type, batch.edge_attr, 
-        batch.seed_mask, batch.batch
-    ).view(-1)
+    probs = model(batch.question_tokens, batch.question_mask, batch.x,
+                  batch.edge_index, batch.edge_type, batch.edge_attr,
+                  batch.seed_mask, batch.batch).view(-1)
 
     log_probs = torch.log(torch.clamp(probs, min=1e-10))
     y = batch.y.view(-1)
@@ -35,6 +34,7 @@ def get_loss(model, batch):
 
     return (kl_per_graph * valid_mask).sum() / valid_count
 
+
 def train(model, loader, optimizer, device):
     model.train()
     total_loss = 0
@@ -46,6 +46,7 @@ def train(model, loader, optimizer, device):
         optimizer.step()
         total_loss += loss.item()
     return total_loss / len(loader)
+
 
 @torch.no_grad()
 def test(model, loader, device):
@@ -83,7 +84,9 @@ def test(model, loader, device):
 
     return hits1 / total_graphs
 
-def main(root, batch_size, epochs, num_layers, num_instructions, num_iterations, save_path):
+
+def main(root, batch_size, epochs, num_layers, num_instructions,
+         num_iterations, save_path):
     HIDDEN_CHANNELS = 128
     QUESTION_EMBED_DIM = 384
     EDGE_ATTR_DIM = 384
@@ -93,8 +96,9 @@ def main(root, batch_size, epochs, num_layers, num_instructions, num_iterations,
     dataset = WebQSPDatasetReaRev(root=root, split="train")
     loader = PyGDataLoader(dataset, batch_size=batch_size, shuffle=True)
     val_dataset = WebQSPDatasetReaRev(root=root, split="validation")
-    val_loader = PyGDataLoader(val_dataset, batch_size=batch_size, shuffle=False)
-    
+    val_loader = PyGDataLoader(val_dataset, batch_size=batch_size,
+                               shuffle=False)
+
     model = ReaRev(
         NODE_IN_CHANNELS,
         EDGE_ATTR_DIM,
@@ -105,11 +109,13 @@ def main(root, batch_size, epochs, num_layers, num_instructions, num_iterations,
         QUESTION_EMBED_DIM,
     ).to(device)
     optimizer = Adam(model.parameters(), lr=1e-3)
-    
+
     print("Training...")
-    for epoch in range(epochs): 
+    for epoch in range(epochs):
         avg_loss = train(model, loader, optimizer, device)
-        print(f"Epoch {epoch+1} Training Loss: {avg_loss:.4f} Val Hit@1: {test(model, val_loader, device):.4f}")
+        print(
+            f"Epoch {epoch+1} Training Loss: {avg_loss:.4f} Val Hit@1: {test(model, val_loader, device):.4f}"
+        )
 
     print("Saving model...")
     config = {
@@ -121,22 +127,29 @@ def main(root, batch_size, epochs, num_layers, num_instructions, num_iterations,
         'num_iterations': num_iterations,
         'question_embed_dim': QUESTION_EMBED_DIM,
     }
-    checkpoint = {
-        'config': config,
-        'state_dict': model.state_dict()
-    }
+    checkpoint = {'config': config, 'state_dict': model.state_dict()}
     torch.save(checkpoint, save_path)
     print("Model saved to", save_path)
 
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Train and evaluate ReaRev on WebQSP.")
-    parser.add_argument("--root", type=str, default="./data/webqsp", help="Dataset root directory.")
-    parser.add_argument("--save_path", type=str, default="../outputs/rearev/rearev.pth", help="Path to save the model.")
-    parser.add_argument("--batch_size", type=int, default=8, help="Mini-batch size.")
-    parser.add_argument("--epochs", type=int, default=2, help="Number of training epochs.")
-    parser.add_argument("--num_layers", type=int, default=2, help="Number of reasoning layers.")
-    parser.add_argument("--num_instructions", type=int, default=2, help="Number of instructions.")
-    parser.add_argument("--num_iterations", type=int, default=2, help="Number of adaptation iterations.")
+    parser = argparse.ArgumentParser(
+        description="Train and evaluate ReaRev on WebQSP.")
+    parser.add_argument("--root", type=str, default="./data/webqsp",
+                        help="Dataset root directory.")
+    parser.add_argument("--save_path", type=str,
+                        default="../outputs/rearev/rearev.pth",
+                        help="Path to save the model.")
+    parser.add_argument("--batch_size", type=int, default=8,
+                        help="Mini-batch size.")
+    parser.add_argument("--epochs", type=int, default=2,
+                        help="Number of training epochs.")
+    parser.add_argument("--num_layers", type=int, default=2,
+                        help="Number of reasoning layers.")
+    parser.add_argument("--num_instructions", type=int, default=2,
+                        help="Number of instructions.")
+    parser.add_argument("--num_iterations", type=int, default=2,
+                        help="Number of adaptation iterations.")
     args = parser.parse_args()
 
     main(
