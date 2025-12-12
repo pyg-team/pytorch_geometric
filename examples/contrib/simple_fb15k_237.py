@@ -29,7 +29,8 @@ val_data = FB15k_237(path, split='val')[0].to(device)
 test_data = FB15k_237(path, split='test')[0].to(device)
 
 # Initialize the SimplE model
-# SimplE uses two embeddings per entity (head/tail) and two per relation (forward/inverse)
+# SimplE uses two embeddings per entity (head/tail) and two per
+# relation (forward/inverse)
 model = SimplE(
     num_nodes=train_data.num_nodes,
     num_relations=train_data.num_edge_types,
@@ -91,3 +92,4 @@ for epoch in range(1, args.epochs + 1):
 rank, mrr, hits_at_10 = test(test_data)
 print(f'Test Mean Rank: {rank:.2f}, Test MRR: {mrr:.4f}, '
       f'Test Hits@10: {hits_at_10:.4f}')
+

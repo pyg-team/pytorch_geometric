@@ -57,9 +57,9 @@ class SimplE(KGEModel):
             num_nodes (int): The number of entities in the knowledge graph.
             num_relations (int): The number of relation types in the knowledge
                 graph.
-            hidden_channels (int): The dimensionality of the embedding vectors.
-                Larger values can capture more complex patterns but require more
-                memory and computation.
+            hidden_channels (int): The dimensionality of the embedding
+                vectors. Larger values can capture more complex patterns
+                but require more memory and computation.
             sparse (bool, optional): If set to :obj:`True`, gradients w.r.t. to
                 the embedding matrices will be sparse. Useful for very large
                 knowledge graphs. (default: :obj:`False`)
@@ -67,7 +67,8 @@ class SimplE(KGEModel):
         super().__init__(num_nodes, num_relations, hidden_channels, sparse)
 
         # Additional embeddings beyond the base KGEModel:
-        # - node_emb_tail: tail embeddings for entities (used when entity is a tail)
+        # - node_emb_tail: tail embeddings for entities (used when
+        #   entity is a tail)
         # - rel_emb_inv: inverse relation embeddings (for r^{-1})
         self.node_emb_tail = Embedding(num_nodes, hidden_channels, sparse=sparse)
         self.rel_emb_inv = Embedding(num_relations, hidden_channels, sparse=sparse)
@@ -94,10 +95,11 @@ class SimplE(KGEModel):
     ) -> Tensor:
         r"""Computes the score for the given triplet.
         
-        The SimplE scoring function computes the average of two CP decomposition
-        scores: one for the forward relation and one for the inverse relation.
-        This addresses the independence issue in CP by coupling the head and
-        tail embeddings of entities through inverse relations.
+        The SimplE scoring function computes the average of two CP
+        decomposition scores: one for the forward relation and one for
+        the inverse relation. This addresses the independence issue in CP
+        by coupling the head and tail embeddings of entities through
+        inverse relations.
         
         Args:
             head_index (torch.Tensor): The head entity indices of shape
@@ -108,31 +110,34 @@ class SimplE(KGEModel):
                 :obj:`[batch_size]`.
         
         Returns:
-            torch.Tensor: The score for each triplet of shape :obj:`[batch_size]`.
-                Higher scores indicate more plausible triples.
+            torch.Tensor: The score for each triplet of shape
+                :obj:`[batch_size]`. Higher scores indicate more
+                plausible triples.
         """
         # Get embeddings for the forward direction: (h, r, t)
-        head = self.node_emb(head_index)  # h_{e_i}: head embedding of head entity
-        tail = self.node_emb_tail(tail_index)  # t_{e_j}: tail embedding of tail entity
+        head = self.node_emb(head_index)  # h_{e_i}: head emb of head entity
+        tail = self.node_emb_tail(tail_index)  # t_{e_j}: tail emb of tail
         rel = self.rel_emb(rel_type)  # v_r: forward relation embedding
-        
+
         # Get embeddings for the inverse direction: (t, r^{-1}, h)
         # For the inverse, we need the head embedding of the tail entity
         # and the tail embedding of the head entity
-        tail_head = self.node_emb(tail_index)  # h_{e_j}: head embedding of tail entity
-        head_tail = self.node_emb_tail(head_index)  # t_{e_i}: tail embedding of head entity
-        rel_inv = self.rel_emb_inv(rel_type)  # v_{r^{-1}}: inverse relation embedding
+        tail_head = self.node_emb(tail_index)  # h_{e_j}: head emb of tail
+        head_tail = self.node_emb_tail(head_index)  # t_{e_i}: tail emb
+        rel_inv = self.rel_emb_inv(rel_type)  # v_{r^{-1}}: inverse relation
 
         # Compute Score 1: CP score for forward relation
         # ⟨h_{e_i}, v_r, t_{e_j}⟩ = sum over dimensions of (h * v_r * t)
         score1 = (head * rel * tail).sum(dim=-1)
 
         # Compute Score 2: CP score for inverse relation
-        # ⟨h_{e_j}, v_{r^{-1}}, t_{e_i}⟩ = sum over dimensions of (h_tail * v_r_inv * t_head)
+        # ⟨h_{e_j}, v_{r^{-1}}, t_{e_i}⟩ = sum over dims of
+        # (h_tail * v_r_inv * t_head)
         score2 = (tail_head * rel_inv * head_tail).sum(dim=-1)
 
         # SimplE score is the average of the two CP scores
-        # This coupling ensures that both directions contribute to learning
+        # This coupling ensures that both directions contribute to
+        # learning
         return 0.5 * (score1 + score2)
 
     def loss(
@@ -177,3 +182,4 @@ class SimplE(KGEModel):
         # Binary cross-entropy loss encourages positive scores to be high
         # and negative scores to be low
         return F.binary_cross_entropy_with_logits(scores, target)
+
