@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Added `SimplE` knowledge graph embedding model to `torch_geometric.contrib.nn` ([#10528](https://github.com/pyg-team/pytorch_geometric/pull/10528))
+
 ### Changed
 
 ### Deprecated
