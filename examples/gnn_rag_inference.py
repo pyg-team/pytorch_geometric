@@ -338,7 +338,8 @@ def build_and_save_full_kg(
 
 class GNNRAGInferencePipeline:
     """Minimal inference wrapper that reuses helpers for subgraph building
-    and path verbalization."""
+    and path verbalization.
+    """
     def __init__(
         self,
         model_path: str,
