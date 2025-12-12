@@ -2,8 +2,8 @@
 then matches node entities to the full KG, builds a subgraph
 and feeds the subgraph to a trained ReaRev model to get the reasoning paths
 """
-import os
 import argparse
+import os
 from typing import Any, Dict, List, Optional, Tuple
 
 import networkx as nx
@@ -312,8 +312,7 @@ def build_and_save_full_kg(
     splits: Optional[List[str]] = None,
     limit: Optional[int] = None,
 ) -> Tuple[Data, Dict[str, int], Dict[str, int]]:
-    """
-    Build the union KG across splits and persist it for later inference.
+    """Build the union KG across splits and persist it for later inference.
     """
     splits = splits or ["train", "validation", "test"]
     datasets = [
@@ -324,18 +323,20 @@ def build_and_save_full_kg(
 
     os.makedirs(os.path.dirname(kg_path) or ".", exist_ok=True)
     torch.save(
-        {"full_kg": full_kg, "entity2id": entity2id, "relation2id": relation2id},
+        {
+            "full_kg": full_kg,
+            "entity2id": entity2id,
+            "relation2id": relation2id
+        },
         kg_path,
     )
     return full_kg, entity2id, relation2id
 
 
 class GNNRAGInferencePipeline:
-    """
-    Minimal inference wrapper that reuses the 
+    """Minimal inference wrapper that reuses the
     helpers for subgraph building and path verbalization.
     """
-
     def __init__(
         self,
         model_path: str,
@@ -343,21 +344,21 @@ class GNNRAGInferencePipeline:
         device: Optional[str] = None,
         encoder_name: str = "sentence-transformers/all-MiniLM-L6-v2",
     ):
-        self.device = torch.device(
-            device if device else ("cuda" if torch.cuda.is_available() else "cpu")
-        )
+        self.device = torch.device(device if device else (
+            "cuda" if torch.cuda.is_available() else "cpu"))
 
         self.encoder = SentenceTransformer(encoder_name).to(self.device).eval()
 
         checkpoint = torch.load(model_path, map_location=self.device)
-        if isinstance(checkpoint, dict) and "config" in checkpoint and "state_dict" in checkpoint:
+        if isinstance(
+                checkpoint, dict
+        ) and "config" in checkpoint and "state_dict" in checkpoint:
             self.model = ReaRev(**checkpoint["config"]).to(self.device)
             self.model.load_state_dict(checkpoint["state_dict"])
         else:
             raise ValueError(
                 "Model checkpoint must contain 'config' and 'state_dict' "
-                "(see examples/rearev.py for how to save it)."
-            )
+                "(see examples/rearev.py for how to save it).")
         self.model.eval()
 
         kg_data = torch.load(kg_path, map_location="cpu")
@@ -365,7 +366,9 @@ class GNNRAGInferencePipeline:
         self.entity2id: Dict[str, int] = kg_data["entity2id"]
         self.relation2id: Dict[str, int] = kg_data["relation2id"]
         if not hasattr(self.full_kg, "rel_text"):
-            self.full_kg.rel_text = [f"rel_{i}" for i in range(self.full_kg.edge_attr.size(0))]
+            self.full_kg.rel_text = [
+                f"rel_{i}" for i in range(self.full_kg.edge_attr.size(0))
+            ]
 
     def _anchors_to_ids(self, anchors: List[str]) -> List[int]:
         ids: List[int] = []
@@ -387,7 +390,8 @@ class GNNRAGInferencePipeline:
     ) -> Dict[str, object]:
         anchor_ids = self._anchors_to_ids(anchor_entities)
         if not anchor_ids:
-            raise ValueError("None of the anchor entities were found in the KG.")
+            raise ValueError(
+                "None of the anchor entities were found in the KG.")
 
         sub = build_subgraph(
             full_kg=self.full_kg,
@@ -399,7 +403,8 @@ class GNNRAGInferencePipeline:
         if isinstance(sub, tuple):
             sub = sub[0]
         if not isinstance(sub, Data) or sub.num_nodes == 0:
-            raise ValueError("Empty subgraph generated; check anchors or KG content.")
+            raise ValueError(
+                "Empty subgraph generated; check anchors or KG content.")
 
         sub.batch = torch.zeros(sub.num_nodes, dtype=torch.long)
         q_tokens, q_mask = encode_q(question, self.encoder, device=self.device)
