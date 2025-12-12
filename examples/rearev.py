@@ -85,7 +85,7 @@ def test(model, loader, device):
     return hits1 / total_graphs
 
 
-def main(root, batch_size, epochs, num_layers, num_instructions,
+def rearev_train(root, batch_size, epochs, num_layers, num_instructions,
          num_iterations, save_path):
     HIDDEN_CHANNELS = 128
     QUESTION_EMBED_DIM = 384
@@ -152,7 +152,7 @@ if __name__ == "__main__":
                         help="Number of adaptation iterations.")
     args = parser.parse_args()
 
-    main(
+    rearev_train(
         root=args.root,
         batch_size=args.batch_size,
         epochs=args.epochs,
