@@ -46,13 +46,13 @@ class SimplE(KGEModel):
         sparse: bool = False,
     ):
         r"""Initializes the SimplE model.
-        
+
         SimplE extends CP decomposition by introducing inverse relations to
         couple the head and tail embeddings of entities. Each entity has two
         embeddings: one for when it appears as a head and one for when it
         appears as a tail. Similarly, each relation has two embeddings: one
         for the forward direction and one for the inverse direction.
-        
+
         Args:
             num_nodes (int): The number of entities in the knowledge graph.
             num_relations (int): The number of relation types in the knowledge
@@ -70,14 +70,16 @@ class SimplE(KGEModel):
         # - node_emb_tail: tail embeddings for entities (used when
         #   entity is a tail)
         # - rel_emb_inv: inverse relation embeddings (for r^{-1})
-        self.node_emb_tail = Embedding(num_nodes, hidden_channels, sparse=sparse)
-        self.rel_emb_inv = Embedding(num_relations, hidden_channels, sparse=sparse)
+        self.node_emb_tail = Embedding(num_nodes, hidden_channels,
+                                       sparse=sparse)
+        self.rel_emb_inv = Embedding(num_relations, hidden_channels,
+                                     sparse=sparse)
 
         self.reset_parameters()
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module.
-        
+
         Initializes all embedding matrices using Xavier uniform initialization,
         which helps maintain the variance of activations and gradients through
         the network layers.
@@ -94,13 +96,13 @@ class SimplE(KGEModel):
         tail_index: Tensor,
     ) -> Tensor:
         r"""Computes the score for the given triplet.
-        
+
         The SimplE scoring function computes the average of two CP
         decomposition scores: one for the forward relation and one for
         the inverse relation. This addresses the independence issue in CP
         by coupling the head and tail embeddings of entities through
         inverse relations.
-        
+
         Args:
             head_index (torch.Tensor): The head entity indices of shape
                 :obj:`[batch_size]`.
@@ -108,7 +110,7 @@ class SimplE(KGEModel):
                 :obj:`[batch_size]`.
             tail_index (torch.Tensor): The tail entity indices of shape
                 :obj:`[batch_size]`.
-        
+
         Returns:
             torch.Tensor: The score for each triplet of shape
                 :obj:`[batch_size]`. Higher scores indicate more
@@ -147,12 +149,12 @@ class SimplE(KGEModel):
         tail_index: Tensor,
     ) -> Tensor:
         r"""Computes the loss for the given positive triplets.
-        
+
         The loss function uses binary cross-entropy with logits, comparing
         positive triplets against randomly sampled negative triplets. This
         encourages the model to assign higher scores to positive triples than
         to negative ones.
-        
+
         Args:
             head_index (torch.Tensor): The head entity indices of shape
                 :obj:`[batch_size]`.
@@ -160,17 +162,17 @@ class SimplE(KGEModel):
                 :obj:`[batch_size]`.
             tail_index (torch.Tensor): The tail entity indices of shape
                 :obj:`[batch_size]`.
-        
+
         Returns:
             torch.Tensor: The computed loss value (a scalar).
         """
         # Compute scores for positive triplets
         pos_score = self(head_index, rel_type, tail_index)
-        
+
         # Generate negative triplets by randomly corrupting heads or tails
         # and compute their scores
         neg_score = self(*self.random_sample(head_index, rel_type, tail_index))
-        
+
         # Concatenate positive and negative scores
         scores = torch.cat([pos_score, neg_score], dim=0)
 
@@ -182,4 +184,3 @@ class SimplE(KGEModel):
         # Binary cross-entropy loss encourages positive scores to be high
         # and negative scores to be low
         return F.binary_cross_entropy_with_logits(scores, target)
-

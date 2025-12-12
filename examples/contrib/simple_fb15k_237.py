@@ -4,8 +4,8 @@ import os.path as osp
 import torch
 import torch.optim as optim
 
-from torch_geometric.datasets import FB15k_237
 from torch_geometric.contrib.nn import SimplE
+from torch_geometric.datasets import FB15k_237
 
 # Parse command-line arguments for hyperparameters
 parser = argparse.ArgumentParser()
@@ -20,7 +20,8 @@ parser.add_argument('--epochs', type=int, default=500,
 args = parser.parse_args()
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-path = osp.join(osp.dirname(osp.realpath(__file__)), '..', '..', 'data', 'FB15k')
+path = osp.join(osp.dirname(osp.realpath(__file__)), '..', '..', 'data',
+                'FB15k')
 
 # Load the FB15k-237 dataset splits
 # FB15k-237 is a subset of Freebase with 237 relations and 14,951 entities
@@ -67,7 +68,7 @@ def train():
 @torch.no_grad()
 def test(data):
     """Evaluates the model on the given dataset.
-    
+
     Returns:
         tuple: (mean_rank, mrr, hits_at_k) evaluation metrics
     """
@@ -92,4 +93,3 @@ for epoch in range(1, args.epochs + 1):
 rank, mrr, hits_at_10 = test(test_data)
 print(f'Test Mean Rank: {rank:.2f}, Test MRR: {mrr:.4f}, '
       f'Test Hits@10: {hits_at_10:.4f}')
-

@@ -73,4 +73,3 @@ def test_simple():
         assert 0 <= mean_rank <= 10
         assert 0 < mrr <= 1
         assert hits == 1.0
-
