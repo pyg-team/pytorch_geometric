@@ -7,8 +7,8 @@ from torch_geometric.nn.kge import KGEModel
 
 
 class SimplE(KGEModel):
-    r"""The SimplE model from the `"SimplE Embedding for Link Prediction in
-    Knowledge Graphs" <https://proceedings.neurips.cc/paper/2018/file/
+    r"""The SimplE model from the `"SimplE Embedding for Link Prediction
+    in Knowledge Graphs" <https://proceedings.neurips.cc/paper/2018/file/
     b2ab001909a8a6f04b51920306046ce5-Paper.pdf>`_ paper.
 
     :class:`SimplE` addresses the independence of the two embedding vectors
