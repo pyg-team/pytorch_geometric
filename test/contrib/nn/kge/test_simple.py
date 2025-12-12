@@ -31,19 +31,23 @@ def test_simple_scoring():
     ])
 
     # Test scoring: (h=1, r=1, t=2)
-    # Score 1: ⟨h_1, v_1, t_2⟩ = sum([3,4] * [2,2] * [6,5]) = sum([6,8] * [6,5]) = sum([36,40]) = 76
-    # Score 2: ⟨h_2, v_1_inv, t_1⟩ = sum([5,6] * [2,1] * [4,3]) = sum([10,6] * [4,3]) = sum([40,18]) = 58
+    # Score 1: ⟨h_1, v_1, t_2⟩ = sum([3,4] * [2,2] * [6,5])
+    #   = sum([6,8] * [6,5]) = sum([36,40]) = 76
+    # Score 2: ⟨h_2, v_1_inv, t_1⟩ = sum([5,6] * [2,1] * [4,3])
+    #   = sum([10,6] * [4,3]) = sum([40,18]) = 58
     # Final: 0.5 * (76 + 58) = 67.0
-    
+
     score = model(
         head_index=torch.tensor([1]),
         rel_type=torch.tensor([1]),
         tail_index=torch.tensor([2]),
     )
-    
+
     # Manual calculation:
-    # Score 1: sum([3,4] * [2,2] * [6,5]) = sum([6,8] * [6,5]) = sum([36,40]) = 76
-    # Score 2: sum([5,6] * [2,1] * [4,3]) = sum([10,6] * [4,3]) = sum([40,18]) = 58
+    # Score 1: sum([3,4] * [2,2] * [6,5]) = sum([6,8] * [6,5])
+    #   = sum([36,40]) = 76
+    # Score 2: sum([5,6] * [2,1] * [4,3]) = sum([10,6] * [4,3])
+    #   = sum([40,18]) = 58
     # Final: 0.5 * (76 + 58) = 67.0
     expected_score = 67.0
     assert torch.allclose(score, torch.tensor([expected_score]))
