@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased] - 2025-12-12
+
 Update expired Google Drive file IDs for politifact and gossipcop datasets.
+
 ### Added
 
 ### Changed
