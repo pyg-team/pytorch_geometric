@@ -67,4 +67,4 @@ max_hops: 4
 
 # Optional: Distribution of reasoning types (must sum to 1.0)
 # If not specified, no special handling of reasoning types
-reasoning_type_distribution: '{"factual":0.15,"causal":0.15,"relational":0.15,"inferential":0.15,"temporal":0.15,"procedural":0.15,"visual":0.1}' 
+reasoning_type_distribution: '{"factual":0.15,"causal":0.15,"relational":0.15,"inferential":0.15,"temporal":0.15,"procedural":0.15,"visual":0.1}'
