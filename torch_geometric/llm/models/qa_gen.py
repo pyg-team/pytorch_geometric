@@ -10,8 +10,8 @@ import traceback
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
-
+from typing import Any, Dict, List, Optional, Tuple, TypedDict
+from openai import OpenAI
 import faiss
 import numpy as np
 import pandas as pd
