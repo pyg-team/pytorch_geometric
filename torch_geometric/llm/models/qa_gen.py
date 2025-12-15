@@ -11,11 +11,12 @@ from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, TypedDict
-from openai import OpenAI
+
 import faiss
 import numpy as np
 import pandas as pd
 from jinja2 import Template
+from openai import OpenAI
 from sklearn.metrics.pairwise import cosine_similarity
 
 # Configure logging - default to WARNING, --verbose enables INFO/DEBUG
