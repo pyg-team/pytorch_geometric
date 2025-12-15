@@ -15,12 +15,10 @@ from torch_geometric.llm.large_graph_indexer import (
     get_features_for_triplets_groups,
 )
 from torch_geometric.llm.models import SentenceTransformer
-from torch_geometric.llm.utils.backend_utils import retrieval_via_pcst
-
-
-def preprocess_triplet(triplet: TripletLike) -> TripletLike:
-    h, r, t = triplet
-    return str(h).lower(), str(r).lower(), str(t).lower()
+from torch_geometric.llm.utils.backend_utils import (
+    preprocess_triplet,
+    retrieval_via_pcst,
+)
 
 
 class KGQABaseDataset(InMemoryDataset):
