@@ -1,39 +1,30 @@
 import argparse
-from ast import List
 import asyncio
-from copy import deepcopy
-from datetime import datetime
-from enum import Enum
+import hashlib
 import json
 import logging
 import os
-from pathlib import Path
 import pickle
 import random
 import re
 import traceback
-from typing import Any, Dict, Optional, Tuple, TypedDict
-from langgraph.graph import StateGraph
+from ast import List
+from copy import deepcopy
+from datetime import datetime
+from enum import Enum
+from glob import glob
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple, TypedDict
+
+import faiss
+import numpy as np
+import pandas as pd
+import yaml
 from jinja2 import Template
+from langgraph.graph import StateGraph
 from langgraph.graph.state import CompiledStateGraph
 from openai import OpenAI
-import yaml
-import hashlib
-import os
-import json
-import re
-import time
-from typing import Any, List, Dict, Tuple, Optional
-from pathlib import Path
-import yaml
-import numpy as np
-import faiss
-import pickle
 from sklearn.metrics.pairwise import cosine_similarity
-import pandas as pd
-from openai import OpenAI
-import traceback
-from glob import glob
 
 # Configure logging - default to WARNING, --verbose enables INFO/DEBUG
 logger = logging.getLogger(__name__)
@@ -77,7 +68,6 @@ Please ensure your output is ONLY the JSON object with no preamble or additional
 """
 artifact_extraction_prompt_template = Template(artifact_extraction_prompt)
 
-
 llm_rank_artifacts_prompt = """You are an expert at evaluating semantic artifacts for question-answer generation.
 
 Given the following extracted artifacts from a transcript, select the TOP {{top_k}} artifacts that would be MOST VALUABLE for generating insightful and complex question-answer pairs.
@@ -98,7 +88,6 @@ Format: [1, 5, 3, 2, 7]
 
 Your selection (top {{top_k}} numbers only):"""
 llm_rank_artifacts_prompt_template = Template(llm_rank_artifacts_prompt)
-
 
 generate_timeline_prompt = """
 You are an expert timeline curator creating a rich event log from transcript segments.
@@ -161,7 +150,6 @@ class LLMClient:
     Manages three separate models with sleep/wake functionality for efficient
     GPU memory utilization. Only one model is active at a time.
     """
-
     def __init__(
         self,
         generation_model: str,
@@ -298,9 +286,8 @@ class LLMClient:
                 'vLLM is not installed. Please install it with: pip install vllm'
             ) from err
 
-        logger.info(
-            'Initializing local vLLM with model: %s (task=%s)', model, task
-        )
+        logger.info('Initializing local vLLM with model: %s (task=%s)', model,
+                    task)
         llm_kwargs = {
             'model': model,
             'tensor_parallel_size': tensor_parallel_size,
@@ -323,9 +310,8 @@ class LLMClient:
         if not api_key:
             raise ValueError('NVIDIA_API_KEY environment variable is not set')
 
-        return OpenAI(
-            base_url='https://integrate.api.nvidia.com/v1', api_key=api_key
-        )
+        return OpenAI(base_url='https://integrate.api.nvidia.com/v1',
+                      api_key=api_key)
 
     def _sleep_all(self) -> None:
         """Put all vLLM models to sleep."""
@@ -334,9 +320,9 @@ class LLMClient:
 
         seen = set()
         for client in [
-            self.generation_client,
-            self.evaluation_client,
-            self.embedding_client,
+                self.generation_client,
+                self.evaluation_client,
+                self.embedding_client,
         ]:
             if id(client) not in seen:
                 seen.add(id(client))
@@ -396,14 +382,12 @@ class LLMClient:
 
         # Get the appropriate client and model name
         if model_type == 'generation':
-            vllm_client = (
-                self.generation_client if self.backend == Backend.VLLM else None
-            )
+            vllm_client = (self.generation_client
+                           if self.backend == Backend.VLLM else None)
             model_name = self.generation_model_name
         else:  # evaluation
-            vllm_client = (
-                self.evaluation_client if self.backend == Backend.VLLM else None
-            )
+            vllm_client = (self.evaluation_client
+                           if self.backend == Backend.VLLM else None)
             model_name = self.evaluation_model_name
 
         if self.backend == Backend.VLLM:
@@ -427,11 +411,9 @@ class LLMClient:
                 stream=True,
                 seed=33,
             )
-            return ''.join(
-                chunk.choices[0].delta.content
-                for chunk in completion
-                if chunk.choices[0].delta.content
-            )
+            return ''.join(chunk.choices[0].delta.content
+                           for chunk in completion
+                           if chunk.choices[0].delta.content)
 
     def generate(
         self,
@@ -565,7 +547,6 @@ class ArtifactExtractor:
     """LLM-driven artifact extractor that identifies key semantic elements
     from transcripts to enhance Q&A generation quality.
     """
-
     def __init__(
         self,
         client: Optional[LLMClient],
@@ -585,8 +566,8 @@ class ArtifactExtractor:
         }
 
     def extract_artifacts(
-        self, text: str, max_artifacts_per_type: int = 8
-    ) -> List[Dict[str, Any]]:
+            self, text: str,
+            max_artifacts_per_type: int = 8) -> List[Dict[str, Any]]:
         """Extract semantic artifacts from transcript text using LLM.
 
         Args:
@@ -598,24 +579,27 @@ class ArtifactExtractor:
         """
         if not self.client:
             logger.warning(
-                'No OpenAI client available, returning empty artifacts'
-            )
+                'No OpenAI client available, returning empty artifacts')
             return []
 
         try:
             # Create extraction prompt
-            prompt = self._create_extraction_prompt(
-                text, max_artifacts_per_type
-            )
+            prompt = self._create_extraction_prompt(text,
+                                                    max_artifacts_per_type)
 
             logger.debug('extract_artifacts prompt: %s', prompt)
             # Call LLM for artifact extraction
             messages = [
                 {
-                    'role': 'system',
-                    'content': 'You are an expert at extracting semantic artifacts from text for enhanced Q&A generation.',
+                    'role':
+                    'system',
+                    'content':
+                    'You are an expert at extracting semantic artifacts from text for enhanced Q&A generation.',
                 },
-                {'role': 'user', 'content': prompt},
+                {
+                    'role': 'user',
+                    'content': prompt
+                },
             ]
 
             response_text = self.client.generate(
@@ -637,9 +621,8 @@ class ArtifactExtractor:
             # Rank and filter top artifacts
             top_artifacts = self._rank_and_filter_artifacts(artifacts)
 
-            logger.info(
-                'Extracted %d high-quality artifacts', len(top_artifacts)
-            )
+            logger.info('Extracted %d high-quality artifacts',
+                        len(top_artifacts))
             return top_artifacts
 
         except Exception as e:
@@ -648,12 +631,10 @@ class ArtifactExtractor:
 
     def _create_extraction_prompt(self, text: str, max_artifacts: int) -> str:
         """Create prompt for artifact extraction."""
-        artifact_descriptions = '\n'.join(
-            [
-                f'- **{name}**: {desc}'
-                for name, desc in self.artifact_types.items()
-            ]
-        )
+        artifact_descriptions = '\n'.join([
+            f'- **{name}**: {desc}'
+            for name, desc in self.artifact_types.items()
+        ])
 
         text = text[:3000] + '...' if len(text) > 3000 else text
         return artifact_extraction_prompt_template.render(
@@ -662,23 +643,20 @@ class ArtifactExtractor:
             max_artifacts=max_artifacts,
         )
 
-    def _parse_artifacts_response(
-        self, response_text: str
-    ) -> List[Dict[str, Any]]:
+    def _parse_artifacts_response(self,
+                                  response_text: str) -> List[Dict[str, Any]]:
         """Parse LLM response and structure artifacts."""
         artifacts = []
 
         try:
             # Extract JSON from response
-            json_match = re.search(
-                r'```json\s*(.*?)\s*```', response_text, re.DOTALL
-            )
+            json_match = re.search(r'```json\s*(.*?)\s*```', response_text,
+                                   re.DOTALL)
             if json_match:
                 json_str = json_match.group(1)
             else:
-                json_match = re.search(
-                    r'```\s*(.*?)\s*```', response_text, re.DOTALL
-                )
+                json_match = re.search(r'```\s*(.*?)\s*```', response_text,
+                                       re.DOTALL)
                 if json_match:
                     json_str = json_match.group(1)
                 else:
@@ -697,15 +675,14 @@ class ArtifactExtractor:
                 logger.info('Try again')
                 try:
                     # Remove only from the very beginning and very end
-                    cleaned = re.sub(
-                        r'^```json\s*', '', json_str
-                    )  # Remove from start
-                    cleaned = re.sub(r'\s*```$', '', cleaned)  # Remove from end
+                    cleaned = re.sub(r'^```json\s*', '',
+                                     json_str)  # Remove from start
+                    cleaned = re.sub(r'\s*```$', '',
+                                     cleaned)  # Remove from end
                     return json.loads(cleaned)
                 except Exception as e1:
-                    logger.error(
-                        'Error again in parse_artifacts_response: %s', e1
-                    )
+                    logger.error('Error again in parse_artifacts_response: %s',
+                                 e1)
                     raise
             # Structure artifacts with type information
             for artifact_type, items in artifact_data.items():
@@ -747,21 +724,18 @@ class ArtifactExtractor:
         for artifact_type, pattern in patterns.items():
             matches = re.findall(pattern, text, re.IGNORECASE)
             for match in matches[:3]:  # Limit to 3 per type
-                artifacts.append(
-                    {
-                        'type': artifact_type,
-                        'text': match.strip(),
-                        'description': match.strip(),
-                        'importance': 'Extracted from transcript',
-                        'relevance_score': 0.5,
-                    }
-                )
+                artifacts.append({
+                    'type': artifact_type,
+                    'text': match.strip(),
+                    'description': match.strip(),
+                    'importance': 'Extracted from transcript',
+                    'relevance_score': 0.5,
+                })
 
         return artifacts
 
-    def _calculate_relevance_scores(
-        self, artifacts: List[Dict[str, Any]], text: str
-    ) -> List[Dict[str, Any]]:
+    def _calculate_relevance_scores(self, artifacts: List[Dict[str, Any]],
+                                    text: str) -> List[Dict[str, Any]]:
         """Calculate relevance scores for artifacts based on context."""
         text_lower = text.lower()
         text_words = set(text_lower.split())
@@ -780,9 +754,8 @@ class ArtifactExtractor:
             artifact_words = set(artifact_text.split())
             overlap = len(artifact_words & text_words)
             if artifact_words:
-                score += (
-                    overlap / len(artifact_words)
-                ) * 0.3  # Max 0.3 from overlap
+                score += (overlap /
+                          len(artifact_words)) * 0.3  # Max 0.3 from overlap
 
             # Factor 3: Type importance (some types are inherently more important)
             type_weights = {
@@ -808,8 +781,8 @@ class ArtifactExtractor:
         return artifacts
 
     def _rank_and_filter_artifacts(
-        self, artifacts: List[Dict[str, Any]], min_score: float = 0.3
-    ) -> List[Dict[str, Any]]:
+            self, artifacts: List[Dict[str, Any]],
+            min_score: float = 0.3) -> List[Dict[str, Any]]:
         """Rank artifacts by relevance and filter low-quality ones."""
         # Filter artifacts with minimum score
         filtered = [
@@ -828,8 +801,7 @@ class ArtifactExtractor:
             if type_counts.get(artifact_type, 0) < 3:  # Max 3 per type
                 diverse_artifacts.append(artifact)
                 type_counts[artifact_type] = (
-                    type_counts.get(artifact_type, 0) + 1
-                )
+                    type_counts.get(artifact_type, 0) + 1)
 
         return diverse_artifacts
 
@@ -859,9 +831,8 @@ class ArtifactExtractor:
             # Fallback to rule-based ranking
             return self._rule_based_ranking(artifacts, top_k)
 
-    def _rule_based_ranking(
-        self, artifacts: List[Dict[str, Any]], top_k: int
-    ) -> List[Dict[str, Any]]:
+    def _rule_based_ranking(self, artifacts: List[Dict[str, Any]],
+                            top_k: int) -> List[Dict[str, Any]]:
         """Original rule-based ranking method."""
         # Prioritize certain types for Q&A generation
         qa_type_weights = {
@@ -886,9 +857,8 @@ class ArtifactExtractor:
 
         return artifacts[:top_k]
 
-    def _llm_rank_artifacts_for_qa(
-        self, artifacts: List[Dict[str, Any]], top_k: int
-    ) -> List[Dict[str, Any]]:
+    def _llm_rank_artifacts_for_qa(self, artifacts: List[Dict[str, Any]],
+                                   top_k: int) -> List[Dict[str, Any]]:
         """Use LLM to intelligently rank artifacts for Q&A generation.
 
         Args:
@@ -904,21 +874,24 @@ class ArtifactExtractor:
         try:
             # Format artifacts for LLM evaluation
             artifacts_text = ''
-            for i, artifact in enumerate(
-                artifacts[:15], 1
-            ):  # Limit to 15 for prompt size
+            for i, artifact in enumerate(artifacts[:15],
+                                         1):  # Limit to 15 for prompt size
                 artifacts_text += f'\n{i}. [{artifact["type"]}] {artifact["text"]}: {artifact["description"]}'
 
             prompt = llm_rank_artifacts_prompt_template.render(
-                top_k=top_k, artifacts_text=artifacts_text
-            )
+                top_k=top_k, artifacts_text=artifacts_text)
 
             messages = [
                 {
-                    'role': 'system',
-                    'content': 'You are an expert at evaluating content for educational Q&A generation.',
+                    'role':
+                    'system',
+                    'content':
+                    'You are an expert at evaluating content for educational Q&A generation.',
                 },
-                {'role': 'user', 'content': prompt},
+                {
+                    'role': 'user',
+                    'content': prompt
+                },
             ]
 
             response_text = self.client.generate(
@@ -928,9 +901,8 @@ class ArtifactExtractor:
             )
 
             numbers = re.findall(r'\d+', response_text)
-            selected_indices = [
-                int(n) - 1 for n in numbers[:top_k]
-            ]  # Convert to 0-based index
+            selected_indices = [int(n) - 1 for n in numbers[:top_k]
+                                ]  # Convert to 0-based index
 
             # Get the selected artifacts
             selected_artifacts = []
@@ -939,8 +911,7 @@ class ArtifactExtractor:
                     # Add LLM ranking score
                     artifact = artifacts[idx].copy()
                     artifact['llm_rank'] = len(
-                        selected_indices
-                    ) - selected_indices.index(idx)
+                        selected_indices) - selected_indices.index(idx)
                     artifact['qa_score'] = 1.0 - (
                         selected_indices.index(idx) * 0.1
                     )  # Higher score for earlier selections
@@ -950,10 +921,8 @@ class ArtifactExtractor:
             if len(selected_artifacts) < top_k:
                 remaining = self._rule_based_ranking(artifacts, top_k * 2)
                 for artifact in remaining:
-                    if (
-                        artifact not in selected_artifacts
-                        and len(selected_artifacts) < top_k
-                    ):
+                    if (artifact not in selected_artifacts
+                            and len(selected_artifacts) < top_k):
                         selected_artifacts.append(artifact)
 
             logger.info(
@@ -964,13 +933,11 @@ class ArtifactExtractor:
 
         except Exception as e:
             logger.warning(
-                'LLM ranking failed, falling back to rule-based: %s', e
-            )
+                'LLM ranking failed, falling back to rule-based: %s', e)
             return self._rule_based_ranking(artifacts, top_k)
 
-    def format_artifacts_for_prompt(
-        self, artifacts: List[Dict[str, Any]]
-    ) -> str:
+    def format_artifacts_for_prompt(self, artifacts: List[Dict[str,
+                                                               Any]]) -> str:
         """Format artifacts into a string suitable for inclusion in Q&A generation prompt.
 
         Args:
@@ -1021,9 +988,8 @@ class ArtifactExtractor:
             logger.error('Error loading artifacts: %s', e)
 
 
-def split_segments_text_structured(
-    segments: List[dict], parts: int = 3
-) -> List[str]:
+def split_segments_text_structured(segments: List[dict],
+                                   parts: int = 3) -> List[str]:
     """Most structured approach: Clear section headers and organized timestamp info."""
     total = len(segments)
     if total == 0:
@@ -1055,8 +1021,7 @@ def split_segments_text_structured(
         if section_segments:
             # Add section header
             section_text = f'=== Section {i + 1} ===\n' + '\n'.join(
-                section_segments
-            )
+                section_segments)
             splits.append(section_text)
 
     return splits
@@ -1070,9 +1035,8 @@ def format_timestamp(seconds: float) -> str:
     return f'{hours:02d}:{minutes:02d}:{secs:02d}'
 
 
-def text_to_sentence_chunks(
-    text: str, sentences_per_chunk: int = 5
-) -> List[dict]:
+def text_to_sentence_chunks(text: str,
+                            sentences_per_chunk: int = 5) -> List[dict]:
     """Alternative: Chunk by sentences for more natural boundaries."""
     logger.debug('text length: %d', len(text))
     import re
@@ -1086,7 +1050,7 @@ def text_to_sentence_chunks(
     word_position = 0
 
     for i in range(0, len(sentences), sentences_per_chunk):
-        chunk_sentences = sentences[i : i + sentences_per_chunk]
+        chunk_sentences = sentences[i:i + sentences_per_chunk]
         chunk_text = '. '.join(chunk_sentences)
         if chunk_text and not chunk_text.endswith('.'):
             chunk_text += '.'
@@ -1096,16 +1060,14 @@ def text_to_sentence_chunks(
         end_word_pos = word_position + len(chunk_words)
         word_position = end_word_pos
 
-        chunks.append(
-            {
-                'text': chunk_text,
-                'start': start_word_pos,
-                'end': end_word_pos,
-                'sentence_count': len(chunk_sentences),
-                'word_count': len(chunk_words),
-                'chunk_id': len(chunks) + 1,
-            }
-        )
+        chunks.append({
+            'text': chunk_text,
+            'start': start_word_pos,
+            'end': end_word_pos,
+            'sentence_count': len(chunk_sentences),
+            'word_count': len(chunk_words),
+            'chunk_id': len(chunks) + 1,
+        })
 
     logger.debug('num chunks: %d', len(chunks))
     return chunks
@@ -1142,7 +1104,7 @@ async def load_input(state: QAGenerationState) -> Dict[str, Any]:
 
     # PLAIN TEXT FILE
     logger.info('[%s] Processing as plain text file', file_path)
-    with open(file_path, 'r', encoding='utf-8') as f:
+    with open(file_path, encoding='utf-8') as f:
         text = f.read()
 
     if not text.strip():
@@ -1189,14 +1151,12 @@ async def create_artifacts(state: QAGenerationState) -> Dict[str, Any]:
             # Select top artifacts for this split
             text_extractor = ArtifactExtractor(client)
             top_artifacts = text_extractor.get_top_artifacts_for_qa(
-                all_artifacts, top_k=5, use_llm_ranking=True
-            )
+                all_artifacts, top_k=5, use_llm_ranking=True)
 
             logger.debug('all_artifacts: %d', len(all_artifacts))
             logger.debug('top_artifacts: %d', len(top_artifacts))
             top_artifacts_str = text_extractor.format_artifacts_for_prompt(
-                top_artifacts
-            )
+                top_artifacts)
             logger.debug('top_artifacts_str: %d', len(top_artifacts_str))
             artifacts_str_splits.append(top_artifacts_str)
 
@@ -1207,16 +1167,11 @@ async def create_artifacts(state: QAGenerationState) -> Dict[str, Any]:
 
 
 def _normalize_segment_metadata(
-    segments: List[Dict[str, Any]],
-) -> List[Dict[str, Any]]:
+    segments: List[Dict[str, Any]], ) -> List[Dict[str, Any]]:
     metadata = []
     for idx, seg in enumerate(segments):
-        seg_id = (
-            seg.get('segment_id')
-            or seg.get('id')
-            or seg.get('segmentIndex')
-            or idx + 1
-        )
+        seg_id = (seg.get('segment_id') or seg.get('id')
+                  or seg.get('segmentIndex') or idx + 1)
         start_seconds = seg.get('start')
         end_seconds = seg.get('end')
         if isinstance(start_seconds, str):
@@ -1229,20 +1184,22 @@ def _normalize_segment_metadata(
                 end_seconds = float(end_seconds)
             except ValueError:
                 end_seconds = None
-        metadata.append(
-            {
-                'segment_id': int(seg_id),
-                'start_seconds': start_seconds,
-                'end_seconds': end_seconds,
-                'start_time': format_timestamp(start_seconds)
-                if start_seconds is not None
-                else '00:00:00',
-                'end_time': format_timestamp(end_seconds)
-                if end_seconds is not None
-                else '00:00:00',
-                'text': seg.get('text', '').strip(),
-            }
-        )
+        metadata.append({
+            'segment_id':
+            int(seg_id),
+            'start_seconds':
+            start_seconds,
+            'end_seconds':
+            end_seconds,
+            'start_time':
+            format_timestamp(start_seconds)
+            if start_seconds is not None else '00:00:00',
+            'end_time':
+            format_timestamp(end_seconds)
+            if end_seconds is not None else '00:00:00',
+            'text':
+            seg.get('text', '').strip(),
+        })
     return metadata
 
 
@@ -1261,9 +1218,8 @@ def extract_json_from_response(response_text: str) -> List[dict]:
         logger.info('Try again')
         try:
             # Remove only from the very beginning and very end
-            cleaned = re.sub(
-                r'^```json\s*', '', response_text
-            )  # Remove from start
+            cleaned = re.sub(r'^```json\s*', '',
+                             response_text)  # Remove from start
             cleaned = re.sub(r'^```\s*', '', cleaned)  # Remove from start
             cleaned = re.sub(r'\s*```$', '', cleaned)  # Remove from end
             return json.loads(cleaned)
@@ -1303,7 +1259,8 @@ def extract_timeline_from_response(response_text: str) -> Dict[str, Any]:
                 return data
         except json.JSONDecodeError:
             pass
-    raise ValueError('Failed to extract structured timeline JSON from response')
+    raise ValueError(
+        'Failed to extract structured timeline JSON from response')
 
 
 def parse_timestamp(ts: str) -> int:
@@ -1316,8 +1273,8 @@ def parse_timestamp(ts: str) -> int:
 
 
 def validate_timeline_events(
-    events: List[Dict[str, Any]], segment_lookup: Dict[int, Dict[str, Any]]
-) -> List[Dict[str, Any]]:
+        events: List[Dict[str, Any]],
+        segment_lookup: Dict[int, Dict[str, Any]]) -> List[Dict[str, Any]]:
     validated: List[Dict[str, Any]] = []
     seen_ids = set()
     for event in events:
@@ -1343,21 +1300,16 @@ def validate_timeline_events(
 
         seg_start = segment.get('start_seconds')
         seg_end = segment.get('end_seconds')
-        if seg_start is not None and (
-            start_seconds is None or start_seconds < seg_start
-        ):
+        if seg_start is not None and (start_seconds is None
+                                      or start_seconds < seg_start):
             start_seconds = seg_start
             start_time = segment['start_time']
-        if seg_end is not None and (
-            end_seconds is None or end_seconds > seg_end
-        ):
+        if seg_end is not None and (end_seconds is None
+                                    or end_seconds > seg_end):
             end_seconds = seg_end
             end_time = segment['end_time']
-        if (
-            start_seconds is None
-            or end_seconds is None
-            or start_seconds > end_seconds
-        ):
+        if (start_seconds is None or end_seconds is None
+                or start_seconds > end_seconds):
             continue
 
         headline = (event.get('headline') or '').strip()
@@ -1382,7 +1334,9 @@ def validate_timeline_events(
 
         entities = event.get('entities')
         if isinstance(entities, list):
-            entities = [str(e).strip()[:60] for e in entities if str(e).strip()]
+            entities = [
+                str(e).strip()[:60] for e in entities if str(e).strip()
+            ]
             entities = entities[:4]
         else:
             entities = []
@@ -1392,22 +1346,20 @@ def validate_timeline_events(
             continue
         seen_ids.add(unique_key)
 
-        validated.append(
-            {
-                'segment_id': seg_id,
-                'start_time': format_timestamp(start_seconds),
-                'end_time': format_timestamp(end_seconds),
-                'start_seconds': start_seconds,
-                'end_seconds': end_seconds,
-                'headline': headline,
-                'key_details': key_details,
-                'key_quote': key_quote,
-                'impact': impact,
-                'entities': entities,
-                'source': 'timeline',
-                'segment_text': segment['text'],
-            }
-        )
+        validated.append({
+            'segment_id': seg_id,
+            'start_time': format_timestamp(start_seconds),
+            'end_time': format_timestamp(end_seconds),
+            'start_seconds': start_seconds,
+            'end_seconds': end_seconds,
+            'headline': headline,
+            'key_details': key_details,
+            'key_quote': key_quote,
+            'impact': impact,
+            'entities': entities,
+            'source': 'timeline',
+            'segment_text': segment['text'],
+        })
     validated.sort(key=lambda ev: ev.get('start_seconds', 0))
     return validated
 
@@ -1424,36 +1376,35 @@ def generate_structured_timeline(
     prompt_segments = []
     for seg in segment_metadata[:max_segments]:
         text = seg['text'].replace('\n', ' ')
-        prompt_segments.append(
-            {
-                'segment_id': seg['segment_id'],
-                'start_time': seg['start_time'],
-                'end_time': seg['end_time'],
-                'text': text[:220],
-            }
-        )
-    prompt = generate_timeline_prompt_template.render(
-        segments=prompt_segments, max_events=max_events
-    )
+        prompt_segments.append({
+            'segment_id': seg['segment_id'],
+            'start_time': seg['start_time'],
+            'end_time': seg['end_time'],
+            'text': text[:220],
+        })
+    prompt = generate_timeline_prompt_template.render(segments=prompt_segments,
+                                                      max_events=max_events)
     messages = [
-        {'role': 'system', 'content': 'Expert timeline summarizer.'},
-        {'role': 'user', 'content': prompt},
+        {
+            'role': 'system',
+            'content': 'Expert timeline summarizer.'
+        },
+        {
+            'role': 'user',
+            'content': prompt
+        },
     ]
     response = client.generate(messages, temperature=0.2)
     timeline_data = extract_timeline_from_response(response)
-    events = (
-        timeline_data.get('timeline', [])
-        if isinstance(timeline_data, dict)
-        else []
-    )
+    events = (timeline_data.get('timeline', []) if isinstance(
+        timeline_data, dict) else [])
     lookup = {item['segment_id']: item for item in segment_metadata}
     validated = validate_timeline_events(events, lookup)
     return validated[:max_events]
 
 
-def format_timeline_highlights(
-    events: List[Dict[str, Any]], limit: int = 8
-) -> List[str]:
+def format_timeline_highlights(events: List[Dict[str, Any]],
+                               limit: int = 8) -> List[str]:
     lines = []
     for event in events[:limit]:
         headline = event.get('headline', '').strip()
@@ -1473,7 +1424,8 @@ _SEGMENT_LINE_PATTERN = re.compile(
 )
 
 
-def _parse_structured_lines(raw: str) -> Tuple[List[str], List[Dict[str, Any]]]:
+def _parse_structured_lines(
+        raw: str) -> Tuple[List[str], List[Dict[str, Any]]]:
     """Extract clean lines and timestamp metadata from a structured split."""
     lines: List[str] = []
     entries: List[Dict[str, Any]] = []
@@ -1493,22 +1445,20 @@ def _parse_structured_lines(raw: str) -> Tuple[List[str], List[Dict[str, Any]]]:
                 end_seconds = parse_timestamp(end_ts)
             except Exception:
                 start_seconds = end_seconds = None
-            entries.append(
-                {
-                    'segment_id': int(segment_id),
-                    'start': start_ts,
-                    'end': end_ts,
-                    'start_seconds': start_seconds,
-                    'end_seconds': end_seconds,
-                    'text': text.strip(),
-                }
-            )
+            entries.append({
+                'segment_id': int(segment_id),
+                'start': start_ts,
+                'end': end_ts,
+                'start_seconds': start_seconds,
+                'end_seconds': end_seconds,
+                'text': text.strip(),
+            })
     return lines, entries
 
 
 def build_cross_part_contexts_from_segments(
-    splits: List[str], max_sections: int = 3, max_chars: int = 1200
-) -> List[Dict[str, Any]]:
+        splits: List[str], max_sections: int = 3,
+        max_chars: int = 1200) -> List[Dict[str, Any]]:
     """Construct per-part summaries of other transcript sections to encourage
     cross-part multi-hop reasoning while retaining timestamp metadata for
     validation.
@@ -1563,15 +1513,18 @@ def build_cross_part_contexts_from_segments(
 
                 if entry_idx < len(entries):
                     entry = entries[entry_idx]
-                    allowed_ranges.append(
-                        {
-                            'start': entry['start'],
-                            'end': entry['end'],
-                            'start_seconds': entry['start_seconds'],
-                            'end_seconds': entry['end_seconds'],
-                            'source': f'section_{jdx + 1}',
-                        }
-                    )
+                    allowed_ranges.append({
+                        'start':
+                        entry['start'],
+                        'end':
+                        entry['end'],
+                        'start_seconds':
+                        entry['start_seconds'],
+                        'end_seconds':
+                        entry['end_seconds'],
+                        'source':
+                        f'section_{jdx + 1}',
+                    })
                     entry_idx += 1
                     entries_added += 1
 
@@ -1584,26 +1537,23 @@ def build_cross_part_contexts_from_segments(
                 other_sections_text.append(formatted)
                 sections_added += 1
 
-        contexts.append(
-            {
-                'text': '\n\n'.join(other_sections_text).strip(),
-                'ranges': [
-                    rng
-                    for rng in allowed_ranges
-                    if rng.get('start') and rng.get('end')
-                ],
-                'metadata': {
-                    'total_other_sections': max(0, total_splits - 1),
-                    'sections_included': len(other_sections_text),
-                    'sections_truncated': sorted(set(sections_truncated)),
-                },
-            }
-        )
+        contexts.append({
+            'text':
+            '\n\n'.join(other_sections_text).strip(),
+            'ranges': [
+                rng for rng in allowed_ranges
+                if rng.get('start') and rng.get('end')
+            ],
+            'metadata': {
+                'total_other_sections': max(0, total_splits - 1),
+                'sections_included': len(other_sections_text),
+                'sections_truncated': sorted(set(sections_truncated)),
+            },
+        })
 
         meta = contexts[-1]['metadata']
-        if meta.get('total_other_sections', 0) and not meta.get(
-            'sections_included'
-        ):
+        if meta.get('total_other_sections',
+                    0) and not meta.get('sections_included'):
             logger.debug(
                 f'Cross-part context for section {idx + 1} did not include any additional segments within the current character budget.'
             )
@@ -1621,9 +1571,8 @@ def build_cross_part_contexts_with_timeline(
     highlight_limit: int = 8,
     max_external_events: int = 5,
 ) -> List[Dict[str, Any]]:
-    global_highlights = format_timeline_highlights(
-        timeline_events, limit=highlight_limit
-    )
+    global_highlights = format_timeline_highlights(timeline_events,
+                                                   limit=highlight_limit)
     contexts: List[Dict[str, Any]] = []
     parsed_sections: List[Tuple[List[str], List[Dict[str, Any]]]] = []
     for raw in splits:
@@ -1632,12 +1581,10 @@ def build_cross_part_contexts_with_timeline(
     for _idx, (_, entries) in enumerate(parsed_sections):
         segment_ids = {
             entry.get('segment_id')
-            for entry in entries
-            if entry.get('segment_id') is not None
+            for entry in entries if entry.get('segment_id') is not None
         }
         external_events = [
-            event
-            for event in timeline_events
+            event for event in timeline_events
             if event.get('segment_id') not in segment_ids
         ]
         external_lines = []
@@ -1654,16 +1601,14 @@ def build_cross_part_contexts_with_timeline(
             if quote:
                 entry += f' | Quote: {quote}'
             external_lines.append(entry[:500])
-            cross_ranges.append(
-                {
-                    'start': event['start_time'],
-                    'end': event['end_time'],
-                    'start_seconds': event.get('start_seconds'),
-                    'end_seconds': event.get('end_seconds'),
-                    'source': f'segment_{event["segment_id"]}',
-                    'segment_id': event['segment_id'],
-                }
-            )
+            cross_ranges.append({
+                'start': event['start_time'],
+                'end': event['end_time'],
+                'start_seconds': event.get('start_seconds'),
+                'end_seconds': event.get('end_seconds'),
+                'source': f'segment_{event["segment_id"]}',
+                'segment_id': event['segment_id'],
+            })
 
         text_lines = []
         if global_highlights:
@@ -1674,16 +1619,14 @@ def build_cross_part_contexts_with_timeline(
             text_lines.extend(external_lines)
         cross_context_text = '\n'.join(text_lines).strip()
 
-        contexts.append(
-            {
-                'text': cross_context_text,
-                'ranges': cross_ranges,
-                'metadata': {
-                    'source': 'timeline',
-                    'external_events': len(external_lines),
-                },
-            }
-        )
+        contexts.append({
+            'text': cross_context_text,
+            'ranges': cross_ranges,
+            'metadata': {
+                'source': 'timeline',
+                'external_events': len(external_lines),
+            },
+        })
 
     return contexts
 
@@ -1704,10 +1647,17 @@ infer_video_style_prompt_template = Template(infer_video_style_prompt)
 
 
 def infer_video_style(segment_text: str, client: LLMClient) -> str:
-    prompt = infer_video_style_prompt_template.render(segment_text=segment_text)
+    prompt = infer_video_style_prompt_template.render(
+        segment_text=segment_text)
     messages = [
-        {'role': 'system', 'content': 'Expert video classifier.'},
-        {'role': 'user', 'content': prompt},
+        {
+            'role': 'system',
+            'content': 'Expert video classifier.'
+        },
+        {
+            'role': 'user',
+            'content': prompt
+        },
     ]
     resp = client.generate(messages, temperature=0.4)
     return resp.splitlines()[0].strip()
@@ -1749,9 +1699,8 @@ ARTIFACT-ENHANCED HARD QUESTION INSTRUCTIONS:
     return artifact_block
 
 
-def distribute_counts(
-    total_count: int, distribution: Dict[str, float], name: str = ''
-) -> Dict[str, int]:
+def distribute_counts(total_count: int, distribution: Dict[str, float],
+                      name: str = '') -> Dict[str, int]:
     """Distribute a total count across categories based on percentages using smart rounding.
 
     This algorithm solves the problem of fairly distributing small integers according to
@@ -1790,13 +1739,15 @@ def distribute_counts(
 
     # Step 1: Calculate exact (floating-point) values for each category
     # Example: 3 * 0.4 = 1.2, 3 * 0.3 = 0.9, 3 * 0.3 = 0.9
-    exact_counts = {cat: total_count * pct for cat, pct in distribution.items()}
+    exact_counts = {
+        cat: total_count * pct
+        for cat, pct in distribution.items()
+    }
 
     # Step 2: Sort by fractional part descending (0.9, 0.9, 0.2)
     # This ensures categories closest to rounding up get priority
-    sorted_cats = sorted(
-        exact_counts.items(), key=lambda x: x[1] % 1, reverse=True
-    )
+    sorted_cats = sorted(exact_counts.items(), key=lambda x: x[1] % 1,
+                         reverse=True)
 
     # Step 3: Assign floor values first (everyone gets their integer part)
     # Example: A gets 1, B gets 0, C gets 0
@@ -1820,9 +1771,8 @@ def distribute_counts(
 
     # Log the distribution for debugging
     if name:
-        logger.info(
-            '%s distribution for %d items: %s', name, total_count, counts
-        )
+        logger.info('%s distribution for %d items: %s', name, total_count,
+                    counts)
 
     return counts
 
@@ -1857,7 +1807,7 @@ Guidelines:
    - Procedural questions ({{reasoning_counts.get("procedural", 0)}} questions): Ask about complex multi-step processes or guidelines
    - Visual questions ({{reasoning_counts.get("visual", 0)}} questions): Ask about visual details requiring cross-reference
    - Causal questions ({{reasoning_counts.get("causal", 0)}} questions): Ask about cause-effect chains spanning segments
-   
+
    Example COMPLEX questions by reasoning type (all must be complexity 4-5):
    - Factual: "What is the total combined budget allocation across all departmental initiatives mentioned, and how does it relate to the overall fiscal year target?"
    - Relational: "How does the performance metric achieved in Q2 compare to both the initial baseline and the revised targets that were set?"
@@ -1935,8 +1885,7 @@ Please ensure your output is ONLY the JSON object with no preamble or additional
 """
 
 generate_hard_question_answer_with_timestamps_template = Template(
-    generate_hard_question_answer_with_timestamps_prompt
-)
+    generate_hard_question_answer_with_timestamps_prompt)
 
 
 def _normalize_time_value(value: Any, fallback: str = '') -> str:
@@ -2007,19 +1956,14 @@ def normalize_hop_contexts(pair: Dict[str, Any]) -> List[Dict[str, Any]]:
 
         # Extract and normalize timestamps
         start_time = _normalize_time_value(
-            hop_entry.get('start_time') or hop_entry.get('start'), default_start
-        )
+            hop_entry.get('start_time') or hop_entry.get('start'),
+            default_start)
         end_time = _normalize_time_value(
-            hop_entry.get('end_time') or hop_entry.get('end'), default_end
-        )
+            hop_entry.get('end_time') or hop_entry.get('end'), default_end)
 
         # Extract context (required field)
-        context = (
-            hop_entry.get('context')
-            or hop_entry.get('summary')
-            or hop_entry.get('text')
-            or ''
-        )
+        context = (hop_entry.get('context') or hop_entry.get('summary')
+                   or hop_entry.get('text') or '')
         context = context.strip()
         if not context:
             # Skip entries without context
@@ -2053,8 +1997,8 @@ def _range_contains(start: int, end: int, candidate: Dict[str, Any]) -> bool:
 
 
 def _find_best_matching_range(
-    start: int, candidates: List[Dict[str, Any]]
-) -> Optional[Dict[str, Any]]:
+        start: int, candidates: List[Dict[str,
+                                          Any]]) -> Optional[Dict[str, Any]]:
     best: Optional[Dict[str, Any]] = None
     best_delta: Optional[int] = None
     for candidate in candidates:
@@ -2102,8 +2046,7 @@ def validate_hop_context_time_ranges(
                     if _range_contains(start_seconds, end_seconds, candidate):
                         target_range = candidate.copy()
                         target_range['source'] = candidate.get(
-                            'source', 'cross'
-                        )
+                            'source', 'cross')
                         break
 
         if target_range:
@@ -2123,8 +2066,7 @@ def validate_hop_context_time_ranges(
             hop_entry['source'] = best_match.get('source')
             warnings.append(
                 f'Hop {hop_entry.get("hop")} timestamps adjusted to nearest available range '
-                f'({best_match.get("start")} - {best_match.get("end")}).'
-            )
+                f'({best_match.get("start")} - {best_match.get("end")}).')
         else:
             warnings.append(
                 f'Hop {hop_entry.get("hop")} timestamps ({start_ts} - {end_ts}) do not map to known segments.'
@@ -2169,16 +2111,15 @@ def generate_hard_question_answer_with_timestamps(
         }
 
     # Use utility function for better distribution
-    query_counts = distribute_counts(
-        num_pairs, query_type_distribution, 'Query type'
-    )
+    query_counts = distribute_counts(num_pairs, query_type_distribution,
+                                     'Query type')
 
     # Calculate reasoning type distribution
     reasoning_counts = {}
     if reasoning_type_distribution:
-        reasoning_counts = distribute_counts(
-            num_pairs, reasoning_type_distribution, 'Reasoning type'
-        )
+        reasoning_counts = distribute_counts(num_pairs,
+                                             reasoning_type_distribution,
+                                             'Reasoning type')
 
     prompt = generate_hard_question_answer_with_timestamps_template.render(
         artifact_block=artifact_block,
@@ -2198,8 +2139,14 @@ def generate_hard_question_answer_with_timestamps(
     logger.debug('final_prompt: %s', prompt)
 
     messages = [
-        {'role': 'system', 'content': 'Complex QA generation expert.'},
-        {'role': 'user', 'content': prompt},
+        {
+            'role': 'system',
+            'content': 'Complex QA generation expert.'
+        },
+        {
+            'role': 'user',
+            'content': prompt
+        },
     ]
 
     max_prompt_attempts = 3
@@ -2217,9 +2164,9 @@ def generate_hard_question_answer_with_timestamps(
 
             hop_contexts = normalize_hop_contexts(pair)
             if allowed_ranges_local or allowed_ranges_cross:
-                validate_hop_context_time_ranges(
-                    pair, allowed_ranges_local or [], allowed_ranges_cross or []
-                )
+                validate_hop_context_time_ranges(pair, allowed_ranges_local
+                                                 or [], allowed_ranges_cross
+                                                 or [])
             if not hop_contexts:
                 all_valid = False
                 logger.warning(
@@ -2302,7 +2249,7 @@ Guidelines:
    - Procedural questions ({{reasoning_counts.get("procedural", 0)}} questions): Ask about steps or guidelines
    - Visual questions ({{reasoning_counts.get("visual", 0)}} questions): Ask about unique visual details
    - Causal questions ({{reasoning_counts.get("causal", 0)}} questions): Ask about causes, reasons, or contributing factors
-   
+
    Example questions by reasoning type:
    - Factual: "How many paid time off days are employees eligible for per year?"
    - Relational: "How did sales revenue compare to expenses in Q3 2023?"
@@ -2317,7 +2264,7 @@ Guidelines:
    - Each pair must be unique and have varying complexity levels between 1 (simple) and 5 (complex).
    - For each pair, identify the start and end time (in HH:MM:SS format) that best supports the answer.
 
-6. **IMPORTANT - Segment Identification**: 
+6. **IMPORTANT - Segment Identification**:
    - The transcript below contains segments formatted as "Segment N (HH:MM:SS - HH:MM:SS): text" where N starts from 1
    - For each question-answer pair you generate, identify ALL segment numbers FROM which the question is derived
    - These segments contain the source material that inspired the question and provide the answer
@@ -2356,11 +2303,10 @@ Output a JSON array where each element is an object with the following keys:
   - "start_time"
   - "end_time"
 
-Please ensure your output is ONLY the JSON object with no preamble or additional text.  
+Please ensure your output is ONLY the JSON object with no preamble or additional text.
 """
 generate_question_answer_with_timestamps_template = Template(
-    generate_question_answer_with_timestamps_prompt
-)
+    generate_question_answer_with_timestamps_prompt)
 
 
 def generate_question_answer_with_timestamps(
@@ -2389,9 +2335,8 @@ def generate_question_answer_with_timestamps(
 
         if remaining > 0:
             # Add remainder to most common type
-            reasoning_counts['factual'] = (
-                reasoning_counts.get('factual', 0) + remaining
-            )
+            reasoning_counts['factual'] = (reasoning_counts.get('factual', 0) +
+                                           remaining)
 
     prompt = generate_question_answer_with_timestamps_template.render(
         artifact_block=artifact_block,
@@ -2404,16 +2349,21 @@ def generate_question_answer_with_timestamps(
     )
     logger.debug('final_prompt: %s', prompt)
     messages = [
-        {'role': 'system', 'content': 'QA generation expert.'},
-        {'role': 'user', 'content': prompt},
+        {
+            'role': 'system',
+            'content': 'QA generation expert.'
+        },
+        {
+            'role': 'user',
+            'content': prompt
+        },
     ]
     resp = client.generate(messages, temperature=0.3)
     return extract_json_from_response(resp)
 
 
 def extract_time_ranges_from_structured_text(
-    structured_text: str,
-) -> List[Dict[str, Any]]:
+    structured_text: str, ) -> List[Dict[str, Any]]:
     """Parse structured segment text to retrieve timestamp ranges."""
     ranges: List[Dict[str, Any]] = []
     for line in structured_text.splitlines():
@@ -2426,21 +2376,18 @@ def extract_time_ranges_from_structured_text(
             end_seconds = parse_timestamp(end_ts)
         except Exception:
             start_seconds = end_seconds = None
-        ranges.append(
-            {
-                'start': start_ts,
-                'end': end_ts,
-                'start_seconds': start_seconds,
-                'end_seconds': end_seconds,
-                'source': 'local',
-            }
-        )
+        ranges.append({
+            'start': start_ts,
+            'end': end_ts,
+            'start_seconds': start_seconds,
+            'end_seconds': end_seconds,
+            'source': 'local',
+        })
     return ranges
 
 
-def process_segments_info(
-    qa_pair: Dict[str, Any], segments: List[Dict[str, Any]]
-) -> None:
+def process_segments_info(qa_pair: Dict[str, Any],
+                          segments: List[Dict[str, Any]]) -> None:
     """Process segment_ids in a QA pair and calculate start_time and end_time.
     Also processes hop_contexts if present, and ensures top-level segment_ids
     is the union of all hop-level segment_ids.
@@ -2486,8 +2433,7 @@ def process_segments_info(
     if hop_segment_ids_union:
         # Use the larger set (union of both)
         final_segment_ids = sorted(
-            top_level_segment_ids.union(hop_segment_ids_union)
-        )
+            top_level_segment_ids.union(hop_segment_ids_union))
         qa_pair['segment_ids'] = final_segment_ids
     elif top_level_segment_ids:
         # No hop contexts, just use top-level as-is
@@ -2535,9 +2481,9 @@ async def generate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
         state.get(
             'query_type_distribution',
             '{"multi_hop":0.4,"structural":0.3,"contextual":0.3}',
-        )
-    )
-    reasoning_type_distribution = state.get('reasoning_type_distribution', None)
+        ))
+    reasoning_type_distribution = state.get('reasoning_type_distribution',
+                                            None)
     if reasoning_type_distribution:
         reasoning_type_distribution = json.loads(reasoning_type_distribution)
     min_complexity = state.get('min_complexity', 4)
@@ -2576,25 +2522,21 @@ async def generate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
         if hard_mode:
             try:
                 timeline_events = generate_structured_timeline(
-                    segments, client=client
-                )
+                    segments, client=client)
                 logger.info(
                     f'[{state["task_id"]}] Timeline events extracted: {len(timeline_events)}'
                 )
             except Exception as e:
                 logger.warning(
-                    f'[{state["task_id"]}] Timeline generation failed: {e}'
-                )
+                    f'[{state["task_id"]}] Timeline generation failed: {e}')
                 traceback.print_exc()
 
         if len(timeline_events) > 0:
             cross_part_contexts = build_cross_part_contexts_with_timeline(
-                splits, timeline_events
-            )
+                splits, timeline_events)
         else:
             cross_part_contexts = build_cross_part_contexts_from_segments(
-                splits
-            )
+                splits)
 
         # Calculate pairs per split
         pps = max(1, num_pairs // max(1, len(splits)))
@@ -2606,8 +2548,7 @@ async def generate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
 
         # Infer video style from the transcript
         sample_text = transcription_segment_text(
-            segments[:10]
-        )  # Use first 10 segments for inference
+            segments[:10])  # Use first 10 segments for inference
         video_style = infer_video_style(sample_text, client)
         logger.info('Inferred video style: %s', video_style)
 
@@ -2617,25 +2558,23 @@ async def generate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
                 state.get(
                     'query_type_distribution',
                     '{"multi_hop":0.4,"structural":0.3,"contextual":0.3}',
-                )
-            )
+                ))
             reasoning_type_distribution_str = state.get(
-                'reasoning_type_distribution', None
-            )
+                'reasoning_type_distribution', None)
             if reasoning_type_distribution_str:
                 reasoning_type_distribution = json.loads(
-                    reasoning_type_distribution_str
-                )
+                    reasoning_type_distribution_str)
             min_hops = state.get('min_hops', 2)
             max_hops = state.get('max_hops', 4)
 
         split_idx = 0
         for idx, seg_text in enumerate(splits):
-            cross_context_info = (
-                cross_part_contexts[idx]
-                if idx < len(cross_part_contexts)
-                else {'text': '', 'ranges': [], 'metadata': {}}
-            )
+            cross_context_info = (cross_part_contexts[idx]
+                                  if idx < len(cross_part_contexts) else {
+                                      'text': '',
+                                      'ranges': [],
+                                      'metadata': {}
+                                  })
             cross_context = cross_context_info.get('text', '')
             cross_ranges = cross_context_info.get('ranges', [])
             context_meta = cross_context_info.get('metadata', {})
@@ -2643,10 +2582,8 @@ async def generate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
                 logger.debug(
                     f'[{state["task_id"]}] Cross-part context for split {idx + 1} truncated sections: {context_meta["sections_truncated"]}'
                 )
-            if (
-                context_meta.get('source') == 'timeline'
-                and context_meta.get('external_events', 0) == 0
-            ):
+            if (context_meta.get('source') == 'timeline'
+                    and context_meta.get('external_events', 0) == 0):
                 logger.debug(
                     f'[{state["task_id"]}] Timeline context for split {idx + 1} had no external events'
                 )
@@ -2657,9 +2594,8 @@ async def generate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
             # Use the actual generate_question_answer function from helper
             retry_count = 0
             split_idx += 1
-            top_artifacts = (
-                artifacts_str_splits[idx] if artifacts_str_splits else None
-            )
+            top_artifacts = (artifacts_str_splits[idx]
+                             if artifacts_str_splits else None)
 
             while retry_count < max_retries:
                 try:
@@ -2671,7 +2607,8 @@ async def generate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
                             client=client,
                             summary=summary,
                             query_type_distribution=query_type_distribution,
-                            reasoning_type_distribution=reasoning_type_distribution,
+                            reasoning_type_distribution=
+                            reasoning_type_distribution,
                             min_complexity=min_complexity,
                             min_hops=min_hops,
                             max_hops=max_hops,
@@ -2680,8 +2617,7 @@ async def generate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
                             allowed_ranges_local=local_ranges,
                             allowed_ranges_cross=cross_ranges,
                             self_contained_question=state.get(
-                                'self_contained_question', False
-                            ),
+                                'self_contained_question', False),
                         )
                     else:
                         qa = generate_question_answer_with_timestamps(  # FIXED: Use timestamp version
@@ -2690,11 +2626,11 @@ async def generate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
                             num_pairs=pps,
                             client=client,
                             summary=summary,
-                            reasoning_type_distribution=reasoning_type_distribution,
+                            reasoning_type_distribution=
+                            reasoning_type_distribution,
                             artifacts_context=top_artifacts,
                             self_contained_question=state.get(
-                                'self_contained_question', False
-                            ),
+                                'self_contained_question', False),
                         )
 
                     # Process segment_ids to calculate timestamps
@@ -2761,7 +2697,7 @@ def get_embeddings(
 ):
     embs = []
     for i in range(0, len(texts), batch_size):
-        batch = texts[i : i + batch_size]
+        batch = texts[i:i + batch_size]
         resp = client.embed(
             prompts=batch,
             input_type=input_type,
@@ -2801,8 +2737,7 @@ def validate_answer_spans_hybrid(
 
     if not os.path.exists(idx_path) or not os.path.exists(meta_path):
         logger.info(
-            f'Creating {base_name} index.faiss and metadata.pkl in {edir}'
-        )
+            f'Creating {base_name} index.faiss and metadata.pkl in {edir}')
         texts = [s['text'] for s in segments]
         embs = get_embeddings(texts, client=client, input_type='passage')
         embs = np.array(embs, dtype='float32')
@@ -2810,9 +2745,8 @@ def validate_answer_spans_hybrid(
         logger.info('index.faiss and metadata.pkl are created')
 
     index = faiss.read_index(str(idx_path))
-    metadata = pickle.load(
-        open(meta_path, 'rb')
-    )  # list of {"start":ms,"end":ms,...}
+    metadata = pickle.load(open(meta_path,
+                                'rb'))  # list of {"start":ms,"end":ms,...}
 
     for qa in qa_pairs:
         ans = qa['answer'].strip()
@@ -2864,9 +2798,8 @@ def validate_answer_spans_hybrid(
 
         valid.append(qa)
 
-    logger.info(
-        'total qa pairs: %d, valid pairs: %d', len(qa_pairs), len(valid)
-    )
+    logger.info('total qa pairs: %d, valid pairs: %d', len(qa_pairs),
+                len(valid))
     return valid
 
 
@@ -2981,15 +2914,16 @@ async def validate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
         }
 
         logger.info(
-            f'Validated {len(validated_pairs)}/{len(qa_pairs)} QA pairs'
-        )
+            f'Validated {len(validated_pairs)}/{len(qa_pairs)} QA pairs')
 
         return {
-            'validated_pairs': validated_pairs,
-            'validation_results': validation_results,
-            'status': TaskStatus.PROCESSING.value
-            if validated_pairs
-            else TaskStatus.FAILED.value,
+            'validated_pairs':
+            validated_pairs,
+            'validation_results':
+            validation_results,
+            'status':
+            TaskStatus.PROCESSING.value
+            if validated_pairs else TaskStatus.FAILED.value,
         }
 
     except Exception as e:
@@ -2998,20 +2932,20 @@ async def validate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
         return {
             'error_messages': state.get('error_messages', []) + [str(e)],
             'status': TaskStatus.FAILED.value,
-            'validation_results': {'error': str(e)},
+            'validation_results': {
+                'error': str(e)
+            },
         }
 
 
 async def mine_hard_negative_segments(
-    state: QAGenerationState,
-) -> Dict[str, Any]:
+    state: QAGenerationState, ) -> Dict[str, Any]:
     """Mine hard negative segments for each QA pair using embedding similarity."""
     logger.info('Mining hard negative segments for task %s', state['task_id'])
 
     if not state.get('enable_hard_negatives', False):
         logger.info(
-            'Hard negative mining disabled via configuration; skipping.'
-        )
+            'Hard negative mining disabled via configuration; skipping.')
         qa_pairs = state.get('validated_pairs', [])
         for qa_pair in qa_pairs:
             qa_pair['hard_negative_segment_ids'] = []
@@ -3036,8 +2970,7 @@ async def mine_hard_negative_segments(
     # Skip if no segments (like in image-only mode)
     if not segments or len(segments) == 0:
         logger.info(
-            'No segments available, skipping hard negative segment mining'
-        )
+            'No segments available, skipping hard negative segment mining')
         for qa_pair in qa_pairs:
             qa_pair['hard_negative_segment_ids'] = []
             qa_pair['hard_negatives_metadata'] = []
@@ -3077,7 +3010,7 @@ async def mine_hard_negative_segments(
         edir = Path(output_dir) / 'embedding_data'
         idx_path = edir / f'{base_name}_index.faiss'
 
-        api_key = os.getenv('NVIDIA_API_KEY')
+        os.getenv('NVIDIA_API_KEY')
 
         if idx_path.exists():
             logger.info('Loading existing FAISS index from %s', idx_path)
@@ -3086,16 +3019,13 @@ async def mine_hard_negative_segments(
             embs = index.reconstruct_n(0, index.ntotal)
 
             logger.info(
-                f'Loaded {len(embs)} normalized embeddings from FAISS index'
-            )
+                f'Loaded {len(embs)} normalized embeddings from FAISS index')
         else:
             logger.info(
-                'FAISS index not found, computing embeddings for all segments'
-            )
+                'FAISS index not found, computing embeddings for all segments')
 
-            embs = get_embeddings(
-                texts, client=state.client, input_type='passage'
-            )
+            embs = get_embeddings(texts, client=state.client,
+                                  input_type='passage')
             embs = np.array(embs, dtype='float32')
 
             faiss.normalize_L2(embs)
@@ -3105,11 +3035,9 @@ async def mine_hard_negative_segments(
             index.add(embs)
 
         min_distance = np.sqrt(
-            2 * (1 - max_similarity)
-        )  # max similarity = min distance
+            2 * (1 - max_similarity))  # max similarity = min distance
         max_distance = np.sqrt(
-            2 * (1 - min_similarity)
-        )  # min similarity = max distance
+            2 * (1 - min_similarity))  # min similarity = max distance
 
         for qa_pair in qa_pairs:
             positive_segment_ids = set(qa_pair.get('segment_ids', []))
@@ -3129,14 +3057,12 @@ async def mine_hard_negative_segments(
                     continue
 
                 # Use the first positive segment's embedding
-                positive_emb = embs[
-                    first_positive_idx : first_positive_idx + 1
-                ]  # Keep 2D shape
+                positive_emb = embs[first_positive_idx:first_positive_idx +
+                                    1]  # Keep 2D shape
 
                 # Search for top K + buffer similar segments
-                search_k = min(
-                    top_k + len(positive_segment_ids) + 20, len(segments)
-                )
+                search_k = min(top_k + len(positive_segment_ids) + 20,
+                               len(segments))
                 D, I = index.search(positive_emb, search_k)
 
                 # Filter hard negative segments
@@ -3150,12 +3076,10 @@ async def mine_hard_negative_segments(
 
                     if min_distance <= distance <= max_distance:
                         cosine_sim = 1 - (distance**2) / 2
-                        hard_negatives.append(
-                            {
-                                'segment_id': segment_id,
-                                'similarity': float(cosine_sim),
-                            }
-                        )
+                        hard_negatives.append({
+                            'segment_id': segment_id,
+                            'similarity': float(cosine_sim),
+                        })
 
                     # Stop when we have enough hard negatives
                     if len(hard_negatives) >= top_k:
@@ -3172,16 +3096,14 @@ async def mine_hard_negative_segments(
                 )
 
             except Exception as e:
-                logger.warning(
-                    'Error mining hard negatives for question: %s', e
-                )
+                logger.warning('Error mining hard negatives for question: %s',
+                               e)
                 qa_pair['hard_negative_segment_ids'] = []
                 qa_pair['hard_negatives_metadata'] = []
 
         # Summary statistics
         total_hard_negs = sum(
-            len(qa.get('hard_negative_segment_ids', [])) for qa in qa_pairs
-        )
+            len(qa.get('hard_negative_segment_ids', [])) for qa in qa_pairs)
         avg_hard_negs = total_hard_negs / len(qa_pairs) if qa_pairs else 0
 
         logger.info(
@@ -3232,8 +3154,7 @@ Example: ["negative answer 1", "negative answer 2", "negative answer 3"]
 Do not include any other text, only the JSON array.
 """
 generate_negative_answers_prompt_template = Template(
-    generate_negative_answers_prompt
-)
+    generate_negative_answers_prompt)
 
 
 def generate_negative_answers(
@@ -3253,8 +3174,14 @@ def generate_negative_answers(
     logger.debug('final_prompt: %s', prompt)
 
     messages = [
-        {'role': 'system', 'content': 'Expert distractor creator.'},
-        {'role': 'user', 'content': prompt},
+        {
+            'role': 'system',
+            'content': 'Expert distractor creator.'
+        },
+        {
+            'role': 'user',
+            'content': prompt
+        },
     ]
     try:
         resp = client.generate(messages, temperature=0.3)
@@ -3275,8 +3202,7 @@ def generate_negative_answers(
 
 
 async def generate_negative_answers_node(
-    state: QAGenerationState,
-) -> Dict[str, Any]:
+    state: QAGenerationState, ) -> Dict[str, Any]:
     """Generate negative answers for multiple choice questions."""
     logger.info('Generating negative answers for task %s', state['task_id'])
 
@@ -3287,8 +3213,7 @@ async def generate_negative_answers_node(
     num_negatives = state.get('num_negatives', 3)
     if num_negatives == 0:
         logger.info(
-            f'num_negatives is 0. Negative answers will not be generated'
-        )
+            f'num_negatives is 0. Negative answers will not be generated')
         return {'qa_pairs': qa_pairs}
 
     logger.info(
@@ -3305,9 +3230,8 @@ async def generate_negative_answers_node(
             negative_answers = generate_negative_answers(
                 question=qa_pair['question'],
                 correct_answer=qa_pair['answer'],
-                segment_text=segment_text[
-                    :1000
-                ],  # Limit context for efficiency
+                segment_text=segment_text[:
+                                          1000],  # Limit context for efficiency
                 num_negatives=num_negatives,
                 client=client,
             )
@@ -3321,7 +3245,7 @@ async def generate_negative_answers_node(
 
 llm_evaluate_qa_pair_prompt = """
 You are an expert evaluator of question-answer pairs.
-    
+
 Please evaluate the following question and answer based on the provided context:
 
 CONTEXT:
@@ -3392,10 +3316,15 @@ async def llm_evaluate_qa_pair(
 
     messages = [
         {
-            'role': 'system',
-            'content': 'You are an expert QA evaluator that provides structured JSON evaluations.',
+            'role':
+            'system',
+            'content':
+            'You are an expert QA evaluator that provides structured JSON evaluations.',
         },
-        {'role': 'user', 'content': prompt},
+        {
+            'role': 'user',
+            'content': prompt
+        },
     ]
 
     logger.debug('llm_evaluate_qa_pair using %s', client.evaluation_model_name)
@@ -3407,9 +3336,8 @@ async def llm_evaluate_qa_pair(
         logger.info('Try again')
         try:
             # Remove only from the very beginning and very end
-            cleaned = re.sub(
-                r'^```json\s*', '', response_text
-            )  # Remove from start
+            cleaned = re.sub(r'^```json\s*', '',
+                             response_text)  # Remove from start
             cleaned = re.sub(r'\s*```$', '', cleaned)  # Remove from end
             return json.loads(cleaned)
         except Exception as e1:
@@ -3419,13 +3347,22 @@ async def llm_evaluate_qa_pair(
 
         # Return a default evaluation on error
         return {
-            'relevance': {'score': 0, 'justification': 'Evaluation failed'},
-            'accuracy': {'score': 0, 'justification': 'Evaluation failed'},
+            'relevance': {
+                'score': 0,
+                'justification': 'Evaluation failed'
+            },
+            'accuracy': {
+                'score': 0,
+                'justification': 'Evaluation failed'
+            },
             'context_support': {
                 'score': 0,
                 'justification': 'Evaluation failed',
             },
-            'clarity': {'score': 0, 'justification': 'Evaluation failed'},
+            'clarity': {
+                'score': 0,
+                'justification': 'Evaluation failed'
+            },
             'overall': {
                 'score': 0,
                 'assessment': f'Evaluation error: {str(e)}',
@@ -3461,11 +3398,8 @@ async def evaluate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
         f'Evaluating QA pairs using {client.evaluation_model_name}, sample size: {sample_size}, validated_pairs: {len(validated_pairs)}'
     )
 
-    eval_sample = (
-        validated_pairs
-        if len(validated_pairs) <= sample_size
-        else random.sample(validated_pairs, sample_size)
-    )
+    eval_sample = (validated_pairs if len(validated_pairs) <= sample_size else
+                   random.sample(validated_pairs, sample_size))
     logger.info(
         f'Evaluating QA pairs: eval sample size: {len(eval_sample)}, validated_pairs: {len(validated_pairs)}'
     )
@@ -3481,11 +3415,12 @@ async def evaluate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
         answer = qa_pair['answer']
         split_idx = qa_pair['split'] if 'split' in qa_pair else -1
         if split_idx != -1:
-            cross_context_info = (
-                cross_part_contexts[split_idx]
-                if split_idx < len(cross_part_contexts)
-                else {'text': '', 'ranges': [], 'metadata': {}}
-            )
+            cross_context_info = (cross_part_contexts[split_idx] if split_idx
+                                  < len(cross_part_contexts) else {
+                                      'text': '',
+                                      'ranges': [],
+                                      'metadata': {}
+                                  })
             cross_context = cross_context_info.get('text', '')
         else:
             cross_context = ''
@@ -3506,8 +3441,7 @@ async def evaluate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
 
                 # Check if segment overlaps with QA time range
                 if seg_start <= parse_timestamp(
-                    end_time
-                ) and seg_end >= parse_timestamp(start_time):
+                        end_time) and seg_end >= parse_timestamp(start_time):
                     relevant_segments.append(segment.get('text', ''))
 
             context = ' '.join(relevant_segments)
@@ -3518,9 +3452,8 @@ async def evaluate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
             logger.error('Validation error: %s, %s', e, error_msg)
             segments = state.get('segments', [])
 
-            context = transcription_segment_text(segments)[
-                :1000
-            ]  # Use first 1000 chars as fallback
+            context = transcription_segment_text(
+                segments)[:1000]  # Use first 1000 chars as fallback
 
         # Evaluate this QA pair
         try:
@@ -3538,8 +3471,7 @@ async def evaluate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
 
             # Track overall scores
             overall_scores.append(
-                evaluation_result.get('overall', {}).get('score', 0)
-            )
+                evaluation_result.get('overall', {}).get('score', 0))
 
         except Exception as e:
             logger.warning('Failed to evaluate QA pair: %s', e)
@@ -3553,28 +3485,46 @@ async def evaluate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
     # Update metrics with evaluation results
     avg_score = sum(overall_scores) / max(len(overall_scores), 1)
     evaluation_metrics = {
-        'average_quality_score': avg_score,
-        'evaluated_pairs': len(evaluated_pairs),
-        'evaluation_model': client.evaluation_model_name,
-        'high_quality_ratio': sum(1 for s in overall_scores if s >= 7)
-        / max(len(overall_scores), 1),
+        'average_quality_score':
+        avg_score,
+        'evaluated_pairs':
+        len(evaluated_pairs),
+        'evaluation_model':
+        client.evaluation_model_name,
+        'high_quality_ratio':
+        sum(1 for s in overall_scores if s >= 7) / max(len(overall_scores), 1),
     }
 
     # Add evaluations back to original QA pairs
-    evaluated_ids = {qa['question']: qa['evaluation'] for qa in evaluated_pairs}
+    evaluated_ids = {
+        qa['question']: qa['evaluation']
+        for qa in evaluated_pairs
+    }
     for qa_pair in qa_pairs:
         if qa_pair['question'] in evaluated_ids:
             qa_pair['evaluation'] = evaluated_ids[qa_pair['question']]
         else:
             qa_pair['evaluation'] = {
-                'relevance': {'score': -99, 'justification': 'Not evaluated'},
-                'accuracy': {'score': -99, 'justification': 'Not evaluated'},
+                'relevance': {
+                    'score': -99,
+                    'justification': 'Not evaluated'
+                },
+                'accuracy': {
+                    'score': -99,
+                    'justification': 'Not evaluated'
+                },
                 'context_support': {
                     'score': -99,
                     'justification': 'Not evaluated',
                 },
-                'clarity': {'score': -99, 'justification': 'Not evaluated'},
-                'overall': {'score': -99, 'assessment': 'Not evaluated'},
+                'clarity': {
+                    'score': -99,
+                    'justification': 'Not evaluated'
+                },
+                'overall': {
+                    'score': -99,
+                    'assessment': 'Not evaluated'
+                },
                 'improvements': 'N/A',
             }
 
@@ -3596,9 +3546,8 @@ async def filter_by_quality(state: QAGenerationState) -> Dict[str, Any]:
         f'Filtering QA pairs by quality for validated_pairs: {len(validated_pairs)} qa_pairs, total: {len(qa_pairs)}'
     )
 
-    quality_threshold = state.get('evaluation', {}).get(
-        'quality_threshold', 6.0
-    )
+    quality_threshold = state.get('evaluation',
+                                  {}).get('quality_threshold', 6.0)
     logger.debug('quality_threshold: %s', quality_threshold)
 
     # Count pairs with quality scores
@@ -3632,32 +3581,27 @@ async def filter_by_quality(state: QAGenerationState) -> Dict[str, Any]:
     # either lower the threshold or keep the best ones
     if num_evaluated > 0 and len(high_quality_pairs) == 0:
         logger.warning(
-            f'No QA pairs meet quality threshold {quality_threshold}.'
-        )
+            f'No QA pairs meet quality threshold {quality_threshold}.')
 
         # Option 1: Sort by quality and keep top 30%
         if validated_pairs:
             sorted_pairs = sorted(
                 validated_pairs,
-                key=lambda x: x.get('evaluation', {})
-                .get('overall', {})
-                .get('score', 0),
+                key=lambda x: x.get('evaluation', {}).get('overall', {}).get(
+                    'score', 0),
                 reverse=True,
             )
-            top_n = max(
-                1, int(len(sorted_pairs) * 0.3)
-            )  # Keep at least 1, up to 30%
+            top_n = max(1, int(len(sorted_pairs) *
+                               0.3))  # Keep at least 1, up to 30%
             high_quality_pairs = sorted_pairs[:top_n]
             logger.info(
                 f'Keeping top {len(high_quality_pairs)} pairs by quality score.'
             )
 
-    sum_overall_score = sum(
-        [
-            qa.get('evaluation', {}).get('overall', {}).get('score', 0)
-            for qa in evaluated_pairs
-        ]
-    )
+    sum_overall_score = sum([
+        qa.get('evaluation', {}).get('overall', {}).get('score', 0)
+        for qa in evaluated_pairs
+    ])
 
     logger.debug('sum_overall_score: %s', sum_overall_score)
     quality_metrics = {
@@ -3684,16 +3628,21 @@ async def monitor_progress(state: QAGenerationState) -> Dict[str, Any]:
 
     # Basic metrics
     base_metrics = {
-        'task_id': state['task_id'],
-        'qa_pairs_generated': len(state.get('qa_pairs', [])),
-        'validation_rate': state.get('validation_results', {}).get(
-            'validated_pairs', 0
-        )
-        / max(state.get('validation_results', {}).get('total_pairs', 1), 1),
-        'model_used': state.get('model_selection', 'unknown'),
-        'retry_count': state.get('retry_count', 0),
-        'status': state.get('status', 'unknown'),
-        'timestamp': datetime.now().isoformat(),
+        'task_id':
+        state['task_id'],
+        'qa_pairs_generated':
+        len(state.get('qa_pairs', [])),
+        'validation_rate':
+        state.get('validation_results', {}).get('validated_pairs', 0) /
+        max(state.get('validation_results', {}).get('total_pairs', 1), 1),
+        'model_used':
+        state.get('model_selection', 'unknown'),
+        'retry_count':
+        state.get('retry_count', 0),
+        'status':
+        state.get('status', 'unknown'),
+        'timestamp':
+        datetime.now().isoformat(),
     }
 
     # Add evaluation metrics if available
@@ -3713,7 +3662,7 @@ async def monitor_progress(state: QAGenerationState) -> Dict[str, Any]:
     quality_metrics = state.get('quality_metrics', {})
 
     # Add per-category average scores if we have evaluated QA pairs
-    qa_pairs = state.get('qa_pairs', [])
+    state.get('qa_pairs', [])
     high_quality_qa_pairs = state.get('high_quality_qa_pairs', [])
     low_quality_qa_pairs = state.get('low_quality_qa_pairs', [])
     evaluated_pairs = high_quality_qa_pairs + low_quality_qa_pairs
@@ -3721,31 +3670,21 @@ async def monitor_progress(state: QAGenerationState) -> Dict[str, Any]:
     if evaluated_pairs:
         # Calculate average scores for each category
         avg_scores = {
-            'relevance_avg': sum(
-                qa['evaluation'].get('relevance', {}).get('score', 0)
-                for qa in evaluated_pairs
-            )
-            / len(evaluated_pairs),
-            'accuracy_avg': sum(
-                qa['evaluation'].get('accuracy', {}).get('score', 0)
-                for qa in evaluated_pairs
-            )
-            / len(evaluated_pairs),
-            'context_support_avg': sum(
-                qa['evaluation'].get('context_support', {}).get('score', 0)
-                for qa in evaluated_pairs
-            )
-            / len(evaluated_pairs),
-            'clarity_avg': sum(
-                qa['evaluation'].get('clarity', {}).get('score', 0)
-                for qa in evaluated_pairs
-            )
-            / len(evaluated_pairs),
-            'overall_avg': sum(
-                qa['evaluation'].get('overall', {}).get('score', 0)
-                for qa in evaluated_pairs
-            )
-            / len(evaluated_pairs),
+            'relevance_avg':
+            sum(qa['evaluation'].get('relevance', {}).get('score', 0)
+                for qa in evaluated_pairs) / len(evaluated_pairs),
+            'accuracy_avg':
+            sum(qa['evaluation'].get('accuracy', {}).get('score', 0)
+                for qa in evaluated_pairs) / len(evaluated_pairs),
+            'context_support_avg':
+            sum(qa['evaluation'].get('context_support', {}).get('score', 0)
+                for qa in evaluated_pairs) / len(evaluated_pairs),
+            'clarity_avg':
+            sum(qa['evaluation'].get('clarity', {}).get('score', 0)
+                for qa in evaluated_pairs) / len(evaluated_pairs),
+            'overall_avg':
+            sum(qa['evaluation'].get('overall', {}).get('score', 0)
+                for qa in evaluated_pairs) / len(evaluated_pairs),
         }
 
         # Add detailed scoring to evaluation metrics
@@ -3755,25 +3694,23 @@ async def monitor_progress(state: QAGenerationState) -> Dict[str, Any]:
         }
 
         # Log the detailed scores
-        logger.info(
-            f'Avg scores: rel={avg_scores["relevance_avg"]:.2f}, '
-            + f'acc={avg_scores["accuracy_avg"]:.2f}, '
-            + f'ctx={avg_scores["context_support_avg"]:.2f}, '
-            + f'clarity={avg_scores["clarity_avg"]:.2f}, '
-            + f'overall={avg_scores["overall_avg"]:.2f}'
-        )
+        logger.info(f'Avg scores: rel={avg_scores["relevance_avg"]:.2f}, ' +
+                    f'acc={avg_scores["accuracy_avg"]:.2f}, ' +
+                    f'ctx={avg_scores["context_support_avg"]:.2f}, ' +
+                    f'clarity={avg_scores["clarity_avg"]:.2f}, ' +
+                    f'overall={avg_scores["overall_avg"]:.2f}')
     else:
         if evaluation_metrics:
             logger.info(
                 f'Evaluation metrics: avg_score={evaluation_metrics.get("average_quality_score", 0):.2f}, '
-                + f'evaluated_pairs={evaluation_metrics.get("evaluated_pairs", 0)}'
+                +
+                f'evaluated_pairs={evaluation_metrics.get("evaluated_pairs", 0)}'
             )
 
     if quality_metrics:
         logger.info(
             f'Quality metrics: high_quality={quality_metrics.get("high_quality_pairs", 0)}/{quality_metrics.get("total_pairs", 0)}, '
-            + f'threshold={quality_metrics.get("quality_threshold", 0)}'
-        )
+            + f'threshold={quality_metrics.get("quality_threshold", 0)}')
 
     # Combine metrics
     combined_metrics = {
@@ -3789,7 +3726,7 @@ async def monitor_progress(state: QAGenerationState) -> Dict[str, Any]:
 
 async def store_results(state: QAGenerationState) -> Dict[str, Any]:
     """Store results to CSV and JSON files."""
-    task_id = state['task_id']
+    state['task_id']
     logger.info('Storing results for task %s', state['task_id'])
 
     if state.get('skip_store'):
@@ -3838,9 +3775,8 @@ async def store_results(state: QAGenerationState) -> Dict[str, Any]:
                     relevant_segments = []
                     for seg_id in segment_ids:
                         if 0 <= seg_id < len(segments):
-                            relevant_segments.append(
-                                segments[seg_id].get('text', '')
-                            )
+                            relevant_segments.append(segments[seg_id].get(
+                                'text', ''))
                     context = ' '.join(relevant_segments)
                 else:
                     # Old fallback based on timestamps
@@ -3868,86 +3804,99 @@ async def store_results(state: QAGenerationState) -> Dict[str, Any]:
             # Extract all individual scores
             relevance_score = evaluation.get('relevance', {}).get('score', 0)
             relevance_justification = evaluation.get('relevance', {}).get(
-                'justification', ''
-            )
+                'justification', '')
 
             accuracy_score = evaluation.get('accuracy', {}).get('score', 0)
             accuracy_justification = evaluation.get('accuracy', {}).get(
-                'justification', ''
-            )
+                'justification', '')
 
-            context_support_score = evaluation.get('context_support', {}).get(
-                'score', 0
-            )
+            context_support_score = evaluation.get('context_support',
+                                                   {}).get('score', 0)
             context_support_justification = evaluation.get(
-                'context_support', {}
-            ).get('justification', '')
+                'context_support', {}).get('justification', '')
 
             clarity_score = evaluation.get('clarity', {}).get('score', 0)
             clarity_justification = evaluation.get('clarity', {}).get(
-                'justification', ''
-            )
+                'justification', '')
 
             overall_score = evaluation.get('overall', {}).get('score', 0)
-            assessment = evaluation.get('overall', {}).get(
-                'assessment', 'Not evaluated'
-            )
+            assessment = evaluation.get('overall',
+                                        {}).get('assessment', 'Not evaluated')
             improvements = evaluation.get('improvements', '')
             image_id = 'Not applicable'
             start_time = 'Not applicable'
             end_time = 'Not applicalbe'
 
             row = {
-                'task_id': state['task_id'],
-                'file_path': str(state['file_path']),
-                'image_id': image_id,
-                'question': qa_pair['question'],
-                'answer': qa_pair.get('answer', 'N/A'),
-                'query_type': qa_pair.get('query_type', 'unspecified'),
-                'reasoning_type': qa_pair.get('reasoning_type', 'unspecified'),
-                'hop_count': qa_pair['hop_count']
-                if 'hop_count' in qa_pair
-                else -1,
-                'hop_contexts': qa_pair['hop_contexts']
-                if 'hop_contexts' in qa_pair
-                else 'N/A',
-                'context': context[:500],  # Limit context length
-                'context_segments': qa_pair.get(
-                    'context_segments', []
-                ),  # Full context text from each segment
-                'segment_ids': qa_pair.get(
-                    'segment_ids', []
-                ),  # Add segment IDs for traceability
-                'hard_negative_segment_ids': qa_pair.get(
-                    'hard_negative_segment_ids', []
-                ),
-                'hard_negatives_metadata': qa_pair.get(
-                    'hard_negatives_metadata', []
-                ),
-                'start_time': start_time,
-                'end_time': end_time,
-                'question_complexity': qa_pair.get('question_complexity', 1),
-                'model_used': qa_pair.get(
-                    'model_used', state.get('model_selection', '')
-                ),
-                'negative_answers': qa_pair.get('negative_answers', []),
-                'timestamp': qa_pair.get(
-                    'timestamp', datetime.now().isoformat()
-                ),
+                'task_id':
+                state['task_id'],
+                'file_path':
+                str(state['file_path']),
+                'image_id':
+                image_id,
+                'question':
+                qa_pair['question'],
+                'answer':
+                qa_pair.get('answer', 'N/A'),
+                'query_type':
+                qa_pair.get('query_type', 'unspecified'),
+                'reasoning_type':
+                qa_pair.get('reasoning_type', 'unspecified'),
+                'hop_count':
+                qa_pair['hop_count'] if 'hop_count' in qa_pair else -1,
+                'hop_contexts':
+                qa_pair['hop_contexts']
+                if 'hop_contexts' in qa_pair else 'N/A',
+                'context':
+                context[:500],  # Limit context length
+                'context_segments':
+                qa_pair.get('context_segments',
+                            []),  # Full context text from each segment
+                'segment_ids':
+                qa_pair.get('segment_ids',
+                            []),  # Add segment IDs for traceability
+                'hard_negative_segment_ids':
+                qa_pair.get('hard_negative_segment_ids', []),
+                'hard_negatives_metadata':
+                qa_pair.get('hard_negatives_metadata', []),
+                'start_time':
+                start_time,
+                'end_time':
+                end_time,
+                'question_complexity':
+                qa_pair.get('question_complexity', 1),
+                'model_used':
+                qa_pair.get('model_used', state.get('model_selection', '')),
+                'negative_answers':
+                qa_pair.get('negative_answers', []),
+                'timestamp':
+                qa_pair.get('timestamp',
+                            datetime.now().isoformat()),
                 # Overall evaluation
-                'quality_score': overall_score,
-                'assessment': assessment,
-                'improvements': improvements,
+                'quality_score':
+                overall_score,
+                'assessment':
+                assessment,
+                'improvements':
+                improvements,
                 # Individual evaluation scores
-                'relevance_score': relevance_score,
-                'accuracy_score': accuracy_score,
-                'context_support_score': context_support_score,
-                'clarity_score': clarity_score,
+                'relevance_score':
+                relevance_score,
+                'accuracy_score':
+                accuracy_score,
+                'context_support_score':
+                context_support_score,
+                'clarity_score':
+                clarity_score,
                 # Justifications (optional - can remove if too verbose)
-                'relevance_justification': relevance_justification,
-                'accuracy_justification': accuracy_justification,
-                'context_support_justification': context_support_justification,
-                'clarity_justification': clarity_justification,
+                'relevance_justification':
+                relevance_justification,
+                'accuracy_justification':
+                accuracy_justification,
+                'context_support_justification':
+                context_support_justification,
+                'clarity_justification':
+                clarity_justification,
             }
             qa_data.append(row)
 
@@ -3956,9 +3905,8 @@ async def store_results(state: QAGenerationState) -> Dict[str, Any]:
         # check if evaluation is off
         evaluation_obj = state.get('evaluation', {})
         question_only = state.get('question_only', False)
-        enable = (
-            evaluation_obj['enable'] if 'enable' in evaluation_obj else True
-        )
+        enable = (evaluation_obj['enable']
+                  if 'enable' in evaluation_obj else True)
         logger.debug(
             f'Enable Evaluating QA pairs? {enable}, question_only? {question_only}'
         )
@@ -3971,63 +3919,53 @@ async def store_results(state: QAGenerationState) -> Dict[str, Any]:
             # Log evaluation summary
             if evaluation_metrics:
                 avg_scores = {
-                    'relevance': sum(
-                        qa.get('evaluation', {})
-                        .get('relevance', {})
-                        .get('score', 0)
-                        for qa in evaluated_pairs
-                        if 'evaluation' in qa
-                    )
-                    / max(
+                    'relevance':
+                    sum(
+                        qa.get('evaluation', {}).get('relevance', {}).get(
+                            'score', 0)
+                        for qa in evaluated_pairs if 'evaluation' in qa) /
+                    max(
                         sum(1 for qa in evaluated_pairs if 'evaluation' in qa),
                         1,
                     ),
-                    'accuracy': sum(
-                        qa.get('evaluation', {})
-                        .get('accuracy', {})
-                        .get('score', 0)
-                        for qa in evaluated_pairs
-                        if 'evaluation' in qa
-                    )
-                    / max(
+                    'accuracy':
+                    sum(
+                        qa.get('evaluation', {}).get('accuracy', {}).get(
+                            'score', 0)
+                        for qa in evaluated_pairs if 'evaluation' in qa) /
+                    max(
                         sum(1 for qa in evaluated_pairs if 'evaluation' in qa),
                         1,
                     ),
-                    'context_support': sum(
-                        qa.get('evaluation', {})
-                        .get('context_support', {})
-                        .get('score', 0)
-                        for qa in evaluated_pairs
-                        if 'evaluation' in qa
-                    )
-                    / max(
+                    'context_support':
+                    sum(
+                        qa.get('evaluation', {}).get('context_support',
+                                                     {}).get('score', 0)
+                        for qa in evaluated_pairs if 'evaluation' in qa) /
+                    max(
                         sum(1 for qa in evaluated_pairs if 'evaluation' in qa),
                         1,
                     ),
-                    'clarity': sum(
-                        qa.get('evaluation', {})
-                        .get('clarity', {})
-                        .get('score', 0)
-                        for qa in evaluated_pairs
-                        if 'evaluation' in qa
-                    )
-                    / max(
+                    'clarity':
+                    sum(
+                        qa.get('evaluation', {}).get('clarity', {}).get(
+                            'score', 0)
+                        for qa in evaluated_pairs if 'evaluation' in qa) /
+                    max(
                         sum(1 for qa in evaluated_pairs if 'evaluation' in qa),
                         1,
                     ),
-                    'overall': evaluation_metrics.get(
-                        'average_quality_score', 0
-                    ),
+                    'overall':
+                    evaluation_metrics.get('average_quality_score', 0),
                 }
 
                 logger.info(
-                    f'Avg scores: relevance={avg_scores["relevance"]:.2f}, '
-                    + f'accuracy={avg_scores["accuracy"]:.2f}, '
-                    + f'context={avg_scores["context_support"]:.2f}, '
-                    + f'clarity={avg_scores["clarity"]:.2f}, '
-                    + f'overall={avg_scores["overall"]:.2f}, '
-                    + f'status={TaskStatus.COMPLETED.value}'
-                )
+                    f'Avg scores: relevance={avg_scores["relevance"]:.2f}, ' +
+                    f'accuracy={avg_scores["accuracy"]:.2f}, ' +
+                    f'context={avg_scores["context_support"]:.2f}, ' +
+                    f'clarity={avg_scores["clarity"]:.2f}, ' +
+                    f'overall={avg_scores["overall"]:.2f}, ' +
+                    f'status={TaskStatus.COMPLETED.value}')
 
         logger.info('Complete!')
         return {
@@ -4073,9 +4011,8 @@ async def feedback_controller(state: QAGenerationState) -> Dict[str, Any]:
                 'status': TaskStatus.RETRYING.value,
                 'feedback': {
                     'action': 'retry',
-                    'reason': state.get('error_messages', ['Unknown error'])[
-                        -1
-                    ],
+                    'reason': state.get('error_messages',
+                                        ['Unknown error'])[-1],
                     'strategy': 'model_upgrade',
                     'model': client.generation_model_name,
                 },
@@ -4106,12 +4043,14 @@ def compute_metrics(
         return {}
 
     metrics = {
-        'average_question_length': df['question'].str.len().mean(),
-        'average_answer_length': df['answer'].str.len().mean(),
-        'complexity_distribution': df['question_complexity']
-        .value_counts()
-        .to_dict(),
-        'total_pairs': len(df),
+        'average_question_length':
+        df['question'].str.len().mean(),
+        'average_answer_length':
+        df['answer'].str.len().mean(),
+        'complexity_distribution':
+        df['question_complexity'].value_counts().to_dict(),
+        'total_pairs':
+        len(df),
     }
 
     # Extract valid values from the config distributions
@@ -4157,32 +4096,26 @@ def compute_metrics(
         # Filter to only valid query types
         valid_query_df = df[df['query_type'].isin(valid_query_types)]
         metrics['query_type_distribution'] = (
-            valid_query_df['query_type'].value_counts().to_dict()
-        )
+            valid_query_df['query_type'].value_counts().to_dict())
 
         # Check for misclassified entries
         invalid_query_types = df[~df['query_type'].isin(valid_query_types)][
-            'query_type'
-        ].unique()
+            'query_type'].unique()
         if len(invalid_query_types) > 0:
-            logger.warning(
-                'Found invalid query_type values: %s', invalid_query_types
-            )
+            logger.warning('Found invalid query_type values: %s',
+                           invalid_query_types)
             metrics['invalid_query_types'] = list(invalid_query_types)
 
     if 'reasoning_type' in df.columns and valid_reasoning_types:
         # Filter to only valid reasoning types
-        valid_reasoning_df = df[
-            df['reasoning_type'].isin(valid_reasoning_types)
-        ]
+        valid_reasoning_df = df[df['reasoning_type'].isin(
+            valid_reasoning_types)]
         metrics['reasoning_type_distribution'] = (
-            valid_reasoning_df['reasoning_type'].value_counts().to_dict()
-        )
+            valid_reasoning_df['reasoning_type'].value_counts().to_dict())
 
         # Check for misclassified entries
-        invalid_reasoning_types = df[
-            ~df['reasoning_type'].isin(valid_reasoning_types)
-        ]['reasoning_type'].unique()
+        invalid_reasoning_types = df[~df['reasoning_type'].isin(
+            valid_reasoning_types)]['reasoning_type'].unique()
         if len(invalid_reasoning_types) > 0:
             logger.warning(
                 'Found invalid reasoning_type values: %s',
@@ -4192,19 +4125,18 @@ def compute_metrics(
 
     if 'is_hard' in df.columns:
         metrics['hard_queries_count'] = df['is_hard'].sum()
-        metrics['hard_queries_percentage'] = (
-            (df['is_hard'].sum() / len(df)) * 100 if len(df) > 0 else 0
-        )
+        metrics['hard_queries_percentage'] = ((df['is_hard'].sum() / len(df)) *
+                                              100 if len(df) > 0 else 0)
 
     # Add multi-hop metrics if available
     if 'hop_count' in df.columns:
         multihop_df = df[df['query_type'] == 'multi_hop']
         if len(multihop_df) > 0:
             metrics['multi_hop_metrics'] = {
-                'average_hop_count': multihop_df['hop_count'].mean(),
-                'hop_count_distribution': multihop_df['hop_count']
-                .value_counts()
-                .to_dict(),
+                'average_hop_count':
+                multihop_df['hop_count'].mean(),
+                'hop_count_distribution':
+                multihop_df['hop_count'].value_counts().to_dict(),
             }
 
     return metrics
@@ -4260,23 +4192,16 @@ class QAGenerator:
         self.batch = batch
         self.batch_size = batch_size
         self.backend = backend
-        self.gen_model = (
-            gen_model
-            if not self.config.get('gen_model', None)
-            else self.config.get('gen_model')
-        )
-        self.embedding_model = (
-            embedding_model
-            if not self.config.get('embedding_model', None)
-            else self.config.get('embedding_model')
-        )
+        self.gen_model = (gen_model if not self.config.get('gen_model', None)
+                          else self.config.get('gen_model'))
+        self.embedding_model = (embedding_model
+                                if not self.config.get('embedding_model', None)
+                                else self.config.get('embedding_model'))
 
         evaluation_obj = self.config.get('evaluation', {})
-        self.evaluation_model = (
-            evaluation_model
-            if not evaluation_obj.get('model', None)
-            else evaluation_obj.get('model')
-        )
+        self.evaluation_model = (evaluation_model
+                                 if not evaluation_obj.get('model', None) else
+                                 evaluation_obj.get('model'))
 
         model_progression = self.config.get('model_progression', None)
         if model_progression is None:
@@ -4312,13 +4237,11 @@ class QAGenerator:
         workflow.add_node('create_artifacts', create_artifacts)
         workflow.add_node('generate_qa', generate_qa_pairs)
         workflow.add_node('validate', validate_qa_pairs)
-        workflow.add_node(
-            'mine_hard_negative_segments', mine_hard_negative_segments
-        )
+        workflow.add_node('mine_hard_negative_segments',
+                          mine_hard_negative_segments)
         workflow.add_node('generate_negative', generate_negative_answers_node)
-        workflow.add_node(
-            'evaluate_qa', evaluate_qa_pairs
-        )  # New evaluation node
+        workflow.add_node('evaluate_qa',
+                          evaluate_qa_pairs)  # New evaluation node
         workflow.add_node('filter_quality', filter_by_quality)
         workflow.add_node('monitor', monitor_progress)
         workflow.add_node('store_results', store_results)
@@ -4336,29 +4259,30 @@ class QAGenerator:
             'validate',
             route_after_validation,
             {
-                'continue': 'mine_hard_negative_segments',  # Continue to mine hard negatives
+                'continue':
+                'mine_hard_negative_segments',  # Continue to mine hard negatives
                 'feedback': 'feedback_node',  # Route to feedback on failure
             },
         )
 
         workflow.add_edge(
-            'mine_hard_negative_segments', 'generate_negative'
-        )  # Then generate negative answers
-        workflow.add_edge(
-            'generate_negative', 'evaluate_qa'
-        )  # Add evaluation after negatives
+            'mine_hard_negative_segments',
+            'generate_negative')  # Then generate negative answers
+        workflow.add_edge('generate_negative',
+                          'evaluate_qa')  # Add evaluation after negatives
         workflow.add_edge('evaluate_qa', 'filter_quality')
         workflow.add_edge('filter_quality', 'monitor')
         workflow.add_edge('monitor', 'store_results')
 
         workflow.add_conditional_edges(
             'store_results',
-            lambda x: (
-                'feedback'
-                if x.get('status') == TaskStatus.FAILED.value
-                else 'end'
-            ),
-            {'feedback_node': 'feedback_node', 'end': 'end'},
+            lambda x:
+            ('feedback'
+             if x.get('status') == TaskStatus.FAILED.value else 'end'),
+            {
+                'feedback_node': 'feedback_node',
+                'end': 'end'
+            },
         )
 
         workflow.add_conditional_edges(
@@ -4373,7 +4297,7 @@ class QAGenerator:
         return workflow.compile()
 
     def _load_config(self, config_path: str) -> Dict:
-        with open(config_path, 'r') as f:
+        with open(config_path) as f:
             return yaml.safe_load(f)
 
     def check_already_done(self):
@@ -4416,8 +4340,7 @@ class QAGenerator:
         # Also include files without any extension (treat as text files)
         all_files = folder.rglob('*')
         input_data.extend(
-            [f for f in all_files if f.is_file() and not f.suffix]
-        )
+            [f for f in all_files if f.is_file() and not f.suffix])
 
         logger.info('total input files: %d', len(input_data))
 
@@ -4444,17 +4367,13 @@ class QAGenerator:
             os.remove(out_file)
 
         while True:
-            end = (
-                start + limiter
-                if start + limiter < len(input_data)
-                else len(input_data)
-            )
+            end = (start + limiter if start +
+                   limiter < len(input_data) else len(input_data))
             logger.info('Process %d to %d', start, end)
             total_input_data = input_data[start:end]
 
             input_data_to_do = [
-                elem
-                for elem in total_input_data
+                elem for elem in total_input_data
                 if str(elem) not in done_file_paths
             ]
 
@@ -4464,8 +4383,7 @@ class QAGenerator:
 
             if len(input_data_to_do) > 0:
                 results = await self._process_directory(
-                    input_data_to_do, folder
-                )
+                    input_data_to_do, folder)
                 # incremental save
                 logger.info('results: %d', len(results))
                 self.write_all_qa_pairs(results, out_file)
@@ -4492,44 +4410,33 @@ class QAGenerator:
                 f'{out_file} contains {len(lines)} json objs, but there are {len(all_chunk_results)} all_chunk_results'
             )
 
-    async def _process_directory(
-        self, input_data_list: List[Any], input_dir: Optional[Path] = None
-    ):
+    async def _process_directory(self, input_data_list: List[Any],
+                                 input_dir: Optional[Path] = None):
         """Process all transcription files in a directory."""
         # input_data can be a list of Path (filename)
         tasks = []
 
-        output_dir = self.config.get('output_dir')
+        self.config.get('output_dir')
         for input_data in input_data_list:
             logger.info('==> input_file: %s', input_data)
             data = input_data
             data_id = input_data
             task = asyncio.create_task(
-                self.process_data(data, data_id, input_dir)
-            )
+                self.process_data(data, data_id, input_dir))
             tasks.append(task)
 
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         # Per-chunk summary statistics
         successful = sum(
-            1
-            for r in results
-            if isinstance(r, dict)
-            and r.get('status') == TaskStatus.COMPLETED.value
-            and r.get('reason') != 'already_processed'
-        )
+            1 for r in results
+            if isinstance(r, dict) and r.get('status') == TaskStatus.COMPLETED.
+            value and r.get('reason') != 'already_processed')
         skipped = sum(
-            1
-            for r in results
-            if isinstance(r, dict) and r.get('reason') == 'already_processed'
-        )
-        failed = sum(
-            1
-            for r in results
-            if isinstance(r, dict)
-            and r.get('status') == TaskStatus.FAILED.value
-        )
+            1 for r in results
+            if isinstance(r, dict) and r.get('reason') == 'already_processed')
+        failed = sum(1 for r in results if isinstance(r, dict)
+                     and r.get('status') == TaskStatus.FAILED.value)
 
         if self.overwrite:
             logger.info(
@@ -4578,9 +4485,8 @@ class QAGenerator:
             )
             return file_path.stem
 
-    async def process_data(
-        self, data: str, data_id: str, input_dir: Optional[Path] = None
-    ) -> Dict[str, Any]:
+    async def process_data(self, data: str, data_id: str,
+                           input_dir: Optional[Path] = None) -> Dict[str, Any]:
         """Process a single transcription file."""
         # data can be a file_path or an image_b64_str
         # use md5 hash of the file name (without extension) to retrieve the output file
@@ -4588,12 +4494,10 @@ class QAGenerator:
             file_path = data
             task_id = hashlib.md5(Path(file_path).stem.encode()).hexdigest()
             is_image_b64_str = False
-            image_b64_str = None
         else:
             file_path = data_id
             task_id = data_id
             is_image_b64_str = True
-            image_b64_str = data
 
         # Check if output file already exists (resume functionality)
         # Skip this check if --overwrite flag is used
@@ -4629,55 +4533,69 @@ class QAGenerator:
 
         try:
             initial_state = {
-                'task_id': task_id,
-                'file_path': file_path,
-                'input_dir': str(input_dir) if input_dir else None,
-                'output_dir': self.config.get('output_dir'),
+                'task_id':
+                task_id,
+                'file_path':
+                file_path,
+                'input_dir':
+                str(input_dir) if input_dir else None,
+                'output_dir':
+                self.config.get('output_dir'),
                 'qa_pairs': [],
-                'question_only': self.config.get('question_only', False),
+                'question_only':
+                self.config.get('question_only', False),
                 'validation_results': {},
                 'negative_answers': [],
-                'model_selection': '',
-                'retry_count': 0,
+                'model_selection':
+                '',
+                'retry_count':
+                0,
                 'error_messages': [],
-                'status': TaskStatus.PENDING.value,
+                'status':
+                TaskStatus.PENDING.value,
                 'metrics': {},
                 'feedback': {},
                 # "client": self.client,  # Pass OpenAI client
-                'num_pairs': self.config.get('num_pairs', 10),
-                'num_negatives': self.config.get('num_negatives', 3),
-                'dedup_threshold': self.config.get('dedup_threshold', 0.6),
-                'parts': self.config.get('parts', 3),
-                'hard': self.config.get('hard', False),
-                'use_artifact': self.config.get('use_artifact', False),
-                'evaluation': self.config.get('evaluation'),
-                'query_type_distribution': self.config.get(
+                'num_pairs':
+                self.config.get('num_pairs', 10),
+                'num_negatives':
+                self.config.get('num_negatives', 3),
+                'dedup_threshold':
+                self.config.get('dedup_threshold', 0.6),
+                'parts':
+                self.config.get('parts', 3),
+                'hard':
+                self.config.get('hard', False),
+                'use_artifact':
+                self.config.get('use_artifact', False),
+                'evaluation':
+                self.config.get('evaluation'),
+                'query_type_distribution':
+                self.config.get(
                     'query_type_distribution',
                     '{"multi_hop":0.4,"structural":0.3,"contextual":0.3}',
                 ),
-                'reasoning_type_distribution': self.config.get(
-                    'reasoning_type_distribution', None
-                ),
-                'min_hops': self.config.get('min_hops', 2),
-                'max_hops': self.config.get('max_hops', 4),
-                'models': self.config.get('models'),
+                'reasoning_type_distribution':
+                self.config.get('reasoning_type_distribution', None),
+                'min_hops':
+                self.config.get('min_hops', 2),
+                'max_hops':
+                self.config.get('max_hops', 4),
+                'models':
+                self.config.get('models'),
                 'summary': [],
-                'self_contained_question': self.config.get(
-                    'self_contained_question', False
-                ),
-                'hard_negatives_top_k': self.config.get(
-                    'hard_negatives_top_k', 10
-                ),
-                'hard_negatives_min_sim': self.config.get(
-                    'hard_negatives_min_sim', 0.5
-                ),
-                'hard_negatives_max_sim': self.config.get(
-                    'hard_negatives_max_sim', 0.7
-                ),
-                'enable_hard_negatives': self.config.get(
-                    'enable_hard_negatives', True
-                ),
-                'text_artifacts': None,
+                'self_contained_question':
+                self.config.get('self_contained_question', False),
+                'hard_negatives_top_k':
+                self.config.get('hard_negatives_top_k', 10),
+                'hard_negatives_min_sim':
+                self.config.get('hard_negatives_min_sim', 0.5),
+                'hard_negatives_max_sim':
+                self.config.get('hard_negatives_max_sim', 0.7),
+                'enable_hard_negatives':
+                self.config.get('enable_hard_negatives', True),
+                'text_artifacts':
+                None,
             }
 
             use_artifact = initial_state.get('use_artifact')
@@ -4685,8 +4603,7 @@ class QAGenerator:
                 try:
                     ret = await load_input(initial_state)
                     text_artifacts = get_text_artifacts(
-                        ret['segments'], self.client
-                    )
+                        ret['segments'], self.client)
                     logger.info('text artifacts: %d', len(text_artifacts))
                     initial_state['text_artifacts'] = text_artifacts
                 except Exception as e:
@@ -4695,8 +4612,7 @@ class QAGenerator:
             total_pairs = initial_state['num_pairs']
             pairs_per_shard = int(self.config.get('pairs_per_shard', 0) or 0)
             max_parallel_shards = int(
-                self.config.get('max_parallel_shards', 4) or 1
-            )
+                self.config.get('max_parallel_shards', 4) or 1)
 
             # If sharding requested and beneficial, fan out multiple workflow runs
             if pairs_per_shard > 0 and pairs_per_shard < total_pairs:
@@ -4719,12 +4635,14 @@ class QAGenerator:
                     shard_state['parent_task_id'] = task_id
                     shard_state['shard_index'] = shard_idx
                     shard_state['skip_store'] = True
-                    shard_states.append(
-                        (
-                            shard_state,
-                            {'configurable': {'thread_id': shard_task_id}},
-                        )
-                    )
+                    shard_states.append((
+                        shard_state,
+                        {
+                            'configurable': {
+                                'thread_id': shard_task_id
+                            }
+                        },
+                    ))
                     remaining -= request_pairs
                     shard_idx += 1
                     logger.debug(
@@ -4733,41 +4651,39 @@ class QAGenerator:
 
                 semaphore = asyncio.Semaphore(max(1, max_parallel_shards))
 
-                async def run_shard(
-                    state_config: Tuple[Dict[str, Any], Dict[str, Any]],
-                ):
+                async def run_shard(state_config: Tuple[Dict[str, Any],
+                                                        Dict[str, Any]], ):
                     shard_state, shard_config = state_config
                     async with semaphore:
                         logger.info(
                             f'Launching shard {shard_state["task_id"]} '
-                            f'for {shard_state["num_pairs"]} pairs'
-                        )
+                            f'for {shard_state["num_pairs"]} pairs')
                         return await self.workflow.ainvoke(
-                            shard_state, shard_config
-                        )
+                            shard_state, shard_config)
 
                 shard_tasks = [
                     asyncio.create_task(run_shard(sc)) for sc in shard_states
                 ]
-                shard_results = await asyncio.gather(
-                    *shard_tasks, return_exceptions=True
-                )
+                shard_results = await asyncio.gather(*shard_tasks,
+                                                     return_exceptions=True)
 
                 successful_results: List[Dict[str, Any]] = []
                 for idx, result in enumerate(shard_results):
                     if isinstance(result, Exception):
-                        logger.error(
-                            'Shard %d raised exception: %s', idx, result
-                        )
+                        logger.error('Shard %d raised exception: %s', idx,
+                                     result)
                         raise result
                     if not isinstance(result, dict):
                         logger.error(
                             f'Shard {idx} returned unexpected result type: {type(result)}'
                         )
                         return {
-                            'task_id': task_id,
-                            'status': TaskStatus.FAILED.value,
-                            'error': f'Unexpected shard result type: {type(result)}',
+                            'task_id':
+                            task_id,
+                            'status':
+                            TaskStatus.FAILED.value,
+                            'error':
+                            f'Unexpected shard result type: {type(result)}',
                         }
                     if result.get('status') == TaskStatus.FAILED.value:
                         logger.error(
@@ -4795,15 +4711,14 @@ class QAGenerator:
                     res.get('task_id') for res in successful_results
                 ]
                 aggregate_state['enable_hard_negatives'] = initial_state.get(
-                    'enable_hard_negatives', True
-                )
+                    'enable_hard_negatives', True)
 
                 for key in (
-                    'qa_pairs',
-                    'validated_pairs',
-                    'high_quality_qa_pairs',
-                    'low_quality_qa_pairs',
-                    'not_evaluated_pairs',
+                        'qa_pairs',
+                        'validated_pairs',
+                        'high_quality_qa_pairs',
+                        'low_quality_qa_pairs',
+                        'not_evaluated_pairs',
                 ):
                     aggregate_state[key] = []
 
@@ -4835,27 +4750,24 @@ class QAGenerator:
                         if key not in validated_keys:
                             validated_keys.append(key)
 
-                    for pair in (
-                        shard_result.get('high_quality_qa_pairs', []) or []
-                    ):
+                    for pair in (shard_result.get('high_quality_qa_pairs', [])
+                                 or []):
                         key = make_key(pair)
                         if key not in merged_pairs:
                             merged_pairs[key] = deepcopy(pair)
                         if key not in high_keys:
                             high_keys.append(key)
 
-                    for pair in (
-                        shard_result.get('low_quality_qa_pairs', []) or []
-                    ):
+                    for pair in (shard_result.get('low_quality_qa_pairs', [])
+                                 or []):
                         key = make_key(pair)
                         if key not in merged_pairs:
                             merged_pairs[key] = deepcopy(pair)
                         if key not in low_keys:
                             low_keys.append(key)
 
-                    for pair in (
-                        shard_result.get('not_evaluated_pairs', []) or []
-                    ):
+                    for pair in (shard_result.get('not_evaluated_pairs', [])
+                                 or []):
                         key = make_key(pair)
                         if key not in merged_pairs:
                             merged_pairs[key] = deepcopy(pair)
@@ -4883,50 +4795,42 @@ class QAGenerator:
                     merged_pairs[key] for key in ordered_keys
                 ]
                 aggregate_state['validated_pairs'] = [
-                    merged_pairs[key]
-                    for key in validated_keys
+                    merged_pairs[key] for key in validated_keys
                     if key in allowed_keys
                 ]
                 aggregate_state['high_quality_qa_pairs'] = [
-                    merged_pairs[key]
-                    for key in high_keys
+                    merged_pairs[key] for key in high_keys
                     if key in allowed_keys
                 ]
                 aggregate_state['low_quality_qa_pairs'] = [
-                    merged_pairs[key] for key in low_keys if key in allowed_keys
+                    merged_pairs[key] for key in low_keys
+                    if key in allowed_keys
                 ]
                 aggregate_state['not_evaluated_pairs'] = [
-                    merged_pairs[key]
-                    for key in not_eval_keys
+                    merged_pairs[key] for key in not_eval_keys
                     if key in allowed_keys
                 ]
 
                 for bucket in (
-                    'qa_pairs',
-                    'validated_pairs',
-                    'high_quality_qa_pairs',
-                    'low_quality_qa_pairs',
-                    'not_evaluated_pairs',
+                        'qa_pairs',
+                        'validated_pairs',
+                        'high_quality_qa_pairs',
+                        'low_quality_qa_pairs',
+                        'not_evaluated_pairs',
                 ):
                     for pair in aggregate_state[bucket]:
                         pair['task_id'] = task_id
 
                 enable_hard_negatives = aggregate_state.get(
-                    'enable_hard_negatives', True
-                )
-                total_hard_negs = (
-                    sum(
-                        len(pair.get('hard_negative_segment_ids', []))
-                        for pair in aggregate_state['qa_pairs']
-                    )
-                    if enable_hard_negatives
-                    else 0
-                )
-                avg_hard_negs = (
-                    total_hard_negs / len(aggregate_state['qa_pairs'])
-                    if enable_hard_negatives and aggregate_state['qa_pairs']
-                    else 0.0
-                )
+                    'enable_hard_negatives', True)
+                total_hard_negs = (sum(
+                    len(pair.get('hard_negative_segment_ids', []))
+                    for pair in aggregate_state['qa_pairs'])
+                                   if enable_hard_negatives else 0)
+                avg_hard_negs = (total_hard_negs /
+                                 len(aggregate_state['qa_pairs'])
+                                 if enable_hard_negatives
+                                 and aggregate_state['qa_pairs'] else 0.0)
                 aggregate_state['hard_negatives_stats'] = {
                     'total_hard_negatives': total_hard_negs,
                     'avg_per_question': avg_hard_negs,
@@ -4935,76 +4839,73 @@ class QAGenerator:
 
                 # Update validation metrics
                 total_validated = sum(
-                    res.get('validation_results', {}).get('validated_pairs', 0)
-                    for res in successful_results
-                )
+                    res.get('validation_results', {}).get(
+                        'validated_pairs', 0) for res in successful_results)
                 total_attempted = sum(
                     res.get('validation_results', {}).get('total_pairs', 0)
-                    for res in successful_results
-                )
+                    for res in successful_results)
                 if total_attempted:
                     aggregate_state['validation_results'] = {
-                        'total_pairs': total_attempted,
-                        'validated_pairs': total_validated,
-                        'dropped_pairs': total_attempted - total_validated,
-                        'validation_method': successful_results[0]
-                        .get('validation_results', {})
-                        .get('validation_method', 'hybrid_with_faiss'),
+                        'total_pairs':
+                        total_attempted,
+                        'validated_pairs':
+                        total_validated,
+                        'dropped_pairs':
+                        total_attempted - total_validated,
+                        'validation_method':
+                        successful_results[0].get('validation_results',
+                                                  {}).get(
+                                                      'validation_method',
+                                                      'hybrid_with_faiss'),
                     }
 
                 # Recompute evaluation and quality metrics based on combined lists
-                evaluated_pairs = (
-                    aggregate_state['high_quality_qa_pairs']
-                    + aggregate_state['low_quality_qa_pairs']
-                )
+                evaluated_pairs = (aggregate_state['high_quality_qa_pairs'] +
+                                   aggregate_state['low_quality_qa_pairs'])
                 if evaluated_pairs:
                     avg_score = sum(
-                        qa.get('evaluation', {})
-                        .get('overall', {})
-                        .get('score', 0)
-                        for qa in evaluated_pairs
-                    ) / len(evaluated_pairs)
+                        qa.get('evaluation', {}).get('overall', {}).get(
+                            'score', 0)
+                        for qa in evaluated_pairs) / len(evaluated_pairs)
                 else:
                     avg_score = 0.0
 
                 sample_eval = next(
-                    (
-                        res.get('evaluation_metrics')
-                        for res in successful_results
-                        if res.get('evaluation_metrics')
-                    ),
+                    (res.get('evaluation_metrics')
+                     for res in successful_results
+                     if res.get('evaluation_metrics')),
                     {},
                 )
 
                 aggregate_state['evaluation_metrics'] = {
-                    'average_quality_score': avg_score,
-                    'evaluated_pairs': len(evaluated_pairs),
-                    'evaluation_model': sample_eval.get('evaluation_model'),
-                    'high_quality_ratio': (
-                        len(aggregate_state['high_quality_qa_pairs'])
-                        / max(len(evaluated_pairs), 1)
-                        if evaluated_pairs
-                        else 0.0
-                    ),
+                    'average_quality_score':
+                    avg_score,
+                    'evaluated_pairs':
+                    len(evaluated_pairs),
+                    'evaluation_model':
+                    sample_eval.get('evaluation_model'),
+                    'high_quality_ratio':
+                    (len(aggregate_state['high_quality_qa_pairs']) /
+                     max(len(evaluated_pairs), 1) if evaluated_pairs else 0.0),
                 }
 
                 quality_threshold = initial_state.get('evaluation', {}).get(
-                    'quality_threshold', 6.0
-                )
+                    'quality_threshold', 6.0)
                 aggregate_state['quality_metrics'] = {
-                    'total_pairs': len(aggregate_state['qa_pairs']),
-                    'evaluated_pairs': len(evaluated_pairs),
-                    'high_quality_pairs': len(
-                        aggregate_state['high_quality_qa_pairs']
-                    ),
-                    'low_quality_pairs': len(
-                        aggregate_state['low_quality_qa_pairs']
-                    ),
-                    'not_evaluated_pairs': len(
-                        aggregate_state['not_evaluated_pairs']
-                    ),
-                    'quality_threshold': quality_threshold,
-                    'average_quality': avg_score,
+                    'total_pairs':
+                    len(aggregate_state['qa_pairs']),
+                    'evaluated_pairs':
+                    len(evaluated_pairs),
+                    'high_quality_pairs':
+                    len(aggregate_state['high_quality_qa_pairs']),
+                    'low_quality_pairs':
+                    len(aggregate_state['low_quality_qa_pairs']),
+                    'not_evaluated_pairs':
+                    len(aggregate_state['not_evaluated_pairs']),
+                    'quality_threshold':
+                    quality_threshold,
+                    'average_quality':
+                    avg_score,
                 }
 
                 aggregate_state['metrics'] = {
@@ -5020,9 +4921,9 @@ class QAGenerator:
                 for shard_result in successful_results:
                     qa_data_to_write = shard_result.get('qa_data_to_write', [])
                     logger.debug(
-                        f'shard qa_data_to_write: {len(qa_data_to_write)}'
-                    )
-                    aggregate_state['qa_data_to_write'].extend(qa_data_to_write)
+                        f'shard qa_data_to_write: {len(qa_data_to_write)}')
+                    aggregate_state['qa_data_to_write'].extend(
+                        qa_data_to_write)
                 logger.info(
                     f'total shard qa_data_to_write: {len(aggregate_state["qa_data_to_write"])}'
                 )
@@ -5042,9 +4943,8 @@ class QAGenerator:
             return final_state
         except Exception as e:
             error_msg = traceback.format_exc()
-            logger.error(
-                'Error processing file %s: %s, %s', file_path, e, error_msg
-            )
+            logger.error('Error processing file %s: %s, %s', file_path, e,
+                         error_msg)
             return {
                 'task_id': task_id,
                 'status': TaskStatus.FAILED.value,
@@ -5066,7 +4966,8 @@ class QAGenerator:
             for result in all_chunk_results:
                 if isinstance(result, dict) and result.get('qa_data_to_write'):
                     combined_result = {}
-                    combined_result['qa_pairs'] = result.get('qa_data_to_write')
+                    combined_result['qa_pairs'] = result.get(
+                        'qa_data_to_write')
                     total_qa_pairs += len(combined_result['qa_pairs'])
 
                     top_artifacts = result.get('top_artifacts', {})
@@ -5075,15 +4976,15 @@ class QAGenerator:
                     metrics = result.get('metrics', {})
                     segments = result.get('segments', [])
 
-                    update_dict(combined_result, 'top_artifacts', top_artifacts)
+                    update_dict(combined_result, 'top_artifacts',
+                                top_artifacts)
                     update_dict(
                         combined_result,
                         'evaluation_metrics',
                         evaluation_metrics,
                     )
-                    update_dict(
-                        combined_result, 'quality_metrics', quality_metrics
-                    )
+                    update_dict(combined_result, 'quality_metrics',
+                                quality_metrics)
                     update_dict(combined_result, 'metrics', metrics)
                     update_dict(combined_result, 'segments', segments)
 
@@ -5100,22 +5001,19 @@ class QAGenerator:
                     '{"multi_hop":0.4,"structural":0.3,"contextual":0.3}',
                 )
                 reasoning_type_dist = self.config.get(
-                    'reasoning_type_distribution', None
-                )
+                    'reasoning_type_distribution', None)
 
                 question_only = self.config.get('question_only', False)
                 logger.debug('question_only? %s', question_only)
                 if not question_only:
                     logger.debug(
-                        f'combined results[0]: {combined_results[0].keys()}'
-                    )
+                        f'combined results[0]: {combined_results[0].keys()}')
                     all_qa_pairs = []
                     for re in combined_results:
                         all_qa_pairs.extend(re['qa_pairs'])
                         logger.info('num all_qa_pairs: %d', len(all_qa_pairs))
-                    metrics = compute_metrics(
-                        all_qa_pairs, query_type_dist, reasoning_type_dist
-                    )
+                    metrics = compute_metrics(all_qa_pairs, query_type_dist,
+                                              reasoning_type_dist)
                     logger.info(
                         f'Final aggregated metrics across all chunks: {metrics}'
                     )
@@ -5145,8 +5043,7 @@ class QAGenerator:
 if __name__ == '__main__':
     # Parse command line arguments
     parser = argparse.ArgumentParser(
-        description='TrueQuery QA Generation System'
-    )
+        description='TrueQuery QA Generation System')
     parser.add_argument(
         '--config',
         '-c',
@@ -5157,14 +5054,16 @@ if __name__ == '__main__':
     parser.add_argument(
         '--overwrite',
         action='store_true',
-        help='Overwrite existing output files and reprocess all input files (disables resume functionality).',
+        help=
+        'Overwrite existing output files and reprocess all input files (disables resume functionality).',
     )
 
     parser.add_argument(
         '--batch',
         type=int,
         default=0,
-        help='Which batch to run. For example, if batch_size = 10, we will process input files from 0 to 9 with batch 0, and 10 to 19 with batch 1 etc',
+        help=
+        'Which batch to run. For example, if batch_size = 10, we will process input files from 0 to 9 with batch 0, and 10 to 19 with batch 1 etc',
     )
 
     parser.add_argument(
@@ -5178,7 +5077,8 @@ if __name__ == '__main__':
         '--verbose',
         '-v',
         action='store_true',
-        help='Enable verbose logging (INFO and DEBUG messages). By default, only WARNING/ERROR/CRITICAL are shown.',
+        help=
+        'Enable verbose logging (INFO and DEBUG messages). By default, only WARNING/ERROR/CRITICAL are shown.',
     )
 
     args = parser.parse_args()
