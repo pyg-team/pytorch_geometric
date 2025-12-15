@@ -15,6 +15,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import yaml
 from langgraph.graph import StateGraph
 from langgraph.graph.state import CompiledStateGraph
+
 from torch_geometric.llm.models.qa_gen import (
     LLMClient,
     QAGenerationState,
@@ -66,23 +67,16 @@ class QAGenerator:
         self.batch = batch
         self.batch_size = batch_size
         self.backend = backend
-        self.gen_model = (
-            gen_model
-            if not self.config.get('gen_model', None)
-            else self.config.get('gen_model')
-        )
-        self.embedding_model = (
-            embedding_model
-            if not self.config.get('embedding_model', None)
-            else self.config.get('embedding_model')
-        )
+        self.gen_model = (gen_model if not self.config.get('gen_model', None)
+                          else self.config.get('gen_model'))
+        self.embedding_model = (embedding_model
+                                if not self.config.get('embedding_model', None)
+                                else self.config.get('embedding_model'))
 
         evaluation_obj = self.config.get('evaluation', {})
-        self.evaluation_model = (
-            evaluation_model
-            if not evaluation_obj.get('model', None)
-            else evaluation_obj.get('model')
-        )
+        self.evaluation_model = (evaluation_model
+                                 if not evaluation_obj.get('model', None) else
+                                 evaluation_obj.get('model'))
 
         model_progression = self.config.get('model_progression', None)
         if model_progression is None:
@@ -118,13 +112,11 @@ class QAGenerator:
         workflow.add_node('create_artifacts', create_artifacts)
         workflow.add_node('generate_qa', generate_qa_pairs)
         workflow.add_node('validate', validate_qa_pairs)
-        workflow.add_node(
-            'mine_hard_negative_segments', mine_hard_negative_segments
-        )
+        workflow.add_node('mine_hard_negative_segments',
+                          mine_hard_negative_segments)
         workflow.add_node('generate_negative', generate_negative_answers_node)
-        workflow.add_node(
-            'evaluate_qa', evaluate_qa_pairs
-        )  # New evaluation node
+        workflow.add_node('evaluate_qa',
+                          evaluate_qa_pairs)  # New evaluation node
         workflow.add_node('filter_quality', filter_by_quality)
         workflow.add_node('monitor', monitor_progress)
         workflow.add_node('store_results', store_results)
@@ -142,29 +134,30 @@ class QAGenerator:
             'validate',
             route_after_validation,
             {
-                'continue': 'mine_hard_negative_segments',  # Continue to mine hard negatives
+                'continue':
+                'mine_hard_negative_segments',  # Continue to mine hard negatives
                 'feedback': 'feedback_node',  # Route to feedback on failure
             },
         )
 
         workflow.add_edge(
-            'mine_hard_negative_segments', 'generate_negative'
-        )  # Then generate negative answers
-        workflow.add_edge(
-            'generate_negative', 'evaluate_qa'
-        )  # Add evaluation after negatives
+            'mine_hard_negative_segments',
+            'generate_negative')  # Then generate negative answers
+        workflow.add_edge('generate_negative',
+                          'evaluate_qa')  # Add evaluation after negatives
         workflow.add_edge('evaluate_qa', 'filter_quality')
         workflow.add_edge('filter_quality', 'monitor')
         workflow.add_edge('monitor', 'store_results')
 
         workflow.add_conditional_edges(
             'store_results',
-            lambda x: (
-                'feedback'
-                if x.get('status') == TaskStatus.FAILED.value
-                else 'end'
-            ),
-            {'feedback_node': 'feedback_node', 'end': 'end'},
+            lambda x:
+            ('feedback'
+             if x.get('status') == TaskStatus.FAILED.value else 'end'),
+            {
+                'feedback_node': 'feedback_node',
+                'end': 'end'
+            },
         )
 
         workflow.add_conditional_edges(
@@ -179,7 +172,7 @@ class QAGenerator:
         return workflow.compile()
 
     def _load_config(self, config_path: str) -> Dict:
-        with open(config_path, 'r') as f:
+        with open(config_path) as f:
             return yaml.safe_load(f)
 
     def check_already_done(self):
@@ -222,8 +215,7 @@ class QAGenerator:
         # Also include files without any extension (treat as text files)
         all_files = folder.rglob('*')
         input_data.extend(
-            [f for f in all_files if f.is_file() and not f.suffix]
-        )
+            [f for f in all_files if f.is_file() and not f.suffix])
 
         logger.info('total input files: %d', len(input_data))
 
@@ -250,17 +242,13 @@ class QAGenerator:
             os.remove(out_file)
 
         while True:
-            end = (
-                start + limiter
-                if start + limiter < len(input_data)
-                else len(input_data)
-            )
+            end = (start + limiter if start +
+                   limiter < len(input_data) else len(input_data))
             logger.info('Process %d to %d', start, end)
             total_input_data = input_data[start:end]
 
             input_data_to_do = [
-                elem
-                for elem in total_input_data
+                elem for elem in total_input_data
                 if str(elem) not in done_file_paths
             ]
 
@@ -270,8 +258,7 @@ class QAGenerator:
 
             if len(input_data_to_do) > 0:
                 results = await self._process_directory(
-                    input_data_to_do, folder
-                )
+                    input_data_to_do, folder)
                 # incremental save
                 logger.info('results: %d', len(results))
                 self.write_all_qa_pairs(results, out_file)
@@ -298,44 +285,33 @@ class QAGenerator:
                 f'{out_file} contains {len(lines)} json objs, but there are {len(all_chunk_results)} all_chunk_results'
             )
 
-    async def _process_directory(
-        self, input_data_list: List[Any], input_dir: Optional[Path] = None
-    ):
+    async def _process_directory(self, input_data_list: List[Any],
+                                 input_dir: Optional[Path] = None):
         """Process all transcription files in a directory."""
         # input_data can be a list of Path (filename)
         tasks = []
 
-        output_dir = self.config.get('output_dir')
+        self.config.get('output_dir')
         for input_data in input_data_list:
             logger.info('==> input_file: %s', input_data)
             data = input_data
             data_id = input_data
             task = asyncio.create_task(
-                self.process_data(data, data_id, input_dir)
-            )
+                self.process_data(data, data_id, input_dir))
             tasks.append(task)
 
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
         # Per-chunk summary statistics
         successful = sum(
-            1
-            for r in results
-            if isinstance(r, dict)
-            and r.get('status') == TaskStatus.COMPLETED.value
-            and r.get('reason') != 'already_processed'
-        )
+            1 for r in results
+            if isinstance(r, dict) and r.get('status') == TaskStatus.COMPLETED.
+            value and r.get('reason') != 'already_processed')
         skipped = sum(
-            1
-            for r in results
-            if isinstance(r, dict) and r.get('reason') == 'already_processed'
-        )
-        failed = sum(
-            1
-            for r in results
-            if isinstance(r, dict)
-            and r.get('status') == TaskStatus.FAILED.value
-        )
+            1 for r in results
+            if isinstance(r, dict) and r.get('reason') == 'already_processed')
+        failed = sum(1 for r in results if isinstance(r, dict)
+                     and r.get('status') == TaskStatus.FAILED.value)
 
         if self.overwrite:
             logger.info(
@@ -384,9 +360,8 @@ class QAGenerator:
             )
             return file_path.stem
 
-    async def process_data(
-        self, data: str, data_id: str, input_dir: Optional[Path] = None
-    ) -> Dict[str, Any]:
+    async def process_data(self, data: str, data_id: str,
+                           input_dir: Optional[Path] = None) -> Dict[str, Any]:
         """Process a single transcription file."""
         # data can be a file_path or an image_b64_str
         # use md5 hash of the file name (without extension) to retrieve the output file
@@ -394,12 +369,10 @@ class QAGenerator:
             file_path = data
             task_id = hashlib.md5(Path(file_path).stem.encode()).hexdigest()
             is_image_b64_str = False
-            image_b64_str = None
         else:
             file_path = data_id
             task_id = data_id
             is_image_b64_str = True
-            image_b64_str = data
 
         # Check if output file already exists (resume functionality)
         # Skip this check if --overwrite flag is used
@@ -435,55 +408,69 @@ class QAGenerator:
 
         try:
             initial_state = {
-                'task_id': task_id,
-                'file_path': file_path,
-                'input_dir': str(input_dir) if input_dir else None,
-                'output_dir': self.config.get('output_dir'),
+                'task_id':
+                task_id,
+                'file_path':
+                file_path,
+                'input_dir':
+                str(input_dir) if input_dir else None,
+                'output_dir':
+                self.config.get('output_dir'),
                 'qa_pairs': [],
-                'question_only': self.config.get('question_only', False),
+                'question_only':
+                self.config.get('question_only', False),
                 'validation_results': {},
                 'negative_answers': [],
-                'model_selection': '',
-                'retry_count': 0,
+                'model_selection':
+                '',
+                'retry_count':
+                0,
                 'error_messages': [],
-                'status': TaskStatus.PENDING.value,
+                'status':
+                TaskStatus.PENDING.value,
                 'metrics': {},
                 'feedback': {},
                 # "client": self.client,  # Pass OpenAI client
-                'num_pairs': self.config.get('num_pairs', 10),
-                'num_negatives': self.config.get('num_negatives', 3),
-                'dedup_threshold': self.config.get('dedup_threshold', 0.6),
-                'parts': self.config.get('parts', 3),
-                'hard': self.config.get('hard', False),
-                'use_artifact': self.config.get('use_artifact', False),
-                'evaluation': self.config.get('evaluation'),
-                'query_type_distribution': self.config.get(
+                'num_pairs':
+                self.config.get('num_pairs', 10),
+                'num_negatives':
+                self.config.get('num_negatives', 3),
+                'dedup_threshold':
+                self.config.get('dedup_threshold', 0.6),
+                'parts':
+                self.config.get('parts', 3),
+                'hard':
+                self.config.get('hard', False),
+                'use_artifact':
+                self.config.get('use_artifact', False),
+                'evaluation':
+                self.config.get('evaluation'),
+                'query_type_distribution':
+                self.config.get(
                     'query_type_distribution',
                     '{"multi_hop":0.4,"structural":0.3,"contextual":0.3}',
                 ),
-                'reasoning_type_distribution': self.config.get(
-                    'reasoning_type_distribution', None
-                ),
-                'min_hops': self.config.get('min_hops', 2),
-                'max_hops': self.config.get('max_hops', 4),
-                'models': self.config.get('models'),
+                'reasoning_type_distribution':
+                self.config.get('reasoning_type_distribution', None),
+                'min_hops':
+                self.config.get('min_hops', 2),
+                'max_hops':
+                self.config.get('max_hops', 4),
+                'models':
+                self.config.get('models'),
                 'summary': [],
-                'self_contained_question': self.config.get(
-                    'self_contained_question', False
-                ),
-                'hard_negatives_top_k': self.config.get(
-                    'hard_negatives_top_k', 10
-                ),
-                'hard_negatives_min_sim': self.config.get(
-                    'hard_negatives_min_sim', 0.5
-                ),
-                'hard_negatives_max_sim': self.config.get(
-                    'hard_negatives_max_sim', 0.7
-                ),
-                'enable_hard_negatives': self.config.get(
-                    'enable_hard_negatives', True
-                ),
-                'text_artifacts': None,
+                'self_contained_question':
+                self.config.get('self_contained_question', False),
+                'hard_negatives_top_k':
+                self.config.get('hard_negatives_top_k', 10),
+                'hard_negatives_min_sim':
+                self.config.get('hard_negatives_min_sim', 0.5),
+                'hard_negatives_max_sim':
+                self.config.get('hard_negatives_max_sim', 0.7),
+                'enable_hard_negatives':
+                self.config.get('enable_hard_negatives', True),
+                'text_artifacts':
+                None,
             }
 
             use_artifact = initial_state.get('use_artifact')
@@ -491,8 +478,7 @@ class QAGenerator:
                 try:
                     ret = await load_input(initial_state)
                     text_artifacts = get_text_artifacts(
-                        ret['segments'], self.client
-                    )
+                        ret['segments'], self.client)
                     logger.info('text artifacts: %d', len(text_artifacts))
                     initial_state['text_artifacts'] = text_artifacts
                 except Exception as e:
@@ -501,8 +487,7 @@ class QAGenerator:
             total_pairs = initial_state['num_pairs']
             pairs_per_shard = int(self.config.get('pairs_per_shard', 0) or 0)
             max_parallel_shards = int(
-                self.config.get('max_parallel_shards', 4) or 1
-            )
+                self.config.get('max_parallel_shards', 4) or 1)
 
             # If sharding requested and beneficial, fan out multiple workflow runs
             if pairs_per_shard > 0 and pairs_per_shard < total_pairs:
@@ -525,12 +510,14 @@ class QAGenerator:
                     shard_state['parent_task_id'] = task_id
                     shard_state['shard_index'] = shard_idx
                     shard_state['skip_store'] = True
-                    shard_states.append(
-                        (
-                            shard_state,
-                            {'configurable': {'thread_id': shard_task_id}},
-                        )
-                    )
+                    shard_states.append((
+                        shard_state,
+                        {
+                            'configurable': {
+                                'thread_id': shard_task_id
+                            }
+                        },
+                    ))
                     remaining -= request_pairs
                     shard_idx += 1
                     logger.debug(
@@ -539,41 +526,39 @@ class QAGenerator:
 
                 semaphore = asyncio.Semaphore(max(1, max_parallel_shards))
 
-                async def run_shard(
-                    state_config: Tuple[Dict[str, Any], Dict[str, Any]],
-                ):
+                async def run_shard(state_config: Tuple[Dict[str, Any],
+                                                        Dict[str, Any]], ):
                     shard_state, shard_config = state_config
                     async with semaphore:
                         logger.info(
                             f'Launching shard {shard_state["task_id"]} '
-                            f'for {shard_state["num_pairs"]} pairs'
-                        )
+                            f'for {shard_state["num_pairs"]} pairs')
                         return await self.workflow.ainvoke(
-                            shard_state, shard_config
-                        )
+                            shard_state, shard_config)
 
                 shard_tasks = [
                     asyncio.create_task(run_shard(sc)) for sc in shard_states
                 ]
-                shard_results = await asyncio.gather(
-                    *shard_tasks, return_exceptions=True
-                )
+                shard_results = await asyncio.gather(*shard_tasks,
+                                                     return_exceptions=True)
 
                 successful_results: List[Dict[str, Any]] = []
                 for idx, result in enumerate(shard_results):
                     if isinstance(result, Exception):
-                        logger.error(
-                            'Shard %d raised exception: %s', idx, result
-                        )
+                        logger.error('Shard %d raised exception: %s', idx,
+                                     result)
                         raise result
                     if not isinstance(result, dict):
                         logger.error(
                             f'Shard {idx} returned unexpected result type: {type(result)}'
                         )
                         return {
-                            'task_id': task_id,
-                            'status': TaskStatus.FAILED.value,
-                            'error': f'Unexpected shard result type: {type(result)}',
+                            'task_id':
+                            task_id,
+                            'status':
+                            TaskStatus.FAILED.value,
+                            'error':
+                            f'Unexpected shard result type: {type(result)}',
                         }
                     if result.get('status') == TaskStatus.FAILED.value:
                         logger.error(
@@ -601,15 +586,14 @@ class QAGenerator:
                     res.get('task_id') for res in successful_results
                 ]
                 aggregate_state['enable_hard_negatives'] = initial_state.get(
-                    'enable_hard_negatives', True
-                )
+                    'enable_hard_negatives', True)
 
                 for key in (
-                    'qa_pairs',
-                    'validated_pairs',
-                    'high_quality_qa_pairs',
-                    'low_quality_qa_pairs',
-                    'not_evaluated_pairs',
+                        'qa_pairs',
+                        'validated_pairs',
+                        'high_quality_qa_pairs',
+                        'low_quality_qa_pairs',
+                        'not_evaluated_pairs',
                 ):
                     aggregate_state[key] = []
 
@@ -641,27 +625,24 @@ class QAGenerator:
                         if key not in validated_keys:
                             validated_keys.append(key)
 
-                    for pair in (
-                        shard_result.get('high_quality_qa_pairs', []) or []
-                    ):
+                    for pair in (shard_result.get('high_quality_qa_pairs', [])
+                                 or []):
                         key = make_key(pair)
                         if key not in merged_pairs:
                             merged_pairs[key] = deepcopy(pair)
                         if key not in high_keys:
                             high_keys.append(key)
 
-                    for pair in (
-                        shard_result.get('low_quality_qa_pairs', []) or []
-                    ):
+                    for pair in (shard_result.get('low_quality_qa_pairs', [])
+                                 or []):
                         key = make_key(pair)
                         if key not in merged_pairs:
                             merged_pairs[key] = deepcopy(pair)
                         if key not in low_keys:
                             low_keys.append(key)
 
-                    for pair in (
-                        shard_result.get('not_evaluated_pairs', []) or []
-                    ):
+                    for pair in (shard_result.get('not_evaluated_pairs', [])
+                                 or []):
                         key = make_key(pair)
                         if key not in merged_pairs:
                             merged_pairs[key] = deepcopy(pair)
@@ -689,50 +670,42 @@ class QAGenerator:
                     merged_pairs[key] for key in ordered_keys
                 ]
                 aggregate_state['validated_pairs'] = [
-                    merged_pairs[key]
-                    for key in validated_keys
+                    merged_pairs[key] for key in validated_keys
                     if key in allowed_keys
                 ]
                 aggregate_state['high_quality_qa_pairs'] = [
-                    merged_pairs[key]
-                    for key in high_keys
+                    merged_pairs[key] for key in high_keys
                     if key in allowed_keys
                 ]
                 aggregate_state['low_quality_qa_pairs'] = [
-                    merged_pairs[key] for key in low_keys if key in allowed_keys
+                    merged_pairs[key] for key in low_keys
+                    if key in allowed_keys
                 ]
                 aggregate_state['not_evaluated_pairs'] = [
-                    merged_pairs[key]
-                    for key in not_eval_keys
+                    merged_pairs[key] for key in not_eval_keys
                     if key in allowed_keys
                 ]
 
                 for bucket in (
-                    'qa_pairs',
-                    'validated_pairs',
-                    'high_quality_qa_pairs',
-                    'low_quality_qa_pairs',
-                    'not_evaluated_pairs',
+                        'qa_pairs',
+                        'validated_pairs',
+                        'high_quality_qa_pairs',
+                        'low_quality_qa_pairs',
+                        'not_evaluated_pairs',
                 ):
                     for pair in aggregate_state[bucket]:
                         pair['task_id'] = task_id
 
                 enable_hard_negatives = aggregate_state.get(
-                    'enable_hard_negatives', True
-                )
-                total_hard_negs = (
-                    sum(
-                        len(pair.get('hard_negative_segment_ids', []))
-                        for pair in aggregate_state['qa_pairs']
-                    )
-                    if enable_hard_negatives
-                    else 0
-                )
-                avg_hard_negs = (
-                    total_hard_negs / len(aggregate_state['qa_pairs'])
-                    if enable_hard_negatives and aggregate_state['qa_pairs']
-                    else 0.0
-                )
+                    'enable_hard_negatives', True)
+                total_hard_negs = (sum(
+                    len(pair.get('hard_negative_segment_ids', []))
+                    for pair in aggregate_state['qa_pairs'])
+                                   if enable_hard_negatives else 0)
+                avg_hard_negs = (total_hard_negs /
+                                 len(aggregate_state['qa_pairs'])
+                                 if enable_hard_negatives
+                                 and aggregate_state['qa_pairs'] else 0.0)
                 aggregate_state['hard_negatives_stats'] = {
                     'total_hard_negatives': total_hard_negs,
                     'avg_per_question': avg_hard_negs,
@@ -741,76 +714,73 @@ class QAGenerator:
 
                 # Update validation metrics
                 total_validated = sum(
-                    res.get('validation_results', {}).get('validated_pairs', 0)
-                    for res in successful_results
-                )
+                    res.get('validation_results', {}).get(
+                        'validated_pairs', 0) for res in successful_results)
                 total_attempted = sum(
                     res.get('validation_results', {}).get('total_pairs', 0)
-                    for res in successful_results
-                )
+                    for res in successful_results)
                 if total_attempted:
                     aggregate_state['validation_results'] = {
-                        'total_pairs': total_attempted,
-                        'validated_pairs': total_validated,
-                        'dropped_pairs': total_attempted - total_validated,
-                        'validation_method': successful_results[0]
-                        .get('validation_results', {})
-                        .get('validation_method', 'hybrid_with_faiss'),
+                        'total_pairs':
+                        total_attempted,
+                        'validated_pairs':
+                        total_validated,
+                        'dropped_pairs':
+                        total_attempted - total_validated,
+                        'validation_method':
+                        successful_results[0].get('validation_results',
+                                                  {}).get(
+                                                      'validation_method',
+                                                      'hybrid_with_faiss'),
                     }
 
                 # Recompute evaluation and quality metrics based on combined lists
-                evaluated_pairs = (
-                    aggregate_state['high_quality_qa_pairs']
-                    + aggregate_state['low_quality_qa_pairs']
-                )
+                evaluated_pairs = (aggregate_state['high_quality_qa_pairs'] +
+                                   aggregate_state['low_quality_qa_pairs'])
                 if evaluated_pairs:
                     avg_score = sum(
-                        qa.get('evaluation', {})
-                        .get('overall', {})
-                        .get('score', 0)
-                        for qa in evaluated_pairs
-                    ) / len(evaluated_pairs)
+                        qa.get('evaluation', {}).get('overall', {}).get(
+                            'score', 0)
+                        for qa in evaluated_pairs) / len(evaluated_pairs)
                 else:
                     avg_score = 0.0
 
                 sample_eval = next(
-                    (
-                        res.get('evaluation_metrics')
-                        for res in successful_results
-                        if res.get('evaluation_metrics')
-                    ),
+                    (res.get('evaluation_metrics')
+                     for res in successful_results
+                     if res.get('evaluation_metrics')),
                     {},
                 )
 
                 aggregate_state['evaluation_metrics'] = {
-                    'average_quality_score': avg_score,
-                    'evaluated_pairs': len(evaluated_pairs),
-                    'evaluation_model': sample_eval.get('evaluation_model'),
-                    'high_quality_ratio': (
-                        len(aggregate_state['high_quality_qa_pairs'])
-                        / max(len(evaluated_pairs), 1)
-                        if evaluated_pairs
-                        else 0.0
-                    ),
+                    'average_quality_score':
+                    avg_score,
+                    'evaluated_pairs':
+                    len(evaluated_pairs),
+                    'evaluation_model':
+                    sample_eval.get('evaluation_model'),
+                    'high_quality_ratio':
+                    (len(aggregate_state['high_quality_qa_pairs']) /
+                     max(len(evaluated_pairs), 1) if evaluated_pairs else 0.0),
                 }
 
                 quality_threshold = initial_state.get('evaluation', {}).get(
-                    'quality_threshold', 6.0
-                )
+                    'quality_threshold', 6.0)
                 aggregate_state['quality_metrics'] = {
-                    'total_pairs': len(aggregate_state['qa_pairs']),
-                    'evaluated_pairs': len(evaluated_pairs),
-                    'high_quality_pairs': len(
-                        aggregate_state['high_quality_qa_pairs']
-                    ),
-                    'low_quality_pairs': len(
-                        aggregate_state['low_quality_qa_pairs']
-                    ),
-                    'not_evaluated_pairs': len(
-                        aggregate_state['not_evaluated_pairs']
-                    ),
-                    'quality_threshold': quality_threshold,
-                    'average_quality': avg_score,
+                    'total_pairs':
+                    len(aggregate_state['qa_pairs']),
+                    'evaluated_pairs':
+                    len(evaluated_pairs),
+                    'high_quality_pairs':
+                    len(aggregate_state['high_quality_qa_pairs']),
+                    'low_quality_pairs':
+                    len(aggregate_state['low_quality_qa_pairs']),
+                    'not_evaluated_pairs':
+                    len(aggregate_state['not_evaluated_pairs']),
+                    'quality_threshold':
+                    quality_threshold,
+                    'average_quality':
+                    avg_score,
                 }
 
                 aggregate_state['metrics'] = {
@@ -826,9 +796,9 @@ class QAGenerator:
                 for shard_result in successful_results:
                     qa_data_to_write = shard_result.get('qa_data_to_write', [])
                     logger.debug(
-                        f'shard qa_data_to_write: {len(qa_data_to_write)}'
-                    )
-                    aggregate_state['qa_data_to_write'].extend(qa_data_to_write)
+                        f'shard qa_data_to_write: {len(qa_data_to_write)}')
+                    aggregate_state['qa_data_to_write'].extend(
+                        qa_data_to_write)
                 logger.info(
                     f'total shard qa_data_to_write: {len(aggregate_state["qa_data_to_write"])}'
                 )
@@ -848,9 +818,8 @@ class QAGenerator:
             return final_state
         except Exception as e:
             error_msg = traceback.format_exc()
-            logger.error(
-                'Error processing file %s: %s, %s', file_path, e, error_msg
-            )
+            logger.error('Error processing file %s: %s, %s', file_path, e,
+                         error_msg)
             return {
                 'task_id': task_id,
                 'status': TaskStatus.FAILED.value,
@@ -872,7 +841,8 @@ class QAGenerator:
             for result in all_chunk_results:
                 if isinstance(result, dict) and result.get('qa_data_to_write'):
                     combined_result = {}
-                    combined_result['qa_pairs'] = result.get('qa_data_to_write')
+                    combined_result['qa_pairs'] = result.get(
+                        'qa_data_to_write')
                     total_qa_pairs += len(combined_result['qa_pairs'])
 
                     top_artifacts = result.get('top_artifacts', {})
@@ -881,15 +851,15 @@ class QAGenerator:
                     metrics = result.get('metrics', {})
                     segments = result.get('segments', [])
 
-                    update_dict(combined_result, 'top_artifacts', top_artifacts)
+                    update_dict(combined_result, 'top_artifacts',
+                                top_artifacts)
                     update_dict(
                         combined_result,
                         'evaluation_metrics',
                         evaluation_metrics,
                     )
-                    update_dict(
-                        combined_result, 'quality_metrics', quality_metrics
-                    )
+                    update_dict(combined_result, 'quality_metrics',
+                                quality_metrics)
                     update_dict(combined_result, 'metrics', metrics)
                     update_dict(combined_result, 'segments', segments)
 
@@ -906,22 +876,19 @@ class QAGenerator:
                     '{"multi_hop":0.4,"structural":0.3,"contextual":0.3}',
                 )
                 reasoning_type_dist = self.config.get(
-                    'reasoning_type_distribution', None
-                )
+                    'reasoning_type_distribution', None)
 
                 question_only = self.config.get('question_only', False)
                 logger.debug('question_only? %s', question_only)
                 if not question_only:
                     logger.debug(
-                        f'combined results[0]: {combined_results[0].keys()}'
-                    )
+                        f'combined results[0]: {combined_results[0].keys()}')
                     all_qa_pairs = []
                     for re in combined_results:
                         all_qa_pairs.extend(re['qa_pairs'])
                         logger.info('num all_qa_pairs: %d', len(all_qa_pairs))
-                    metrics = compute_metrics(
-                        all_qa_pairs, query_type_dist, reasoning_type_dist
-                    )
+                    metrics = compute_metrics(all_qa_pairs, query_type_dist,
+                                              reasoning_type_dist)
                     logger.info(
                         f'Final aggregated metrics across all chunks: {metrics}'
                     )
@@ -953,13 +920,12 @@ class QAGenerator:
         except Exception as e:
             logger.error(e)
             return "Visualization not available"
-    
+
 
 if __name__ == '__main__':
     # Parse command line arguments
     parser = argparse.ArgumentParser(
-        description='TrueQuery QA Generation System'
-    )
+        description='TrueQuery QA Generation System')
     parser.add_argument(
         '--config',
         '-c',
@@ -971,14 +937,16 @@ if __name__ == '__main__':
     parser.add_argument(
         '--overwrite',
         action='store_true',
-        help='Overwrite existing output files and reprocess all input files (disables resume functionality).',
+        help=
+        'Overwrite existing output files and reprocess all input files (disables resume functionality).',
     )
 
     parser.add_argument(
         '--batch',
         type=int,
         default=0,
-        help='Which batch to run. For example, if batch_size = 10, we will process input files from 0 to 9 with batch 0, and 10 to 19 with batch 1 etc',
+        help=
+        'Which batch to run. For example, if batch_size = 10, we will process input files from 0 to 9 with batch 0, and 10 to 19 with batch 1 etc',
     )
 
     parser.add_argument(
@@ -992,7 +960,8 @@ if __name__ == '__main__':
         '--verbose',
         '-v',
         action='store_true',
-        help='Enable verbose logging (INFO and DEBUG messages). By default, only WARNING/ERROR/CRITICAL are shown.',
+        help=
+        'Enable verbose logging (INFO and DEBUG messages). By default, only WARNING/ERROR/CRITICAL are shown.',
     )
 
     args = parser.parse_args()
