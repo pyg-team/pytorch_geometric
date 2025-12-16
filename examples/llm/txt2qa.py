@@ -134,8 +134,8 @@ class QAGenerator:
             'validate',
             route_after_validation,
             {
-                'continue':
-                'mine_hard_negative_segments',  # Continue to mine hard negatives
+                'continue': ('mine_hard_negative_segments'
+                             ),  # Continue to mine hard negatives
                 'feedback': 'feedback_node',  # Route to feedback on failure
             },
         )
@@ -207,7 +207,8 @@ class QAGenerator:
         output_dir = self.config.get('output_dir')
 
         input_data = []
-        # Use rglob to recursively search in subfolders for common text file extensions
+        # Use rglob to recursively search in subfolders
+        # for common text file extensions
         text_extensions = ['*.txt', '*.text', '*.md']
         for ext in text_extensions:
             input_data.extend(folder.rglob(ext))
@@ -252,9 +253,8 @@ class QAGenerator:
                 if str(elem) not in done_file_paths
             ]
 
-            logger.info(
-                f'Already done: {len(done_file_paths)}, still_to_do: {len(input_data_to_do)}'
-            )
+            logger.info(f'Already done: {len(done_file_paths)}, \
+                    still_to_do: {len(input_data_to_do)}')
 
             if len(input_data_to_do) > 0:
                 results = await self._process_directory(
@@ -281,9 +281,8 @@ class QAGenerator:
         if len(lines) != len(all_chunk_results):
             logger.debug('%s: num lines: %d', out_file, len(lines))
             logger.debug('all_chunk_results: %d', len(all_chunk_results))
-            logger.warning(
-                f'{out_file} contains {len(lines)} json objs, but there are {len(all_chunk_results)} all_chunk_results'
-            )
+            logger.warning(f'{out_file} contains {len(lines)} json objs, \
+                    but there are {len(all_chunk_results)} all_chunk_results')
 
     async def _process_directory(self, input_data_list: List[Any],
                                  input_dir: Optional[Path] = None):
@@ -314,22 +313,23 @@ class QAGenerator:
                      and r.get('status') == TaskStatus.FAILED.value)
 
         if self.overwrite:
-            logger.info(
-                f'Chunk processing complete (overwrite mode): {successful} successful, {failed} failed'
-            )
+            logger.info(f'Chunk processing complete (overwrite mode): \
+                    {successful} successful, {failed} failed')
         else:
-            logger.info(
-                f'Chunk processing complete: {successful} successful, {skipped} skipped (already processed), {failed} failed'
-            )
+            logger.info(f'Chunk processing complete: {successful} successful, \
+                    {skipped} skipped (already processed), {failed} failed')
 
         return results
 
     @staticmethod
     def _get_output_stem(file_path: Path, input_dir: Path) -> str:
-        """Generate a sanitized output filename stem that includes subfolder paths.
+        """Generate a sanitized output filename stem that \
+            includes subfolder paths.
 
-        For files in subfolders, concatenates subfolder names with the filename stem.
-        Example: input_dir/subfolder1/subfolder2/file.txt -> subfolder1_subfolder2_file
+        For files in subfolders, concatenates subfolder names with the \
+            filename stem.
+        Example: input_dir/subfolder1/subfolder2/file.txt -> \
+            subfolder1_subfolder2_file
 
         Args:
             file_path: Full path to the input file
@@ -356,15 +356,16 @@ class QAGenerator:
         except ValueError:
             # If file_path is not relative to input_dir, just use the stem
             logger.warning(
-                f'File {file_path} is not relative to input_dir {input_dir}, using stem only'
-            )
+                f'File {file_path} is not relative to input_dir {input_dir}, \
+                    using stem only')
             return file_path.stem
 
     async def process_data(self, data: str, data_id: str,
                            input_dir: Optional[Path] = None) -> Dict[str, Any]:
         """Process a single transcription file."""
         # data can be a file_path or an image_b64_str
-        # use md5 hash of the file name (without extension) to retrieve the output file
+        # use md5 hash of the file name (without extension) to retrieve the
+        # output file
         if os.path.exists(data):
             file_path = data
             task_id = hashlib.md5(Path(file_path).stem.encode()).hexdigest()
@@ -378,9 +379,11 @@ class QAGenerator:
         # Skip this check if --overwrite flag is used
         if not self.overwrite:
             output_dir = Path(self.config.get('output_dir'))
-            # Use stem to be consistent with the output file name in store_results
+            # Use stem to be consistent with the
+            # output file name in store_results
             if os.path.exists(data):
-                # Use the new helper to generate output stem with subfolder paths
+                # Use the new helper to generate output stem with
+                # subfolder paths
                 if input_dir:
                     stem = self._get_output_stem(Path(file_path), input_dir)
                 else:
@@ -390,9 +393,8 @@ class QAGenerator:
             output_file = output_dir / f'qa_pairs_{stem}.json'
 
             if output_file.exists():
-                logger.info(
-                    f'Skipping {file_path} - output file already exists: {output_file}'
-                )
+                logger.info(f'Skipping {file_path} - output file \
+                        already exists: {output_file}')
                 return {
                     'task_id': task_id,
                     'status': TaskStatus.COMPLETED.value,
@@ -402,9 +404,8 @@ class QAGenerator:
                     'output_file': str(output_file),
                 }
         else:
-            logger.info(
-                f'Overwrite mode enabled - processing {file_path} regardless of existing output files'
-            )
+            logger.info(f'Overwrite mode enabled - processing {file_path} \
+                    regardless of existing output files')
 
         try:
             initial_state = {
@@ -489,12 +490,13 @@ class QAGenerator:
             max_parallel_shards = int(
                 self.config.get('max_parallel_shards', 4) or 1)
 
-            # If sharding requested and beneficial, fan out multiple workflow runs
+            # If sharding requested and beneficial, fan out
+            # multiple workflow runs
             if pairs_per_shard > 0 and pairs_per_shard < total_pairs:
                 logger.info(
                     f'Sharding task {task_id}: total_pairs={total_pairs}, '
-                    f'pairs_per_shard={pairs_per_shard}, max_parallel_shards={max_parallel_shards}'
-                )
+                    f'pairs_per_shard={pairs_per_shard}, \
+                        max_parallel_shards={max_parallel_shards}')
 
                 shard_states: List[Tuple[Dict[str, Any], Dict[str, Any]]] = []
                 remaining = total_pairs
@@ -520,9 +522,8 @@ class QAGenerator:
                     ))
                     remaining -= request_pairs
                     shard_idx += 1
-                    logger.debug(
-                        f'request_pairs: {request_pairs}, remaining: {remaining}, shard_idx: {shard_idx}'
-                    )
+                    logger.debug(f'request_pairs: {request_pairs}, \
+                            remaining: {remaining}, shard_idx: {shard_idx}')
 
                 semaphore = asyncio.Semaphore(max(1, max_parallel_shards))
 
@@ -550,20 +551,19 @@ class QAGenerator:
                         raise result
                     if not isinstance(result, dict):
                         logger.error(
-                            f'Shard {idx} returned unexpected result type: {type(result)}'
-                        )
+                            f'Shard {idx} returned unexpected result type: \
+                                {type(result)}')
                         return {
                             'task_id':
                             task_id,
                             'status':
                             TaskStatus.FAILED.value,
                             'error':
-                            f'Unexpected shard result type: {type(result)}',
+                            (f'Unexpected shard result type: {type(result)}'),
                         }
                     if result.get('status') == TaskStatus.FAILED.value:
-                        logger.error(
-                            f'Shard {idx} failed with errors: {result.get("error_messages")}'
-                        )
+                        logger.error(f'Shard {idx} failed with errors: \
+                                {result.get("error_messages")}')
                         return result
                     result['client'] = None
                     successful_results.append(result)
@@ -727,14 +727,13 @@ class QAGenerator:
                         total_validated,
                         'dropped_pairs':
                         total_attempted - total_validated,
-                        'validation_method':
-                        successful_results[0].get('validation_results',
-                                                  {}).get(
-                                                      'validation_method',
-                                                      'hybrid_with_faiss'),
+                        'validation_method': (successful_results[0].get(
+                            'validation_results',
+                            {}).get('validation_method', 'hybrid_with_faiss')),
                     }
 
-                # Recompute evaluation and quality metrics based on combined lists
+                # Recompute evaluation and quality metrics
+                # based on combined lists
                 evaluated_pairs = (aggregate_state['high_quality_qa_pairs'] +
                                    aggregate_state['low_quality_qa_pairs'])
                 if evaluated_pairs:
@@ -799,9 +798,8 @@ class QAGenerator:
                         f'shard qa_data_to_write: {len(qa_data_to_write)}')
                     aggregate_state['qa_data_to_write'].extend(
                         qa_data_to_write)
-                logger.info(
-                    f'total shard qa_data_to_write: {len(aggregate_state["qa_data_to_write"])}'
-                )
+                logger.info(f'total shard qa_data_to_write: \
+                        {len(aggregate_state["qa_data_to_write"])}')
 
                 aggregate_state['status'] = TaskStatus.COMPLETED.value
 
@@ -865,9 +863,8 @@ class QAGenerator:
 
                     combined_results.append(combined_result)
 
-            logger.info(
-                f'how many combined_results? {len(combined_results)}, total_qa_pairs: {total_qa_pairs}'
-            )
+            logger.info(f'how many combined_results? {len(combined_results)}, \
+                    total_qa_pairs: {total_qa_pairs}')
 
             if combined_results:
                 # Get distributions from config
@@ -884,14 +881,13 @@ class QAGenerator:
                     logger.debug(
                         f'combined results[0]: {combined_results[0].keys()}')
                     all_qa_pairs = []
-                    for re in combined_results:
-                        all_qa_pairs.extend(re['qa_pairs'])
+                    for res in combined_results:
+                        all_qa_pairs.extend(res['qa_pairs'])
                         logger.info('num all_qa_pairs: %d', len(all_qa_pairs))
                     metrics = compute_metrics(all_qa_pairs, query_type_dist,
                                               reasoning_type_dist)
-                    logger.info(
-                        f'Final aggregated metrics across all chunks: {metrics}'
-                    )
+                    logger.info(f'Final aggregated metrics across all chunks: \
+                            {metrics}')
                 else:
                     logger.info('Skip compute_metrics')
 
@@ -913,13 +909,13 @@ class QAGenerator:
             logger.error('Error write_all_qa_pairs: %s, %s', e, error_msg)
 
     def visualize_workflow(self):
-        """Generate a visual representation of the workflow"""
+        """Generate a visual representation of the workflow."""
         try:
             # This would generate a Mermaid diagram or similar
             return self.workflow.get_graph().draw_mermaid()
         except Exception as e:
             logger.error(e)
-            return "Visualization not available"
+            return 'Visualization not available'
 
 
 if __name__ == '__main__':
@@ -937,16 +933,17 @@ if __name__ == '__main__':
     parser.add_argument(
         '--overwrite',
         action='store_true',
-        help=
-        'Overwrite existing output files and reprocess all input files (disables resume functionality).',
+        help='Overwrite existing output files and reprocess all input files \
+            (disables resume functionality).',
     )
 
     parser.add_argument(
         '--batch',
         type=int,
         default=0,
-        help=
-        'Which batch to run. For example, if batch_size = 10, we will process input files from 0 to 9 with batch 0, and 10 to 19 with batch 1 etc',
+        help='Which batch to run. For example, if batch_size = 10, \
+            we will process input files from 0 to 9 with batch 0, \
+                and 10 to 19 with batch 1 etc',
     )
 
     parser.add_argument(
@@ -960,8 +957,8 @@ if __name__ == '__main__':
         '--verbose',
         '-v',
         action='store_true',
-        help=
-        'Enable verbose logging (INFO and DEBUG messages). By default, only WARNING/ERROR/CRITICAL are shown.',
+        help='Enable verbose logging (INFO and DEBUG messages).\
+            By default, only WARNING/ERROR/CRITICAL are shown.',
     )
 
     args = parser.parse_args()

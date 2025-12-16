@@ -23,7 +23,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 logger = logging.getLogger(__name__)
 
 artifact_extraction_prompt = """
-Analyze the following transcript and extract semantic artifacts that would be valuable for generating high-quality question-answer pairs.
+Analyze the following transcript and extract semantic artifacts that would be \
+    valuable for generating high-quality question-answer pairs.
 
 TRANSCRIPT:
 {{text}}
@@ -42,11 +43,13 @@ Output your evaluation as a valid JSON object with the following structure:
 ```json
 {
   "key_concepts": [
-    {"text": "concept name", "description": "detailed description", "importance": "why it's important"},
+    {"text": "concept name", "description": "detailed description", \
+        "importance": "why it's important"},
     ...
   ],
   "relationships": [
-    {"text": "relationship description", "description": "detailed explanation", "importance": "relevance"},
+    {"text": "relationship description", \
+        "description": "detailed explanation", "importance": "relevance"},
     ...
   ],
   "themes": [...],
@@ -57,13 +60,17 @@ Output your evaluation as a valid JSON object with the following structure:
   "contextual_factors": [...]
 }
 
-Please ensure your output is ONLY the JSON object with no preamble or additional text.
+Please ensure your output is ONLY the JSON object with no preamble \
+    or additional text.
 """
 artifact_extraction_prompt_template = Template(artifact_extraction_prompt)
 
-llm_rank_artifacts_prompt = """You are an expert at evaluating semantic artifacts for question-answer generation.
+llm_rank_artifacts_prompt = """You are an expert at evaluating semantic \
+    artifacts for question-answer generation.
 
-Given the following extracted artifacts from a transcript, select the TOP {{top_k}} artifacts that would be MOST VALUABLE for generating insightful and complex question-answer pairs.
+Given the following extracted artifacts from a transcript, select the \
+    TOP {{top_k}} artifacts that would be MOST VALUABLE for generating \
+        insightful and complex question-answer pairs.
 
 AVAILABLE ARTIFACTS:
 {{artifacts_text}}
@@ -76,23 +83,29 @@ SELECTION CRITERIA:
 5. Include artifacts that support synthesis and analysis questions
 6. Consider diversity - avoid selecting only one type
 
-RESPOND WITH ONLY THE NUMBERS of your top {{top_k}} choices in order of importance.
+RESPOND WITH ONLY THE NUMBERS of your top {{top_k}} choices in \
+    order of importance.
 Format: [1, 5, 3, 2, 7]
 
 Your selection (top {{top_k}} numbers only):"""
 llm_rank_artifacts_prompt_template = Template(llm_rank_artifacts_prompt)
 
 generate_timeline_prompt = """
-You are an expert timeline curator creating a rich event log from transcript segments.
+You are an expert timeline curator creating a rich event log from \
+    transcript segments.
 
 Objectives:
-- Surface at most {{max_events}} pivotal moments that show progress, decisions, or issues in the session.
-- Each event must cite one of the provided segment IDs (1-based numbering) with exact timestamps taken from that segment.
-- Provide enough detail (key actions, quotes, implications) so downstream systems can build cross-part reasoning.
+- Surface at most {{max_events}} pivotal moments that show progress, \
+    decisions, or issues in the session.
+- Each event must cite one of the provided segment IDs (1-based numbering) \
+    with exact timestamps taken from that segment.
+- Provide enough detail (key actions, quotes, implications) so downstream \
+    systems can build cross-part reasoning.
 
 Input Segments (use only these, never invent content):
 {% for seg in segments %}
-- Segment {{seg.segment_id}} ({{seg.start_time}} - {{seg.end_time}}): {{seg.text}}
+- Segment {{seg.segment_id}} \
+    ({{seg.start_time}} - {{seg.end_time}}): {{seg.text}}
 {% endfor %}
 
 Required JSON output:
@@ -103,22 +116,28 @@ Required JSON output:
       "start_time": "HH:MM:SS",
       "end_time": "HH:MM:SS",
       "headline": "<= 18 words capturing the moment",
-      "key_details": "2 sentences summarising the action/outcome (<= 220 chars)",
-      "key_quote": "Exact quote or concise paraphrase from the segment (<= 200 chars)",
-      "impact": "Why this matters for securing/operating AI agents (<= 140 chars)",
+      "key_details": \
+        "2 sentences summarising the action/outcome (<= 220 chars)",
+      "key_quote": \
+        "Exact quote or concise paraphrase from the segment (<= 200 chars)",
+      "impact": \
+        "Why this matters for securing/operating AI agents (<= 140 chars)",
       "entities": ["Speaker or system names involved" (0-4 items)]
     }
   ]
 }
 
 Strict rules:
-1. Use only segment IDs provided; keep start/end timestamps within that segment's window.
-2. Do not output more than {{max_events}} events; ensure they are ordered chronologically.
+1. Use only segment IDs provided; keep start/end timestamps within that \
+    segment's window.
+2. Do not output more than {{max_events}} events; ensure they are ordered \
+    chronologically.
 3. If you cannot find a quote, use a faithful paraphrase and label it clearly.
 4. All strings must be plain text (no markdown) and JSON must be valid.
 
 Return only the JSON object.
-Please ensure your output is ONLY the JSON object with no preamble or additional text.
+Please ensure your output is ONLY the JSON object with no preamble \
+    or additional text.
 """
 generate_timeline_prompt_template = Template(generate_timeline_prompt)
 
@@ -155,12 +174,15 @@ class LLMClient:
         max_model_len: Optional[int] = None,
         enable_sleep_mode: bool = True,
     ):
-        """Initialize LLMClient with generation, evaluation, and embedding models.
+        """Initialize LLMClient with generation, evaluation, and \
+            embedding models.
 
         Args:
             generation_model: Model name/path for text generation
-            evaluation_model: Model name/path for evaluation (defaults to generation_model)
-            embedding_model: Model name/path for embeddings (defaults to generation_model)
+            evaluation_model: \
+                Model name/path for evaluation (defaults to generation_model)
+            embedding_model: \
+                Model name/path for embeddings (defaults to generation_model)
             backend: Backend to use (NIM or VLLM)
             api_key: API key (for NIM backend)
             tensor_parallel_size: Number of GPUs for tensor parallelism (VLLM)
@@ -258,7 +280,7 @@ class LLMClient:
         max_model_len: Optional[int] = None,
         enable_sleep_mode: bool = True,
         task: str = 'generate',
-    ) -> 'LLM':
+    ) -> "LLM":  # noqa: F821
         """Create local vLLM client with OpenAI-compatible API.
 
         Args:
@@ -275,9 +297,8 @@ class LLMClient:
         try:
             from vllm import LLM
         except ImportError as err:
-            raise ImportError(
-                'vLLM is not installed. Please install it with: pip install vllm'
-            ) from err
+            raise ImportError('vLLM is not installed. \
+                    Please install it with: pip install vllm') from err
 
         logger.info('Initializing local vLLM with model: %s (task=%s)', model,
                     task)
@@ -528,7 +549,8 @@ class QAGenerationState(TypedDict):
     hard_negatives_min_sim: (
         float  # Minimum similarity threshold (too dissimilar = not useful)
     )
-    hard_negatives_max_sim: float  # Maximum similarity threshold (too similar = likely false negative)
+    hard_negatives_max_sim: float  # Maximum similarity threshold
+    # (too similar = likely false negative)
     hard_negatives_stats: Dict[str, Any]  # Statistics about hard negatives
     enable_hard_negatives: bool
     text_artifacts: List[Any]
@@ -587,7 +609,8 @@ class ArtifactExtractor:
                     'role':
                     'system',
                     'content':
-                    'You are an expert at extracting semantic artifacts from text for enhanced Q&A generation.',
+                    'You are an expert at extracting semantic \
+                        artifacts from text for enhanced Q&A generation.',
                 },
                 {
                     'role': 'user',
@@ -750,7 +773,8 @@ class ArtifactExtractor:
                 score += (overlap /
                           len(artifact_words)) * 0.3  # Max 0.3 from overlap
 
-            # Factor 3: Type importance (some types are inherently more important)
+            # Factor 3: Type importance (some types are \
+            # inherently more important)
             type_weights = {
                 'key_concepts': 0.25,
                 'relationships': 0.20,
@@ -809,7 +833,8 @@ class ArtifactExtractor:
         Args:
             artifacts: List of all artifacts
             top_k: Number of top artifacts to select
-            use_llm_ranking: Whether to use LLM-based ranking (True) or rule-based (False)
+            use_llm_ranking: Whether to use LLM-based ranking (True) or \
+                rule-based (False)
 
         Returns:
             List of top artifacts for Q&A enhancement
@@ -869,7 +894,8 @@ class ArtifactExtractor:
             artifacts_text = ''
             for i, artifact in enumerate(artifacts[:15],
                                          1):  # Limit to 15 for prompt size
-                artifacts_text += f'\n{i}. [{artifact["type"]}] {artifact["text"]}: {artifact["description"]}'
+                artifacts_text += f'\n{i}. [{artifact["type"]}] \
+                    {artifact["text"]}: {artifact["description"]}'
 
             prompt = llm_rank_artifacts_prompt_template.render(
                 top_k=top_k, artifacts_text=artifacts_text)
@@ -879,7 +905,8 @@ class ArtifactExtractor:
                     'role':
                     'system',
                     'content':
-                    'You are an expert at evaluating content for educational Q&A generation.',
+                    ('You are an expert at evaluating content for educational \
+                        Q&A generation.'),
                 },
                 {
                     'role': 'user',
@@ -931,7 +958,8 @@ class ArtifactExtractor:
 
     def format_artifacts_for_prompt(self, artifacts: List[Dict[str,
                                                                Any]]) -> str:
-        """Format artifacts into a string suitable for inclusion in Q&A generation prompt.
+        """Format artifacts into a string suitable for inclusion in \
+            Q&A generation prompt.
 
         Args:
             artifacts: List of artifacts to format
@@ -983,7 +1011,9 @@ class ArtifactExtractor:
 
 def split_segments_text_structured(segments: List[dict],
                                    parts: int = 3) -> List[str]:
-    """Most structured approach: Clear section headers and organized timestamp info."""
+    """Most structured approach: Clear section headers and organized \
+        timestamp info.
+    """
     total = len(segments)
     if total == 0:
         return []
@@ -1008,7 +1038,9 @@ def split_segments_text_structured(segments: List[dict],
             end_formatted = format_timestamp(end_time)
 
             # Structured format with 1-based segment numbering
-            segment_info = f'Segment {start_idx + j + 1} ({start_formatted} - {end_formatted}): {text}'
+            segment_info = f'Segment {start_idx + j + 1}\
+                ({start_formatted} - {end_formatted}): {text}'
+
             section_segments.append(segment_info)
 
         if section_segments:
@@ -1160,7 +1192,7 @@ async def create_artifacts(state: QAGenerationState) -> Dict[str, Any]:
 
 
 def _normalize_segment_metadata(
-    segments: List[Dict[str, Any]], ) -> List[Dict[str, Any]]:
+        segments: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     metadata = []
     for idx, seg in enumerate(segments):
         seg_id = (seg.get('segment_id') or seg.get('id')
@@ -1184,12 +1216,10 @@ def _normalize_segment_metadata(
             start_seconds,
             'end_seconds':
             end_seconds,
-            'start_time':
-            format_timestamp(start_seconds)
-            if start_seconds is not None else '00:00:00',
-            'end_time':
-            format_timestamp(end_seconds)
-            if end_seconds is not None else '00:00:00',
+            'start_time': (format_timestamp(start_seconds)
+                           if start_seconds is not None else '00:00:00'),
+            'end_time': (format_timestamp(end_seconds)
+                         if end_seconds is not None else '00:00:00'),
             'text':
             seg.get('text', '').strip(),
         })
@@ -1403,7 +1433,9 @@ def format_timeline_highlights(events: List[Dict[str, Any]],
         headline = event.get('headline', '').strip()
         details = (event.get('key_details') or '').strip()
         impact = (event.get('impact') or '').strip()
-        snippet = f'- [{event["start_time"]} - {event["end_time"]}] (Segment {event["segment_id"]}) {headline}'
+        snippet = f'- [{event["start_time"]} - {event["end_time"]}] \
+            (Segment {event["segment_id"]}) {headline}'
+
         if details:
             snippet += f' — {details}'
         if impact:
@@ -1413,8 +1445,8 @@ def format_timeline_highlights(events: List[Dict[str, Any]],
 
 
 _SEGMENT_LINE_PATTERN = re.compile(
-    r'^Segment\s+(?P<id>\d+)\s*\((?P<start>\d{2}:\d{2}:\d{2})\s*-\s*(?P<end>\d{2}:\d{2}:\d{2})\):\s*(?P<text>.*)$'
-)
+    r'^Segment\s+(?P<id>\d+)\s*\((?P<start>\d{2}:\d{2}:\d{2})\s*-\s*'
+    r'(?P<end>\d{2}:\d{2}:\d{2})\):\s*(?P<text>.*)$')
 
 
 def _parse_structured_lines(
@@ -1548,12 +1580,13 @@ def build_cross_part_contexts_from_segments(
         if meta.get('total_other_sections',
                     0) and not meta.get('sections_included'):
             logger.debug(
-                f'Cross-part context for section {idx + 1} did not include any additional segments within the current character budget.'
-            )
+                f'Cross-part context for section {idx + 1} did not include \
+                    any additional segments within the current character \
+                    budget.')
         elif meta.get('sections_truncated'):
             logger.debug(
-                f'Cross-part context for section {idx + 1} truncated sections {meta["sections_truncated"]} due to character limits.'
-            )
+                f'Cross-part context for section {idx + 1} truncated sections \
+                    {meta["sections_truncated"]} due to character limits.')
 
     return contexts
 
@@ -1586,7 +1619,9 @@ def build_cross_part_contexts_with_timeline(
             detail = (event.get('key_details') or '').strip()
             impact = (event.get('impact') or '').strip()
             quote = (event.get('key_quote') or '').strip()
-            entry = f'- [{event["start_time"]} - {event["end_time"]}] (Segment {event["segment_id"]}) {event["headline"]}'
+            entry = f'- [{event["start_time"]} - {event["end_time"]}] \
+                (Segment {event["segment_id"]}) {event["headline"]}'
+
             if detail:
                 entry += f' — {detail}'
             if impact:
@@ -1640,6 +1675,7 @@ infer_video_style_prompt_template = Template(infer_video_style_prompt)
 
 
 def infer_video_style(segment_text: str, client: LLMClient) -> str:
+    """Infer the video style from the transcript excerpt."""
     prompt = infer_video_style_prompt_template.render(
         segment_text=segment_text)
     messages = [
@@ -1661,8 +1697,8 @@ def get_summary_block(summary: List[Dict[str, str]]) -> str:
     if not summary:
         return ''
     lines = [
-        f'- **{seg["segment_title"]} ({seg["timestamp"]}):** {seg["description"]}'
-        for seg in summary
+        f'- **{seg["segment_title"]} ({seg["timestamp"]}):\
+            ** {seg["description"]}' for seg in summary
     ]
     return 'Video summary:\n' + '\n'.join(lines) + '\n\n'
 
@@ -1682,30 +1718,38 @@ def get_artifact_block_for_hard_question(artifacts_context):
 EXTRACTED SEMANTIC ARTIFACTS (Use these to create deeper multi-hop questions):
 {artifacts_context}
 ARTIFACT-ENHANCED HARD QUESTION INSTRUCTIONS:
-- Use identified relationships to create questions that connect multiple concepts across the transcript
-- Leverage processes and workflows to generate questions about cause-and-effect chains
-- Use themes and insights to formulate questions requiring synthesis of multiple viewpoints
-- Create questions that explore how technical terms relate to the broader concepts
+- Use identified relationships to create questions that connect multiple \
+    concepts across the transcript
+- Leverage processes and workflows to generate questions about \
+    cause-and-effect chains
+- Use themes and insights to formulate questions requiring synthesis of \
+    multiple viewpoints
+- Create questions that explore how technical terms relate to the broader \
+    concepts
 - Design multi-hop questions that traverse the artifact graph structure
-- Focus on questions that require understanding the connections between different artifact types
+- Focus on questions that require understanding the connections between \
+    different artifact types
 """
     return artifact_block
 
 
 def distribute_counts(total_count: int, distribution: Dict[str, float],
                       name: str = '') -> Dict[str, int]:
-    """Distribute a total count across categories based on percentages using smart rounding.
+    """Distribute a total count across categories based on percentages using \
+        smart rounding.
 
-    This algorithm solves the problem of fairly distributing small integers according to
-    percentage distributions. The naive approach of using int(count * percentage) often
-    results in all items going to the first category due to truncation.
+    This algorithm solves the problem of fairly distributing small integers \
+        according to percentage distributions. The naive approach of using \
+        int(count * percentage) often results in all items going to the first \
+        category due to truncation.
 
     Algorithm steps:
     1. Calculate exact (floating-point) count for each category
     2. Sort categories by their fractional parts in descending order
     3. Assign floor values to all categories
     4. Distribute remaining items to categories with largest fractional parts
-    5. If still items left (rare edge case), assign to the category with highest percentage
+    5. If still items left (rare edge case), assign to the category with \
+        highest percentage
 
     Example:
         With 3 items and distribution {"A": 0.4, "B": 0.3, "C": 0.3}:
@@ -1719,7 +1763,8 @@ def distribute_counts(total_count: int, distribution: Dict[str, float],
 
     Args:
         total_count: Total number of items to distribute
-        distribution: Dict mapping category names to their target percentage (0-1)
+        distribution: Dict mapping category names to their target percentage \
+            (0-1)
                      Sum of percentages should be 1.0
         name: Optional name for logging purposes (e.g., "Query type")
 
@@ -1771,97 +1816,158 @@ def distribute_counts(total_count: int, distribution: Dict[str, float],
 
 
 generate_hard_question_answer_with_timestamps_prompt = """
-You are an expert at extracting complex question and answer pairs from transcripts.
+You are an expert at extracting complex question and answer \
+    pairs from transcripts.
 
 {{artifact_block}}
 
 Guidelines:
 1. Generate ONLY Complex Questions (Complexity 4-5):
-   - All questions MUST require understanding connections between different parts of the transcript
+   - All questions MUST require understanding connections between \
+    different parts of the transcript
    - Questions should test deep understanding, not simple facts
 {%- if self_contained_question %}
-   - Do not mention the existence of a context/transcript in the generated question like "in the transcript", "from the given context", or "in Segment 148". Produce a natural, standalone question.
-   - Only use facts present in the provided context/transcript; if missing, say you cannot generate a question.
+   - Do not mention the existence of a context/transcript in the \
+    generated question like "in the transcript", "from the given context", \
+        or "in Segment 148". Produce a natural, standalone question.
+   - Only use facts present in the provided context/transcript; if \
+    missing, say you cannot generate a question.
 {%- endif %}
-   - Example: "How does the speaker's initial explanation of X relate to the later implementation of Y?"
+   - Example: "How does the speaker's initial explanation of X relate to the \
+    later implementation of Y?"
 
 2. Question Types to Generate:
-   - Multi-hop questions ({{query_counts.get("multi_hop", 0)}} questions): Connect {{min_hops}}-{{max_hops}} separated segments
-   - Structural questions ({{query_counts.get("structural", 0)}} questions): Focus on relationships between concepts
-   - Contextual questions ({{query_counts.get("contextual", 0)}} questions): Require surrounding context to understand
-   - Use the cross-part context snippets to connect evidence that lives outside the current transcript section
+   - Multi-hop questions ({{query_counts.get("multi_hop", 0)}} questions): \
+    Connect {{min_hops}}-{{max_hops}} separated segments
+   - Structural questions ({{query_counts.get("structural", 0)}} questions): \
+    Focus on relationships between concepts
+   - Contextual questions ({{query_counts.get("contextual", 0)}} questions): \
+    Require surrounding context to understand
+   - Use the cross-part context snippets to connect evidence that lives \
+    outside the current transcript section
 
 {%- if reasoning_counts %}
 3. Reasoning Types to Include:
-   - Factual questions ({{reasoning_counts.get("factual", 0)}} questions): Ask for complex facts that require synthesizing multiple pieces of information (NOT simple lookups)
-   - Relational questions ({{reasoning_counts.get("relational", 0)}} questions): Ask how data points compare or correlate across different segments
-   - Inferential questions ({{reasoning_counts.get("inferential", 0)}} questions): Ask about conclusions or implications requiring synthesis
-   - Temporal questions ({{reasoning_counts.get("temporal", 0)}} questions): Ask about changes or events over time across segments
-   - Procedural questions ({{reasoning_counts.get("procedural", 0)}} questions): Ask about complex multi-step processes or guidelines
-   - Visual questions ({{reasoning_counts.get("visual", 0)}} questions): Ask about visual details requiring cross-reference
-   - Causal questions ({{reasoning_counts.get("causal", 0)}} questions): Ask about cause-effect chains spanning segments
+   - Factual questions ({{reasoning_counts.get("factual", 0)}} \
+    questions): Ask for complex facts that require synthesizing \
+    multiple pieces of information (NOT simple lookups)
+   - Relational questions ({{reasoning_counts.get("relational", 0)}} \
+    questions): Ask how data points compare or correlate across \
+    different segments
+   - Inferential questions ({{reasoning_counts.get("inferential", 0)}} \
+    questions): Ask about conclusions or implications requiring synthesis
+   - Temporal questions ({{reasoning_counts.get("temporal", 0)}} \
+    questions): Ask about changes or events over time across segments
+   - Procedural questions ({{reasoning_counts.get("procedural", 0)}} \
+    questions): Ask about complex multi-step processes or guidelines
+   - Visual questions ({{reasoning_counts.get("visual", 0)}} \
+    questions): Ask about visual details requiring cross-reference
+   - Causal questions ({{reasoning_counts.get("causal", 0)}} \
+    questions): Ask about cause-effect chains spanning segments
 
    Example COMPLEX questions by reasoning type (all must be complexity 4-5):
-   - Factual: "What is the total combined budget allocation across all departmental initiatives mentioned, and how does it relate to the overall fiscal year target?"
-   - Relational: "How does the performance metric achieved in Q2 compare to both the initial baseline and the revised targets that were set?"
-   - Inferential: "Based on the challenges outlined and the proposed solutions, what unstated assumptions underlie the strategic pivot?"
-   - Temporal: "How did the implementation timeline evolve from the initial proposal through the mid-year review to the final execution phase?"
-   - Procedural: "What is the complete approval workflow including standard requirements, exceptions, and escalation processes?"
-   - Visual: "How do the visual elements presented relate to the verbal descriptions provided, and what discrepancies exist between them?"
-   - Causal: "What chain of events, starting from the initial decision, led through various complications to the final outcome?"
+   - Factual: "What is the total combined budget allocation across \
+    all departmental initiatives mentioned, and how does it relate to the \
+    overall fiscal year target?"
+   - Relational: "How does the performance metric achieved in Q2 compare to \
+    both the initial baseline and the revised targets that were set?"
+   - Inferential: "Based on the challenges outlined and the proposed \
+    solutions, what unstated assumptions underlie the strategic pivot?"
+   - Temporal: "How did the implementation timeline evolve from the \
+    initial proposal through the mid-year review to the final execution phase?"
+   - Procedural: "What is the complete approval workflow including standard \
+    requirements, exceptions, and escalation processes?"
+   - Visual: "How do the visual elements presented relate to the verbal \
+    descriptions provided, and what discrepancies exist between them?"
+   - Causal: "What chain of events, starting from the \
+    initial decision, led through various complications to the final outcome?"
 
 4. IMPORTANT - Orthogonal Distributions:
-   - Each question must have BOTH a query type (multi_hop/structural/contextual) AND a reasoning type
-   - For example: A multi_hop factual question or a structural causal question
+   - Each question must have BOTH a query type \
+    (multi_hop/structural/contextual) AND a reasoning type
+   - For example: A multi_hop factual question \
+    or a structural causal question
    - Ensure the final distribution matches both specified percentages
 {%- endif %}
 
 Meta-Reasoning Playbook (follow before drafting output):
    1. Scan the current section for key statements and log their timestamps.
-   2. Compare against the cross-part context to spot related events elsewhere and capture the matching timestamps.
-   3. Design a reasoning chain that depends on evidence from both the local section and external context, outlining each hop.
-   4. Confirm each hop's start/end time aligns with the chosen segments, then compose the question and answer around that chain.
-   5. Ensure the final answer references all hops and explains why the timestamps substantiate the reasoning.
+   2. Compare against the cross-part context to spot related events elsewhere \
+    and capture the matching timestamps.
+   3. Design a reasoning chain that depends on evidence from both the local \
+    section and external context, outlining each hop.
+   4. Confirm each hop's start/end time aligns with the chosen segments, then \
+    compose the question and answer around that chain.
+   5. Ensure the final answer references all hops and explains why the \
+    timestamps substantiate the reasoning.
 
 5. **IMPORTANT - Segment Identification**:
-   - The transcript below contains segments formatted as "Segment N (HH:MM:SS - HH:MM:SS): text" where N starts from 1
-   - For each question-answer pair you generate, identify ALL segment numbers FROM which the question is derived
-   - These segments are the source material that should be retrieved when someone asks this question
-   - Record these segment numbers in the "segment_ids" field as a list of integers (e.g., [1, 4, 8])
+   - The transcript below contains segments formatted as "Segment N \
+    (HH:MM:SS - HH:MM:SS): text" where N starts from 1
+   - For each question-answer pair you generate, identify ALL segment numbers \
+    FROM which the question is derived
+   - These segments are the source material that should be retrieved when \
+    someone asks this question
+   - Record these segment numbers in the "segment_ids" field as a list of \
+    integers (e.g., [1, 4, 8])
    - For multi-hop questions:
-     * The top-level "segment_ids" should be the UNION of all segment IDs across all hops
+     * The top-level "segment_ids" should be the UNION of all segment IDs \
+      across all hops
      * Each hop in "hop_contexts" should specify its own "segment_ids" list
-     * Example: If hop 1 uses [1, 3] and hop 2 uses [6, 8], then top-level segment_ids should be [1, 3, 6, 8]
-   - The timestamps will be automatically calculated from the segments you identify
+     * Example: If hop 1 uses [1, 3] and hop 2 uses [6, 8], then top-level \
+      segment_ids should be [1, 3, 6, 8]
+   - The timestamps will be automatically calculated from the segments you \
+    identify
 
 
 4. For Each Question:
    - Must have complexity level {{min_complexity}} or higher
-   - Generate the question FROM the identified segments (these segments are the source material)
+   - Generate the question FROM the identified segments (these segments are \
+    the source material)
    - Multi-hop questions must specify hop_count ({{min_hops}}-{{max_hops}})
-   - Provide hop_contexts: a list where each hop includes "hop", "segment_ids" (the source segments for this hop), "start_time", "end_time", and a concise "context" summary describing the supporting segment(s)
+   - Provide hop_contexts: a list where each hop includes "hop", \
+    "segment_ids" (the source segments for this hop), "start_time", \
+    "end_time", and a concise "context" summary \
+    describing the supporting segment(s)
 
 5. Generate {{num_pairs}} distinct question and answer pairs.
 
-The output should be a JSON array of objects (with the number of objects equal to {{num_pairs}}), where each object contains:
-  - "question": the complex question requiring structural understanding of the contexts/transcripts/segments without explicitly referencing the context/transcript/segments in the question
-  - "answer": comprehensive answer from the contexts/transcripts/segments without explicitly referencing the context/transcript/segments in the answer
+The output should be a JSON array of objects (with the number of objects \
+    equal to {{num_pairs}}), where each object contains:
+  - "question": the complex question requiring structural understanding of \
+    the contexts/transcripts/segments without explicitly referencing the \
+    context/transcript/segments in the question
+  - "answer": comprehensive answer from the contexts/transcripts/segments \
+    without explicitly referencing the context/transcript/segments in the \
+    answer
   - "question_complexity": numeric score {{min_complexity}}-5
   - "query_type": one of ["multi_hop", "structural", "contextual"]
 {%- if reasoning_counts %}
-  - "reasoning_type": one of ["factual", "relational", "inferential", "temporal", "procedural", "visual", "causal"]
+  - "reasoning_type": one of ["factual", "relational", "inferential", \
+    "temporal", "procedural", "visual", "causal"]
 {%- endif %}
-  - "segment_ids": list of segment numbers (e.g., [1, 4, 8]) that are the source material for this question (these should be retrieved when the question is asked)
-  - "start_time": HH:MM:SS timestamp (will be calculated from earliest segment)
-  - "end_time": HH:MM:SS timestamp (will be calculated from latest segment)
-  - "hop_count": number of hops ({{min_hops}}-{{max_hops}}) for multi_hop questions only
-  - "hop_contexts": array of hop detail objects with "hop", "segment_ids" (source segments for this hop), "start_time", "end_time", "context" (required for every question)
+  - "segment_ids": list of segment numbers (e.g., [1, 4, 8]) that are the \
+    source material for this question (these should be retrieved when the \
+    question is asked)
+  - "start_time": HH:MM:SS timestamp (will be calculated from earliest \
+    segment)
+  - "end_time": HH:MM:SS timestamp (will be calculated \
+    from latest segment)
+  - "hop_count": number of hops ({{min_hops}}-{{max_hops}}) \
+    for multi_hop questions only
+  - "hop_contexts": array of hop detail objects with "hop", \
+    "segment_ids" (source segments for this hop), "start_time", \
+        "end_time", "context" (required for every question)
 
 Additional Constraints:
-- **Output only the JSON. Do not include any introductory or concluding text.**
-- **Please ensure that your entire response is strictly valid JSON with no additional text or formatting.**
-- **The output should be a JSON array containing exactly {{num_pairs}} objects.**
-- **Pay careful attention to the timestamp markers in the transcript to ensure accurate start_time and end_time values.**
+- **Output only the JSON. Do not include any \
+    introductory or concluding text.**
+- **Please ensure that your entire response is \
+    strictly valid JSON with no additional text or formatting.**
+- **The output should be a JSON array containing \
+    exactly {{num_pairs}} objects.**
+- **Pay careful attention to the timestamp markers \
+    in the transcript to ensure accurate start_time and end_time values.**
 
 Video Style Guidance: {{video_style}}
 
@@ -1874,7 +1980,8 @@ Transcript:
 {{segment_text}}
 
 Output a JSON array where each element is an object with the required keys.
-Please ensure your output is ONLY the JSON object with no preamble or additional text.
+Please ensure your output is ONLY the JSON object \
+    with no preamble or additional text.
 """
 
 generate_hard_question_answer_with_timestamps_template = Template(
@@ -1882,7 +1989,9 @@ generate_hard_question_answer_with_timestamps_template = Template(
 
 
 def _normalize_time_value(value: Any, fallback: str = '') -> str:
-    """Normalize hop context timestamps to HH:MM:SS, falling back when missing."""
+    """Normalize hop context timestamps to HH:MM:SS, \
+        falling back when missing.
+    """
     if value is None:
         return fallback
     if isinstance(value, (int, float)):
@@ -1897,7 +2006,8 @@ def _normalize_time_value(value: Any, fallback: str = '') -> str:
 
 
 def normalize_hop_contexts(pair: Dict[str, Any]) -> List[Dict[str, Any]]:
-    """Normalize hop_context entries to a consistent structure with exactly 5 fields:
+    """Normalize hop_context entries to a consistent structure with exactly \
+        5 fields:
     - hop: hop number (int)
     - segment_ids: list of segment IDs
     - start_time: timestamp string
@@ -1908,7 +2018,7 @@ def normalize_hop_contexts(pair: Dict[str, Any]) -> List[Dict[str, Any]]:
         pair: QA pair dictionary containing hop_contexts
 
     Returns:
-        List of normalized hop context dictionaries with 5 fields each
+        List of normalized hop context dictionaries with 5 fields each.
     """
     hop_contexts = pair.get('hop_contexts')
     if hop_contexts is None:
@@ -1950,7 +2060,8 @@ def normalize_hop_contexts(pair: Dict[str, Any]) -> List[Dict[str, Any]]:
         # Extract and normalize timestamps
         start_time = _normalize_time_value(
             hop_entry.get('start_time') or hop_entry.get('start'),
-            default_start)
+            default_start,
+        )
         end_time = _normalize_time_value(
             hop_entry.get('end_time') or hop_entry.get('end'), default_end)
 
@@ -2058,12 +2169,12 @@ def validate_hop_context_time_ranges(
             hop_entry['end_time'] = best_match['end']
             hop_entry['source'] = best_match.get('source')
             warnings.append(
-                f'Hop {hop_entry.get("hop")} timestamps adjusted to nearest available range '
+                f'Hop {hop_entry.get("hop")} timestamps adjusted \
+                    to nearest available range '
                 f'({best_match.get("start")} - {best_match.get("end")}).')
         else:
-            warnings.append(
-                f'Hop {hop_entry.get("hop")} timestamps ({start_ts} - {end_ts}) do not map to known segments.'
-            )
+            warnings.append(f'Hop {hop_entry.get("hop")} timestamps \
+                    ({start_ts} - {end_ts}) do not map to known segments.')
 
     if warnings:
         pair.setdefault('validation_warnings', []).extend(warnings)
@@ -2087,7 +2198,9 @@ def generate_hard_question_answer_with_timestamps(
     allowed_ranges_cross: Optional[List[Dict[str, Any]]] = None,
     self_contained_question: bool = False,
 ) -> List[dict]:
-    """Generates EXCLUSIVELY hard question-answer pairs that require graph structure understanding."""
+    """Generates EXCLUSIVELY hard question-answer
+    pairs that require graph structure understanding.
+    """
     summary_block = get_summary_block(summary or [])
     cross_part_context_block = get_cross_part_context_block(cross_part_context)
     # Add artifact context if provided
@@ -2157,13 +2270,16 @@ def generate_hard_question_answer_with_timestamps(
 
             hop_contexts = normalize_hop_contexts(pair)
             if allowed_ranges_local or allowed_ranges_cross:
-                validate_hop_context_time_ranges(pair, allowed_ranges_local
-                                                 or [], allowed_ranges_cross
-                                                 or [])
+                validate_hop_context_time_ranges(
+                    pair,
+                    allowed_ranges_local or [],
+                    allowed_ranges_cross or [],
+                )
             if not hop_contexts:
                 all_valid = False
                 logger.warning(
-                    f'Retrying hard QA (with timestamps) due to missing hop_contexts (attempt {attempt}/{max_prompt_attempts})'
+                    f'Retrying hard QA (with timestamps) due to missing \
+                        hop_contexts (attempt {attempt}/{max_prompt_attempts})'
                 )
                 break
 
@@ -2188,8 +2304,8 @@ def generate_hard_question_answer_with_timestamps(
             return qa_pairs
 
     raise ValueError(
-        'Failed to generate hop_contexts for hard question answers after retries'
-    )
+        'Failed to generate hop_contexts for hard question answers \
+        after retries')
 
 
 def get_artifact_block(artifacts_context):
@@ -2217,36 +2333,53 @@ You are an expert at extracting question and answer pairs from transcripts.
 
 Guidelines:
 1. Frame Questions as If You Don't Know the Answer:
-   - Write questions that are general and applicable to a wide range of scenarios.
-   - Do not directly reference the transcript content or assume the viewer already knows the transcript details.
+   - Write questions that are general and applicable to a wide range of \
+    scenarios.
+   - Do not directly reference the transcript content or assume the viewer \
+    already knows the transcript details.
 {%- if self_contained_question %}
-   - Do not mention the existence of a context/transcript in the generated question like "in the transcript", "from the given context", or "in Segment 148". Produce a natural, standalone question.
-   - Only use facts present in the provided context/transcript; if missing, say you cannot generate a question.
+   - Do not mention the existence of a context/transcript in the generated \
+    question like "in the transcript", "from the given context", or \
+        "in Segment 148". Produce a natural, standalone question.
+   - Only use facts present in the provided context/transcript; \
+    if missing, say you cannot generate a question.
 {%- endif %}
-   - Example: "What are some emerging trends in the field of artificial intelligence?"
+   - Example: "What are some emerging trends in the field of \
+    artificial intelligence?"
 
 2. Ensure Questions are Contextually Relevant:
-   - Questions should be about broad topics that could be answered by a wide range of transcripts.
+   - Questions should be about broad topics that could be answered by a wide \
+    range of transcripts.
 
 3. Diversity in Question Types:
-   - Include a mix of factual questions (e.g., "What are the primary benefits of cloud computing?"),
-     why/how questions (e.g., "Why has AI adoption grown in recent years?"),
-     and procedural questions (e.g., "How did the IT manager explain the process for requesting new software?").
+   - Include a mix of factual questions (e.g., "What are the primary benefits \
+    of cloud computing?"), why/how questions (e.g., "Why has AI adoption \
+    grown in recent years?"), and procedural questions (e.g., "How did the\
+    IT manager explain the process for requesting new software?").
 
 {%- if reasoning_counts %}
 4. Reasoning Types to Include:
-   - Factual questions ({{reasoning_counts.get("factual", 0)}} questions): Ask for specific, verifiable facts unique to this document
-   - Relational questions ({{reasoning_counts.get("relational", 0)}} questions): Ask how data points compare or correlate
-   - Inferential questions ({{reasoning_counts.get("inferential", 0)}} questions): Ask about conclusions or implications
-   - Temporal questions ({{reasoning_counts.get("temporal", 0)}} questions): Ask about changes or events over time
-   - Procedural questions ({{reasoning_counts.get("procedural", 0)}} questions): Ask about steps or guidelines
-   - Visual questions ({{reasoning_counts.get("visual", 0)}} questions): Ask about unique visual details
-   - Causal questions ({{reasoning_counts.get("causal", 0)}} questions): Ask about causes, reasons, or contributing factors
+   - Factual questions ({{reasoning_counts.get("factual", 0)}} \
+    questions): Ask for specific, verifiable facts unique to this document
+   - Relational questions ({{reasoning_counts.get("relational", 0)}} \
+    questions): Ask how data points compare or correlate
+   - Inferential questions ({{reasoning_counts.get("inferential", 0)}} \
+    questions): Ask about conclusions or implications
+   - Temporal questions ({{reasoning_counts.get("temporal", 0)}} \
+    questions): Ask about changes or events over time
+   - Procedural questions ({{reasoning_counts.get("procedural", 0)}} \
+    questions): Ask about steps or guidelines
+   - Visual questions ({{reasoning_counts.get("visual", 0)}} \
+    questions): Ask about unique visual details
+   - Causal questions ({{reasoning_counts.get("causal", 0)}} \
+    questions): Ask about causes, reasons, or contributing factors
 
    Example questions by reasoning type:
-   - Factual: "How many paid time off days are employees eligible for per year?"
+   - Factual: "How many paid time off days are employees \
+    eligible for per year?"
    - Relational: "How did sales revenue compare to expenses in Q3 2023?"
-   - Inferential: "What does the report suggest about future AI investment trends?"
+   - Inferential: "What does the report suggest about future AI investment \
+    trends?"
    - Temporal: "What was the change in machinery value between 2018 and 2019?"
    - Procedural: "What are the steps for submitting a travel reimbursement?"
    - Visual: "Which report includes the Department of Agriculture logo?"
@@ -2254,31 +2387,49 @@ Guidelines:
 {%- endif %}
 
 5. Generate {{num_pairs}} distinct question and answer pairs:
-   - Each pair must be unique and have varying complexity levels between 1 (simple) and 5 (complex).
-   - For each pair, identify the start and end time (in HH:MM:SS format) that best supports the answer.
+   - Each pair must be unique and have varying complexity levels between 1 \
+    (simple) and 5 (complex).
+   - For each pair, identify the start and end time (in HH:MM:SS format) \
+    that best supports the answer.
 
 6. **IMPORTANT - Segment Identification**:
-   - The transcript below contains segments formatted as "Segment N (HH:MM:SS - HH:MM:SS): text" where N starts from 1
-   - For each question-answer pair you generate, identify ALL segment numbers FROM which the question is derived
-   - These segments contain the source material that inspired the question and provide the answer
-   - Record these segment numbers in the "segment_ids" field as a list of integers (e.g., [1, 3, 6])
-   - Think of it as: "If someone asks this question in a retrieval system, these are the segments that should be retrieved"
-   - The timestamps (start_time and end_time) will be automatically calculated from the segments you identify
-   - If a question requires information from multiple segments, include all relevant segment numbers
+   - The transcript below contains segments formatted as "Segment N \
+    (HH:MM:SS - HH:MM:SS): text" where N starts from 1
+   - For each question-answer pair you generate, identify ALL segment numbers \
+    FROM which the question is derived
+   - These segments contain the source material that inspired the \
+    question and provide the answer
+   - Record these segment numbers in the "segment_ids" field as a list of \
+    integers (e.g., [1, 3, 6])
+   - Think of it as: "If someone asks this question in a retrieval system, \
+    these are the segments that should be retrieved"
+   - The timestamps (start_time and end_time) will be automatically \
+    calculatedfrom the segments you identify
+   - If a question requires information from multiple segments, include all \
+    relevant segment numbers
 
-The output should be a JSON array of objects (with the number of objects equal to {{num_pairs}}), where each object contains:
-  - "question": the generated question without explicitly referencing the context/transcript/segments in the question.
-  - "answer": the answer without explicitly referencing the context/transcript/segments in the answer.
+The output should be a JSON array of objects (with the number of \
+    objects equal to {{num_pairs}}), where each object contains:
+  - "question": the generated question without explicitly referencing the \
+    context/transcript/segments in the question.
+  - "answer": the answer without explicitly referencing the \
+    context/transcript/segments in the answer.
   - "question_complexity": a numeric score from 1 (simple) to 5 (complex).
-  - "segment_ids": list of segment numbers (e.g., [1, 3, 6]) that are the source material for this question-answer pair.
-  - "start_time": the HH:MM:SS timestamp (will be calculated from earliest segment).
-  - "end_time": the HH:MM:SS timestamp (will be calculated from latest segment).
+  - "segment_ids": list of segment numbers (e.g., [1, 3, 6]) that are the \
+    source material for this question-answer pair.
+  - "start_time": the HH:MM:SS timestamp (will be calculated from earliest \
+    segment).
+  - "end_time": the HH:MM:SS timestamp (will be calculated from latest \
+    segment).
 
 Additional Constraints:
 - **Output only the JSON. Do not include any introductory or concluding text.**
-- **Please ensure that your entire response is strictly valid JSON with no additional text or formatting.**
-- **The output should be a JSON array containing exactly {{num_pairs}} objects.**
-- **Pay careful attention to the timestamp markers in the transcript to ensure accurate start_time and end_time values.**
+- **Please ensure that your entire response is strictly valid JSON with no \
+    additional text or formatting.**
+- **The output should be a JSON array containing exactly {{num_pairs}} \
+    objects.**
+- **Pay careful attention to the timestamp markers in the transcript to \
+    ensure accurate start_time and end_time values.**
 
 Video Style Guidance: {{video_style}}
 
@@ -2296,7 +2447,8 @@ Output a JSON array where each element is an object with the following keys:
   - "start_time"
   - "end_time"
 
-Please ensure your output is ONLY the JSON object with no preamble or additional text.
+Please ensure your output is ONLY the JSON object with no preamble \
+    or additional text.
 """
 generate_question_answer_with_timestamps_template = Template(
     generate_question_answer_with_timestamps_prompt)
@@ -2356,7 +2508,7 @@ def generate_question_answer_with_timestamps(
 
 
 def extract_time_ranges_from_structured_text(
-    structured_text: str, ) -> List[Dict[str, Any]]:
+        structured_text: str) -> List[Dict[str, Any]]:
     """Parse structured segment text to retrieve timestamp ranges."""
     ranges: List[Dict[str, Any]] = []
     for line in structured_text.splitlines():
@@ -2385,7 +2537,8 @@ def process_segments_info(qa_pair: Dict[str, Any],
     Also processes hop_contexts if present, and ensures top-level segment_ids
     is the union of all hop-level segment_ids.
 
-    Note: segment_ids are 1-based (as shown to LLM), but converted to 0-based for array indexing.
+    Note: segment_ids are 1-based (as shown to LLM), but converted to 0-based \
+        for array indexing.
 
     Args:
         qa_pair: The QA pair dict that will be modified in-place
@@ -2516,9 +2669,8 @@ async def generate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
             try:
                 timeline_events = generate_structured_timeline(
                     segments, client=client)
-                logger.info(
-                    f'[{state["task_id"]}] Timeline events extracted: {len(timeline_events)}'
-                )
+                logger.info(f'[{state["task_id"]}] Timeline events extracted: \
+                        {len(timeline_events)}')
             except Exception as e:
                 logger.warning(
                     f'[{state["task_id"]}] Timeline generation failed: {e}')
@@ -2573,17 +2725,18 @@ async def generate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
             context_meta = cross_context_info.get('metadata', {})
             if context_meta.get('sections_truncated'):
                 logger.debug(
-                    f'[{state["task_id"]}] Cross-part context for split {idx + 1} truncated sections: {context_meta["sections_truncated"]}'
-                )
+                    f'[{state["task_id"]}] Cross-part context for split \
+                        {idx + 1} truncated sections: \
+                            {context_meta["sections_truncated"]}')
             if (context_meta.get('source') == 'timeline'
                     and context_meta.get('external_events', 0) == 0):
                 logger.debug(
-                    f'[{state["task_id"]}] Timeline context for split {idx + 1} had no external events'
-                )
+                    f'[{state["task_id"]}] Timeline context for split \
+                        {idx + 1} had no external events')
             local_ranges = extract_time_ranges_from_structured_text(seg_text)
-            logger.info(
-                f'Processing split {split_idx + 1}/{len(splits)}: len of seg_text: {len(seg_text)}, len of summary: {len(summary)}'
-            )
+            logger.info(f'Processing split {split_idx + 1}/{len(splits)}: \
+                    len of seg_text: {len(seg_text)}, len of summary: \
+                        {len(summary)}')
             # Use the actual generate_question_answer function from helper
             retry_count = 0
             split_idx += 1
@@ -2593,15 +2746,16 @@ async def generate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
             while retry_count < max_retries:
                 try:
                     if hard_mode:
-                        qa = generate_hard_question_answer_with_timestamps(  # FIXED: Use timestamp version
+                        # FIXED: Use timestamp version
+                        qa = generate_hard_question_answer_with_timestamps(
                             segment_text=seg_text,
                             video_style=video_style,
                             num_pairs=pps,
                             client=client,
                             summary=summary,
                             query_type_distribution=query_type_distribution,
-                            reasoning_type_distribution=
-                            reasoning_type_distribution,
+                            reasoning_type_distribution=  # noqa: E251
+                            reasoning_type_distribution,  # noqa: E251
                             min_complexity=min_complexity,
                             min_hops=min_hops,
                             max_hops=max_hops,
@@ -2613,14 +2767,15 @@ async def generate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
                                 'self_contained_question', False),
                         )
                     else:
-                        qa = generate_question_answer_with_timestamps(  # FIXED: Use timestamp version
+                        # FIXED: Use timestamp version
+                        qa = generate_question_answer_with_timestamps(
                             segment_text=seg_text,
                             video_style=video_style,
                             num_pairs=pps,
                             client=client,
                             summary=summary,
-                            reasoning_type_distribution=
-                            reasoning_type_distribution,
+                            reasoning_type_distribution=  # noqa: E251
+                            reasoning_type_distribution,  # noqa: E251
                             artifacts_context=top_artifacts,
                             self_contained_question=state.get(
                                 'self_contained_question', False),
@@ -2635,9 +2790,8 @@ async def generate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
 
                 except Exception as e:
                     retry_count += 1
-                    logger.warning(
-                        f'QA generation failed (attempt {retry_count}/{max_retries}): {e}'
-                    )
+                    logger.warning(f'QA generation failed (attempt \
+                        {retry_count}/{max_retries}): {e}')
                     if retry_count >= max_retries:
                         raise
                     await asyncio.sleep(1)  # Brief delay before retry
@@ -2753,7 +2907,7 @@ def validate_answer_spans_hybrid(
         )
         q_emb = np.array(resp, dtype=np.float32)
         faiss.normalize_L2(q_emb)
-        D, I = index.search(q_emb, 1)
+        D, I = index.search(q_emb, 1)  # noqa: E741
         if float(D[0][0]) < sim_threshold:
             continue  # drop if too dissimilar
 
@@ -2769,12 +2923,10 @@ def validate_answer_spans_hybrid(
                 # anchor here
                 st = seg['start']
                 en = seg['end']
-                qa['start_time'] = (
-                    f'{int(st // 3600):02d}:{int((st % 3600) // 60):02d}:{int(st % 60):02d}'
-                )
-                qa['end_time'] = (
-                    f'{int(en // 3600):02d}:{int((en % 3600) // 60):02d}:{int(en % 60):02d}'
-                )
+                qa['start_time'] = (f'{int(st // 3600):02d}:\
+                        {int((st % 3600) // 60):02d}:{int(st % 60):02d}')
+                qa['end_time'] = (f'{int(en // 3600):02d}:\
+                        {int((en % 3600) // 60):02d}:{int(en % 60):02d}')
                 found_anchor = True
                 break
 
@@ -2782,12 +2934,10 @@ def validate_answer_spans_hybrid(
             # fallback: use FAISS‑nearest segment
             st = hit_meta['start']
             en = hit_meta['end']
-            qa['start_time'] = (
-                f'{int(st // 3600):02d}:{int((st % 3600) // 60):02d}:{int(st % 60):02d}'
-            )
-            qa['end_time'] = (
-                f'{int(en // 3600):02d}:{int((en % 3600) // 60):02d}:{int(en % 60):02d}'
-            )
+            qa['start_time'] = (f'{int(st // 3600):02d}:\
+                    {int((st % 3600) // 60):02d}:{int(st % 60):02d}')
+            qa['end_time'] = (f'{int(en // 3600):02d}:\
+                    {int((en % 3600) // 60):02d}:{int(en % 60):02d}')
 
         valid.append(qa)
 
@@ -2806,10 +2956,12 @@ def deduplicate_qa(
     Args:
       qa_pairs: list of dicts with at least a "question" key.
       client: LLMClient instance
-      threshold: cosine similarity above which two questions are considered duplicates.
+      threshold: cosine similarity above \
+      which two questions are considered duplicates.
 
     Returns:
-      Filtered list of qa_pairs containing only the first instance of each cluster.
+      Filtered list of qa_pairs containing \
+      only the first instance of each cluster.
     """
     # 1) Extract questions
     questions = [qa['question'] for qa in qa_pairs]
@@ -2818,7 +2970,8 @@ def deduplicate_qa(
 
     # 2) Embed all questions in one batch
     # api_key = os.getenv("NVIDIA_API_KEY")
-    # client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", api_key=api_key)
+    # client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", \
+    # api_key=api_key)
     resp = client.embed(prompts=questions, input_type='query')
     # 3) Build embedding matrix and L2‑normalize
     embs = np.array(resp, dtype=np.float32)
@@ -2914,9 +3067,8 @@ async def validate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
             validated_pairs,
             'validation_results':
             validation_results,
-            'status':
-            TaskStatus.PROCESSING.value
-            if validated_pairs else TaskStatus.FAILED.value,
+            'status': (TaskStatus.PROCESSING.value
+                       if validated_pairs else TaskStatus.FAILED.value),
         }
 
     except Exception as e:
@@ -2932,8 +3084,10 @@ async def validate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
 
 
 async def mine_hard_negative_segments(
-    state: QAGenerationState, ) -> Dict[str, Any]:
-    """Mine hard negative segments for each QA pair using embedding similarity."""
+        state: QAGenerationState) -> Dict[str, Any]:
+    """Mine hard negative segments for \
+        each QA pair using embedding similarity.
+    """
     logger.info('Mining hard negative segments for task %s', state['task_id'])
 
     if not state.get('enable_hard_negatives', False):
@@ -2980,9 +3134,8 @@ async def mine_hard_negative_segments(
     texts = [t for t in texts if t.strip()]  # Filter empty texts
 
     if not texts:
-        logger.warning(
-            'No text content in segments, skipping hard negative segment mining'
-        )
+        logger.warning('No text content in segments, \
+            skipping hard negative segment mining')
         for qa_pair in qa_pairs:
             qa_pair['hard_negative_segment_ids'] = []
             qa_pair['hard_negatives_metadata'] = []
@@ -3056,7 +3209,7 @@ async def mine_hard_negative_segments(
                 # Search for top K + buffer similar segments
                 search_k = min(top_k + len(positive_segment_ids) + 20,
                                len(segments))
-                D, I = index.search(positive_emb, search_k)
+                D, I = index.search(positive_emb, search_k)  # noqa: E741
 
                 # Filter hard negative segments
                 hard_negatives = []
@@ -3084,9 +3237,8 @@ async def mine_hard_negative_segments(
                 ]
                 qa_pair['hard_negatives_metadata'] = hard_negatives
 
-                logger.debug(
-                    f'Found {len(hard_negatives)} hard negatives for question: {qa_pair["question"][:50]}...'
-                )
+                logger.debug(f'Found {len(hard_negatives)} hard \
+                        negatives for question: {qa_pair["question"][:50]}...')
 
             except Exception as e:
                 logger.warning('Error mining hard negatives for question: %s',
@@ -3099,9 +3251,8 @@ async def mine_hard_negative_segments(
             len(qa.get('hard_negative_segment_ids', [])) for qa in qa_pairs)
         avg_hard_negs = total_hard_negs / len(qa_pairs) if qa_pairs else 0
 
-        logger.info(
-            f'Hard negative mining complete. Avg {avg_hard_negs:.1f} hard negatives per QA pair'
-        )
+        logger.info(f'Hard negative mining complete. Avg {avg_hard_negs:.1f} \
+                hard negatives per QA pair')
 
         return {
             'validated_pairs': qa_pairs,
@@ -3130,7 +3281,8 @@ async def mine_hard_negative_segments(
 
 
 generate_negative_answers_prompt = """
-Given the following question from a transcript, generate {{num_negatives}} plausible but incorrect answers.
+Given the following question from a transcript, \
+    generate {{num_negatives}} plausible but incorrect answers.
 
 QUESTION: {{question}}
 CORRECT ANSWER: {{correct_answer}}
@@ -3138,10 +3290,13 @@ CORRECT ANSWER: {{correct_answer}}
 Guidelines:
 1. Create answers that are factually incorrect but sound reasonable
 2. Make answers similar in structure and length to the correct answer
-3. Ensure negative answers are clearly wrong when compared to the correct answer
-4. Vary the types of incorrectness (wrong facts, wrong reasoning, wrong conclusions)
+3. Ensure negative answers are clearly wrong when \
+    compared to the correct answer
+4. Vary the types of incorrectness (wrong facts, wrong reasoning, \
+    wrong conclusions)
 
-Output as a JSON array of strings containing exactly {{num_negatives}} negative answers.
+Output as a JSON array of strings containing exactly \
+    {{num_negatives}} negative answers.
 Example: ["negative answer 1", "negative answer 2", "negative answer 3"]
 
 Do not include any other text, only the JSON array.
@@ -3195,7 +3350,7 @@ def generate_negative_answers(
 
 
 async def generate_negative_answers_node(
-    state: QAGenerationState, ) -> Dict[str, Any]:
+        state: QAGenerationState) -> Dict[str, Any]:
     """Generate negative answers for multiple choice questions."""
     logger.info('Generating negative answers for task %s', state['task_id'])
 
@@ -3206,12 +3361,11 @@ async def generate_negative_answers_node(
     num_negatives = state.get('num_negatives', 3)
     if num_negatives == 0:
         logger.info(
-            f'num_negatives is 0. Negative answers will not be generated')
+            'num_negatives is 0. Negative answers will not be generated')
         return {'qa_pairs': qa_pairs}
 
-    logger.info(
-        f'Generating negative answers using model: {client.generation_model_name}'
-    )
+    logger.info('Generating negative answers using model: \
+            {client.generation_model_name}')
 
     # Get full transcript text
     segment_text = transcription_segment_text(segments)
@@ -3223,8 +3377,8 @@ async def generate_negative_answers_node(
             negative_answers = generate_negative_answers(
                 question=qa_pair['question'],
                 correct_answer=qa_pair['answer'],
-                segment_text=segment_text[:
-                                          1000],  # Limit context for efficiency
+                # Limit context for efficiency
+                segment_text=segment_text[:1000],
                 num_negatives=num_negatives,
                 client=client,
             )
@@ -3239,7 +3393,8 @@ async def generate_negative_answers_node(
 llm_evaluate_qa_pair_prompt = """
 You are an expert evaluator of question-answer pairs.
 
-Please evaluate the following question and answer based on the provided context:
+Please evaluate the following question and answer \
+based on the provided context:
 
 CONTEXT:
 ```
@@ -3275,7 +3430,8 @@ Output your evaluation as a valid JSON object with the following structure:
   "improvements": "Suggestions for improving this QA pair"
 }
 
-Please ensure your output is ONLY the JSON object with no preamble or additional text.
+Please ensure your output is ONLY the JSON \
+object with no preamble or additional text.
 """
 llm_evaluate_qa_pair_prompt_template = Template(llm_evaluate_qa_pair_prompt)
 
@@ -3311,8 +3467,8 @@ async def llm_evaluate_qa_pair(
         {
             'role':
             'system',
-            'content':
-            'You are an expert QA evaluator that provides structured JSON evaluations.',
+            'content': ('You are an expert QA evaluator\
+                that provides structured JSON evaluations.'),
         },
         {
             'role': 'user',
@@ -3334,9 +3490,8 @@ async def llm_evaluate_qa_pair(
             cleaned = re.sub(r'\s*```$', '', cleaned)  # Remove from end
             return json.loads(cleaned)
         except Exception as e1:
-            logger.error(
-                f'Error again in QA evaluation: {e1}. Response_text: {response_text}'
-            )
+            logger.error(f'Error again in QA evaluation: {e1}. \
+                Response_text: {response_text}')
 
         # Return a default evaluation on error
         return {
@@ -3380,22 +3535,21 @@ async def evaluate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
     )
     if question_only or not enable:
         logger.info(
-            f'Skip evaluation because of question_only is {question_only} or enable_evaluation is {enable} '
-        )
+            f'Skip evaluation because of question_only is {question_only} \
+            or enable_evaluation is {enable} ')
         return {'qa_pairs': qa_pairs, 'evaluation_metrics': {}}
 
     # Sample at most 5 QA pairs for evaluation if there are many
     sample_size = evaluation_obj.get('sample_size', 5)
 
-    logger.info(
-        f'Evaluating QA pairs using {client.evaluation_model_name}, sample size: {sample_size}, validated_pairs: {len(validated_pairs)}'
-    )
+    logger.info(f'Evaluating QA pairs using {client.evaluation_model_name}, \
+        sample size: {sample_size},\
+        validated_pairs: {len(validated_pairs)}')
 
     eval_sample = (validated_pairs if len(validated_pairs) <= sample_size else
                    random.sample(validated_pairs, sample_size))
-    logger.info(
-        f'Evaluating QA pairs: eval sample size: {len(eval_sample)}, validated_pairs: {len(validated_pairs)}'
-    )
+    logger.info(f'Evaluating QA pairs: eval sample size: {len(eval_sample)}, \
+            validated_pairs: {len(validated_pairs)}')
 
     overall_scores = []
     evaluated_pairs = []
@@ -3485,7 +3639,8 @@ async def evaluate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
         'evaluation_model':
         client.evaluation_model_name,
         'high_quality_ratio':
-        sum(1 for s in overall_scores if s >= 7) / max(len(overall_scores), 1),
+        (sum(1
+             for s in overall_scores if s >= 7) / max(len(overall_scores), 1)),
     }
 
     # Add evaluations back to original QA pairs
@@ -3521,9 +3676,9 @@ async def evaluate_qa_pairs(state: QAGenerationState) -> Dict[str, Any]:
                 'improvements': 'N/A',
             }
 
-    logger.info(
-        f'Evaluation complete. num qa_pairs: {len(qa_pairs)}, num evaluated_pairs: {len(evaluated_pairs)}, Average score: {avg_score:.2f}/10'
-    )
+    logger.info(f'Evaluation complete. num qa_pairs: {len(qa_pairs)}, \
+            num evaluated_pairs: {len(evaluated_pairs)}, \
+                Average score: {avg_score:.2f}/10')
 
     return {'qa_pairs': qa_pairs, 'evaluation_metrics': evaluation_metrics}
 
@@ -3535,9 +3690,8 @@ async def filter_by_quality(state: QAGenerationState) -> Dict[str, Any]:
     qa_pairs = state.get('qa_pairs', [])
     validated_pairs = state.get('validated_pairs', [])
 
-    logger.debug(
-        f'Filtering QA pairs by quality for validated_pairs: {len(validated_pairs)} qa_pairs, total: {len(qa_pairs)}'
-    )
+    logger.debug(f'Filtering QA pairs by quality for validated_pairs: \
+            {len(validated_pairs)} qa_pairs, total: {len(qa_pairs)}')
 
     quality_threshold = state.get('evaluation',
                                   {}).get('quality_threshold', 6.0)
@@ -3563,12 +3717,15 @@ async def filter_by_quality(state: QAGenerationState) -> Dict[str, Any]:
     num_evaluated = len(evaluated_pairs)
 
     # Log quality filtering results
+    logger.info(f'{state["file_path"]}: Total qa_pairs: {len(qa_pairs)}, \
+            validated_pairs: {len(validated_pairs)}, \
+            not_evaluated_pairs: {len(not_evaluated_pairs)}, \
+            high_quality_pairs: {len(high_quality_pairs)}, \
+            low_quality_pairs: {len(low_quality_pairs)}, \
+            evaluated_pairs: {num_evaluated}')
     logger.info(
-        f'{state["file_path"]}: Total qa_pairs: {len(qa_pairs)}, validated_pairs: {len(validated_pairs)}, not_evaluated_pairs: {len(not_evaluated_pairs)}, high_quality_pairs: {len(high_quality_pairs)}, low_quality_pairs: {len(low_quality_pairs)}, evaluated_pairs: {num_evaluated}'
-    )
-    logger.info(
-        f'Quality filtering: {len(high_quality_pairs)}/{num_evaluated} pairs above threshold {quality_threshold}'
-    )
+        f'Quality filtering: {len(high_quality_pairs)}/{num_evaluated} \
+            pairs above threshold {quality_threshold}')
 
     # If we have evaluations but all pairs are below threshold,
     # either lower the threshold or keep the best ones
@@ -3587,9 +3744,8 @@ async def filter_by_quality(state: QAGenerationState) -> Dict[str, Any]:
             top_n = max(1, int(len(sorted_pairs) *
                                0.3))  # Keep at least 1, up to 30%
             high_quality_pairs = sorted_pairs[:top_n]
-            logger.info(
-                f'Keeping top {len(high_quality_pairs)} pairs by quality score.'
-            )
+            logger.info(f'Keeping top {len(high_quality_pairs)} \
+                    pairs by quality score.')
 
     sum_overall_score = sum([
         qa.get('evaluation', {}).get('overall', {}).get('score', 0)
@@ -3626,8 +3782,8 @@ async def monitor_progress(state: QAGenerationState) -> Dict[str, Any]:
         'qa_pairs_generated':
         len(state.get('qa_pairs', [])),
         'validation_rate':
-        state.get('validation_results', {}).get('validated_pairs', 0) /
-        max(state.get('validation_results', {}).get('total_pairs', 1), 1),
+        (state.get('validation_results', {}).get('validated_pairs', 0) /
+         max(state.get('validation_results', {}).get('total_pairs', 1), 1)),
         'model_used':
         state.get('model_selection', 'unknown'),
         'retry_count':
@@ -3647,8 +3803,8 @@ async def monitor_progress(state: QAGenerationState) -> Dict[str, Any]:
     )
     if question_only or not enable:
         logger.info(
-            f'Skip evaluation because of question_only is {question_only} or enable_evaluation is {enable} '
-        )
+            f'Skip evaluation because of question_only is {question_only} \
+                or enable_evaluation is {enable} ')
         return {'metrics': None, 'status': TaskStatus.PROCESSING.value}
 
     evaluation_metrics = state.get('evaluation_metrics', {})
@@ -3664,20 +3820,20 @@ async def monitor_progress(state: QAGenerationState) -> Dict[str, Any]:
         # Calculate average scores for each category
         avg_scores = {
             'relevance_avg':
-            sum(qa['evaluation'].get('relevance', {}).get('score', 0)
-                for qa in evaluated_pairs) / len(evaluated_pairs),
+            (sum(qa['evaluation'].get('relevance', {}).get('score', 0)
+                 for qa in evaluated_pairs) / len(evaluated_pairs)),
             'accuracy_avg':
-            sum(qa['evaluation'].get('accuracy', {}).get('score', 0)
-                for qa in evaluated_pairs) / len(evaluated_pairs),
+            (sum(qa['evaluation'].get('accuracy', {}).get('score', 0)
+                 for qa in evaluated_pairs) / len(evaluated_pairs)),
             'context_support_avg':
-            sum(qa['evaluation'].get('context_support', {}).get('score', 0)
-                for qa in evaluated_pairs) / len(evaluated_pairs),
+            (sum(qa['evaluation'].get('context_support', {}).get('score', 0)
+                 for qa in evaluated_pairs) / len(evaluated_pairs)),
             'clarity_avg':
-            sum(qa['evaluation'].get('clarity', {}).get('score', 0)
-                for qa in evaluated_pairs) / len(evaluated_pairs),
+            (sum(qa['evaluation'].get('clarity', {}).get('score', 0)
+                 for qa in evaluated_pairs) / len(evaluated_pairs)),
             'overall_avg':
-            sum(qa['evaluation'].get('overall', {}).get('score', 0)
-                for qa in evaluated_pairs) / len(evaluated_pairs),
+            (sum(qa['evaluation'].get('overall', {}).get('score', 0)
+                 for qa in evaluated_pairs) / len(evaluated_pairs)),
         }
 
         # Add detailed scoring to evaluation metrics
@@ -3694,16 +3850,16 @@ async def monitor_progress(state: QAGenerationState) -> Dict[str, Any]:
                     f'overall={avg_scores["overall_avg"]:.2f}')
     else:
         if evaluation_metrics:
-            logger.info(
-                f'Evaluation metrics: avg_score={evaluation_metrics.get("average_quality_score", 0):.2f}, '
-                +
-                f'evaluated_pairs={evaluation_metrics.get("evaluated_pairs", 0)}'
-            )
+            logger.info(f'Evaluation metrics: avg_score=\
+                    {evaluation_metrics.get("average_quality_score", 0):.2f}, '
+                        + f'evaluated_pairs=\
+                    {evaluation_metrics.get("evaluated_pairs", 0)}')
 
     if quality_metrics:
-        logger.info(
-            f'Quality metrics: high_quality={quality_metrics.get("high_quality_pairs", 0)}/{quality_metrics.get("total_pairs", 0)}, '
-            + f'threshold={quality_metrics.get("quality_threshold", 0)}')
+        logger.info(f'Quality metrics: \
+                high_quality={quality_metrics.get("high_quality_pairs", 0)}/\
+                    {quality_metrics.get("total_pairs", 0)}, ' +
+                    f'threshold={quality_metrics.get("quality_threshold", 0)}')
 
     # Combine metrics
     combined_metrics = {
@@ -3723,9 +3879,8 @@ async def store_results(state: QAGenerationState) -> Dict[str, Any]:
     logger.info('Storing results for task %s', state['task_id'])
 
     if state.get('skip_store'):
-        logger.info(
-            f'skip_store flag set for task {state["task_id"]}; skipping persistence'
-        )
+        logger.info('skip_store flag set for task {state["task_id"]}; \
+                skipping persistence')
         return {'status': state.get('status', TaskStatus.PROCESSING.value)}
 
     output_dir = Path(state['output_dir'])
@@ -3750,9 +3905,8 @@ async def store_results(state: QAGenerationState) -> Dict[str, Any]:
             end_sec = segment.get('end', 0)
             segment_map[(start_sec, end_sec)] = segment.get('text', '')
 
-        logger.info(
-            f'Num qa_pair to write: {len(qa_pairs_to_write)}, total_qa_pairs = {len(qa_pairs)}'
-        )
+        logger.info(f'Num qa_pair to write: {len(qa_pairs_to_write)}, \
+                total_qa_pairs = {len(qa_pairs)}')
         qa_data = []
 
         for qa_pair in qa_pairs_to_write:
@@ -3836,10 +3990,9 @@ async def store_results(state: QAGenerationState) -> Dict[str, Any]:
                 'reasoning_type':
                 qa_pair.get('reasoning_type', 'unspecified'),
                 'hop_count':
-                qa_pair['hop_count'] if 'hop_count' in qa_pair else -1,
-                'hop_contexts':
-                qa_pair['hop_contexts']
-                if 'hop_contexts' in qa_pair else 'N/A',
+                (qa_pair['hop_count'] if 'hop_count' in qa_pair else -1),
+                'hop_contexts': (qa_pair['hop_contexts']
+                                 if 'hop_contexts' in qa_pair else 'N/A'),
                 'context':
                 context[:500],  # Limit context length
                 'context_segments':
@@ -3900,54 +4053,50 @@ async def store_results(state: QAGenerationState) -> Dict[str, Any]:
         question_only = state.get('question_only', False)
         enable = (evaluation_obj['enable']
                   if 'enable' in evaluation_obj else True)
-        logger.debug(
-            f'Enable Evaluating QA pairs? {enable}, question_only? {question_only}'
-        )
+        logger.debug(f'Enable Evaluating QA pairs? {enable}, \
+                question_only? {question_only}')
         if question_only or not enable:
-            logger.info(
-                f'Skip evaluation because of question_only is {question_only} or enable_evaluation is {enable} '
-            )
+            logger.info(f'Skip evaluation because of question_only is \
+                    {question_only} or enable_evaluation is {enable} ')
         else:
             evaluation_metrics = state.get('evaluation_metrics', {})
             # Log evaluation summary
             if evaluation_metrics:
                 avg_scores = {
                     'relevance':
-                    sum(
+                    (sum(
                         qa.get('evaluation', {}).get('relevance', {}).get(
                             'score', 0)
                         for qa in evaluated_pairs if 'evaluation' in qa) /
-                    max(
-                        sum(1 for qa in evaluated_pairs if 'evaluation' in qa),
-                        1,
-                    ),
-                    'accuracy':
-                    sum(
+                     max(
+                         sum(1
+                             for qa in evaluated_pairs if 'evaluation' in qa),
+                         1,
+                     )),
+                    'accuracy': (sum(
                         qa.get('evaluation', {}).get('accuracy', {}).get(
                             'score', 0)
-                        for qa in evaluated_pairs if 'evaluation' in qa) /
-                    max(
-                        sum(1 for qa in evaluated_pairs if 'evaluation' in qa),
-                        1,
-                    ),
-                    'context_support':
-                    sum(
+                        for qa in evaluated_pairs if 'evaluation' in qa) / max(
+                            sum(1 for qa in evaluated_pairs
+                                if 'evaluation' in qa),
+                            1,
+                        )),
+                    'context_support': (sum(
                         qa.get('evaluation', {}).get('context_support',
                                                      {}).get('score', 0)
-                        for qa in evaluated_pairs if 'evaluation' in qa) /
-                    max(
-                        sum(1 for qa in evaluated_pairs if 'evaluation' in qa),
-                        1,
-                    ),
-                    'clarity':
-                    sum(
+                        for qa in evaluated_pairs if 'evaluation' in qa) / max(
+                            sum(1 for qa in evaluated_pairs
+                                if 'evaluation' in qa),
+                            1,
+                        )),
+                    'clarity': (sum(
                         qa.get('evaluation', {}).get('clarity', {}).get(
                             'score', 0)
-                        for qa in evaluated_pairs if 'evaluation' in qa) /
-                    max(
-                        sum(1 for qa in evaluated_pairs if 'evaluation' in qa),
-                        1,
-                    ),
+                        for qa in evaluated_pairs if 'evaluation' in qa) / max(
+                            sum(1 for qa in evaluated_pairs
+                                if 'evaluation' in qa),
+                            1,
+                        )),
                     'overall':
                     evaluation_metrics.get('average_quality_score', 0),
                 }
@@ -3995,9 +4144,8 @@ async def feedback_controller(state: QAGenerationState) -> Dict[str, Any]:
                 next_model = model_progression[idx + 1]
                 client.update_generation_model(next_model)
 
-            logger.info(
-                f'Retry {retry_count + 1}/3: Upgrading model to {client.generation_model_name.get("model_selection", "same")}'
-            )
+            logger.info(f'Retry {retry_count + 1}/3: Upgrading model to \
+                {client.generation_model_name.get("model_selection", "same")}')
 
             return {
                 'retry_count': retry_count + 1,
@@ -4041,7 +4189,7 @@ def compute_metrics(
         'average_answer_length':
         df['answer'].str.len().mean(),
         'complexity_distribution':
-        df['question_complexity'].value_counts().to_dict(),
+        (df['question_complexity'].value_counts().to_dict()),
         'total_pairs':
         len(df),
     }
@@ -4129,7 +4277,7 @@ def compute_metrics(
                 'average_hop_count':
                 multihop_df['hop_count'].mean(),
                 'hop_count_distribution':
-                multihop_df['hop_count'].value_counts().to_dict(),
+                (multihop_df['hop_count'].value_counts().to_dict()),
             }
 
     return metrics
@@ -4144,9 +4292,8 @@ def route_after_validation(state: QAGenerationState) -> str:
         logger.warning('No QA pairs passed validation, routing to feedback')
         return 'feedback'
     else:
-        logger.info(
-            f'{len(qa_pairs)} QA pairs passed validation, continuing to mine hard negatives'
-        )
+        logger.info(f'{len(qa_pairs)} QA pairs passed validation, \
+                continuing to mine hard negatives')
         return 'continue'
 
 
