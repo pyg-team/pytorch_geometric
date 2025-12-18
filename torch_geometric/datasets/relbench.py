@@ -1,18 +1,32 @@
 """RelBench dataset integration for PyTorch Geometric.
 
 Converts RelBench datasets to PyG HeteroData with warehouse task labels.
+
+Warehouse Intelligence Labels:
+    Labels are generated heuristically from graph structure when external
+    labels are not provided. The heuristics are based on:
+
+    - **lineage**: Foreign key depth analysis. Values 0-4 represent data flow
+      hierarchy (0=source/no FK refs, 4=deeply derived). Shape: [num_nodes]
+    - **silo**: Connected component analysis. Binary 0.0/1.0 where 1.0
+      indicates isolated/siloed nodes. Shape: [num_nodes]
+    - **anomaly**: Node centrality outlier detection. Binary 0/1 based on
+      degree/betweenness centrality statistics. Shape: [num_nodes]
+
+    external_labels: dict[str, Tensor] where keys are 'lineage', 'silo',
+    'anomaly' and values are Tensors of shape [num_total_nodes].
 """
 
 from __future__ import annotations
 
 import logging
-import warnings
 from typing import Any
 
 import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData, InMemoryDataset
+from torch_geometric.utils import degree, to_networkx
 
 # Constants
 DEFAULT_SBERT_MODEL = 'sentence-transformers/all-MiniLM-L6-v2'
@@ -34,81 +48,51 @@ MAX_LINEAGE_DEPTH = 4
 SILO_ISOLATED = 1.0
 DUMMY_EDGE_LIMIT = 50
 
-# Set up logging
 logger = logging.getLogger(__name__)
 
-# Optional dependencies with proper error handling
+# Optional: pandas for data processing
 try:
     import pandas as pd
     PANDAS_AVAILABLE = True
 except ImportError:
-    logger.warning("pandas not available, some functionality will be limited")
     PANDAS_AVAILABLE = False
     pd = None
 
-# Import SentenceTransformer with fallbacks
+# Optional: PyG LLM SentenceTransformer
+PYG_LLM_AVAILABLE = False
+PyGSentenceTransformer: Any = None
 try:
-    # yapf: disable
-    from torch_geometric.nn.nlp import \
-        SentenceTransformer as PyGSentenceTransformer  # isort: skip
-
-    # yapf: enable
-    PYG_NLP_AVAILABLE = True
+    from torch_geometric.llm.models import \
+        SentenceTransformer as PyGSentenceTransformer
+    PYG_LLM_AVAILABLE = True
 except ImportError:
-    logger.debug("PyG NLP not available")
-    PYG_NLP_AVAILABLE = False
+    pass
 
-    class PyGSentenceTransformer:  # type: ignore
-        def __init__(self, *args: Any, **kwargs: Any) -> None:
-            raise ImportError("PyG SentenceTransformer not available")
-
-
+# Optional: sentence-transformers library
+SENTENCE_TRANSFORMERS_AVAILABLE = False
+STSentenceTransformer: Any = None
 try:
-    # yapf: disable
     from sentence_transformers import \
-        SentenceTransformer as STSentenceTransformer  # isort: skip
-
-    # yapf: enable
+        SentenceTransformer as STSentenceTransformer
     SENTENCE_TRANSFORMERS_AVAILABLE = True
 except ImportError:
-    logger.debug("sentence-transformers not available")
-    SENTENCE_TRANSFORMERS_AVAILABLE = False
+    pass
 
-    class STSentenceTransformer:  # type: ignore
-        def __init__(self, *args: Any, **kwargs: Any) -> None:
-            raise ImportError("sentence-transformers not available")
-
-
-# Check if any SBERT implementation is available
-if not PYG_NLP_AVAILABLE and not SENTENCE_TRANSFORMERS_AVAILABLE:
-    warnings.warn(
-        'Neither PyG NLP nor sentence-transformers available. '
-        'Install PyG 2.6.0+ or sentence-transformers for full functionality',
-        stacklevel=2,
-    )
-
+# Optional: RelBench for dataset loading
 try:
     from relbench.datasets import get_dataset
     RELBENCH_AVAILABLE = True
 except ImportError:
-    logger.warning("RelBench not available, using fallback implementations")
     RELBENCH_AVAILABLE = False
+    get_dataset = None
 
-# Additional imports for heuristic labeling
-try:
-
-    from torch_geometric.utils import degree, to_networkx
-    GRAPH_ANALYSIS_AVAILABLE = True
-except ImportError:
-    logger.warning("PyG graph analysis not available, using basic heuristics")
-    GRAPH_ANALYSIS_AVAILABLE = False
-
+# Optional: NetworkX for advanced graph analysis
 try:
     import networkx as nx
     NETWORKX_AVAILABLE = True
 except ImportError:
-    logger.warning("NetworkX not available, using simplified graph analysis")
     NETWORKX_AVAILABLE = False
+    nx = None
 
 
 class RelBenchError(Exception):
@@ -116,23 +100,38 @@ class RelBenchError(Exception):
 
 
 class HeuristicLabeler:
-    """Generate warehouse task labels from foreign keys and graph structure."""
-    def __init__(self) -> None:
-        self.use_networkx = NETWORKX_AVAILABLE
-        self.use_graph_analysis = GRAPH_ANALYSIS_AVAILABLE
+    """Generate warehouse task labels from foreign keys and graph structure.
 
-    def generate_labels(self, hetero_data: HeteroData, db: Any,
-                        tasks: list[str] | None = None) -> dict[str, Tensor]:
-        """Generate warehouse task labels from database and graph structure."""
+    Labels are generated heuristically:
+    - lineage: FK depth (0=source, 1-4=derived depth)
+    - silo: Connected component analysis (0=connected, 1=isolated)
+    - anomaly: Centrality outliers (0=normal, 1=anomalous)
+    """
+    def generate_labels(
+        self,
+        hetero_data: HeteroData,
+        db: Any,
+        tasks: list[str] | None = None,
+    ) -> dict[str, Tensor]:
+        """Generate warehouse task labels from database and graph structure.
+
+        Args:
+            hetero_data: HeteroData graph to analyze
+            db: RelBench database object with FK metadata
+            tasks: List of tasks to generate ('lineage', 'silo', 'anomaly')
+
+        Returns:
+            Dict mapping task name to label tensor of shape [num_nodes]
+        """
         if tasks is None:
             tasks = ['lineage', 'silo', 'anomaly']
-        labels = {}
+
         homo_data = hetero_data.to_homogeneous()
         num_nodes = homo_data.num_nodes
-
         if num_nodes is None:
             raise ValueError("Cannot generate labels: graph has no nodes")
 
+        labels: dict[str, Tensor] = {}
         if 'lineage' in tasks:
             labels['lineage'] = self._generate_lineage_labels(
                 hetero_data, db, num_nodes)
@@ -144,8 +143,12 @@ class HeuristicLabeler:
 
         return labels
 
-    def _generate_lineage_labels(self, hetero_data: HeteroData, db: Any,
-                                 num_nodes: int) -> Tensor:
+    def _generate_lineage_labels(
+        self,
+        hetero_data: HeteroData,
+        db: Any,
+        num_nodes: int,
+    ) -> Tensor:
         """Generate lineage labels based on foreign key depth."""
         lineage_labels = torch.zeros(num_nodes, dtype=torch.long)
         fk_depth_map = self._analyze_foreign_key_depth(db)
@@ -153,46 +156,36 @@ class HeuristicLabeler:
         node_idx = 0
         for table_name in hetero_data.node_types:
             table_nodes = hetero_data[table_name].num_nodes
-
             if table_name in fk_depth_map:
-                depth = fk_depth_map[table_name]
-                lineage_type = min(depth, MAX_LINEAGE_DEPTH)
+                depth = min(fk_depth_map[table_name], MAX_LINEAGE_DEPTH)
             else:
-                lineage_type = MAX_LINEAGE_DEPTH
-
-            lineage_labels[node_idx:node_idx + table_nodes] = lineage_type
+                depth = MAX_LINEAGE_DEPTH
+            lineage_labels[node_idx:node_idx + table_nodes] = depth
             node_idx += table_nodes
 
         return lineage_labels
 
     def _generate_silo_labels(self, homo_data: Data, num_nodes: int) -> Tensor:
         """Generate silo labels based on graph connectivity."""
-        if homo_data.num_edges == 0:
+        if homo_data.num_edges == 0 or homo_data.edge_index is None:
             return torch.ones(num_nodes, dtype=torch.float)
 
         edge_index = homo_data.edge_index
-        if edge_index is None:
-            return torch.ones(num_nodes, dtype=torch.float)
+        node_degrees = degree(edge_index[0], num_nodes=num_nodes)
 
-        if self.use_graph_analysis:
-            node_degrees = degree(edge_index[0], num_nodes=num_nodes)
-        else:
-            node_degrees = torch.bincount(edge_index[0],
-                                          minlength=num_nodes).float()
-
-        if self.use_networkx:
+        # Use NetworkX for accurate connected component analysis if available
+        if NETWORKX_AVAILABLE:
             try:
                 G = to_networkx(homo_data, to_undirected=True)
                 components = list(nx.connected_components(G))
-                largest_component_size = max(
-                    len(comp) for comp in components) if components else 0
-                silo_threshold = max(
-                    largest_component_size * SILO_THRESHOLD_RATIO,
-                    SILO_MIN_SIZE)
+                largest_size = max(len(c)
+                                   for c in components) if components else 0
+                threshold = max(largest_size * SILO_THRESHOLD_RATIO,
+                                SILO_MIN_SIZE)
 
                 silo_labels = torch.zeros(num_nodes, dtype=torch.float)
                 for comp in components:
-                    if len(comp) < silo_threshold:
+                    if len(comp) < threshold:
                         for node in comp:
                             if node < num_nodes:
                                 silo_labels[node] = SILO_ISOLATED
@@ -200,88 +193,80 @@ class HeuristicLabeler:
             except Exception as e:
                 logger.warning(f"NetworkX analysis failed: {e}")
 
-        degree_threshold = node_degrees.mean() * DEGREE_THRESHOLD_MULTIPLIER
-        return (node_degrees < degree_threshold).float()
+        # Fallback: use degree-based heuristic
+        deg_threshold = node_degrees.mean() * DEGREE_THRESHOLD_MULTIPLIER
+        return (node_degrees < deg_threshold).float()
 
-    def _generate_quality_labels(self, homo_data: Data,
-                                 num_nodes: int) -> Tensor:
+    def _generate_quality_labels(
+        self,
+        homo_data: Data,
+        num_nodes: int,
+    ) -> Tensor:
         """Generate anomaly labels based on node centrality."""
-        if homo_data.num_edges == 0:
+        if homo_data.num_edges == 0 or homo_data.edge_index is None:
             return torch.zeros(num_nodes, dtype=torch.long)
 
         edge_index = homo_data.edge_index
-        if edge_index is None:
-            return torch.zeros(num_nodes, dtype=torch.long)
+        node_degrees = degree(edge_index[0], num_nodes=num_nodes)
 
-        if self.use_graph_analysis:
-            node_degrees = degree(edge_index[0], num_nodes=num_nodes)
-        else:
-            node_degrees = torch.bincount(edge_index[0],
-                                          minlength=num_nodes).float()
-
-        if self.use_networkx:
+        # Use NetworkX for centrality analysis if available
+        if NETWORKX_AVAILABLE:
             try:
                 G = to_networkx(homo_data, to_undirected=True)
-                degree_centrality = nx.degree_centrality(G)
-                betweenness_centrality = nx.betweenness_centrality(
+                deg_cent = nx.degree_centrality(G)
+                bet_cent = nx.betweenness_centrality(
                     G, k=min(CENTRALITY_K_LIMIT, len(G)))
 
-                quality_scores = torch.zeros(num_nodes, dtype=torch.float)
+                scores = torch.zeros(num_nodes, dtype=torch.float)
                 for node in range(num_nodes):
                     if node in G:
-                        deg_cent = degree_centrality.get(node, 0)
-                        bet_cent = betweenness_centrality.get(node, 0)
-                        quality_scores[node] = (
-                            CENTRALITY_DEGREE_WEIGHT * deg_cent +
-                            CENTRALITY_BETWEENNESS_WEIGHT * bet_cent)
-
-                quality_threshold = quality_scores.mean() - quality_scores.std(
-                )
-                return (quality_scores < quality_threshold).long()
+                        scores[node] = (
+                            CENTRALITY_DEGREE_WEIGHT * deg_cent.get(node, 0) +
+                            CENTRALITY_BETWEENNESS_WEIGHT *
+                            bet_cent.get(node, 0))
+                threshold = scores.mean() - scores.std()
+                return (scores < threshold).long()
             except Exception as e:
                 logger.warning(f"NetworkX centrality analysis failed: {e}")
 
-        degree_threshold = node_degrees.mean() - node_degrees.std()
-        return (node_degrees < degree_threshold).long()
+        # Fallback: use degree-based heuristic
+        threshold = node_degrees.mean() - node_degrees.std()
+        return (node_degrees < threshold).long()
 
     def _analyze_foreign_key_depth(self, db: Any) -> dict[str, int]:
         """Calculate table depth based on foreign key dependencies."""
         if db is None:
-            return {}  # Return empty dict when no database provided
+            return {}
 
-        fk_graph = {}
+        # Build FK dependency graph
+        fk_graph: dict[str, list[str]] = {}
         for table_name, table_obj in db.table_dict.items():
             fk_relations = table_obj.fkey_col_to_pkey_table
             fk_graph[table_name] = list(
                 fk_relations.values()) if fk_relations else []
 
-        def calculate_depth(table: str, visited: set,
-                            depth_cache: dict) -> int:
-            if table in visited or table in depth_cache:
-                return depth_cache.get(table, 0)
+        def calc_depth(table: str, visited: set[str], cache: dict[str,
+                                                                  int]) -> int:
+            if table in cache:
+                return cache[table]
+            if table in visited:
+                return 0  # Cycle detected
 
             visited.add(table)
-            if not fk_graph.get(table):
+            refs = fk_graph.get(table, [])
+            if not refs:
                 depth = 0
             else:
-                max_ref_depth = 0
-                for ref_table in fk_graph[table]:
-                    if ref_table in fk_graph:
-                        ref_depth = calculate_depth(ref_table, visited.copy(),
-                                                    depth_cache)
-                        max_ref_depth = max(max_ref_depth, ref_depth)
-                depth = max_ref_depth + 1
-
-            depth_cache[table] = depth
+                depth = 1 + max(
+                    (calc_depth(r, visited.copy(), cache)
+                     for r in refs if r in fk_graph),
+                    default=0,
+                )
+            cache[table] = depth
             return depth
 
-        depth_cache: dict[str, int] = {}
-        fk_depth = {}
-        for table_name in db.table_dict.keys():
-            fk_depth[table_name] = calculate_depth(table_name, set(),
-                                                   depth_cache)
-
-        return fk_depth
+        cache: dict[str, int] = {}
+        return {t: calc_depth(t, set(), cache) for t in db.table_dict}
 
 
 class RelBenchProcessor:
@@ -307,7 +292,7 @@ class RelBenchProcessor:
         Raises:
             RelBenchError: If no suitable encoder is available
         """
-        if PYG_NLP_AVAILABLE:
+        if PYG_LLM_AVAILABLE:
             try:
                 self.encoder = PyGSentenceTransformer(self.sbert_model)
                 logger.info(
@@ -341,7 +326,7 @@ class RelBenchProcessor:
             return torch.empty(0, EMBEDDING_DIM)
 
         try:
-            if PYG_NLP_AVAILABLE and isinstance(self.encoder,
+            if PYG_LLM_AVAILABLE and isinstance(self.encoder,
                                                 PyGSentenceTransformer):
                 # PyG encoder expects tokenized input - let's tokenize properly
                 try:

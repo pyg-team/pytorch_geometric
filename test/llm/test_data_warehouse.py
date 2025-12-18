@@ -14,7 +14,7 @@ class TestWarehouseTaskHead:
     def test_task_head_initialization(self) -> None:
         """Test WarehouseTaskHead initialization."""
         try:
-            from torch_geometric.utils.data_warehouse import WarehouseTaskHead
+            from torch_geometric.llm.data_warehouse import WarehouseTaskHead
         except ImportError:
             pytest.skip("Data warehouse not available")
 
@@ -29,7 +29,7 @@ class TestWarehouseTaskHead:
     def test_all_task_predictions(self) -> None:
         """Test predictions for all warehouse tasks."""
         try:
-            from torch_geometric.utils.data_warehouse import WarehouseTaskHead
+            from torch_geometric.llm.data_warehouse import WarehouseTaskHead
         except ImportError:
             pytest.skip("Data warehouse not available")
 
@@ -47,7 +47,7 @@ class TestWarehouseTaskHead:
     def test_invalid_task_handling(self) -> None:
         """Test handling of invalid task types."""
         try:
-            from torch_geometric.utils.data_warehouse import WarehouseTaskHead
+            from torch_geometric.llm.data_warehouse import WarehouseTaskHead
         except ImportError:
             pytest.skip("Data warehouse not available")
 
@@ -65,7 +65,7 @@ class TestWarehouseGRetriever:
         """Test WarehouseGRetriever initialization."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseGRetriever,
             )
 
@@ -85,7 +85,7 @@ class TestWarehouseGRetriever:
         """Test WarehouseGRetriever with custom configuration."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseGRetriever,
             )
 
@@ -105,7 +105,7 @@ class TestWarehouseGRetriever:
         """Test LLM inference functionality."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseGRetriever,
             )
 
@@ -131,7 +131,7 @@ class TestWarehouseGRetriever:
         """Test inference with multiple questions."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseGRetriever,
             )
 
@@ -161,7 +161,7 @@ class TestWarehouseGRetriever:
         """Test task-specific predictions."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseGRetriever,
             )
 
@@ -184,7 +184,7 @@ class TestWarehouseGRetriever:
         """Test forward pass with different tasks."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseGRetriever,
             )
 
@@ -214,7 +214,7 @@ class TestWarehouseGRetriever:
         """Test G-Retriever error handling."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseGRetriever,
             )
 
@@ -238,7 +238,7 @@ class TestWarehouseConversationSystem:
         """Test WarehouseConversationSystem initialization."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -259,7 +259,7 @@ class TestWarehouseConversationSystem:
         """Test processing of all query types."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -292,7 +292,7 @@ class TestWarehouseConversationSystem:
         """Test conversation history functionality."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -329,7 +329,7 @@ class TestSimpleWarehouseModel:
         """Test SimpleWarehouseModel initialization."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
             )
 
@@ -346,7 +346,7 @@ class TestSimpleWarehouseModel:
         """Test SimpleWarehouseModel with custom parameters."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
             )
 
@@ -366,7 +366,7 @@ class TestSimpleWarehouseModel:
         """Test forward pass functionality."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
             )
 
@@ -387,7 +387,7 @@ class TestSimpleWarehouseModel:
         """Test forward pass with all task types."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
             )
 
@@ -409,7 +409,7 @@ class TestSimpleWarehouseModel:
         """Test predict_task method."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
             )
 
@@ -429,7 +429,7 @@ class TestSimpleWarehouseModel:
         """Test edge cases and error handling."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
             )
 
@@ -452,7 +452,7 @@ class TestSimpleWarehouseModel:
         """Test batch processing functionality."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
             )
 
@@ -477,7 +477,7 @@ class TestSmartParser:
         """Test smart parser lineage translation."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -519,7 +519,7 @@ class TestSmartParser:
         """Test smart parser for all task types."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -546,7 +546,7 @@ class TestSmartParser:
         """Test concise prompt generation."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -580,7 +580,7 @@ class TestSmartParser:
         """Test table information extraction."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -614,7 +614,7 @@ class TestSmartParser:
         """Test table information extraction with no context."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -642,7 +642,7 @@ class TestAdvancedFeatures:
         """Test conversation system in concise mode."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -675,7 +675,7 @@ class TestAdvancedFeatures:
         """Test error handling in conversation system."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -697,7 +697,7 @@ class TestAdvancedFeatures:
         """Test query type classification."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -724,7 +724,7 @@ class TestAdvancedFeatures:
         """Test contextual prompt generation."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -760,7 +760,7 @@ class TestAdvancedFeatures:
         """Test analytics generation with edge cases."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -785,7 +785,7 @@ class TestAdvancedFeatures:
         """Test conversation history management."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -825,7 +825,7 @@ class TestWarehouseDemo:
         """Test create_warehouse_demo function."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 create_warehouse_demo,
             )
 
@@ -844,7 +844,7 @@ class TestWarehouseDemo:
         """Test create_warehouse_demo with various options."""
         try:
             # yapf: disable
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 create_warehouse_demo,
             )
 
@@ -874,7 +874,7 @@ class TestWarehouseDeepCoverage:
     """Target remaining branches in data_warehouse.py."""
     def test_extract_relevant_data_samples_no_context(self) -> None:
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -890,7 +890,7 @@ class TestWarehouseDeepCoverage:
 
     def test_extract_relevant_data_samples_with_encoder_error(self) -> None:
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -912,7 +912,7 @@ class TestWarehouseDeepCoverage:
 
     def test_map_nodes_to_table_info_variants(self) -> None:
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -930,7 +930,7 @@ class TestWarehouseDeepCoverage:
 
     def test_extract_keyword_relevant_data(self) -> None:
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -945,7 +945,7 @@ class TestWarehouseDeepCoverage:
 
     def test_extract_detailed_warehouse_info(self) -> None:
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -964,7 +964,7 @@ class TestWarehouseDeepCoverage:
 
     def test_extract_detailed_analytics_all(self) -> None:
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseConversationSystem, )
         except ImportError:
             pytest.skip("Data warehouse not available")
@@ -998,7 +998,7 @@ class TestWarehouseDeepCoverage:
 
     def test_get_dataset_description_variants(self) -> None:
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -1014,7 +1014,7 @@ class TestWarehouseDeepCoverage:
 
     def test_create_integrated_response_variants(self) -> None:
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -1034,7 +1034,7 @@ class TestWarehouseDeepCoverage:
 
     def test_concise_prompt_verbose_logging(self) -> None:
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -1052,7 +1052,7 @@ class TestWarehouseDeepCoverage:
 
     def test_dataset_description_relational(self) -> None:
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -1064,7 +1064,7 @@ class TestWarehouseDeepCoverage:
 
     def test_clean_llm_response_artifacts(self) -> None:
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -1078,7 +1078,7 @@ class TestWarehouseDeepCoverage:
 
     def test_extract_detailed_analytics_general(self) -> None:
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -1094,7 +1094,7 @@ class TestWarehouseDeepCoverage:
     def test_initialize_domain_description_twice_and_history_copy(
             self) -> None:
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -1115,7 +1115,7 @@ class TestWarehouseDeepCoverage:
 
     def test_process_query_with_labels_template(self) -> None:
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -1142,7 +1142,7 @@ class TestWarehouseDeepCoverage:
 
     def test_extract_table_info_and_clean_llm_response(self) -> None:
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -1166,7 +1166,7 @@ class TestWarehouseDeepCoverage:
     def test_process_query_llm_path_and_labels(self) -> None:
         """Test LLM path with warehouse labels."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 create_warehouse_demo, )
         except ImportError:
             pytest.skip("Data warehouse not available")
@@ -1197,7 +1197,7 @@ class TestWarehouseDeepCoverage:
     def test_encoder_success_path(self) -> None:
         """Test sentence encoder success path."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -1222,7 +1222,7 @@ class TestWarehouseDeepCoverage:
     def test_clean_llm_response_empty(self) -> None:
         """Test clean LLM response with empty input."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -1234,7 +1234,7 @@ class TestWarehouseDeepCoverage:
     def test_extract_gat_insights_all_types(self) -> None:
         """Test GAT insights extraction for all task types."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseConversationSystem, )
         except ImportError:
             pytest.skip("Data warehouse not available")
@@ -1271,7 +1271,7 @@ class TestWarehouseDeepCoverage:
     def test_detailed_analytics_quality_excellent_with_dummy(self) -> None:
         """Test detailed analytics with excellent quality scores."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseConversationSystem, )
         except ImportError:
             pytest.skip("Data warehouse not available")
@@ -1294,14 +1294,14 @@ class TestExceptionHandling:
     def test_import_error_fallback(self) -> None:
         """Test ImportError handling in WarehouseGRetriever initialization."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseGRetriever, )
         except ImportError:
             pytest.skip("Data warehouse not available")
 
         # Test the ImportError handling in WarehouseGRetriever.__init__
         # This tests the exception path when G-Retriever is not available
-        import torch_geometric.utils.data_warehouse as dw
+        import torch_geometric.llm.data_warehouse as dw
         original_has_gretriever = dw.HAS_GRETRIEVER
 
         try:
@@ -1319,7 +1319,7 @@ class TestExceptionHandling:
     def test_custom_llm_inference_exception(self) -> None:
         """Test exception fallback in custom_llm_inference."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseGRetriever, )
         except ImportError:
             pytest.skip("G-Retriever not available")
@@ -1334,7 +1334,7 @@ class TestExceptionHandling:
     def test_process_query_exception_handling(self) -> None:
         """Test exception handling in process_query."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -1350,7 +1350,7 @@ class TestExceptionHandling:
     def test_simple_model_exception_handling(self) -> None:
         """Test exception handling in SimpleWarehouseModel."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel, )
         except ImportError:
             pytest.skip("Data warehouse not available")
@@ -1370,7 +1370,7 @@ class TestThresholdBranches:
     def test_silo_threshold_branches(self) -> None:
         """Test silo probability threshold branches."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseConversationSystem, )
         except ImportError:
             pytest.skip("Data warehouse not available")
@@ -1404,7 +1404,7 @@ class TestThresholdBranches:
     def test_quality_threshold_branches(self) -> None:
         """Test quality score threshold branches."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseConversationSystem, )
         except ImportError:
             pytest.skip("Data warehouse not available")
@@ -1435,7 +1435,7 @@ class TestThresholdBranches:
     def test_impact_threshold_branches(self) -> None:
         """Test impact level threshold branches."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseConversationSystem, )
         except ImportError:
             pytest.skip("Data warehouse not available")
@@ -1462,7 +1462,7 @@ class TestEdgeCases:
     def test_empty_question_handling(self) -> None:
         """Test empty question list handling."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseGRetriever, )
         except ImportError:
             pytest.skip("G-Retriever not available")
@@ -1481,7 +1481,7 @@ class TestEdgeCases:
     def test_empty_label_handling(self) -> None:
         """Test empty label list handling."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseGRetriever, )
         except ImportError:
             pytest.skip("G-Retriever not available")
@@ -1498,7 +1498,7 @@ class TestEdgeCases:
     def test_empty_llm_response_cleaning(self) -> None:
         """Test LLM response cleaning with edge cases."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -1527,7 +1527,7 @@ class TestEdgeCases:
     def test_empty_context_handling(self) -> None:
         """Test handling of None/empty context in various methods."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -1550,7 +1550,7 @@ class TestEdgeCases:
     def test_encode_text_fallback(self) -> None:
         """Test _encode_text fallback behavior."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -1573,7 +1573,7 @@ class TestModelConfigurations:
     def test_llm_embedding_dimension_detection(self) -> None:
         """Test LLM embedding dimension detection branches."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseGRetriever, )
         except ImportError:
             pytest.skip("G-Retriever not available")
@@ -1581,8 +1581,8 @@ class TestModelConfigurations:
         # Mock LLM and GRetriever to avoid actual model loading
         from unittest.mock import patch, MagicMock
 
-        with patch('torch_geometric.utils.data_warehouse.LLM') as mock_llm:
-            with patch('torch_geometric.utils.data_warehouse.GRetriever') \
+        with patch('torch_geometric.llm.data_warehouse.LLM') as mock_llm:
+            with patch('torch_geometric.llm.data_warehouse.GRetriever') \
                     as mock_gr:
 
                 mock_llm.return_value = MagicMock()
@@ -1607,7 +1607,7 @@ class TestModelConfigurations:
     def test_parameter_handling_branches(self) -> None:
         """Test parameter handling in custom_llm_inference."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseGRetriever, )
         except ImportError:
             pytest.skip("G-Retriever not available")
@@ -1631,7 +1631,7 @@ class TestModelConfigurations:
     def test_query_type_classification_branches(self) -> None:
         """Test all query type classification branches."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -1656,7 +1656,7 @@ class TestModelConfigurations:
     def test_analytics_generation_error_handling(self) -> None:
         """Test analytics generation with error conditions."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseConversationSystem, )
         except ImportError:
             pytest.skip("Data warehouse not available")
@@ -1682,7 +1682,7 @@ class TestModelConfigurations:
     def test_create_warehouse_demo_fallback(self) -> None:
         """Test create_warehouse_demo fallback behavior."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 create_warehouse_demo, )
         except ImportError:
             pytest.skip("Data warehouse not available")
@@ -1698,7 +1698,7 @@ class TestAnalyticsFormatting:
     def test_silo_severity_levels(self) -> None:
         """Test all silo severity classification branches."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseConversationSystem, )
         except ImportError:
             pytest.skip("Data warehouse not available")
@@ -1747,7 +1747,7 @@ class TestAnalyticsFormatting:
     def test_quality_status_levels(self) -> None:
         """Test quality status classification branches."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseConversationSystem, )
         except ImportError:
             pytest.skip("Data warehouse not available")
@@ -1788,7 +1788,7 @@ class TestAnalyticsFormatting:
     def test_impact_risk_levels(self) -> None:
         """Test impact risk level classification branches."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -1822,7 +1822,7 @@ class TestWarehouseTraining:
     def test_create_warehouse_training_data(self) -> None:
         """Test training data creation."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 create_warehouse_training_data, )
         except ImportError:
             pytest.skip("Training functions not available")
@@ -1853,7 +1853,7 @@ class TestAdditionalCoverage:
             import importlib
             import sys
             from types import ModuleType
-            import torch_geometric.utils.data_warehouse as dw
+            import torch_geometric.llm.data_warehouse as dw
         except Exception:  # pragma: no cover - environment import guard
             pytest.skip("data_warehouse not importable")
 
@@ -1879,15 +1879,15 @@ class TestAdditionalCoverage:
     def test_custom_llm_inference_success_path(self) -> None:
         """Exercise custom_llm_inference try-body via mocks."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseGRetriever, )
         except ImportError:
             pytest.skip("G-Retriever not available")
 
         from unittest.mock import MagicMock, patch
 
-        with patch('torch_geometric.utils.data_warehouse.LLM') as mock_llm, \
-                patch('torch_geometric.utils.data_warehouse.GRetriever') \
+        with patch('torch_geometric.llm.data_warehouse.LLM') as mock_llm, \
+                patch('torch_geometric.llm.data_warehouse.GRetriever') \
                 as mock_gr:
             mock_llm.return_value = MagicMock()
             mock_gr.return_value = MagicMock()
@@ -1922,7 +1922,7 @@ class TestAdditionalCoverage:
     def test_train_loop_with_simple_model(self) -> None:
         """Run one training epoch to cover optimizer/backward/clip/step."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 create_warehouse_training_data,
                 train_warehouse_model,
@@ -1949,15 +1949,15 @@ class TestAdditionalCoverage:
     def test_inference_multi_question_path(self) -> None:
         """Ensure multi-question path calls g_retriever.inference."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseGRetriever, )
         except ImportError:
             pytest.skip("G-Retriever not available")
 
         from unittest.mock import MagicMock, patch
 
-        with patch('torch_geometric.utils.data_warehouse.LLM') as mock_llm, \
-                patch('torch_geometric.utils.data_warehouse.GRetriever') \
+        with patch('torch_geometric.llm.data_warehouse.LLM') as mock_llm, \
+                patch('torch_geometric.llm.data_warehouse.GRetriever') \
                 as mock_gr:
             mock_llm.return_value = MagicMock()
             gr = MagicMock()
@@ -1973,7 +1973,7 @@ class TestAdditionalCoverage:
     def test_concise_general_fallback(self) -> None:
         """Unknown query type should return general fallback string."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -1991,7 +1991,7 @@ class TestAdditionalCoverage:
     def test_infer_key_relationships_variants(self) -> None:
         """Cover _infer_key_relationships early return, heuristic & fallback."""  # noqa: E501
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 SimpleWarehouseModel,
                 WarehouseConversationSystem,
             )
@@ -2012,15 +2012,15 @@ class TestAdditionalCoverage:
     def test_inference_single_question_path(self) -> None:
         """Single-question list should route to custom_llm_inference."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseGRetriever, )
         except ImportError:
             pytest.skip("G-Retriever not available")
 
         from unittest.mock import MagicMock, patch
 
-        with patch('torch_geometric.utils.data_warehouse.LLM') as mock_llm, \
-                patch('torch_geometric.utils.data_warehouse.GRetriever') \
+        with patch('torch_geometric.llm.data_warehouse.LLM') as mock_llm, \
+                patch('torch_geometric.llm.data_warehouse.GRetriever') \
                 as mock_gr:
             mock_llm.return_value = MagicMock()
             mock_gr.return_value = MagicMock()
@@ -2036,7 +2036,7 @@ class TestAdditionalCoverage:
     def test_integrated_response_path_non_empty_llm(self) -> None:
         """Integrated response with non-empty LLM text via dummy model."""
         try:
-            from torch_geometric.utils.data_warehouse import (
+            from torch_geometric.llm.data_warehouse import (
                 WarehouseConversationSystem, )
         except ImportError:
             pytest.skip("Data warehouse not available")

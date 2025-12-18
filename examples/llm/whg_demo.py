@@ -25,7 +25,7 @@ from torch_geometric.data import Data
 
 #
 try:
-    from torch_geometric.utils.data_warehouse import (
+    from torch_geometric.llm.data_warehouse import (
         create_warehouse_demo,
         create_warehouse_training_data,
         train_warehouse_model,
