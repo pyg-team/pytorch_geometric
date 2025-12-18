@@ -68,14 +68,13 @@ except ImportError:
     pass
 
 # Optional: sentence-transformers library
-STSentenceTransformer: Any = None
 SENTENCE_TRANSFORMERS_AVAILABLE = False
 try:
     from sentence_transformers import \
         SentenceTransformer as STSentenceTransformer
     SENTENCE_TRANSFORMERS_AVAILABLE = True
 except ImportError:
-    pass
+    STSentenceTransformer: Any = None  # type: ignore[no-redef]
 
 # Optional: RelBench for dataset loading and graph conversion
 try:
