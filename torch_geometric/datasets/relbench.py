@@ -41,7 +41,6 @@ DEGREE_THRESHOLD_MULTIPLIER = 0.5
 CENTRALITY_K_LIMIT = 100
 CENTRALITY_DEGREE_WEIGHT = 0.7
 CENTRALITY_BETWEENNESS_WEIGHT = 0.3
-EDGE_LIMIT_PER_TYPE = 10
 FALLBACK_SILO_PROB = 0.3
 FALLBACK_ANOMALY_PROB = 0.1
 MAX_LINEAGE_DEPTH = 4
@@ -69,21 +68,24 @@ except ImportError:
     pass
 
 # Optional: sentence-transformers library
+STSentenceTransformer: Any = None
+SENTENCE_TRANSFORMERS_AVAILABLE = False
 try:
     from sentence_transformers import \
         SentenceTransformer as STSentenceTransformer
     SENTENCE_TRANSFORMERS_AVAILABLE = True
 except ImportError:
-    STSentenceTransformer = None
-    SENTENCE_TRANSFORMERS_AVAILABLE = False
+    pass
 
-# Optional: RelBench for dataset loading
+# Optional: RelBench for dataset loading and graph conversion
 try:
     from relbench.datasets import get_dataset
+    from relbench.modeling.graph import make_pkey_fkey_graph
     RELBENCH_AVAILABLE = True
 except ImportError:
     RELBENCH_AVAILABLE = False
     get_dataset = None
+    make_pkey_fkey_graph = None
 
 # Optional: NetworkX for advanced graph analysis
 try:
@@ -375,11 +377,15 @@ class RelBenchProcessor:
     def process_relbench_data(
             self, dataset_name: str,
             sample_size: int | None = None) -> tuple[HeteroData, Any]:
-        """Process RelBench dataset to HeteroData.
+        """Process RelBench dataset to HeteroData using make_pkey_fkey_graph.
+
+        Uses RelBench's make_pkey_fkey_graph for graph structure, then adds
+        semantic embeddings for warehouse intelligence applications.
 
         Args:
             dataset_name: Name of the RelBench dataset
-            sample_size: Optional sample size for large datasets
+            sample_size: Optional sample size for large datasets (not used
+                with make_pkey_fkey_graph, kept for API compatibility)
 
         Returns:
             Tuple of (HeteroData with embeddings, RelBench database)
@@ -387,7 +393,7 @@ class RelBenchProcessor:
         Raises:
             RelBenchError: If processing fails
         """
-        if not RELBENCH_AVAILABLE:
+        if not RELBENCH_AVAILABLE or make_pkey_fkey_graph is None:
             raise RelBenchError(
                 "RelBench not available. Install relbench package.")
 
@@ -396,8 +402,11 @@ class RelBenchProcessor:
             dataset = get_dataset(dataset_name)
             db = dataset.get_db()
 
-            # Convert to HeteroData with sampling during processing
-            hetero_data = self._convert_to_hetero_data(db, sample_size)
+            # Use RelBench's make_pkey_fkey_graph for graph structure
+            hetero_data, _ = make_pkey_fkey_graph(db)
+
+            # Add semantic embeddings if encoder is available
+            self._add_semantic_embeddings(hetero_data, db, sample_size)
 
             # Add metadata
             hetero_data.dataset_name = dataset_name
@@ -415,72 +424,40 @@ class RelBenchProcessor:
             raise RelBenchError(
                 f"Failed to process {dataset_name}: {e}") from e
 
-    def _convert_to_hetero_data(self, db: Any,
-                                sample_size: int | None = None) -> HeteroData:
-        """Convert RelBench database to HeteroData with sampling.
+    def _add_semantic_embeddings(self, hetero_data: HeteroData, db: Any,
+                                 sample_size: int | None = None) -> None:
+        """Add semantic text embeddings to HeteroData nodes.
+
+        This enhances the torch_frame features from make_pkey_fkey_graph
+        with semantic embeddings for warehouse intelligence tasks.
 
         Args:
+            hetero_data: HeteroData from make_pkey_fkey_graph
             db: RelBench database object
-            sample_size: Optional sample size per table
-
-        Returns:
-            HeteroData object with node and edge data
+            sample_size: Optional limit on rows to embed per table
         """
-        hetero_data = HeteroData()
-
-        # Process tables as node types - preserve warehouse structure
-        table_names = list(db.table_dict.keys())
-        logger.info(
-            f"Processing {len(table_names)} tables: {table_names[:5]}...")
-
-        total_nodes = 0
-        for table_name in table_names:
+        for table_name in hetero_data.node_types:
             try:
-                table_obj = db.table_dict[table_name]
+                if table_name not in db.table_dict:
+                    continue
 
-                # Get DataFrame and sample using original approach
+                table_obj = db.table_dict[table_name]
                 table_df = table_obj.df
 
-                # Sample data if requested (original working approach)
+                # Sample if requested
                 if sample_size is not None:
                     table_df = table_df.head(min(sample_size, len(table_df)))
-                    logger.debug(
-                        f"  {table_name}: {len(table_obj.df)}->{len(table_df)}"
-                    )
 
-                # Create text representations for embedding
-                if PANDAS_AVAILABLE and hasattr(table_df, 'to_dict'):
-                    texts = self._create_text_representations(table_df)
-                    embeddings = self.encode_texts(texts)
+                # Create text representations and encode
+                texts = self._create_text_representations(table_df)
+                embeddings = self.encode_texts(texts)
 
-                    hetero_data[table_name].x = embeddings
-                    hetero_data[table_name].num_nodes = len(embeddings)
-                    total_nodes += len(embeddings)
-                    logger.debug(f"  {table_name}: {len(embeddings)} nodes")
-                else:
-                    # Fallback for non-pandas data
-                    num_nodes = len(table_df) if hasattr(table_df,
-                                                         '__len__') else 1
-                    hetero_data[table_name].x = torch.randn(
-                        num_nodes, EMBEDDING_DIM)
-                    hetero_data[table_name].num_nodes = num_nodes
-                    total_nodes += num_nodes
-                    logger.debug(
-                        f"  {table_name}: {num_nodes} nodes (fallback)")
+                # Store as semantic_x (keep original x from RelBench)
+                hetero_data[table_name].semantic_x = embeddings
 
             except Exception as e:
-                logger.warning(f"Failed to process table {table_name}: {e}")
-                # Create minimal node data as fallback
-                hetero_data[table_name].x = torch.randn(1, EMBEDDING_DIM)
-                hetero_data[table_name].num_nodes = 1
-                total_nodes += 1
-
-        logger.info(f"Total nodes across all tables: {total_nodes}")
-
-        # Add basic edge connectivity (simplified)
-        self._add_basic_edges(hetero_data, db)
-
-        return hetero_data
+                logger.warning(f"Semantic embedding failed for {table_name}: "
+                               f"{e}")
 
     def _create_text_representations(self, table_data: Any) -> list[str]:
         """Create text representations from table data.
@@ -511,162 +488,6 @@ class RelBenchProcessor:
             texts = ["unknown data"]
 
         return texts if texts else ["empty table"]
-
-    def _add_basic_edges(self, hetero_data: HeteroData, db: Any) -> None:
-        """Add edges based on RelBench foreign key relationships.
-
-        Args:
-            hetero_data: HeteroData object to modify
-            db: RelBench database object with foreign key metadata
-        """
-        if db is None:
-            logger.warning(
-                "No database provided, using fallback edge creation")
-            self._add_fallback_edges(hetero_data)
-            return
-
-        try:
-            # Create node ID mappings for each table
-            node_mappings = self._create_node_mappings(hetero_data, db)
-
-            # Create edges based on actual foreign key relationships
-            edges_created = 0
-            for table_name, table_obj in db.table_dict.items():
-                if table_name not in hetero_data.node_types:
-                    continue
-
-                # Process each foreign key relationship
-                for fkey_col, target_table in (
-                        table_obj.fkey_col_to_pkey_table.items()):
-                    if target_table not in hetero_data.node_types:
-                        continue
-
-                    edges_created += self._create_fkey_edges(
-                        hetero_data, table_name, target_table, table_obj,
-                        fkey_col, node_mappings)
-
-            logger.info(f"Created {edges_created} real foreign key edges")
-
-        except Exception as e:
-            logger.warning(
-                f"Foreign key edge creation failed: {e}, using fallback")
-            self._add_fallback_edges(hetero_data)
-
-    def _create_node_mappings(self, hetero_data: HeteroData, db: Any) -> dict:
-        """Create mappings from primary key values to node indices.
-
-        Args:
-            hetero_data: HeteroData object
-            db: RelBench database object
-
-        Returns:
-            Dictionary mapping table_name -> {pk_value: node_index}
-        """
-        node_mappings = {}
-
-        for table_name, table_obj in db.table_dict.items():
-            if table_name not in hetero_data.node_types:
-                continue
-
-            # Get primary key column
-            pkey_col = table_obj.pkey_col
-            if not pkey_col or not hasattr(table_obj, 'df'):
-                continue
-
-            # Get the actual number of nodes in the hetero_data for this table
-            actual_num_nodes = hetero_data[table_name].num_nodes
-
-            # Create mapping from primary key values to node indices
-            df = table_obj.df
-            if pkey_col in df.columns:
-                # Only map the first N primary keys where N = actual_num_nodes
-                # This handles sampling correctly
-                pk_values = df[pkey_col].head(actual_num_nodes).tolist()
-                node_mappings[table_name] = {
-                    pk_val: idx
-                    for idx, pk_val in enumerate(pk_values)
-                }
-
-        return node_mappings
-
-    def _create_fkey_edges(self, hetero_data: HeteroData, src_table: str,
-                           dst_table: str, table_obj: Any, fkey_col: str,
-                           node_mappings: dict) -> int:
-        """Create edges based on foreign key relationships.
-
-        Args:
-            hetero_data: HeteroData object to modify
-            src_table: Source table name
-            dst_table: Destination table name
-            table_obj: Source table object
-            fkey_col: Foreign key column name
-            node_mappings: Node ID mappings
-
-        Returns:
-            Number of edges created
-        """
-        if (src_table not in node_mappings or dst_table not in node_mappings
-                or not hasattr(table_obj, 'df')):
-            return 0
-
-        df = table_obj.df
-        if fkey_col not in df.columns:
-            return 0
-
-        # Get mappings
-        src_mapping = node_mappings[src_table]
-        dst_mapping = node_mappings[dst_table]
-
-        # Create edges from foreign key relationships
-        src_indices = []
-        dst_indices = []
-
-        # Get the actual number of source nodes to limit iteration
-        max_src_nodes = len(src_mapping)
-
-        for src_idx, row in enumerate(df.head(max_src_nodes).itertuples()):
-            if src_idx >= max_src_nodes:
-                break
-
-            fkey_value = getattr(row, fkey_col, None)
-            if fkey_value is not None and fkey_value in dst_mapping:
-                src_indices.append(src_idx)
-                dst_indices.append(dst_mapping[fkey_value])
-
-        if src_indices:
-            edge_index = torch.tensor([src_indices, dst_indices],
-                                      dtype=torch.long)
-            edge_type = (src_table, 'references', dst_table)
-            hetero_data[edge_type].edge_index = edge_index
-
-            logger.debug(f"Created {len(src_indices)} edges: {edge_type}")
-            return len(src_indices)
-
-        return 0
-
-    def _add_fallback_edges(self, hetero_data: HeteroData) -> None:
-        """Add fallback random edges when foreign key processing fails."""
-        node_types = list(hetero_data.node_types)
-
-        for i, src_type in enumerate(node_types):
-            for j, dst_type in enumerate(node_types):
-                if i != j:  # No self-loops for simplicity
-                    # Create minimal edge connectivity
-                    src_nodes = hetero_data[src_type].num_nodes
-                    dst_nodes = hetero_data[dst_type].num_nodes
-
-                    if src_nodes > 0 and dst_nodes > 0:
-                        # Create sparse connectivity
-                        num_edges = min(src_nodes, dst_nodes,
-                                        EDGE_LIMIT_PER_TYPE)
-                        src_indices = torch.randint(0, src_nodes,
-                                                    (num_edges, ))
-                        dst_indices = torch.randint(0, dst_nodes,
-                                                    (num_edges, ))
-
-                        edge_index = torch.stack([src_indices, dst_indices])
-                        hetero_data[src_type, 'connects_to',
-                                    dst_type].edge_index = edge_index
 
 
 def _add_warehouse_labels_to_hetero_data(
