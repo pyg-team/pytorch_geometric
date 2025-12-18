@@ -12,8 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Deprecated
 
 ### Removed
-- Removed `UPFD` dataset since the google drive source is no longer available. ([#10562](https://github.com/pyg-team/pytorch_geometric/pull/10562))
 
+- Removed `UPFD` dataset since the google drive source is no longer available. ([#10562](https://github.com/pyg-team/pytorch_geometric/pull/10562))
 
 ### Fixed
 
