@@ -53,7 +53,6 @@ from .webkb import WebKB
 from .wikipedia_network import WikipediaNetwork
 from .heterophilous_graph_dataset import HeterophilousGraphDataset
 from .actor import Actor
-from .upfd import UPFD
 from .github import GitHub
 from .facebook import FacebookPagePage
 from .lastfm_asia import LastFMAsia
