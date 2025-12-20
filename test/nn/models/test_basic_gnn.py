@@ -13,6 +13,7 @@ from torch_geometric.nn import SAGEConv
 from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
+    has_package,
     onlyFullTest,
     onlyLinux,
     onlyNeighborSampler,
@@ -251,11 +252,17 @@ def test_packaging():
 @onlyLinux
 @withPackage('torch>=2.6.0')
 @withPackage('onnx', 'onnxruntime', 'onnxscript')
-def test_onnx(tmp_path: str) -> None:
+@pytest.mark.parametrize('dynamo', [
+    pytest.param(
+        True, marks=pytest.mark.skipif(has_package('torch<2.7.0'),
+                                       reason="Requires torch>=2.7.0")),
+    pytest.param(
+        False, marks=pytest.mark.skipif(has_package('torch>=2.7.0'),
+                                        reason="Deprecated in torch<2.7.0")),
+])
+def test_onnx(tmp_path, dynamo):
     import onnx
     import onnxruntime as ort
-
-    from torch_geometric import safe_onnx_export
 
     warnings.filterwarnings('ignore', '.*tensor to a Python boolean.*')
     warnings.filterwarnings('ignore', '.*shape inference of prim::Constant.*')
@@ -278,24 +285,15 @@ def test_onnx(tmp_path: str) -> None:
     assert expected.size() == (3, 16)
 
     path = osp.join(tmp_path, 'model.onnx')
-    success = safe_onnx_export(
+    kwargs = {"dynamo": True} if dynamo else {}
+    torch.onnx.export(
         model,
         (x, edge_index),
         path,
         input_names=('x', 'edge_index'),
-        opset_version=18,
-        dynamo=True,  # False is deprecated by PyTorch
-        skip_on_error=True,  # Skip gracefully in CI if upstream issue occurs
+        opset_version=16,
+        **kwargs,
     )
-
-    if not success:
-        # ONNX export was skipped due to known upstream issue
-        # This allows CI to pass while the upstream bug exists
-        warnings.warn(
-            "ONNX export test skipped due to known upstream onnx_ir issue. "
-            "This is expected and does not indicate a problem with PyTorch "
-            "Geometric.", UserWarning, stacklevel=2)
-        return
 
     onnx_model = onnx.load(path)
     onnx.checker.check_model(onnx_model)
