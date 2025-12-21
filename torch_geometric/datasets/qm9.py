@@ -245,6 +245,9 @@ class QM9(InMemoryDataset):
         for i, mol in enumerate(tqdm(suppl)):
             if i in skip:
                 continue
+            
+            if mol is None: 
+                continue
 
             N = mol.GetNumAtoms()
 
@@ -273,6 +276,15 @@ class QM9(InMemoryDataset):
             rows, cols, edge_types = [], [], []
             for bond in mol.GetBonds():
                 start, end = bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()
+                
+                # --- START CHANGE: Geometric Filter ---
+                p1 = pos[start]
+                p2 = pos[end]
+                dist = (p1 - p2).norm().item()
+                if dist > 1.85:
+                    continue
+                # --- END CHANGE ---
+                
                 rows += [start, end]
                 cols += [end, start]
                 edge_types += 2 * [bonds[bond.GetBondType()]]
@@ -288,7 +300,11 @@ class QM9(InMemoryDataset):
 
             row, col = edge_index
             hs = (z == 1).to(torch.float)
-            num_hs = scatter(hs[row], col, dim_size=N, reduce='sum').tolist()
+            
+            if row.numel() > 0:
+                num_hs = scatter(hs[row], col, dim_size=N, reduce='sum').tolist()
+            else:
+                num_hs = [0.0] * N
 
             x1 = one_hot(torch.tensor(type_idx), num_classes=len(types))
             x2 = torch.tensor([atomic_number, aromatic, sp, sp2, sp3, num_hs],
@@ -296,7 +312,15 @@ class QM9(InMemoryDataset):
             x = torch.cat([x1, x2], dim=-1)
 
             name = mol.GetProp('_Name')
-            smiles = Chem.MolToSmiles(mol, isomericSmiles=True)
+            
+            # --- START CHANGE: Prefer Property SMILES ---
+            if mol.HasProp('GDB-SMILES'):
+                smiles = mol.GetProp('GDB-SMILES')
+            elif mol.HasProp('SMILES'):
+                smiles = mol.GetProp('SMILES')
+            else:
+                smiles = Chem.MolToSmiles(mol, isomericSmiles=True)
+            # --- END CHANGE ---
 
             data = Data(
                 x=x,
