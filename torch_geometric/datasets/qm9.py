@@ -245,8 +245,8 @@ class QM9(InMemoryDataset):
         for i, mol in enumerate(tqdm(suppl)):
             if i in skip:
                 continue
-            
-            if mol is None: 
+
+            if mol is None:
                 continue
 
             N = mol.GetNumAtoms()
@@ -276,7 +276,7 @@ class QM9(InMemoryDataset):
             rows, cols, edge_types = [], [], []
             for bond in mol.GetBonds():
                 start, end = bond.GetBeginAtomIdx(), bond.GetEndAtomIdx()
-                
+
                 # --- START CHANGE: Geometric Filter ---
                 p1 = pos[start]
                 p2 = pos[end]
@@ -284,7 +284,7 @@ class QM9(InMemoryDataset):
                 if dist > 1.85:
                     continue
                 # --- END CHANGE ---
-                
+
                 rows += [start, end]
                 cols += [end, start]
                 edge_types += 2 * [bonds[bond.GetBondType()]]
@@ -300,9 +300,10 @@ class QM9(InMemoryDataset):
 
             row, col = edge_index
             hs = (z == 1).to(torch.float)
-            
+
             if row.numel() > 0:
-                num_hs = scatter(hs[row], col, dim_size=N, reduce='sum').tolist()
+                num_hs = scatter(hs[row], col, dim_size=N,
+                                 reduce='sum').tolist()
             else:
                 num_hs = [0.0] * N
 
@@ -312,7 +313,7 @@ class QM9(InMemoryDataset):
             x = torch.cat([x1, x2], dim=-1)
 
             name = mol.GetProp('_Name')
-            
+
             # --- START CHANGE: Prefer Property SMILES ---
             if mol.HasProp('GDB-SMILES'):
                 smiles = mol.GetProp('GDB-SMILES')
