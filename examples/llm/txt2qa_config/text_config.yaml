@@ -1,0 +1,70 @@
+# TrueQuery QA Generation Configuration
+# This file contains all the settings for the QA generation workflow
+
+# Input and Output Directories
+input_dir: "/Users/askliar/src/gnn/techqa/corpus"
+output_dir: "/Users/askliar/src/gnn/qa_test"
+
+# for modality = video, run process_keyframe_workflow to create enhanced transcription data
+modality: "text"
+
+# Model Configuration
+gen_model: "nvdev/nvidia/llama-3.1-nemotron-ultra-253b-v1"
+models:
+  # Choose one or more models to use for QA generation
+  mixtral: "nvdev/mistralai/mixtral-8x22b-instruct-v0.1"
+  # llama_70b: "nvdev/meta/llama-3.1-70b-instruct"
+  # llama_405b: "nvdev/meta/llama-3.1-405b-instruct"
+  # nemotron_ultra: "nvdev/nvidia/llama-3.1-nemotron-ultra-253b-v1"
+
+model_progression:
+  - "nvdev/mistralai/mixtral-8x22b-instruct-v0.1"
+  - "nvdev/meta/llama-3.1-70b-instruct"
+  - "nvdev/meta/llama-3.1-405b-instruct"
+  - "nvdev/nvidia/llama-3.1-nemotron-ultra-253b-v1"
+
+# Embedding model for validation and deduplication
+embed_model: "nvdev/nvidia/llama-3.2-nv-embedqa-1b-v2"
+
+# Evaluation Configuration
+evaluation:
+  model: "nvdev/nvidia/llama-3.1-nemotron-ultra-253b-v1"
+  sample_size: 15  # Number of QA pairs to evaluate if there are many
+  quality_threshold: 7.0  # Minimum acceptable quality score (1-10)
+
+use_artifact: true
+
+# Processing Configuration
+num_pairs: 7      # Number of QA pairs to generate per file
+num_negatives: 2   # Number of negative answers per question (0 = none)
+dedup_threshold: 0.6  # Similarity threshold for deduplication
+parts: 3           # Number of parts to split transcript for diverse sampling
+pairs_per_shard: 10         # Number of QA pairs each shard workflow should generate
+max_parallel_shards: 6      # Maximum shard workflows to run concurrently
+enable_hard_negatives: true  # Toggle hard negative mining
+
+# Validation Settings
+validation:
+  min_question_length: 10
+  min_answer_length: 5
+  enable_span_check: true
+
+# Question Generation Settings
+self_contained_question: true  # Generate questions that don't reference the context/transcript
+
+# Retry Configuration
+retry:
+  max_retries: 3
+  base_delay: 1
+  exponential_backoff: true
+
+# Hard Mode Configuration (for complex questions)
+hard: true
+min_complexity: 4
+query_type_distribution: '{"multi_hop":0.4,"structural":0.3,"contextual":0.3}'
+min_hops: 2
+max_hops: 4
+
+# Optional: Distribution of reasoning types (must sum to 1.0)
+# If not specified, no special handling of reasoning types
+reasoning_type_distribution: '{"factual":0.15,"causal":0.15,"relational":0.15,"inferential":0.15,"temporal":0.15,"procedural":0.15,"visual":0.1}'
