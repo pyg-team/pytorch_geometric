@@ -5,19 +5,17 @@ from torch.nn import Sequential as Seq
 
 from torch_geometric.llm.models import LLM, MoleculeGPT, SentenceTransformer
 from torch_geometric.nn import GINEConv
-from torch_geometric.testing import onlyFullTest, withPackage
+from torch_geometric.testing import withPackage
 
 
-@onlyFullTest
 @withPackage('transformers', 'sentencepiece', 'accelerate')
 def test_molecule_gpt() -> None:
     llm = LLM(
         # model_name='lmsys/vicuna-7b-v1.5',
-        model_name='TinyLlama/TinyLlama-1.1B-Chat-v0.1',
+        model_name='Qwen/Qwen3-0.6B',
         num_params=1,
         dtype=torch.bfloat16,
     )
-
     graph_encoder = GINEConv(nn=Seq(Lin(16, 16), ReLU(), Lin(16, 16)),
                              train_eps=True, edge_dim=16)
 
@@ -34,7 +32,7 @@ def test_molecule_gpt() -> None:
 
     assert str(model) == (
         'MoleculeGPT(\n'
-        '  llm=LLM(TinyLlama/TinyLlama-1.1B-Chat-v0.1),\n'
+        '  llm=LLM(Qwen/Qwen3-0.6B),\n'
         '  graph=GINEConv,\n'
         '  smiles=SentenceTransformer(model_name=DeepChem/ChemBERTa-77M-MTR),\n'  # noqa: E501
         ')')
