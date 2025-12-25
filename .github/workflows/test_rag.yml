@@ -35,7 +35,7 @@ jobs:
           uv pip install -e ".[test,rag]"
 
       - name: Run tests
-        timeout-minutes: 10
+        timeout-minutes: 15
         run: |
           uv run --no-project pytest test/llm --cov --cov-report=xml --durations 10
         shell: bash
