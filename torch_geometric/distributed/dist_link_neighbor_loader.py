@@ -1,4 +1,5 @@
 from typing import Callable, Dict, List, Optional, Tuple, Union
+from warnings import warn
 
 import torch
 
@@ -92,6 +93,15 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
                 device=device,
                 channel=channel,
                 concurrency=concurrency,
+            )
+        else:
+            warn(
+                "`torch_geometric.distributed` has been deprecated since 2.7.0 and will "  # noqa: E501
+                "no longer be maintained. For distributed training, refer to our "  # noqa: E501
+                "tutorials on distributed training at "
+                "https://pytorch-geometric.readthedocs.io/en/latest/tutorial/distributed.html "  # noqa: E501
+                "or cuGraph examples at "
+                "https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples",  # noqa: E501
             )
 
         DistLoader.__init__(
