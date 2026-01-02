@@ -325,12 +325,13 @@ class Inspector:
         from torch_geometric.nn import MessagePassing
 
         cls = cls or self._cls
-        if cls.__name__ in self._source_dict:
-            return self._source_dict[cls.__name__]
+        key = ".".join((cls.__module__, cls.__name__))
+        if key in self._source_dict:
+            return self._source_dict[key]
         if cls in {object, torch.nn.Module, MessagePassing}:
             return ''
         source = inspect.getsource(cls)
-        self._source_dict[cls.__name__] = source
+        self._source_dict[key] = source
         return source
 
     def get_params_from_method_call(
