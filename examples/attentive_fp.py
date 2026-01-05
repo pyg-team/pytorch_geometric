@@ -125,7 +125,7 @@ def train():
         loss = F.mse_loss(out, data.y)
         loss.backward()
         optimizer.step()
-        total_loss += float(loss) * data.num_graphs
+        total_loss += float(loss.detach()) * data.num_graphs
         total_examples += data.num_graphs
     return sqrt(total_loss / total_examples)
 
