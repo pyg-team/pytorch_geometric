@@ -75,14 +75,14 @@ repos:
         additional_dependencies: [Flake8-pyproject]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.7
+    rev: v0.14.10
     hooks:
       - id: ruff
         name: Ruff formatting
         args: [--fix, --exit-non-zero-on-fix]
 
   - repo: https://github.com/executablebooks/mdformat
-    rev: 0.7.22
+    rev: 1.0.0
     hooks:
       - id: mdformat
         name: Format Markdown
