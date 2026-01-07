@@ -1,5 +1,5 @@
 import math
-from typing import Optional, Tuple, Union
+from typing import Optional
 
 import torch
 import torch.nn.functional as F
@@ -8,7 +8,7 @@ from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import glorot, ones
-from torch_geometric.typing import Adj, OptTensor, SparseTensor
+from torch_geometric.typing import Adj, SparseTensor
 from torch_geometric.utils import scatter
 
 
@@ -93,19 +93,15 @@ class AEROConv(MessagePassing):
         # Hop attention parameters: one for each iteration k in [0, K]
         # For k=0, we only use h (no z_scale), so dimension is out_channels
         # For k>0, we concatenate h and z_scale, so dimension is 2*out_channels
-        self.hop_atts = torch.nn.ParameterList([
-            Parameter(torch.empty(1, heads, out_channels))
-        ])
+        self.hop_atts = torch.nn.ParameterList(
+            [Parameter(torch.empty(1, heads, out_channels))])
         for _ in range(iterations):
             self.hop_atts.append(
-                Parameter(torch.empty(1, heads, 2 * out_channels))
-            )
+                Parameter(torch.empty(1, heads, 2 * out_channels)))
 
         # Hop attention biases
-        self.hop_biases = torch.nn.ParameterList([
-            Parameter(torch.empty(1, heads))
-            for _ in range(iterations + 1)
-        ])
+        self.hop_biases = torch.nn.ParameterList(
+            [Parameter(torch.empty(1, heads)) for _ in range(iterations + 1)])
 
         # Decay weights: pre-computed log values for efficiency
         self.register_buffer(
@@ -113,8 +109,7 @@ class AEROConv(MessagePassing):
             torch.tensor([
                 math.log((lambd / (k + 1)) + (1 + 1e-6))
                 for k in range(iterations + 1)
-            ], dtype=torch.float32)
-        )
+            ], dtype=torch.float32))
 
         if bias:
             self.bias = Parameter(torch.empty(heads * out_channels))
@@ -283,16 +278,14 @@ class AEROConv(MessagePassing):
         # Compute degrees for both source and target nodes
         deg_col = scatter(a_ij, col, dim=0, dim_size=num_nodes, reduce='sum')
         deg_row = scatter(a_ij, row, dim=0, dim_size=num_nodes, reduce='sum')
-        
+
         deg_col_inv_sqrt = deg_col.pow(-0.5)
         deg_col_inv_sqrt = deg_col_inv_sqrt.masked_fill(
-            deg_col_inv_sqrt == float('inf'), 0.0
-        )
+            deg_col_inv_sqrt == float('inf'), 0.0)
         deg_row_inv_sqrt = deg_row.pow(-0.5)
         deg_row_inv_sqrt = deg_row_inv_sqrt.masked_fill(
-            deg_row_inv_sqrt == float('inf'), 0.0
-        )
-        
+            deg_row_inv_sqrt == float('inf'), 0.0)
+
         a_ij = deg_row_inv_sqrt[row] * a_ij * deg_col_inv_sqrt[col]
 
         # Apply dropout
@@ -327,11 +320,11 @@ class AEROConv(MessagePassing):
         """
         if self._edge_index is None:
             raise RuntimeError("edge_index not set. This should not happen.")
-        a = self._edge_attention(z_scale_i, z_scale_j, self._edge_index, num_nodes)
+        a = self._edge_attention(z_scale_i, z_scale_j, self._edge_index,
+                                 num_nodes)
         return a.unsqueeze(-1) * x_j
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({self.in_channels}, '
                 f'{self.out_channels}, heads={self.heads}, '
                 f'iterations={self.iterations})')
-

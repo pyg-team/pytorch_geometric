@@ -1,7 +1,6 @@
 from typing import Optional
 
 import torch
-import torch.nn.functional as F
 from torch import Tensor
 
 from torch_geometric.nn.conv import AEROConv
@@ -93,8 +92,7 @@ class AEROGNN(torch.nn.Module):
                 self.hidden_channels_with_heads,
                 bias=bias,
                 weight_initializer='glorot',
-            )
-        )
+            ))
         # Middle layers: hidden_channels * heads -> hidden_channels * heads
         for _ in range(num_layers - 1):
             self.lins.append(
@@ -103,8 +101,7 @@ class AEROGNN(torch.nn.Module):
                     self.hidden_channels_with_heads,
                     bias=bias,
                     weight_initializer='glorot',
-                )
-            )
+                ))
         # Final layer: hidden_channels * heads -> out_channels
         self.lins.append(
             Linear(
@@ -112,8 +109,7 @@ class AEROGNN(torch.nn.Module):
                 self.out_channels,
                 bias=bias,
                 weight_initializer='glorot',
-            )
-        )
+            ))
 
         # AERO convolution layer for iterative propagation
         self.conv = AEROConv(
@@ -179,8 +175,8 @@ class AEROGNN(torch.nn.Module):
         return x
 
     def __repr__(self) -> str:
-        return (f'{self.__class__.__name__}({self.in_channels}, '
-                f'{self.hidden_channels}, num_layers={self.num_layers}, '
-                f'out_channels={self.out_channels}, iterations={self.iterations}, '
-                f'heads={self.heads})')
-
+        return (
+            f'{self.__class__.__name__}({self.in_channels}, '
+            f'{self.hidden_channels}, num_layers={self.num_layers}, '
+            f'out_channels={self.out_channels}, iterations={self.iterations}, '
+            f'heads={self.heads})')

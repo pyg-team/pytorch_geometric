@@ -5,7 +5,6 @@ from torch_geometric.data import Data
 from torch_geometric.nn.models import AEROGNN
 from torch_geometric.testing import withDevice
 
-
 out_dims = [None, 8]
 dropouts = [0.0, 0.5]
 iterations_list = [1, 5, 10]
@@ -36,8 +35,8 @@ def test_aero_gnn(out_dim, dropout, iterations, heads, lambd, num_layers):
         dropout=dropout,
     )
     expected_str = (f'AEROGNN(8, 16, num_layers={num_layers}, '
-                   f'out_channels={out_channels}, iterations={iterations}, '
-                   f'heads={heads})')
+                    f'out_channels={out_channels}, iterations={iterations}, '
+                    f'heads={heads})')
     assert str(model) == expected_str
     assert model(x, edge_index).size() == (3, out_channels)
 
@@ -223,4 +222,3 @@ def test_aero_gnn_num_nodes():
     assert out1.size() == (5, 16)
     assert out2.size() == (5, 16)
     assert torch.allclose(out1, out2, atol=1e-6)
-
