@@ -14,12 +14,13 @@ from torch_geometric.utils import scatter
 
 class AEROConv(MessagePassing):
     r"""The AERO (Attentive dEep pROpagation) graph convolution operator from
-    the `"Towards Deep Attention in Graph Neural Networks: Problems and Remedies"
-    <https://arxiv.org/abs/2306.02376>`_ paper.
+    the `"Towards Deep Attention in Graph Neural Networks: Problems and
+    Remedies" <https://arxiv.org/abs/2306.02376>`_ paper.
 
-    AERO-GNN addresses problems in deep graph attention, including vulnerability
-    to over-smoothed features and smooth cumulative attention. The AERO operator
-    performs iterative message passing with attention mechanisms that include:
+    AERO-GNN addresses problems in deep graph attention, including
+    vulnerability to over-smoothed features and smooth cumulative attention.
+    The AERO operator performs iterative message passing with attention
+    mechanisms that include:
 
     1. **Edge attention** :math:`\alpha_{ij}^{(k)}`: Computes attention weights
        for edges at iteration :math:`k` using:
@@ -29,7 +30,8 @@ class AEROConv(MessagePassing):
 
        followed by symmetric normalization:
        .. math::
-           \hat{\alpha}_{ij}^{(k)} = \frac{\alpha_{ij}^{(k)}}{\sqrt{\deg(i) \deg(j)}}
+           \hat{\alpha}_{ij}^{(k)} = \frac{\alpha_{ij}^{(k)}}{\sqrt{
+               \deg(i) \deg(j)}}
 
     2. **Hop attention** :math:`\gamma_i^{(k)}`: Computes attention weights for
        each propagation hop:
@@ -37,14 +39,16 @@ class AEROConv(MessagePassing):
            \gamma_i^{(k)} = \text{ELU}(\mathbf{W}^{(k)} [\mathbf{h}_i^{(k)},
            \mathbf{z}_i^{(k)}]) + \mathbf{b}^{(k)}
 
-    3. **Decay weights**: Applies exponential decay across propagation iterations:
+    3. **Decay weights**: Applies exponential decay across propagation
+       iterations:
        .. math::
            w_k = \log\left(\frac{\lambda}{k+1} + 1 + \epsilon\right)
 
     Args:
         in_channels (int): Size of each input sample.
         out_channels (int): Size of each output sample.
-        heads (int, optional): Number of multi-head attentions. (default: :obj:`1`)
+        heads (int, optional): Number of multi-head attentions.
+            (default: :obj:`1`)
         iterations (int, optional): Number of propagation iterations :math:`K`.
             (default: :obj:`10`)
         lambd (float, optional): Decay weight parameter :math:`\lambda` for
@@ -254,11 +258,12 @@ class AEROConv(MessagePassing):
         r"""Computes edge attention weights with symmetric normalization.
 
         Args:
-            z_scale_i (torch.Tensor): Scaled features for target nodes of shape
-                :math:`(|\mathcal{E}|, H, F_{out})`.
-            z_scale_j (torch.Tensor): Scaled features for source nodes of shape
-                :math:`(|\mathcal{E}|, H, F_{out})`.
-            edge_index (torch.Tensor): Edge indices of shape :math:`(2, |\mathcal{E}|)`.
+            z_scale_i (torch.Tensor): Scaled features for target nodes of
+                shape :math:`(|\mathcal{E}|, H, F_{out})`.
+            z_scale_j (torch.Tensor): Scaled features for source nodes of
+                shape :math:`(|\mathcal{E}|, H, F_{out})`.
+            edge_index (torch.Tensor): Edge indices of shape
+                :math:`(2, |\mathcal{E}|)`.
             num_nodes (int): Number of nodes.
 
         Returns:
@@ -307,10 +312,10 @@ class AEROConv(MessagePassing):
         Args:
             x_j (torch.Tensor): Source node features of shape
                 :math:`(|\mathcal{E}|, H, F_{out})`.
-            z_scale_i (torch.Tensor): Scaled features for target nodes of shape
-                :math:`(|\mathcal{E}|, H, F_{out})`.
-            z_scale_j (torch.Tensor): Scaled features for source nodes of shape
-                :math:`(|\mathcal{E}|, H, F_{out})`.
+            z_scale_i (torch.Tensor): Scaled features for target nodes of
+                shape :math:`(|\mathcal{E}|, H, F_{out})`.
+            z_scale_j (torch.Tensor): Scaled features for source nodes of
+                shape :math:`(|\mathcal{E}|, H, F_{out})`.
             index (torch.Tensor): Target node indices for aggregation of shape
                 :math:`(|\mathcal{E}|,)`.
             num_nodes (int): Number of nodes.

@@ -13,13 +13,13 @@ class AEROGNN(torch.nn.Module):
     `"Towards Deep Attention in Graph Neural Networks: Problems and Remedies"
     <https://arxiv.org/abs/2306.02376>`_ paper.
 
-    AERO-GNN addresses problems in deep graph attention, including vulnerability
-    to over-smoothed features and smooth cumulative attention. The model mitigates
-    these issues through:
+    AERO-GNN addresses problems in deep graph attention, including
+    vulnerability to over-smoothed features and smooth cumulative attention.
+    The model mitigates these issues through:
 
     1. **Edge attention** :math:`\alpha_{ij}^{(k)}`: Learns adaptive attention
-       weights for edges at each propagation iteration, remaining edge-adaptive
-       and graph-adaptive even at deep layers.
+       weights for edges at each propagation iteration, remaining
+       edge-adaptive and graph-adaptive even at deep layers.
     2. **Hop attention** :math:`\gamma_i^{(k)}`: Learns adaptive attention weights
        for each propagation hop, remaining hop-adaptive, node-adaptive, and
        graph-adaptive at deep layers.
@@ -38,8 +38,8 @@ class AEROGNN(torch.nn.Module):
         out_channels (int, optional): Size of each output sample. If set to
             :obj:`None`, will be set to :obj:`hidden_channels`.
             (default: :obj:`None`)
-        iterations (int, optional): Number of propagation iterations :math:`K`.
-            (default: :obj:`10`)
+        iterations (int, optional): Number of propagation iterations
+            :math:`K`. (default: :obj:`10`)
         heads (int, optional): Number of multi-head attentions. (default: :obj:`1`)
         lambd (float, optional): Decay weight parameter :math:`\lambda` for
             exponential decay. (default: :obj:`1.0`)
