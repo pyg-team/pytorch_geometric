@@ -19,6 +19,10 @@ class DirGNNConv(torch.nn.Module):
         alpha (float, optional): The alpha coefficient used to weight the
             aggregations of in- and out-edges as part of a convex combination.
             (default: :obj:`0.5`)
+        trainable_alpha (bool): Whether the alpha coefficient should be a 
+            learnable parameter. If `True`, alpha will be initialized to the value
+            provided via the :obj:`alpha` argument.
+            (default: :obj:`False`)
         root_weight (bool, optional): If set to :obj:`True`, the layer will add
             transformed root node features to the output.
             (default: :obj:`True`)
@@ -27,11 +31,21 @@ class DirGNNConv(torch.nn.Module):
         self,
         conv: MessagePassing,
         alpha: float = 0.5,
+        trainable_alpha: bool = False,
         root_weight: bool = True,
     ):
         super().__init__()
 
-        self.alpha = alpha
+        if alpha < 0. or alpha > 1.:
+            raise ValueError(
+                f'Alpha coefficient has to be between 0 and 1 (got {alpha:.4f})'
+            )
+        self.trainable_alpha = trainable_alpha
+        logit_alpha = torch.special.logit(torch.tensor(alpha))
+        if self.trainable_alpha:
+            self.logit_alpha = torch.nn.Parameter(logit_alpha)
+        else:
+            self.register_buffer('logit_alpha', logit_alpha)
         self.root_weight = root_weight
 
         self.conv_in = copy.deepcopy(conv)
@@ -50,6 +64,10 @@ class DirGNNConv(torch.nn.Module):
             self.lin = None
 
         self.reset_parameters()
+    
+    @property
+    def alpha(self) -> torch.Tensor:
+        return torch.sigmoid(self.logit_alpha)
 
     def reset_parameters(self):
         r"""Resets all learnable parameters of the module."""
