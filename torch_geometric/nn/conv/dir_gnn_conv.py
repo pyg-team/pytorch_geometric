@@ -19,7 +19,7 @@ class DirGNNConv(torch.nn.Module):
         alpha (float, optional): The alpha coefficient used to weight the
             aggregations of in- and out-edges as part of a convex combination.
             (default: :obj:`0.5`)
-        trainable_alpha (bool): Whether the alpha coefficient should be a 
+        trainable_alpha (bool): Whether the alpha coefficient should be a
             learnable parameter. If `True`, alpha will be initialized to the value
             provided via the :obj:`alpha` argument.
             (default: :obj:`False`)
@@ -64,7 +64,7 @@ class DirGNNConv(torch.nn.Module):
             self.lin = None
 
         self.reset_parameters()
-    
+
     @property
     def alpha(self) -> torch.Tensor:
         return torch.sigmoid(self.logit_alpha)
