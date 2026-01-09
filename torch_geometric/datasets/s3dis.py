@@ -43,12 +43,7 @@ class S3DIS(InMemoryDataset):
             (default: :obj:`False`)
     """
 
-    url = ('https://shapenet.cs.stanford.edu/media/'
-           'indoor3d_sem_seg_hdf5_data.zip')
-
-    # In case `shapenet.cs.stanford.edu` is offline, try to download the data
-    # from here:
-    # https://cvg-data.inf.ethz.ch/s3dis/
+    url = 'https://huggingface.co/datasets/cminst/S3DIS/resolve/main/indoor3d_sem_seg_hdf5_data.zip'
 
     def __init__(
         self,
@@ -76,12 +71,16 @@ class S3DIS(InMemoryDataset):
         return [f'{split}_{self.test_area}.pt' for split in ['train', 'test']]
 
     def download(self) -> None:
-        path = download_url(self.url, self.root)
-        extract_zip(path, self.root)
-        os.unlink(path)
+        zip_path = download_url(self.url, self.root)
+
+        extract_zip(zip_path, self.root)
+        os.unlink(zip_path)
         fs.rm(self.raw_dir)
-        name = self.url.split('/')[-1].split('.')[0]
-        os.rename(osp.join(self.root, name), self.raw_dir)
+
+        zip_name = self.url.split('/')[-1]
+        extracted_dir = osp.splitext(zip_name)[0]
+
+        os.rename(osp.join(self.root, extracted_dir), self.raw_dir)
 
     def process(self) -> None:
         import h5py
