@@ -43,7 +43,8 @@ class S3DIS(InMemoryDataset):
             (default: :obj:`False`)
     """
 
-    url = 'https://huggingface.co/datasets/cminst/S3DIS/resolve/main/indoor3d_sem_seg_hdf5_data.zip'
+    url = ('https://huggingface.co/datasets/cminst/S3DIS/'
+           'resolve/main/indoor3d_sem_seg_hdf5_data.zip')
 
     def __init__(
         self,
