@@ -27,6 +27,18 @@ class ResGatedGraphConv(MessagePassing):
 
     with :math:`\sigma` denoting the sigmoid function.
 
+    when edge features :math:`\mathbf{e}_{i,j}` are given, the equations become
+
+    .. math::
+        \mathbf{x}^{\prime}_i = \mathbf{W}_1 \mathbf{x}_i +
+        \sum_{j \in \mathcal{N}(i)} \eta_{i,j} \odot (\mathbf{W}_2 \mathbf{x}_j + \mathbf{W}_5 \mathbf{e}_{i,j})
+
+    where the gate :math:`\eta_{i,j}` is defined as
+
+    .. math::
+        \eta_{i,j} = \sigma(\mathbf{W}_3 \mathbf{x}_i + \mathbf{W}_4
+        \mathbf{x}_j + \mathbf{W}_6 \mathbf{e}_{i,j})
+
     Args:
         in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
             derive the size from the first input(s) to the forward method.
@@ -54,6 +66,7 @@ class ResGatedGraphConv(MessagePassing):
         - **outputs:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
+
     def __init__(
         self,
         in_channels: Union[int, Tuple[int, int]],
@@ -64,7 +77,6 @@ class ResGatedGraphConv(MessagePassing):
         bias: bool = True,
         **kwargs,
     ):
-
         kwargs.setdefault('aggr', 'add')
         super().__init__(**kwargs)
 
@@ -110,7 +122,6 @@ class ResGatedGraphConv(MessagePassing):
         edge_index: Adj,
         edge_attr: OptTensor = None,
     ) -> Tensor:
-
         if isinstance(x, Tensor):
             x = (x, x)
 
@@ -135,9 +146,9 @@ class ResGatedGraphConv(MessagePassing):
 
         return out
 
-    def message(self, k_i: Tensor, q_j: Tensor, v_j: Tensor,
-                edge_attr: OptTensor) -> Tensor:
-
+    def message(
+        self, k_i: Tensor, q_j: Tensor, v_j: Tensor, edge_attr: OptTensor
+    ) -> Tensor:
         assert (edge_attr is not None) == (self.edge_dim is not None)
 
         if edge_attr is not None:
