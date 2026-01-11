@@ -31,7 +31,8 @@ class ResGatedGraphConv(MessagePassing):
 
     .. math::
         \mathbf{x}^{\prime}_i = \mathbf{W}_1 \mathbf{x}_i +
-        \sum_{j \in \mathcal{N}(i)} \eta_{i,j} \odot (\mathbf{W}_2 \mathbf{x}_j + \mathbf{W}_5 \mathbf{e}_{i,j})
+        \sum_{j \in \mathcal{N}(i)} \eta_{i,j} \odot (\mathbf{W}_2 \mathbf{x}_j
+        + \mathbf{W}_5 \mathbf{e}_{i,j})
 
     where the gate :math:`\eta_{i,j}` is defined as
 
