@@ -66,7 +66,6 @@ class ResGatedGraphConv(MessagePassing):
         - **outputs:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
-
     def __init__(
         self,
         in_channels: Union[int, Tuple[int, int]],
@@ -146,9 +145,8 @@ class ResGatedGraphConv(MessagePassing):
 
         return out
 
-    def message(
-        self, k_i: Tensor, q_j: Tensor, v_j: Tensor, edge_attr: OptTensor
-    ) -> Tensor:
+    def message(self, k_i: Tensor, q_j: Tensor, v_j: Tensor,
+                edge_attr: OptTensor) -> Tensor:
         assert (edge_attr is not None) == (self.edge_dim is not None)
 
         if edge_attr is not None:
