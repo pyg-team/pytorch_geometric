@@ -1,5 +1,5 @@
 """This example implements the MoleculeGPT model
-(https://ai4d3.github.io/papers/34.pdf) using PyG.
+(https://ai4d3.github.io/2023/papers/34.pdf) using PyG.
 """
 import argparse
 import math
