@@ -593,7 +593,7 @@ class DimeNet(torch.nn.Module):
             download_url(f'{url}/ckpt.index', path)
 
         path = osp.join(path, 'ckpt')
-        reader = tf.train.load_checkpoint(path)
+        reader = tf.compat.v1.train.load_checkpoint(path)
 
         model = cls(
             hidden_channels=128,
@@ -865,7 +865,7 @@ class DimeNetPlusPlus(DimeNet):
             download_url(f'{url}/ckpt.index', path)
 
         path = osp.join(path, 'ckpt')
-        reader = tf.train.load_checkpoint(path)
+        reader = tf.compat.v1.train.load_checkpoint(path)
 
         # Configuration from DimeNet++:
         # https://github.com/gasteigerjo/dimenet/blob/master/config_pp.yaml
