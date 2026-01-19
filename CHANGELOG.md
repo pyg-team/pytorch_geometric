@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fixed GCNConv.forward to raise an error in case edge_weight has negative values ([#10549](https://github.com/pyg-team/pytorch_geometric/pull/10549))
+
 ### Security
 
 ## [2.7.0] - 2025-10-14
