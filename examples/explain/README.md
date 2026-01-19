@@ -11,3 +11,4 @@ The `explain` package of PyG provides a set of tools to explain the predictions 
 | [`captum_explainer.py`](./captum_explainer.py)                         | Captum-based explainer for node classification          |
 | [`captum_explainer_hetero_link.py`](./captum_explainer_hetero_link.py) | Captum-based explainer for heterogenous link prediction |
 | [`graphmask_explainer.py`](./graphmask_explainer.py)                   | `GraphMaskExplainer` for node classification            |
+| [`gnan_graph_mutagenicity.py`](./gnan_graph_mutagenicity.py)           | `GNAN` for graph classification with built-in node importance scores |

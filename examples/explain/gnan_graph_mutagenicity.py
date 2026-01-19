@@ -11,7 +11,7 @@ The script demonstrates how to:
 
 Run with:
 
-    python examples/gnan_graph_mutagenicity.py
+    python examples/explain/gnan_graph_mutagenicity.py
 
 Graphs in Mutagenicity are small (≈30 nodes), therefore the dense distance
 matrix fits comfortably in memory and can be coqmputed on the fly.
@@ -210,3 +210,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
