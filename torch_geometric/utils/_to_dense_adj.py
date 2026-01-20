@@ -67,6 +67,12 @@ def to_dense_adj(
     if batch_size is None:
         batch_size = int(batch.max()) + 1 if batch.numel() > 0 else 1
 
+    perm = batch.argsort()
+    batch = batch[perm]
+    new_index_map = torch.empty_like(perm)
+    new_index_map[perm] = torch.arange(perm.size(0), device=perm.device)
+    edge_index = new_index_map[edge_index]
+
     one = batch.new_ones(batch.size(0))
     num_nodes = scatter(one, batch, dim=0, dim_size=batch_size, reduce='sum')
     cum_nodes = cumsum(num_nodes)
