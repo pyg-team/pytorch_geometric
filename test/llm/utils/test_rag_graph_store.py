@@ -19,9 +19,11 @@ def test_sample_subgraph_with_valid_tensor_input():
     """Test sample_subgraph with valid tensor input."""
     # Create graph store and set config
     feature_store, config = setup_test_fixtures()
-    graph_store = NeighborSamplingRAGGraphStore(feature_store=feature_store,
-                                                replace=True, disjoint=False)
+    graph_store = NeighborSamplingRAGGraphStore(replace=True, disjoint=False)
+    graph_store.register_feature_store(feature_store=feature_store)
     graph_store.config = config
+    assert graph_store.put_edge_id(torch.tensor([10]), edge_type=None,
+                                   layout='coo')
 
     # Create mock sampler and its output
     mock_sampler = Mock(spec=BidirectionalNeighborSampler)

@@ -1,15 +1,16 @@
 import gc
 
+import pytest
 import torch
 
 from torch_geometric.llm.models import LLM, GRetriever
 from torch_geometric.nn import GAT
-from torch_geometric.testing import onlyRAG, withPackage
+from torch_geometric.testing import withPackage
 
 
-@onlyRAG
-@withPackage('transformers', 'sentencepiece', 'accelerate')
-def test_g_retriever() -> None:
+@withPackage('transformers', 'sentencepiece', 'accelerate', 'peft')
+@pytest.mark.parametrize('use_lora', [True, False])
+def test_g_retriever(use_lora: bool) -> None:
     llm = LLM(model_name='Qwen/Qwen3-0.6B', dtype=torch.float32,
               sys_prompt="You're an agent, answer my questions.")
 
@@ -25,6 +26,7 @@ def test_g_retriever() -> None:
     model = GRetriever(
         llm=llm,
         gnn=gnn,
+        use_lora=use_lora,
     )
     assert str(model) == ('GRetriever(\n'
                           '  llm=LLM(Qwen/Qwen3-0.6B),\n'
@@ -54,8 +56,7 @@ def test_g_retriever() -> None:
     torch.cuda.empty_cache()
 
 
-@onlyRAG
-@withPackage('transformers', 'sentencepiece', 'accelerate')
+@withPackage('transformers', 'sentencepiece', 'accelerate', 'peft')
 def test_g_retriever_many_tokens() -> None:
     llm = LLM(model_name='Qwen/Qwen3-0.6B', dtype=torch.float32,
               sys_prompt="You're an agent, answer my questions.")
@@ -73,6 +74,7 @@ def test_g_retriever_many_tokens() -> None:
         llm=llm,
         gnn=gnn,
         mlp_out_tokens=2,
+        use_lora=True,
     )
     assert str(model) == ('GRetriever(\n'
                           '  llm=LLM(Qwen/Qwen3-0.6B),\n'
