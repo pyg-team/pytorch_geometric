@@ -23,7 +23,7 @@ args = parser.parse_args()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '../../data/MovieLens')
-data = MovieLens(path, model_name='all-MiniLM-L6-v2')[0]
+data = MovieLens(path)[0]
 
 # Add user node features for message passing:
 data['user'].x = torch.eye(data['user'].num_nodes)
