@@ -24,6 +24,8 @@ For examples on [Open Graph Benchmark](https://ogb.stanford.edu/) datasets, see 
 
 For an example on [Relational Deep Learning](https://arxiv.org/abs/2312.04615) with the [RelBench datasets](https://relbench.stanford.edu/), see [`rdl.py`](./rdl.py).
 
+For an example on using [GraphLand datasets](https://arxiv.org/abs/2409.14500) for node property prediction, see [`graphland.py`](./graphland.py).
+
 For examples on using `torch.compile`, see the examples under [`examples/compile`](./compile).
 
 For examples on scaling PyG up via multi-GPUs, see the examples under [`examples/multi_gpu`](./multi_gpu).
