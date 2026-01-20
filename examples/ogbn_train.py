@@ -11,7 +11,13 @@ from tqdm import tqdm
 
 from torch_geometric import seed_everything
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn.models import GAT, GraphSAGE, Polynormer, SGFormer
+from torch_geometric.nn.models import (
+    AEROGNN,
+    GAT,
+    GraphSAGE,
+    Polynormer,
+    SGFormer,
+)
 from torch_geometric.utils import (
     add_self_loops,
     remove_self_loops,
@@ -37,7 +43,7 @@ parser.add_argument(
     "--model",
     type=str.lower,
     default='SGFormer',
-    choices=['sage', 'gat', 'sgformer', 'polynormer'],
+    choices=['sage', 'gat', 'sgformer', 'polynormer', 'aero'],
     help="Model used for training",
 )
 
@@ -55,6 +61,12 @@ parser.add_argument('--hidden_channels', type=int, default=256)
 parser.add_argument('--lr', type=float, default=0.003)
 parser.add_argument('--wd', type=float, default=0.0)
 parser.add_argument('--dropout', type=float, default=0.5)
+parser.add_argument('--iterations', type=int, default=10,
+                    help='number of propagation iterations for AERO model')
+parser.add_argument('--lambd', type=float, default=1.0,
+                    help='decay weight parameter for AERO model')
+parser.add_argument('--add_dropout', action='store_true',
+                    help='apply dropout before final layer for AERO model')
 parser.add_argument(
     '--use_directed_graph',
     action='store_true',
@@ -213,6 +225,18 @@ def get_model(model_name: str) -> torch.nn.Module:
             hidden_channels=num_hidden_channels,
             out_channels=dataset.num_classes,
             local_layers=num_layers,
+        )
+    elif model_name == 'aero':
+        model = AEROGNN(
+            in_channels=dataset.num_features,
+            hidden_channels=num_hidden_channels,
+            num_layers=num_layers,
+            out_channels=dataset.num_classes,
+            iterations=args.iterations,
+            heads=args.num_heads,
+            lambd=args.lambd,
+            dropout=args.dropout,
+            add_dropout=args.add_dropout,
         )
     else:
         raise ValueError(f'Unsupported model type: {model_name}')
