@@ -3,6 +3,7 @@ from typing import Callable, List, NamedTuple, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
+from torch_geometric import EdgeIndex as EdgeIndexTensor
 from torch_geometric.typing import SparseTensor
 
 
@@ -144,6 +145,9 @@ class NeighborSampler(torch.utils.data.DataLoader):
                 num_nodes = int(edge_index.max()) + 1
 
             value = torch.arange(edge_index.size(1)) if return_e_id else None
+            if (not torch.jit.is_scripting()
+                    and isinstance(edge_index, EdgeIndexTensor)):
+                edge_index = edge_index._data
             self.adj_t = SparseTensor(row=edge_index[0], col=edge_index[1],
                                       value=value,
                                       sparse_sizes=(num_nodes, num_nodes)).t()
