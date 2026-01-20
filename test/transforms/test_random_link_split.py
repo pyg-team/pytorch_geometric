@@ -336,3 +336,81 @@ def test_random_link_split_on_dataset(get_dataset):
     assert isinstance(test_dataset[0], Data)
     assert test_dataset[0].edge_label.min() == 0.0
     assert test_dataset[0].edge_label.max() == 1.0
+
+
+def test_random_link_split_with_keep_attrs_false_data():
+    # Create a simple graph with node features and edge attributes
+    x = torch.randn(10, 5)  # 10 nodes with 5 features each
+    edge_index = torch.tensor(
+        [[0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 0],
+         [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6, 8, 7, 9, 8, 0, 9]])
+    edge_attr = torch.randn(edge_index.size(1), 3)  # Edge features
+    y = torch.randint(0, 2, (10, ))  # Node labels
+
+    data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y)
+
+    # Apply RandomLinkSplit with keep_attrs=False
+    transform = RandomLinkSplit(num_val=0.2, num_test=0.2, keep_attrs=False)
+    train_data, val_data, test_data = transform(data)
+
+    # Train, validation and test data should only have edge_label and
+    # edge_label_index
+    for split_data in [train_data, val_data, test_data]:
+        assert hasattr(split_data, 'edge_label')
+        assert hasattr(split_data, 'edge_label_index')
+
+        # Check that x and y are None
+        assert split_data.x is None
+        assert split_data.y is None
+
+        # Check that the label exists and has the right shape
+        assert split_data.edge_label.dim() == 1
+        assert split_data.edge_label_index.size(0) == 2
+
+
+def test_random_link_split_with_keep_attrs_false_hetero_data():
+    # Create a heterogeneous graph
+    data = HeteroData()
+
+    # Add node features
+    data['paper'].x = torch.randn(100, 8)
+    data['author'].x = torch.randn(50, 8)
+
+    # Add edge indices
+    data['paper', 'cites',
+         'paper'].edge_index = torch.randint(0, 100, (2, 150))
+    data['author', 'writes', 'paper'].edge_index = torch.randint(
+        0, 50, (1, 100)).repeat(2, 1)  # Author-to-paper edges
+
+    # Add edge attributes
+    data['paper', 'cites', 'paper'].edge_attr = torch.randn(150, 3)
+    data['author', 'writes', 'paper'].edge_attr = torch.randn(100, 3)
+
+    # Apply RandomLinkSplit with keep_attrs=False
+    transform = RandomLinkSplit(num_val=0.2, num_test=0.2,
+                                neg_sampling_ratio=1.0, edge_types=[
+                                    ('paper', 'cites', 'paper')
+                                ], rev_edge_types=[None], keep_attrs=False)
+
+    train_data, val_data, test_data = transform(data)
+
+    for split_data in [train_data, val_data, test_data]:
+        # Node types should be removed
+        assert 'paper' not in split_data.node_types
+        assert 'author' not in split_data.node_types
+
+        # Only the split edge type should exist
+        assert ('paper', 'cites', 'paper') in split_data.edge_types
+
+        # Edge type should only have label attributes
+        edge_keys = list(split_data['paper', 'cites', 'paper'].keys())
+        assert 'edge_attr' not in edge_keys
+        assert 'edge_label' in edge_keys
+        assert 'edge_label_index' in edge_keys
+
+        # Check edge label shapes
+        edge_label = split_data['paper', 'cites', 'paper'].edge_label
+        edge_label_index = split_data['paper', 'cites',
+                                      'paper'].edge_label_index
+        assert edge_label.dim() == 1
+        assert edge_label_index.size(0) == 2

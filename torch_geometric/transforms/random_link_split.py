@@ -84,6 +84,10 @@ class RandomLinkSplit(BaseTransform):
             split accordingly to prevent any data leakage.
             Can be :obj:`None` in case no reverse connection exists.
             (default: :obj:`None`)
+        keep_attrs (bool, optional): If set to :obj:`False`, will only keep
+            edge labels and indices in validation and test data without copying
+            node features. This can help reduce memory consumption for large
+            graphs. (default: :obj:`True`)
     """
     def __init__(
         self,
@@ -100,6 +104,7 @@ class RandomLinkSplit(BaseTransform):
             EdgeType,
             List[Optional[EdgeType]],
         ]] = None,
+        keep_attrs: bool = True,
     ) -> None:
         if isinstance(edge_types, list):
             if rev_edge_types is None:
@@ -118,6 +123,7 @@ class RandomLinkSplit(BaseTransform):
         self.disjoint_train_ratio = disjoint_train_ratio
         self.edge_types = edge_types
         self.rev_edge_types = rev_edge_types
+        self.keep_attrs = keep_attrs
 
     def forward(
         self,
@@ -159,10 +165,6 @@ class RandomLinkSplit(BaseTransform):
             assert isinstance(test_data, Data)
 
             rev_edge_types = [None]
-
-            train_data = copy.copy(data)
-            val_data = copy.copy(data)
-            test_data = copy.copy(data)
 
             stores = [data._store]
             train_stores = [train_data._store]
@@ -271,6 +273,26 @@ class RandomLinkSplit(BaseTransform):
                 neg_edge_index[:, num_neg_val:num_neg_val + num_neg_test],
                 out=test_store,
             )
+
+        if not self.keep_attrs:
+            keep_attrs = ['edge_label', 'edge_label_index']
+            if isinstance(data, HeteroData):
+                for split_data in [train_data, val_data, test_data]:
+                    # Remove all node attributes
+                    for node_type in split_data.node_types:
+                        del split_data[node_type]
+
+                    # For each edge type, keep only label-related attributes
+                    for edge_type in split_data.edge_types:
+                        edge_store = split_data[edge_type]  # type: ignore
+                        for key in list(edge_store.keys()):
+                            if key not in keep_attrs:
+                                del edge_store[key]
+            else:
+                for data in [train_data, val_data, test_data]:
+                    for key in list(data.keys()):
+                        if key not in keep_attrs:
+                            data[key] = None
 
         return train_data, val_data, test_data
 
