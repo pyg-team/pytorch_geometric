@@ -1,9 +1,14 @@
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 
 import numpy as np
 import torch
 
-from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 
 
 class LastFMAsia(InMemoryDataset):
@@ -27,7 +32,7 @@ class LastFMAsia(InMemoryDataset):
             (default: :obj:`False`)
     """
 
-    url = 'https://graphmining.ai/datasets/ptg/lastfm_asia.npz'
+    url = 'https://snap.stanford.edu/data/lastfm_asia.zip'
 
     def __init__(
         self,
@@ -41,21 +46,44 @@ class LastFMAsia(InMemoryDataset):
         self.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self) -> str:
-        return 'lastfm_asia.npz'
+    def raw_file_names(self) -> List[str]:
+        return [
+            f'lasftm_asia/{x}' for x in [
+                'lastfm_asia_edges.csv',
+                'lastfm_asia_features.json',
+                'lastfm_asia_target.csv',
+            ]
+        ]
 
     @property
     def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self) -> None:
-        download_url(self.url, self.raw_dir)
+        file_path = download_url(self.url, self.raw_dir)
+        extract_zip(file_path, self.raw_dir)
 
     def process(self) -> None:
-        data = np.load(self.raw_paths[0], 'r', allow_pickle=True)
-        x = torch.from_numpy(data['features']).to(torch.float)
-        y = torch.from_numpy(data['target']).to(torch.long)
-        edge_index = torch.from_numpy(data['edges']).to(torch.long)
+        import json
+
+        import pandas as pd
+        edges = pd.read_csv(self.raw_paths[0], dtype=int)
+        features = json.load(open(self.raw_paths[1]))
+        target = pd.read_csv(self.raw_paths[2], dtype=int)
+
+        xs = []
+        n_feats = 128
+        for i in target['id'].values:
+            f = [0] * n_feats
+            if str(i) in features:
+                n_len = len(features[str(i)])
+                f = features[str(
+                    i)][:n_feats] if n_len >= n_feats else features[str(
+                        i)] + [0] * (n_feats - n_len)
+            xs.append(f)
+        x = torch.from_numpy(np.array(xs)).to(torch.float)
+        y = torch.from_numpy(target.values[:, 1]).t().to(torch.long)
+        edge_index = torch.from_numpy(edges.values).to(torch.long)
         edge_index = edge_index.t().contiguous()
 
         data = Data(x=x, y=y, edge_index=edge_index)
