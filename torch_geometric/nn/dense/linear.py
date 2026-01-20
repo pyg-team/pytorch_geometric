@@ -1,5 +1,5 @@
 import math
-import sys
+import os
 import time
 from typing import Any, Dict, Optional, Tuple, Union
 
@@ -262,7 +262,7 @@ class HeteroLinear(torch.nn.Module):
         key: int,
     ) -> None:
 
-        MEASURE_ITER = 1 if 'pytest' in sys.modules else 3
+        MEASURE_ITER = 1 if 'PYTEST_CURRENT_TEST' in os.environ else 3
 
         if torch.cuda.is_available():
             torch.cuda.synchronize()
