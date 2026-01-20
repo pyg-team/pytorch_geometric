@@ -14,8 +14,8 @@ def _setup_gfn_unpooling():
     unpool = GFNUnpooling(3, out_graph)
 
     with torch.no_grad():
-        unpool.weight.copy_(weight)
-        unpool.bias.copy_(bias)
+        unpool._gfn.weight.copy_(weight)
+        unpool._gfn.bias.copy_(bias)
 
     return unpool
 
