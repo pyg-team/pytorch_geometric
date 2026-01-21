@@ -44,7 +44,7 @@ def train_teacher():
     loss = F.cross_entropy(out[data.train_mask], data.y[data.train_mask])
     loss.backward()
     gnn_optimizer.step()
-    return float(loss)
+    return float(loss.detach())
 
 
 @torch.no_grad()
@@ -84,7 +84,7 @@ def train_student():
     loss = args.lamb * loss1 + (1 - args.lamb) * loss2
     loss.backward()
     mlp_optimizer.step()
-    return float(loss)
+    return float(loss.detach())
 
 
 @torch.no_grad()
