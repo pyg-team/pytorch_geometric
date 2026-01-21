@@ -28,6 +28,7 @@ from .radius_graph import RadiusGraph
 from .to_dense import ToDense
 from .two_hop import TwoHop
 from .line_graph import LineGraph
+from .line_digraph import LineDiGraph
 from .laplacian_lambda_max import LaplacianLambdaMax
 from .gdc import GDC
 from .sign import SIGN
