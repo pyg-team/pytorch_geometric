@@ -129,9 +129,13 @@ class GMMConv(MessagePassing):
 
     def forward(self, x: Union[Tensor, OptPairTensor], edge_index: Adj,
                 edge_attr: OptTensor = None, size: Size = None):
-
         if isinstance(x, Tensor):
             x = (x, x)
+
+        if isinstance(
+                edge_index, Tensor
+        ) and edge_index.layout == torch.strided and edge_attr is None:
+            raise ValueError('Strided edge indices require edge attributes')
 
         # propagate_type: (x: OptPairTensor, edge_attr: OptTensor)
         if not self.separate_gaussians:
