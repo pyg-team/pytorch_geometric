@@ -1,10 +1,16 @@
 import inspect
+import sys
 from typing import Any, Dict, Final, List, Optional, Set, Tuple, Union
 
 import torch
 from torch import Tensor
 
-from torch_geometric.inspector import Inspector, Parameter, Signature
+from torch_geometric.inspector import (
+    Inspector,
+    Parameter,
+    Signature,
+    eval_type,
+)
 from torch_geometric.nn import GATConv, SAGEConv
 from torch_geometric.typing import OptPairTensor
 
@@ -16,6 +22,32 @@ def test_eval_type() -> None:
     assert inspector.eval_type('List[Tensor]') == List[Tensor]
     assert inspector.eval_type('Tuple[Tensor, int]') == Tuple[Tensor, int]
     assert inspector.eval_type('Tuple[int, ...]') == Tuple[int, ...]
+
+
+def test_eval_type_python313_compatibility() -> None:
+    """Test that eval_type works correctly on Python 3.13+ with type_params."""
+    # Test the standalone eval_type function directly
+    globals_dict = {
+        'Tensor': Tensor,
+        'List': List,
+        'Tuple': Tuple,
+        'Optional': Optional,
+        'Union': Union
+    }
+
+    # These should work on all Python versions
+    assert eval_type('Tensor', globals_dict) == Tensor
+    assert eval_type('List[Tensor]', globals_dict) == List[Tensor]
+
+    # Test with complex type hints that exercise the typing._eval_type path
+    assert eval_type('Optional[Tensor]', globals_dict) == Optional[Tensor]
+
+    # On Python 3.13+, this should use the new type_params parameter
+    if sys.version_info >= (3, 13):
+        # This would previously raise a DeprecationWarning treated as error
+        # Now it should work correctly with the type_params=() argument
+        result = eval_type('Union[Tensor, None]', globals_dict)
+        assert result == Union[Tensor, None]
 
 
 def test_type_repr() -> None:

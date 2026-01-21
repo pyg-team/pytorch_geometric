@@ -49,11 +49,22 @@ class PositionalEncoding(torch.nn.Module):
         self.base_freq = base_freq
         self.granularity = granularity
 
-        frequency = torch.logspace(0, 1, out_channels // 2, base_freq,
-                                   device=device)
-        self.register_buffer('frequency', frequency)
+        # Compute frequency values, avoiding MPS logspace limitation
+        if device is not None and device.type == 'mps':
+            # MPS doesn't support logspace, compute on CPU first
+            frequency = torch.logspace(0, 1, out_channels // 2, base_freq,
+                                       device='cpu')
+        else:
+            frequency = torch.logspace(0, 1, out_channels // 2, base_freq,
+                                       device=device)
+
+        self.register_buffer('frequency', frequency, persistent=True)
 
         self.reset_parameters()
+
+        # Move the entire module to the target device if specified
+        if device is not None:
+            self.to(device)
 
     def reset_parameters(self):
         pass
@@ -61,6 +72,8 @@ class PositionalEncoding(torch.nn.Module):
     def forward(self, x: Tensor) -> Tensor:
         """"""  # noqa: D419
         x = x / self.granularity if self.granularity != 1.0 else x
+        # The frequency buffer will be on the same device as the module
+        # thanks to PyTorch's automatic device handling for persistent buffers
         out = x.view(-1, 1) * self.frequency.view(1, -1)
         return torch.cat([torch.sin(out), torch.cos(out)], dim=-1)
 
