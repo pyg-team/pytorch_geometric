@@ -65,11 +65,14 @@ def softmax(
         size = ([1] * dim) + [-1]
         count = ptr[1:] - ptr[:-1]
         ptr = ptr.view(size)
+        output_size = index.shape[dim] if index is not None else None
         src_max = segment(src.detach(), ptr, reduce='max')
-        src_max = src_max.repeat_interleave(count, dim=dim)
+        src_max = src_max.repeat_interleave(count, dim=dim,
+                                            output_size=output_size)
         out = (src - src_max).exp()
         out_sum = segment(out, ptr, reduce='sum') + 1e-16
-        out_sum = out_sum.repeat_interleave(count, dim=dim)
+        out_sum = out_sum.repeat_interleave(count, dim=dim,
+                                            output_size=output_size)
     elif index is not None:
         N = maybe_num_nodes(index, num_nodes)
         src_max = scatter(src.detach(), index, dim, dim_size=N, reduce='max')
