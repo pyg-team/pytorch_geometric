@@ -21,6 +21,7 @@ from .label_prop import LabelPropagation
 from .correct_and_smooth import CorrectAndSmooth
 from .attentive_fp import AttentiveFP
 from .rect import RECT_L
+from .graph_cross_network import GraphCrossNet
 from .linkx import LINKX
 from .lightgcn import LightGCN
 from .mask_label import MaskLabel
@@ -74,6 +75,7 @@ __all__ = classes = [
     'CorrectAndSmooth',
     'AttentiveFP',
     'RECT_L',
+    'GraphCrossNet',
     'LINKX',
     'LightGCN',
     'MaskLabel',
