@@ -9,6 +9,7 @@ from datetime import datetime
 from glob import glob
 from itertools import chain
 from pathlib import Path
+from pprint import pprint
 
 import yaml
 
@@ -452,6 +453,8 @@ def make_dataset(args):
 
     # creating the embedding model
     sent_trans_batch_size = 256
+    
+    print(f" ==> Using {ENCODER_MODEL_NAME_DEFAULT} for embeddings")
     model = SentenceTransformer(
         model_name=ENCODER_MODEL_NAME_DEFAULT).to(device)
 
@@ -737,8 +740,13 @@ def test(model, test_loader, args):
         test_batch.question = new_qs
         if args.skip_graph_rag:
             test_batch.desc = ""
-        preds = (inference_step(model, test_batch,
-                                max_out_tokens=max_chars_in_train_answer / 2))
+            
+        ####
+        # Ralph's changes
+        print(f" ==> using max_out_tokens={mot}")
+        mot = 400
+        preds = (inference_step(model, test_batch, max_out_tokens=mot))
+        
         for question, pred, label in zip(raw_qs, preds, test_batch.label):
             eval_tuples.append((question, pred, label))
     for question, pred, label in tqdm(eval_tuples, desc="Eval"):
@@ -763,7 +771,8 @@ if __name__ == '__main__':
     # Need to sanitize sensitive keys
     saved_NIM_KEY = args.NV_NIM_KEY
     args.NV_NIM_KEY = "********"
-    print(f"Starting {args.dataset} training with args: ", args)
+    print(f"Starting {args.dataset} training with args: ")
+    pprint(vars(args))
     args.NV_NIM_KEY = saved_NIM_KEY
 
     dataset_name = os.path.basename(args.dataset)
