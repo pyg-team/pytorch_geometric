@@ -23,7 +23,7 @@ class OSE_GVCS(InMemoryDataset):
     fabrication of the 50 different industrial machines that it takes to
     build a small, sustainable civilization with modern comforts.
 
-    The dataset contains a heterogenous graphs with 50 :obj:`machine` nodes,
+    The dataset contains a heterogeneous graphs with 50 :obj:`machine` nodes,
     composing the GVCS, and 290 directed edges, each representing one out of
     three relationships between machines.
 
