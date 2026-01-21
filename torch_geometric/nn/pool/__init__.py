@@ -15,6 +15,7 @@ from .graclus import graclus
 from .max_pool import max_pool, max_pool_neighbor_x, max_pool_x
 from .topk_pool import TopKPooling
 from .sag_pool import SAGPooling
+from .bipartite_pool import BipartitePooling
 from .edge_pool import EdgePooling
 from .cluster_pool import ClusterPooling
 from .asap import ASAPooling
@@ -348,6 +349,7 @@ __all__ = [
     'ApproxMIPSKNNIndex',
     'TopKPooling',
     'SAGPooling',
+    'BipartitePooling',
     'EdgePooling',
     'ClusterPooling',
     'ASAPooling',

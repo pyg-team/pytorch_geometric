@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Added bipartite pooling operator from `"DeepTreeGANv2: Iterative Pooling of Point Clouds" <https://arxiv.org/abs/2312.00042>`.
+
 ### Changed
 
 ### Deprecated
