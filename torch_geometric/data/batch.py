@@ -1,4 +1,5 @@
 import inspect
+from collections import defaultdict
 from collections.abc import Sequence
 from typing import Any, List, Optional, Type, Union
 
@@ -215,3 +216,65 @@ class Batch(metaclass=DynamicInheritance):
     def __reduce__(self) -> Any:
         state = self.__dict__.copy()
         return DynamicInheritanceGetter(), self.__class__.__bases__, state
+
+    def subbatch(self, idx):
+        # convert index to mask
+        if isinstance(idx, slice) or \
+           (isinstance(idx, Tensor) and idx.dtype == torch.long) or \
+           (isinstance(idx, np.ndarray) and idx.dtype == np.int64) or \
+           (isinstance(idx, Sequence) and not isinstance(idx, str)):
+            mask = torch.zeros(self.num_graphs, dtype=torch.bool)
+            mask[idx] = True
+
+        elif isinstance(idx, np.ndarray) and idx.dtype == bool:
+            mask = torch.from_numpy(idx)
+
+        elif isinstance(idx, Tensor) and idx.dtype == torch.bool:
+            mask = idx
+
+        else:
+            raise IndexError(
+                f"Only slices (':'), list, tuples, torch.tensor and "
+                f"np.ndarray of dtype long or bool are valid indices (got "
+                f"'{type(idx).__name__}')")
+
+        node_mask = mask[self.batch]
+
+        subbatch = self.subgraph(node_mask)
+
+        # need to update attributes:
+        # * _num_graphs
+        # * batch
+        # * ptr
+        # * _inc_dict
+        # * _slice_dict
+
+        subbatch._num_graphs = mask.sum().item()
+
+        assoc = torch.empty(self.num_graphs, dtype=torch.long)
+        assoc[mask] = torch.arange(subbatch.num_graphs)
+        subbatch.batch = assoc[self.batch][node_mask]
+
+        ptr = self._slice_dict['x']
+        num_nodes_per_graph = ptr[1:] - ptr[:-1]
+        ptr = torch.cumsum(num_nodes_per_graph[mask], 0)
+        ptr = torch.cat([torch.tensor([0]), ptr])
+        subbatch.ptr = ptr
+
+        edge_ptr = self._slice_dict['edge_index']
+        num_edges_per_graph = edge_ptr[1:] - edge_ptr[:-1]
+        edge_ptr = torch.cumsum(num_edges_per_graph[mask], 0)
+        edge_ptr = torch.cat([torch.tensor([0]), edge_ptr])
+
+        subbatch._inc_dict = defaultdict(
+            dict, {
+                'x': torch.zeros(subbatch.num_graphs, dtype=torch.long),
+                'edge_index': ptr[:-1]
+            })
+
+        subbatch._slice_dict = defaultdict(dict, {
+            'x': ptr,
+            'edge_index': edge_ptr
+        })
+
+        return subbatch
