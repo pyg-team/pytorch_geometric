@@ -23,6 +23,14 @@ from .molecule_net import MoleculeNet
 from .pcqm4m import PCQM4Mv2
 from .entities import Entities
 from .rel_link_pred_dataset import RelLinkPredDataset
+
+# RelBench integration utilities (optional dependencies)
+try:
+    from .relbench import RelBenchDataset, RelBenchProcessor, create_relbench_hetero_data  # noqa: F401
+
+    _relbench_available = True
+except ImportError:
+    _relbench_available = False
 from .ged_dataset import GEDDataset
 from .attributed_graph_dataset import AttributedGraphDataset
 from .mnist_superpixels import MNISTSuperpixels
@@ -245,3 +253,9 @@ synthetic_datasets = [
 ]
 
 __all__ = homo_datasets + hetero_datasets + hyper_datasets + synthetic_datasets
+
+# Add RelBench dataset if available (only dataset classes belong in __all__)
+if _relbench_available:
+    __all__.extend([
+        "RelBenchDataset",
+    ])
