@@ -70,7 +70,7 @@ class CuGraphGATConv(CuGraphModule):  # pragma: no cover
         self,
         x: Tensor,
         edge_index: EdgeIndex,
-        edge_attr: Tensor,
+        edge_attr: Optional[Tensor] = None,
         max_num_neighbors: Optional[int] = None,
     ) -> Tensor:
         graph = self.get_cugraph(edge_index, max_num_neighbors)
