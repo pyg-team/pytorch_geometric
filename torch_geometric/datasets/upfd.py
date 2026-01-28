@@ -75,8 +75,8 @@ class UPFD(InMemoryDataset):
             (default: :obj:`False`)
     """
     file_ids = {
-        'politifact': '1KOmSrlGcC50PjkvRVbyb_WoWHVql06J-',
-        'gossipcop': '1VskhAQ92PrT4sWEKQ2v2-AJhEcpp4A81',
+        'politifact': '1toou2GO0agoY_OS54LaCWEECQfe93nuq',
+        'gossipcop': '1DkMAzC7XUUciAxsSujRJt3sq1MqaVI3g',
     }
 
     def __init__(

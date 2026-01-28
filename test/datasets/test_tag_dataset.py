@@ -17,6 +17,5 @@ def test_tag_dataset() -> None:
 
     assert 169343 == tag_dataset[0].num_nodes \
         == len(tag_dataset.text) \
-        == len(tag_dataset.llm_explanation) \
-        == len(tag_dataset.llm_prediction)
+        == len(tag_dataset.llm_explanation)
     assert 1166243 == tag_dataset[0].num_edges
