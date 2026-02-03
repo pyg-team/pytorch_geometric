@@ -19,7 +19,7 @@ repos:
         name: Remove trailing whitespaces
       - id: check-toml
         name: Check toml
-     - id: check-yaml
+      - id: check-yaml
         name: Check yaml
 
   - repo: https://github.com/adrienverge/yamllint.git
