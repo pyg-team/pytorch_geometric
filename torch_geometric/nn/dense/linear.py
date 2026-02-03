@@ -262,7 +262,7 @@ class HeteroLinear(torch.nn.Module):
         key: int,
     ) -> None:
 
-        MEASURE_ITER = 1 if 'PYTEST_CURRENT_TEST' not in os.environ else 3
+        MEASURE_ITER = 1 if 'PYTEST_CURRENT_TEST' in os.environ else 3
 
         if torch.cuda.is_available():
             torch.cuda.synchronize()
