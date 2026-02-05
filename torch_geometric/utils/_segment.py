@@ -55,11 +55,11 @@ def segment_logsumexp(
     ptr: Tensor,
     dim: int,
 ) -> Tensor:
-    r"""Returns the log summed exponentials of each row of the :obj:`src``
+    r"""Returns the log summed exponentials of each row of the :obj:`src`
     tensor within the ranges specified in the :obj:`ptr`.
 
     Args:
-        src: The source tensor:
+        src: The source tensor.
         ptr (torch.Tensor): A monotonically increasing pointer tensor that
             refers to the boundaries of segments such that :obj:`ptr[0] = 0`
             and :obj:`ptr[-1] = src.size(0)`.
