@@ -342,7 +342,7 @@ class GATv2Conv(MessagePassing):
         if self.bias is not None:
             out = out + self.bias
 
-        if isinstance(return_attention_weights, bool):
+        if return_attention_weights:
             if isinstance(edge_index, Tensor):
                 if is_torch_sparse_tensor(edge_index):
                     # TODO TorchScript requires to return a tuple
@@ -352,8 +352,8 @@ class GATv2Conv(MessagePassing):
                     return out, (edge_index, alpha)
             elif isinstance(edge_index, SparseTensor):
                 return out, edge_index.set_value(alpha, layout='coo')
-        else:
-            return out
+
+        return out
 
     def edge_update(self, x_j: Tensor, x_i: Tensor, edge_attr: OptTensor,
                     index: Tensor, ptr: OptTensor,
