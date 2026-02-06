@@ -342,7 +342,7 @@ class GATv2Conv(MessagePassing):
         if self.bias is not None:
             out = out + self.bias
 
-        if return_attention_weights:
+        if return_attention_weights is True:
             if isinstance(edge_index, Tensor):
                 if is_torch_sparse_tensor(edge_index):
                     # TODO TorchScript requires to return a tuple
