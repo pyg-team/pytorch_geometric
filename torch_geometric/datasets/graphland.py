@@ -105,7 +105,7 @@ class GraphLandDataset(InMemoryDataset):
             (default: :obj:`"most_frequent"`)
         to_undirected (bool, optional): Whether to convert a directed graph
             to an undirected one. Does not affect undirected graphs.
-            (default: :obj:`False`)
+            (default: :obj:`True`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -230,7 +230,7 @@ class GraphLandDataset(InMemoryDataset):
             str] = 'most_frequent',
         fraction_features_nan_imputation_strategy: Optional[
             str] = 'most_frequent',
-        to_undirected: bool = False,
+        to_undirected: bool = True,
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         force_reload: bool = False,
@@ -609,6 +609,7 @@ class GraphLandDataset(InMemoryDataset):
             relabel_nodes=True,
         )
         train_data = Data(
+            snapshot='train',
             edge_index=train_edge_index,
             x=features[train_graph_mask],
             y=targets[train_graph_mask],
@@ -616,7 +617,7 @@ class GraphLandDataset(InMemoryDataset):
             x_numerical_mask=num_mask,
             x_fraction_mask=frac_mask,
             x_categorical_mask=cat_mask,
-            node_id=train_node_id,
+            cross_snapshot_node_id=train_node_id,
         )
 
         # --- val
@@ -636,6 +637,7 @@ class GraphLandDataset(InMemoryDataset):
             relabel_nodes=True,
         )
         val_data = Data(
+            snapshot='val',
             edge_index=val_edge_index,
             x=features[val_graph_mask],
             y=targets[val_graph_mask],
@@ -643,7 +645,7 @@ class GraphLandDataset(InMemoryDataset):
             x_numerical_mask=num_mask,
             x_fraction_mask=frac_mask,
             x_categorical_mask=cat_mask,
-            node_id=val_node_id,
+            cross_snapshot_node_id=val_node_id,
         )
 
         # --- test
@@ -664,6 +666,7 @@ class GraphLandDataset(InMemoryDataset):
             relabel_nodes=True,
         )
         test_data = Data(
+            snapshot='test',
             edge_index=test_edge_index,
             x=features[test_graph_mask],
             y=targets[test_graph_mask],
@@ -671,7 +674,7 @@ class GraphLandDataset(InMemoryDataset):
             x_numerical_mask=num_mask,
             x_fraction_mask=frac_mask,
             x_categorical_mask=cat_mask,
-            node_id=test_node_id,
+            cross_snapshot_node_id=test_node_id,
         )
 
         return [train_data, val_data, test_data]
