@@ -608,7 +608,7 @@ class GraphLandDataset(InMemoryDataset):
         train_label_mask = torch.from_numpy(train_label_mask).bool()
 
         train_node_id = np.where(train_graph_mask)[0]
-        train_node_id = torch.from_numpy(train_node_id).bool()  # type: ignore
+        train_node_id = torch.from_numpy(train_node_id).long()  # type: ignore
 
         train_edge_index, _ = subgraph(
             train_graph_mask,
