@@ -495,10 +495,14 @@ class GraphLandDataset(InMemoryDataset):
         num_mask[:num_features.shape[1]] = True
 
         frac_mask = torch.zeros(features.shape[1], dtype=torch.bool)
-        frac_mask[num_features.shape[1]:-cat_features.shape[1]] = True
+        if cat_features.shape[1] > 0:
+            frac_mask[num_features.shape[1]:-cat_features.shape[1]] = True
+        else:
+            frac_mask[num_features.shape[1]:] = True
 
         cat_mask = torch.zeros(features.shape[1], dtype=torch.bool)
-        cat_mask[-cat_features.shape[1]:] = True
+        if cat_features.shape[1] > 0:
+            cat_mask[-cat_features.shape[1]:] = True
 
         # >>> update split masks
         train_mask = raw_data['masks']['train'] & labeled_mask
@@ -591,10 +595,14 @@ class GraphLandDataset(InMemoryDataset):
         num_mask[:num_features.shape[1]] = True
 
         frac_mask = torch.zeros(features.shape[1], dtype=torch.bool)
-        frac_mask[num_features.shape[1]:-cat_features.shape[1]] = True
+        if cat_features.shape[1] > 0:
+            frac_mask[num_features.shape[1]:-cat_features.shape[1]] = True
+        else:
+            frac_mask[num_features.shape[1]:] = True
 
         cat_mask = torch.zeros(features.shape[1], dtype=torch.bool)
-        cat_mask[-cat_features.shape[1]:] = True
+        if cat_features.shape[1] > 0:
+            cat_mask[-cat_features.shape[1]:] = True
 
         # >>> construct Data objects
         edge_index = raw_data['edges'].T
