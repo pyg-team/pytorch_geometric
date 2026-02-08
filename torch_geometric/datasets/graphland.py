@@ -44,12 +44,19 @@ class GraphLandDataset(InMemoryDataset):
             :obj:`"TH"` is for "temporal high" split — a 50%/25%/25% temporal
             train/val/test split.
             :obj:`"THI"` is for "temporal high" split with the inductive
-            setting, which means that val and test nodes are not seen at train
-            time, and test nodes are not seen at val time. In contrast to the
-            previous three splits that will result in a dataset with a single
-            graph, setting the split to :obj:`"THI"` will result in a dataset
-            with three graphs corresponding to the train, val, and test
-            snapshots of an evolving network.
+            setting, which means that the graph is evolving over time, thus
+            val and test nodes are not seen at train time, and test nodes
+            are not seen at val time.
+            The :obj:`"RL"`, :obj:`"RH"`, and :obj:`"TH"` splits correspond
+            to the transductive setting and thus will return a dataset with
+            a single graph and three masks (for train, val, and test nodes).
+            In contrast, the :obj:`"THI"` split corresponds to the inductive
+            setting, and thus will return a dataset with three graphs
+            (a train graph, a val graph, and a test graph), which are three
+            snapshots of an evolving network captured at different timestamps.
+            Each of the three graphs has a mask specifying which of the nodes
+            should be used for training (in the train graph) and evaluation
+            (in the val and test graphs).
             :obj:`"TH"` and :obj:`"THI"` splits are not available for the
             following datasets: :obj:`"city-reviews"`, :obj:`"city-roads-M"`,
             :obj:`"city-roads-L"`, :obj:`"web-traffic"`.
