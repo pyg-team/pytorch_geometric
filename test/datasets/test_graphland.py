@@ -64,7 +64,8 @@ def test_inductive_graphland(name: str):
     assert len(dataset) == 3
 
     data_train, data_val, data_test = dataset
-    assert num_nodes == data_test.num_nodes == data_test.cross_snapshot_node_id.shape[0]
+    assert num_nodes == data_test.num_nodes == data_test.cross_snapshot_node_id.shape[
+        0]
     assert num_edges == data_test.num_edges
 
     assert not torch.isnan(data_train.y[data_train.mask]).any().item()
