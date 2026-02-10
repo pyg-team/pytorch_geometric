@@ -710,7 +710,7 @@ def train(args, train_loader, val_loader):
             wandb.finish()
 
         torch.cuda.empty_cache()
-        torch.cuda.reset_max_memory_allocated()
+        torch.cuda.reset_peak_memory_stats()
         model.eval()
         if not args.dont_save_model:
             save_params_dict(model, save_path=save_name)

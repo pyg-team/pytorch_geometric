@@ -32,4 +32,4 @@ For examples on working with heterogeneous data, see the examples under [`exampl
 
 For examples on co-training LLMs with GNNs, see the examples under [`examples/llm`](./llm).
 
-- [Kumo.ai x NVIDIA GNN+LLM Webinar](https://www.youtube.com/watch?v=uRIA8e7Y_vs)
+- [Stanford GNN+LLM Talk](https://www.nvidia.com/en-us/on-demand/session/other25-nv-0003/)
