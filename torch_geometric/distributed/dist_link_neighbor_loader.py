@@ -95,7 +95,7 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
                 concurrency=concurrency,
             )
         else:
-            warn( # noqa: B028
+            warn(  # noqa: B028
                 "`torch_geometric.distributed` has been deprecated since 2.7.0 and will "  # noqa: E501
                 "no longer be maintained. For distributed training, refer to our "  # noqa: E501
                 "tutorials on distributed training at "
