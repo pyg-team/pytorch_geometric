@@ -47,10 +47,12 @@ def test_hypergraph_conv_with_more_edges_than_nodes():
     out = conv(x, hyperedge_index, hyperedge_weight)
     assert out.size() == (num_nodes, out_channels)
 
+
 def test_hypergraph_conv_weight_effect():
     """Test that non-uniform hyperedge weights produce different results
     from uniform weights, verifying that W is applied correctly per the
-    formula X' = D^{-1} H W B^{-1} H^T X Theta."""
+    formula X' = D^{-1} H W B^{-1} H^T X Theta.
+    """
     in_channels, out_channels = (16, 32)
     hyperedge_index = torch.tensor([[0, 0, 1, 1, 2, 3], [0, 1, 0, 1, 0, 1]])
     num_nodes = hyperedge_index[0].max().item() + 1
@@ -68,4 +70,3 @@ def test_hypergraph_conv_weight_effect():
     nonuniform_weight = torch.tensor([1.0, 0.5])
     out_nonuniform = conv(x, hyperedge_index, nonuniform_weight)
     assert not torch.allclose(out_default, out_nonuniform, atol=1e-4)
-
