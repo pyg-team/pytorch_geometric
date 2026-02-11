@@ -10,11 +10,8 @@ from torch_geometric.testing import onlyRAG, withPackage
 @onlyRAG
 @withPackage('transformers', 'sentencepiece', 'accelerate')
 def test_g_retriever() -> None:
-    llm = LLM(
-        model_name='HuggingFaceTB/SmolLM-360M',
-        num_params=1,
-        dtype=torch.float16,
-    )
+    llm = LLM(model_name='Qwen/Qwen3-0.6B', dtype=torch.float32,
+              sys_prompt="You're an agent, answer my questions.")
 
     gnn = GAT(
         in_channels=1024,
@@ -30,7 +27,7 @@ def test_g_retriever() -> None:
         gnn=gnn,
     )
     assert str(model) == ('GRetriever(\n'
-                          '  llm=LLM(HuggingFaceTB/SmolLM-360M),\n'
+                          '  llm=LLM(Qwen/Qwen3-0.6B),\n'
                           '  gnn=GAT(1024, 1024, num_layers=2),\n'
                           ')')
 
@@ -52,7 +49,7 @@ def test_g_retriever() -> None:
     # Test inference:
     pred = model.inference(question, x, edge_index, batch, edge_attr)
     assert len(pred) == 1
-    del model
+    del model, llm, gnn
     gc.collect()
     torch.cuda.empty_cache()
 
@@ -60,11 +57,8 @@ def test_g_retriever() -> None:
 @onlyRAG
 @withPackage('transformers', 'sentencepiece', 'accelerate')
 def test_g_retriever_many_tokens() -> None:
-    llm = LLM(
-        model_name='HuggingFaceTB/SmolLM-360M',
-        num_params=1,
-        dtype=torch.float16,
-    )
+    llm = LLM(model_name='Qwen/Qwen3-0.6B', dtype=torch.float32,
+              sys_prompt="You're an agent, answer my questions.")
 
     gnn = GAT(
         in_channels=1024,
@@ -81,7 +75,7 @@ def test_g_retriever_many_tokens() -> None:
         mlp_out_tokens=2,
     )
     assert str(model) == ('GRetriever(\n'
-                          '  llm=LLM(HuggingFaceTB/SmolLM-360M),\n'
+                          '  llm=LLM(Qwen/Qwen3-0.6B),\n'
                           '  gnn=GAT(1024, 1024, num_layers=2),\n'
                           ')')
 
@@ -103,6 +97,6 @@ def test_g_retriever_many_tokens() -> None:
     # Test inference:
     pred = model.inference(question, x, edge_index, batch, edge_attr)
     assert len(pred) == 1
-    del model
+    del model, llm, gnn
     gc.collect()
     torch.cuda.empty_cache()

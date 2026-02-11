@@ -7,7 +7,7 @@ import torch_geometric.typing
 from torch_geometric.index import index2ptr
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import withCUDA, withoutExtensions
-from torch_geometric.utils import scatter, segment
+from torch_geometric.utils import scatter, segment, segment_logsumexp
 
 
 @withCUDA
@@ -29,6 +29,28 @@ def test_segment(device, without_extensions, reduce):
 
         assert torch.allclose(out[:1], torch.zeros(1, 16, device=device))
         assert torch.allclose(out[1:], expected)
+
+
+@withCUDA
+@withoutExtensions
+def test_segment_logsumexp(device, without_extensions) -> None:
+    src = torch.randn(5, 4, device=device)
+
+    expected = src.logsumexp(dim=0)
+    ptr = torch.tensor([0, 0, 5, 5], device=device)
+    out = segment_logsumexp(src, ptr, dim=0)
+    assert out.size() == (3, 4)
+    assert out[0].abs().sum() == 0.0
+    assert torch.allclose(expected, out[1])
+    assert out[2].abs().sum() == 0.0
+
+    expected = src.logsumexp(dim=1)
+    ptr = torch.tensor([0, 0, 4, 4], device=device)
+    out = segment_logsumexp(src, ptr, dim=1)
+    assert out.size() == (5, 3)
+    assert out[:, 0].abs().sum() == 0.0
+    assert torch.allclose(expected, out[:, 1])
+    assert out[:, 2].abs().sum() == 0.0
 
 
 if __name__ == '__main__':

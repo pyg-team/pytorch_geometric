@@ -1,4 +1,5 @@
 import io
+import os
 import os.path as osp
 import pickle
 import re
@@ -117,7 +118,7 @@ def cp(
     # Cache result if the protocol is not local:
     cache_dir: Optional[str] = None
     if not islocal(path1):
-        if log and 'pytest' not in sys.modules:
+        if log and 'PYTEST_CURRENT_TEST' not in os.environ:
             print(f'Downloading {path1}', file=sys.stderr)
 
         if extract and use_cache:  # Cache seems to confuse the gcs filesystem.
