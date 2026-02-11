@@ -102,7 +102,7 @@ class DistLinkNeighborLoader(LinkLoader, DistLoader):
                 "https://pytorch-geometric.readthedocs.io/en/latest/tutorial/distributed.html "  # noqa: E501
                 "or cuGraph examples at "
                 "https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples",  # noqa: E501
-                stack_level=2)
+                stack_level=2) # noqa: B028
 
         DistLoader.__init__(
             self,
