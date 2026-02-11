@@ -21,7 +21,8 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler):
 
         from torch_geometric.loader import DataLoader, DynamicBatchSampler
 
-        sampler = DynamicBatchSampler(dataset, max_num=10000, mode="node")
+        sampler = DynamicBatchSampler(dataset, max_num_nodes=10000,
+                                      max_num_edges=10000)
         loader = DataLoader(dataset, batch_sampler=sampler, ...)
 
     Args:
@@ -49,9 +50,9 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler):
         if max_num_nodes <= 0:
             raise ValueError(f"`max_num_nodes` should be a positive integer "
                              f"value (got {max_num_nodes})")
-        if max_num_edges <= 0:
-            raise ValueError(f"`max_num_edges` should be a positive integer "
-                             f"value (got {max_num_edges})")
+        if max_num_edges < 0:
+            raise ValueError(f"`max_num_edges` should be a non-negative "
+                             f"integer value (got {max_num_edges})")
         self.dataset = dataset
         self.max_num_nodes = max_num_nodes
         self.max_num_edges = max_num_edges
@@ -85,8 +86,9 @@ class DynamicBatchSampler(torch.utils.data.sampler.Sampler):
                         > self.max_num_nodes) or (current_num_edges + num_edges
                                                   > self.max_num_edges):
 
-                    if current_num_nodes == 0 or current_num_edges == 0:
+                    if current_num_nodes == 0 and current_num_edges == 0:
                         if self.skip_too_big:
+                            num_processed += 1
                             continue
                     else:  # Mini-batch filled:
                         break
