@@ -88,14 +88,14 @@ class DistNeighborLoader(NodeLoader, DistLoader):
                 concurrency=concurrency,
             )
         else:
-            warn(
+            warn( # noqa: B028
                 "`torch_geometric.distributed` has been deprecated since 2.7.0 and will "  # noqa: E501
                 "no longer be maintained. For distributed training, refer to our "  # noqa: E501
                 "tutorials on distributed training at "
                 "https://pytorch-geometric.readthedocs.io/en/latest/tutorial/distributed.html "  # noqa: E501
                 "or cuGraph examples at "
                 "https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples",  # noqa: E501
-                stack_level=2) # noqa: B028
+                stack_level=2)
 
         DistLoader.__init__(
             self,
