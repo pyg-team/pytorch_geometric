@@ -52,16 +52,16 @@ class MovieLens1B(InMemoryDataset):
           - #tasks
         * - Movie
           - 855,776
-          - 18
+          - 
           -
         * - User
           - 2,210,078
-          - 30
+          - 
           -
         * - User-Movie
-          - 1,000,209
-          - 1
-          - 1
+          - 1,223,962,043
+          - 
+          - 
     """
     url = 'https://files.grouplens.org/datasets/movielens/ml-20mx16x32.tar'
 
