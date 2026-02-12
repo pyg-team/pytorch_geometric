@@ -37,6 +37,11 @@ class MovieLens1B(InMemoryDataset):
         add_reverse_edges (bool, optional): If set to :obj:`True`, also stores
             reverse training edges in :obj:`('movie', 'rated_by', 'user')`.
             (default: :obj:`False`)
+        num_shards (int, optional): Number of NPZ shard files to load per
+            split (train/test). Each shard contains ~1/16th of the data.
+            Use a small value (e.g. 1 or 2) to reduce memory usage for
+            quick experiments. If :obj:`None`, all 16 shards are loaded.
+            (default: :obj:`None`)
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
 
@@ -71,9 +76,11 @@ class MovieLens1B(InMemoryDataset):
         transform: Optional[Callable] = None,
         pre_transform: Optional[Callable] = None,
         add_reverse_edges: bool = False,
+        num_shards: Optional[int] = None,
         force_reload: bool = False,
     ) -> None:
         self.add_reverse_edges = add_reverse_edges
+        self.num_shards = num_shards
         super().__init__(root, transform, pre_transform,
                          force_reload=force_reload)
         self.load(self.processed_paths[0], data_cls=HeteroData)
@@ -87,6 +94,8 @@ class MovieLens1B(InMemoryDataset):
 
     @property
     def processed_file_names(self) -> str:
+        if self.num_shards is not None:
+            return f'data_shards{self.num_shards}.pt'
         return 'data.pt'
 
     def download(self) -> None:
@@ -182,8 +191,8 @@ class MovieLens1B(InMemoryDataset):
 
             return edge_index, rating, time
 
-        train_files = get_shard_files('train', None)
-        test_files = get_shard_files('test', None)
+        train_files = get_shard_files('train', self.num_shards)
+        test_files = get_shard_files('test', self.num_shards)
 
         train_rows, train_max_user_id, train_max_movie_id, train_cols = summarize_shards(
             train_files
@@ -206,18 +215,18 @@ class MovieLens1B(InMemoryDataset):
         )
         data['user', 'rates', 'movie'].edge_index = train_edge_index
 
-        if self.add_reverse_edges:
-            data['movie', 'rated_by', 'user'].edge_index = train_edge_index.flip([0])
-
-        if train_rating is not None:
-            data['user', 'rates', 'movie'].rating = train_rating
-            if self.add_reverse_edges:
-                data['movie', 'rated_by', 'user'].rating = train_rating
+        if train_rating is None:
+            train_rating = torch.ones(train_rows, dtype=torch.float)
+        data['user', 'rates', 'movie'].rating = train_rating
 
         if train_time is not None:
             data['user', 'rates', 'movie'].time = train_time
-            if self.add_reverse_edges:
-                data['movie', 'rated_by', 'user'].time = train_time
+
+        data['movie', 'rated_by', 'user'].edge_index = train_edge_index.flip([0])
+        data['movie', 'rated_by', 'user'].rating = train_rating
+
+        if train_time is not None:
+            data['movie', 'rated_by', 'user'].time = train_time
 
         test_edge_label_index, test_edge_label, _ = build_split_tensors(
             test_files,
@@ -225,13 +234,12 @@ class MovieLens1B(InMemoryDataset):
             has_rating=(test_cols >= 3),
             has_time=False,
         )
+
         data['user', 'rates', 'movie'].edge_label_index = test_edge_label_index
 
-        if test_edge_label is not None:
-            edge_label = test_edge_label
-        else:
-            edge_label = torch.ones(test_rows, dtype=torch.float)
-        data['user', 'rates', 'movie'].edge_label = edge_label
+        if test_edge_label is None:
+            test_edge_label = torch.ones(test_rows, dtype=torch.float)
+        data['user', 'rates', 'movie'].edge_label = test_edge_label
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
