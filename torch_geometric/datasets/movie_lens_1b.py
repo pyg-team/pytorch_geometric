@@ -9,7 +9,7 @@ from torch_geometric.data import (
     HeteroData,
     InMemoryDataset,
     download_url,
-    extract_tar
+    extract_tar,
 )
 from torch_geometric.io import fs
 
@@ -57,16 +57,16 @@ class MovieLens1B(InMemoryDataset):
           - #tasks
         * - Movie
           - 855,776
-          - 
+          -
           -
         * - User
           - 2,210,078
-          - 
+          -
           -
         * - User-Movie
           - 1,223,962,043
-          - 
-          - 
+          -
+          -
     """
     url = 'https://files.grouplens.org/datasets/movielens/ml-20mx16x32.tar'
 
@@ -123,15 +123,15 @@ class MovieLens1B(InMemoryDataset):
                 [
                     osp.join(self.raw_dir, name)
                     for name in os.listdir(self.raw_dir)
-                    if name.startswith(f'{split}x16x32_') and name.endswith('.npz')
+                    if name.startswith(f'{split}x16x32_')
+                    and name.endswith('.npz')
                 ],
                 key=shard_index,
             )
             if not files:
                 raise FileNotFoundError(
                     f'No NPZ shard files found for split={split!r} in '
-                    f'{self.raw_dir}'
-                )
+                    f'{self.raw_dir}')
             return files if limit is None else files[:limit]
 
         def summarize_shards(paths: List[str]) -> Tuple[int, int, int, int]:
@@ -145,8 +145,7 @@ class MovieLens1B(InMemoryDataset):
                 if array.ndim != 2 or array.shape[1] < 2:
                     raise ValueError(
                         f'Expected shape [num_rows, >=2] in {path}, '
-                        f'got {tuple(array.shape)}'
-                    )
+                        f'got {tuple(array.shape)}')
                 total_rows += int(array.shape[0])
                 max_user_id = max(max_user_id, int(array[:, 0].max()))
                 max_movie_id = max(max_movie_id, int(array[:, 1].max()))
@@ -161,10 +160,13 @@ class MovieLens1B(InMemoryDataset):
             total_rows: int,
             has_rating: bool,
             has_time: bool,
-        ) -> Tuple[torch.Tensor, Optional[torch.Tensor], Optional[torch.Tensor]]:
+        ) -> Tuple[torch.Tensor, Optional[torch.Tensor],
+                   Optional[torch.Tensor]]:
             edge_index = torch.empty((2, total_rows), dtype=torch.long)
-            rating = torch.empty(total_rows, dtype=torch.float) if has_rating else None
-            time = torch.empty(total_rows, dtype=torch.long) if has_time else None
+            rating = torch.empty(total_rows,
+                                 dtype=torch.float) if has_rating else None
+            time = torch.empty(total_rows,
+                               dtype=torch.long) if has_time else None
 
             offset = 0
             for path in paths:
@@ -175,17 +177,14 @@ class MovieLens1B(InMemoryDataset):
                 next_offset = offset + num_rows
 
                 edge_index[:, offset:next_offset] = torch.from_numpy(
-                    array[:, :2].T
-                ).to(torch.long)
+                    array[:, :2].T).to(torch.long)
 
                 if rating is not None:
-                    rating[offset:next_offset] = torch.from_numpy(array[:, 2]).to(
-                        torch.float
-                    )
+                    rating[offset:next_offset] = torch.from_numpy(
+                        array[:, 2]).to(torch.float)
                 if time is not None:
-                    time[offset:next_offset] = torch.from_numpy(array[:, 3]).to(
-                        torch.long
-                    )
+                    time[offset:next_offset] = torch.from_numpy(
+                        array[:, 3]).to(torch.long)
 
                 offset = next_offset
 
@@ -195,11 +194,9 @@ class MovieLens1B(InMemoryDataset):
         test_files = get_shard_files('test', self.num_shards)
 
         train_rows, train_max_user_id, train_max_movie_id, train_cols = summarize_shards(
-            train_files
-        )
+            train_files)
         test_rows, test_max_user_id, test_max_movie_id, test_cols = summarize_shards(
-            test_files
-        )
+            test_files)
 
         max_user_id = max(train_max_user_id, test_max_user_id)
         max_movie_id = max(train_max_movie_id, test_max_movie_id)
@@ -222,7 +219,8 @@ class MovieLens1B(InMemoryDataset):
         if train_time is not None:
             data['user', 'rates', 'movie'].time = train_time
 
-        data['movie', 'rated_by', 'user'].edge_index = train_edge_index.flip([0])
+        data['movie', 'rated_by',
+             'user'].edge_index = train_edge_index.flip([0])
         data['movie', 'rated_by', 'user'].rating = train_rating
 
         if train_time is not None:

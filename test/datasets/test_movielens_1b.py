@@ -1,9 +1,6 @@
-import torch
-
 from torch_geometric.data.hetero_data import HeteroData
 from torch_geometric.datasets import MovieLens1B
-from torch_geometric.testing import withPackage
-from torch_geometric.testing import onlyFullTest
+
 
 # @onlyFullTest
 def test_movielens_1b():
