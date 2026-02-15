@@ -8,12 +8,16 @@ on:  # yamllint disable-line rule:truthy
       - 'torch_geometric/**'
       - 'test/**'
       - 'examples/**'
+      - 'benchmark/**'
       - 'pyproject.toml'
       - '.github/actions/setup/action.yml'
       - '.github/workflows/linting.yml'
   pull_request:
     paths:
       - 'torch_geometric/**'
+      - 'test/**'
+      - 'examples/**'
+      - 'benchmark/**'
       - 'pyproject.toml'
       - '.github/actions/setup/action.yml'
       - '.github/workflows/linting.yml'

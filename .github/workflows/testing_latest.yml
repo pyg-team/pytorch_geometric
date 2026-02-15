@@ -8,6 +8,7 @@ on:  # yamllint disable-line rule:truthy
       - 'torch_geometric/**'
       - 'test/**'
       - 'pyproject.toml'
+      - 'codecov.yml'
       - '.github/actions/setup/action.yml'
       - '.github/workflows/testing_latest.yml'
   pull_request:
@@ -15,6 +16,7 @@ on:  # yamllint disable-line rule:truthy
       - 'torch_geometric/**'
       - 'test/**'
       - 'pyproject.toml'
+      - 'codecov.yml'
       - '.github/actions/setup/action.yml'
       - '.github/workflows/testing_latest.yml'
 
