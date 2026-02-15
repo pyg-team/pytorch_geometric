@@ -187,6 +187,8 @@ If :conda:`null` :obj:`conda` does not pick up the correct CUDA version of :pyg:
 
    conda install pyg=*=*cu* -c pyg
 
+.. _install-cugraph:
+
 Accelerating PyG with NVIDIA cuGraph GNN
 ----------------------------------------
 
