@@ -18,15 +18,6 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-14]
         python-version: ['3.10']
         torch-version: [2.6.0, 2.7.0, 2.8.0, nightly]
-        include:
-          - torch-version: 2.6.0
-            torchvision-version: 0.21.0
-          - torch-version: 2.7.0
-            torchvision-version: 0.22.0
-          - torch-version: 2.8.0
-            torchvision-version: 0.23.0
-          - torch-version: nightly
-            torchvision-version: nightly
 
     steps:
       - name: Checkout repository
@@ -37,7 +28,6 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           torch-version: ${{ matrix.torch-version }}
-          torchvision-version: ${{ matrix.torchvision-version }}
 
       - name: Install graphviz
         if: ${{ runner.os == 'Linux' }}

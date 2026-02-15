@@ -32,11 +32,6 @@ jobs:
       fail-fast: false
       matrix:
         torch-version: [2.6.0, 2.7.0]
-        include:
-          - torch-version: 2.6.0
-            torchvision-version: 0.21.0
-          - torch-version: 2.7.0
-            torchvision-version: 0.22.0
 
     steps:
       - name: Checkout repository
@@ -46,7 +41,6 @@ jobs:
         uses: ./.github/actions/setup
         with:
           torch-version: ${{ matrix.torch-version }}
-          torchvision-version: ${{ matrix.torchvision-version }}
 
       - name: Install main package
         run: |
