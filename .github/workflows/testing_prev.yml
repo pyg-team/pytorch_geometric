@@ -4,7 +4,19 @@ on:  # yamllint disable-line rule:truthy
   push:
     branches:
       - master
+    paths:
+      - 'torch_geometric/**'
+      - 'test/**'
+      - 'pyproject.toml'
+      - '.github/actions/setup/action.yml'
+      - '.github/workflows/testing_prev.yml'
   pull_request:
+    paths:
+      - 'torch_geometric/**'
+      - 'test/**'
+      - 'pyproject.toml'
+      - '.github/actions/setup/action.yml'
+      - '.github/workflows/testing_prev.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ startsWith(github.ref, 'refs/pull/') || github.run_number }}  # yamllint disable-line
@@ -29,45 +41,25 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 40
-
-      # Skip workflow if only certain files have been changed.
-      - name: Get changed files
-        id: changed-files-specific
-        uses: tj-actions/changed-files@v47
-        with:
-          files: |
-            benchmark/**
-            docker/**
-            docs/**
-            examples/**
-            graphgym/**
-            README.md
-            CHANGELOG.md
 
       - name: Setup packages
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
         uses: ./.github/actions/setup
         with:
           torch-version: ${{ matrix.torch-version }}
           torchvision-version: ${{ matrix.torchvision-version }}
 
       - name: Install main package
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
           uv pip install -e ".[test]"
 
       - name: Check installation
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          uv run --no-project python -c "import torch; print('PyTorch:', torch.__version__)"
-          uv run --no-project python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
-          uv run --no-project python -c "import torch; print('CUDA:', torch.version.cuda)"
+          python -c "import torch; print('PyTorch:', torch.__version__)"
+          python -c "import torch; print('CUDA available:', torch.cuda.is_available())"
+          python -c "import torch; print('CUDA:', torch.version.cuda)"
         shell: bash
 
       - name: Run tests
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
         timeout-minutes: 15
         run: |
-          uv run --no-project pytest --durations 10
+          pytest --durations 10
