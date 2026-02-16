@@ -1,0 +1,71 @@
+name: Testing
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - master
+    paths:
+      - 'torch_geometric/**'
+      - 'test/**'
+      - 'pyproject.toml'
+      - 'codecov.yml'
+      - '.github/actions/setup/action.yml'
+      - '.github/workflows/testing_latest.yml'
+      - '.github/workflows/_testing.yml'
+  pull_request:
+    paths:
+      - 'torch_geometric/**'
+      - 'test/**'
+      - 'pyproject.toml'
+      - 'codecov.yml'
+      - '.github/actions/setup/action.yml'
+      - '.github/workflows/testing_latest.yml'
+      - '.github/workflows/_testing.yml'
+  schedule:
+    - cron: "0 6 * * *"  # Everyday at 6:00am UTC/10:00pm PST
+
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ startsWith(github.ref, 'refs/pull/') || github.run_number }}  # yamllint disable-line
+  # Only cancel intermediate builds if on a PR:
+  cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
+
+jobs:
+  pytest:
+    if: ${{ github.repository == 'pyg-team/pytorch_geometric' && github.event_name != 'schedule' }}
+    uses: ./.github/workflows/_testing.yml
+    with:
+      test-matrix: |
+        { include: [
+          { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "nightly", "cuda-version": "cpu" },
+          { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.8.0", "cuda-version": "cpu" },
+          { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.7.0", "cuda-version": "cpu" },
+          { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.6.0", "cuda-version": "cpu" },
+          { "os": "macos-14", "python-version": "3.10", "torch-version": "2.8.0", "cuda-version": "cpu" },
+          { "os": "windows-2022", "python-version": "3.10", "torch-version": "2.8.0", "cuda-version": "cpu" }
+        ]}
+
+  full:
+    if: ${{ github.repository == 'pyg-team/pytorch_geometric' && github.event_name == 'schedule' }}
+    uses: ./.github/workflows/_testing.yml
+    with:
+      test-matrix: |
+        {
+          "os": ["ubuntu-22.04", "macos-14", "windows-2022"],
+          "python-version": ["3.10"],
+          "torch-version": ["2.6.0", "2.7.0", "2.8.0", "nightly"],
+          "cuda-version": ["cpu"],
+          "full-test": "1"
+        }
+
+  # gpu:
+  #   if: github.repository == 'pyg-team/pytorch_geometric'
+  #   uses: ./.github/workflows/_testing.yml
+  #   with:
+  #     test-matrix: |
+  #       {
+  #         "os": [["self-hosted, nvidia"]],
+  #         "python-version": ["3.10"],
+  #         "torch-version": ["2.8.0"],
+  #         "cuda-version": ["cu128"]
+  #       }

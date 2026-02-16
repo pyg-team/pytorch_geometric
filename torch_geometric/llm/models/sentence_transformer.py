@@ -112,6 +112,19 @@ class SentenceTransformer(torch.nn.Module):
         output_device: Optional[Union[torch.device, str]] = None,
         verbose=False,
     ) -> Tensor:
+        r"""Main function for users. Converts strings to embeddings.
+
+        Args:
+            text (List[str]): List of strings to embed.
+            batch_size (int, optional): How many strings to process.
+                Defaults to processing all at once, but this may lead to
+                OOM errors. (default: obj:`None`)
+            output_device (Union[torch.device, str], optional):
+                By default outputs cpu pytorch tensor, but can choose
+                to output to specific cuda devices. (default: obj:`None`)
+            verbose (bool, optional): Controls the verbosity of outputs.
+                (default: obj:`False`)
+        """
         is_empty = len(text) == 0
         text = ['dummy'] if is_empty else text
 

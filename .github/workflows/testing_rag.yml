@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup packages
         uses: ./.github/actions/setup
@@ -38,12 +38,12 @@ jobs:
         timeout-minutes: 10
         run: |
           # ignore mysterious segfault (139) if tests pass since this does not repro locally
-          uv run --no-project bash -c 'pytest test/llm/models/test_g_retriever.py -m rag --cov --cov-report=xml -v; E=$?; [[ $E == 0 || $E == 139 ]] && exit 0 || exit $E'
-          uv run --no-project bash -c 'pytest test/datasets/ -m rag --cov --cov-report=xml -v; E=$?; [[ $E == 0 || $E == 139 ]] && exit 0 || exit $E'
-          uv run --no-project pytest test/llm/models/test_llm.py -m rag -v
-          uv run --no-project pytest test/llm/models/test_sentence_transformer.py -m rag -v
-          uv run --no-project pytest test/llm/utils/ -m rag -v
-          uv run --no-project pytest test/llm/test_rag_loader.py -m rag -v
+          bash -c 'pytest test/llm/models/test_g_retriever.py -m rag --cov --cov-report=xml -v; E=$?; [[ $E == 0 || $E == 139 ]] && exit 0 || exit $E'
+          bash -c 'pytest test/datasets/ -m rag --cov --cov-report=xml -v; E=$?; [[ $E == 0 || $E == 139 ]] && exit 0 || exit $E'
+          pytest test/llm/models/test_llm.py -m rag -v
+          pytest test/llm/models/test_sentence_transformer.py -m rag -v
+          pytest test/llm/utils/ -m rag -v
+          pytest test/llm/test_rag_loader.py -m rag -v
         shell: bash
         env:
           RAG_TEST: "1"

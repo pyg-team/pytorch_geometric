@@ -14,12 +14,17 @@ from torch_geometric.llm.large_graph_indexer import (
     TripletLike,
     get_features_for_triplets,
 )
+from torch_geometric.llm.utils.backend_utils import preprocess_triplet
 from torch_geometric.typing import WITH_PT20
 
 # create possible nodes and edges for graph
 strkeys = string.ascii_letters + string.digits
-NODE_POOL = list({"".join(random.sample(strkeys, 10)) for i in range(1000)})
-EDGE_POOL = list({"".join(random.sample(strkeys, 10)) for i in range(50)})
+NODE_POOL = list(
+    {"".join(random.sample(strkeys, 10)).lower()
+     for i in range(1000)})
+EDGE_POOL = list(
+    {"".join(random.sample(strkeys, 10)).lower()
+     for i in range(50)})
 
 
 def featurize(s: str) -> int:
@@ -33,11 +38,6 @@ def sample_triplets(amount: int = 1) -> List[TripletLike]:
         r = random.sample(EDGE_POOL, k=1)[0]
         trips.append(tuple([h, r, t]))
     return trips
-
-
-def preprocess_triplet(triplet: TripletLike) -> TripletLike:
-    h, r, t = triplet
-    return h.lower(), r, t.lower()
 
 
 def test_basic_collate():
