@@ -18,8 +18,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix:
-        include: ${{ fromJSON(inputs.test-matrix) }}
+      matrix: ${{ fromJSON(inputs.test-matrix) }}
 
     steps:
       - name: Checkout repository
