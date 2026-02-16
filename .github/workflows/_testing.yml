@@ -31,6 +31,11 @@ jobs:
           torch-version: ${{ matrix.torch-version }}
           cuda-version: ${{ matrix.cuda-version }}
 
+      - name: Install graphviz
+        if: ${{ runner.os == 'Linux' && matrix.full_test == '1' }}
+        run: |
+          sudo apt-get install graphviz
+
       - name: Install main package (Windows)
         if: ${{ runner.os == 'Windows' }}
         run: |
@@ -49,9 +54,11 @@ jobs:
         shell: bash
 
       - name: Run tests
-        timeout-minutes: 15
+        timeout-minutes: 20
         run: |
           pytest --cov --cov-report=xml --durations 10
+        env:
+          FULL_TEST: ${{ matrix.full_test }}
 
       - name: Upload coverage
         if: ${{ runner.os == 'Linux' }}
