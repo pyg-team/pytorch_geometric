@@ -3,7 +3,7 @@ r"""Utility package."""
 import copy
 
 from ._scatter import scatter, group_argsort, group_cat
-from ._segment import segment
+from ._segment import segment, segment_logsumexp
 from ._index_sort import index_sort
 from .functions import cumsum
 from ._degree import degree
@@ -64,6 +64,7 @@ __all__ = [
     'group_argsort',
     'group_cat',
     'segment',
+    'segment_logsumexp',
     'index_sort',
     'cumsum',
     'degree',

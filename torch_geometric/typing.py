@@ -1,6 +1,5 @@
 import inspect
 import os
-import sys
 import typing
 import warnings
 from typing import Any, Dict, List, Optional, Set, Tuple, TypeAlias, Union
@@ -43,7 +42,8 @@ try:
     WITH_PYG_LIB = True
     WITH_GMM = WITH_PT20 and hasattr(pyg_lib.ops, 'grouped_matmul')
     WITH_SEGMM = hasattr(pyg_lib.ops, 'segment_matmul')
-    if WITH_SEGMM and 'pytest' in sys.modules and torch.cuda.is_available():
+    if (WITH_SEGMM and 'PYTEST_CURRENT_TEST' in os.environ
+            and torch.cuda.is_available()):
         # NOTE `segment_matmul` is currently bugged on older NVIDIA cards which
         # let our GPU tests on CI crash. Try if this error is present on the
         # current GPU and disable `WITH_SEGMM`/`WITH_GMM` if necessary.
