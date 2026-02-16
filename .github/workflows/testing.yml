@@ -1,4 +1,4 @@
-name: Testing latest PyTorch
+name: Testing
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -31,7 +31,7 @@ concurrency:
   cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
 
 jobs:
-  latest:
+  pytest:
     if: ${{ github.repository == 'pyg-team/pytorch_geometric' && github.event_name != 'schedule' }}
     uses: ./.github/workflows/_testing.yml
     with:
@@ -39,32 +39,13 @@ jobs:
         {
           "os": ["ubuntu-22.04", "macos-14", "windows-2022"],
           "python-version": ["3.10"],
-          "torch-version": ["2.8.0"],
-          "cuda-version": ["cpu"]
-        }
-
-  prev:
-    if: ${{ github.repository == 'pyg-team/pytorch_geometric' && github.event_name != 'schedule' }}
-    uses: ./.github/workflows/_testing.yml
-    with:
-      test-matrix: |
-        {
-          "os": ["ubuntu-22.04"],
-          "python-version": ["3.10"],
-          "torch-version": ["2.6.0", "2.7.0"],
-          "cuda-version": ["cpu"]
-        }
-
-  nightly:
-    if: ${{ github.repository == 'pyg-team/pytorch_geometric' && github.event_name != 'schedule' }}
-    uses: ./.github/workflows/_testing.yml
-    with:
-      test-matrix: |
-        {
-          "os": ["ubuntu-22.04"],
-          "python-version": ["3.10"],
-          "torch-version": ["nightly"],
-          "cuda-version": ["cpu"]
+          "torch-version": ["2.6.0", "2.7.0", "2.8.0"],
+          "cuda-version": ["cpu"],
+          "include": [
+            {"os": ["ubuntu-latest"], "python-version": ["3.10"], "torch-version": ["2.6.0"], "cuda-version": ["cpu"] },
+            {"os": ["ubuntu-latest"], "python-version": ["3.10"], "torch-version": ["2.7.0"], "cuda-version": ["cpu"] },
+            {"os": ["ubuntu-latest"], "python-version": ["3.10"], "torch-version": ["nightly"], "cuda-version": ["cpu"] }
+          ]
         }
 
   full:
