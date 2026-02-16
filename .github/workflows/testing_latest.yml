@@ -11,6 +11,7 @@ on:  # yamllint disable-line rule:truthy
       - 'codecov.yml'
       - '.github/actions/setup/action.yml'
       - '.github/workflows/testing_latest.yml'
+      - '.github/workflows/_testing.yml'
   pull_request:
     paths:
       - 'torch_geometric/**'
@@ -19,6 +20,7 @@ on:  # yamllint disable-line rule:truthy
       - 'codecov.yml'
       - '.github/actions/setup/action.yml'
       - '.github/workflows/testing_latest.yml'
+      - '.github/workflows/_testing.yml'
   schedule:
     - cron: "0 6 * * *"  # Everyday at 6:00am UTC/10:00pm PST
 
