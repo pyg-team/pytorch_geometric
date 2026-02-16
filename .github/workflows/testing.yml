@@ -23,6 +23,7 @@ on:  # yamllint disable-line rule:truthy
       - '.github/workflows/_testing.yml'
   schedule:
     - cron: "0 6 * * *"  # Everyday at 6:00am UTC/10:00pm PST
+  workflow_dispatch:
 
 
 concurrency:
@@ -46,7 +47,7 @@ jobs:
         ]}
 
   full:
-    if: ${{ github.repository == 'pyg-team/pytorch_geometric' && github.event_name == 'schedule' }}
+    if: ${{ github.repository == 'pyg-team/pytorch_geometric' && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') }}
     uses: ./.github/workflows/_testing.yml
     with:
       test-matrix: |
