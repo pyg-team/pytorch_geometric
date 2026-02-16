@@ -14,7 +14,7 @@ defaults:
 
 jobs:
   test:
-    runs-on: ${{ test-matrix.os }}
+    runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
