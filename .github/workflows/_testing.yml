@@ -28,6 +28,8 @@ jobs:
         uses: ./.github/actions/setup
         with:
           python-version: ${{ matrix.python-version }}
+          torch-version: ${{ matrix.torch-version }}
+          cuda-version: ${{ matrix.cuda-version }}
 
       - name: Install main package (Windows)
         if: ${{ runner.os == 'Windows' }}
