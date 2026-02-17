@@ -40,7 +40,8 @@ INSTRUCTIONS:
 3. Provide clear, concise descriptions for each artifact
 4. Include context about why each artifact is important
 5. Ensure artifacts are specific and actionable for Q&A generation
-6. CRITICAL: Do NOT exceed {{max_artifacts}} items per type. Stop generating after {{max_artifacts}} items.
+6. CRITICAL: Do NOT exceed {{max_artifacts}} items per type.
+Stop generating after {{max_artifacts}} items.
 
 Output your evaluation as a valid JSON object with the following structure:
 ```json
@@ -173,7 +174,7 @@ class LLMClient:
         backend: str = 'nim',
         api_key: Optional[str] = None,
         tensor_parallel_size: int = 1,
-        gpu_memory_utilization: float = 0.9,  # Deprecated, kept for backward compatibility
+        gpu_memory_utilization: float = 0.9,  # Deprecated, kept for compat
         gpu_memory_utilization_generation: Optional[float] = None,
         gpu_memory_utilization_embedding: Optional[float] = None,
         gpu_memory_utilization_evaluation: Optional[float] = None,
@@ -820,30 +821,42 @@ class ArtifactExtractor:
                 artifact_data = json.loads(json_str)
             except Exception as e:
                 logger.warning(
-                    'Error in parse_artifacts_response: %s. Attempting to repair JSON...',
+                    'Error in parse_artifacts_response: %s.'
+                    ' Attempting to repair JSON...',
                     str(e)[:200],
                 )
                 try:
                     # Try to repair malformed JSON using json_repair
                     repaired_json = repair_json(json_str)
                     artifact_data = json.loads(repaired_json)
-                    logger.info('Successfully repaired and parsed JSON with %d artifact types',
-                               len(artifact_data))
+                    logger.info(
+                        'Successfully repaired and parsed JSON'
+                        ' with %d artifact types',
+                        len(artifact_data))
                 except Exception as e1:
                     # If json_repair fails, try truncation recovery
                     try:
                         last_complete = json_str.rfind('},')
                         if last_complete > 0:
-                            truncated = json_str[:last_complete + 1] + '\n  ]\n}'
+                            truncated = (json_str[:last_complete + 1]
+                                         + '\n  ]\n}')
                             artifact_data = json.loads(truncated)
-                            logger.info('Recovered %d items from truncated JSON',
-                                       sum(len(v) if isinstance(v, list) else 1 for v in artifact_data.values()))
+                            n_items = sum(
+                                len(v) if isinstance(v, list) else 1
+                                for v in artifact_data.values())
+                            logger.info(
+                                'Recovered %d items from truncated JSON',
+                                n_items)
                         else:
-                            logger.warning('Could not repair JSON, skipping this response')
+                            logger.warning(
+                                'Could not repair JSON, skipping'
+                                ' this response')
                             return []
                     except Exception as e2:
-                        logger.warning('Could not recover from JSON error: %s, skipping this response',
-                                     str(e2)[:200])
+                        logger.warning(
+                            'Could not recover from JSON error:'
+                            ' %s, skipping this response',
+                            str(e2)[:200])
                         return []
             # Structure artifacts with type information
             for artifact_type, items in artifact_data.items():
@@ -3098,7 +3111,7 @@ def validate_answer_spans_hybrid(
     sim_threshold: float = 0.6,
 ) -> List[Dict[str, Any]]:
     """Hybrid span validation:
-    1) Embedding‐based filter (cosine ≥ sim_threshold) via your FAISS index.
+    1) Embedding-based filter (cosine >= sim_threshold) via your FAISS index.
     2) Literal substring search to anchor exact segment start/end.
     """
     valid = []
@@ -3731,12 +3744,16 @@ async def llm_evaluate_qa_pair(
             return json.loads(cleaned)
         except json.JSONDecodeError as json_err:
             # If JSON is still invalid, try using json_repair
-            logger.warning('Invalid JSON from evaluation model, attempting repair: %s', json_err)
+            logger.warning(
+                'Invalid JSON from evaluation model, attempting'
+                ' repair: %s', json_err)
             from json_repair import repair_json
             return json.loads(repair_json(cleaned))
 
     except Exception as e:
-        logger.error(f'Error in QA evaluation: {e}. Response_text: {response_text if "response_text" in locals() else "N/A"}')
+        resp = response_text if 'response_text' in locals() else 'N/A'
+        logger.error(
+            'Error in QA evaluation: %s. Response_text: %s', e, resp)
 
         # Return a default evaluation on error
         return {

@@ -19,17 +19,17 @@ os.environ.setdefault('RAY_EXPERIMENTAL_NOSET_CUDA_VISIBLE_DEVICES', '1')
 os.environ.setdefault('RAY_OBJECT_STORE_ALLOW_SLOW_STORAGE', '1')
 
 # Set multiprocessing start method before any other imports
-import multiprocessing
+import multiprocessing  # noqa: E402
 try:
     multiprocessing.set_start_method('spawn', force=True)
 except RuntimeError:
     pass
 
-import yaml
-from langgraph.graph import StateGraph
-from langgraph.graph.state import CompiledStateGraph
+import yaml  # noqa: E402
+from langgraph.graph import StateGraph  # noqa: E402
+from langgraph.graph.state import CompiledStateGraph  # noqa: E402
 
-from torch_geometric.llm.models.qa_gen import (
+from torch_geometric.llm.models.qa_gen import (  # noqa: E402
     LLMClient,
     QAGenerationState,
     TaskStatus,
@@ -114,7 +114,7 @@ class QAGenerator:
             if vllm_max_num_batched_tokens is not None else self.config.get(
                 'vllm_max_num_batched_tokens', None))
 
-        # Handle gpu_memory_utilization - can be a single value or per-model dict
+        # Handle gpu_memory_utilization - single value or per-model dict
         gpu_mem_config = self.config.get('vllm_gpu_memory_utilization',
                                          vllm_gpu_memory_utilization)
         if isinstance(gpu_mem_config, dict):
@@ -132,6 +132,9 @@ class QAGenerator:
             vllm_gpu_memory_utilization_evaluation = gpu_mem_config
 
         # Initialize client based on backend
+        gen_util = vllm_gpu_memory_utilization_generation
+        emb_util = vllm_gpu_memory_utilization_embedding
+        eval_util = vllm_gpu_memory_utilization_evaluation
         self.client = LLMClient(
             generation_model=self.gen_model,
             embedding_model=self.embedding_model,
@@ -139,12 +142,9 @@ class QAGenerator:
             backend=self.backend,
             api_key=api_key,
             tensor_parallel_size=vllm_tensor_parallel_size,
-            gpu_memory_utilization_generation=
-            vllm_gpu_memory_utilization_generation,
-            gpu_memory_utilization_embedding=
-            vllm_gpu_memory_utilization_embedding,
-            gpu_memory_utilization_evaluation=
-            vllm_gpu_memory_utilization_evaluation,
+            gpu_memory_utilization_generation=gen_util,
+            gpu_memory_utilization_embedding=emb_util,
+            gpu_memory_utilization_evaluation=eval_util,
             max_model_len=vllm_max_model_len,
             max_num_batched_tokens=vllm_max_num_batched_tokens,
             enable_sleep_mode=True,
