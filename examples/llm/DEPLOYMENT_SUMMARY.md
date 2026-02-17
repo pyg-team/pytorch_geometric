@@ -1,21 +1,25 @@
 # TXT2QA Deployment Summary
 
 ## Overview
+
 Successfully fixed, tested, and documented the TXT2QA synthetic QA generation pipeline for both vLLM (local) and NIM (API) backends.
 
 ## Issues Fixed
 
 ### 1. Critical FAISS L2 Distance Bug
+
 **File:** `torch_geometric/llm/models/qa_gen.py`
 **Function:** `validate_answer_spans_hybrid()`
 **Line:** 3082-3088
 
 **Issue:**
+
 - FAISS returns L2 distances for normalized vectors
 - Code was directly comparing L2 distance to cosine similarity threshold
 - This caused ALL QA pairs to be incorrectly filtered out (0% pass rate)
 
 **Fix:**
+
 ```python
 # Before (BROKEN):
 D, I = index.search(q_emb, 1)
@@ -33,15 +37,18 @@ if cosine_sim < sim_threshold:
 **Impact:** Validation pass rate improved from 0% to 80%+
 
 ### 2. AttributeError in cleanup()
+
 **File:** `torch_geometric/llm/models/qa_gen.py`
 **Function:** `LLMClient.cleanup()`
 **Line:** 540
 
 **Issue:**
+
 - `cleanup()` method checked `self.is_local` attribute
 - Attribute was never defined in `__init__()`
 
 **Fix:**
+
 ```python
 # Before (BROKEN):
 if not self.is_local:
@@ -55,17 +62,20 @@ if self.backend != Backend.VLLM:
 **Impact:** Cleanup now works correctly for both backends
 
 ### 3. JSON Parsing Errors
+
 **File:** `torch_geometric/llm/models/qa_gen.py`
 **Function:** `llm_evaluate_qa_pair()`
 **Line:** 3661-3677
 
 **Issue:**
+
 - LLM models return JSON wrapped in markdown code blocks
 - First parse attempt failed, requiring retry
 - Generated spurious ERROR logs
 
 **Fix:**
-```python
+
+````python
 # Now proactively cleans markdown before parsing
 cleaned = response_text.strip()
 if cleaned.startswith('```'):
@@ -77,16 +87,19 @@ try:
     return json.loads(cleaned)
 except json.JSONDecodeError:
     return json.loads(repair_json(cleaned))
-```
+````
 
 **Impact:** Eliminated error messages, more robust parsing
 
 ### 4. Embedding Dimension Mismatch
+
 **Issue:**
+
 - Old FAISS indexes created with different embedding model
 - Dimension mismatch caused AssertionError
 
 **Fix:**
+
 - Clear old indexes when switching models
 - Document in troubleshooting guide
 
@@ -95,11 +108,13 @@ except json.JSONDecodeError:
 ## Testing Results
 
 ### vLLM Backend Test
+
 **Configuration:** `examples/llm/txt2qa_config/text_config_vllm.yaml`
 **Date:** 2026-02-17
 **Status:** ✅ SUCCESSFUL
 
 **Results:**
+
 - QA pairs generated: 10
 - Quality scores: 8.5/10 average
 - Validation pass rate: 80%
@@ -108,6 +123,7 @@ except json.JSONDecodeError:
 - Output: `techqa_output/all_qa_pairs_batch_0.jsonl`
 
 **Key Metrics:**
+
 ```
 Average question length: 197.75 chars
 Average answer length: 471.25 chars
@@ -121,11 +137,13 @@ Quality distribution:
 ```
 
 ### NIM Backend Test
+
 **Configuration:** `examples/llm/txt2qa_config/text_config_nim.yaml`
 **Date:** 2026-02-17
 **Status:** ✅ SUCCESSFUL
 
 **Results:**
+
 - QA pairs generated: 13
 - Quality scores: 9.3/10 average
 - Validation pass rate: 43% (more stringent)
@@ -134,6 +152,7 @@ Quality distribution:
 - Output: `techqa_output_nim/all_qa_pairs_batch_0.jsonl`
 
 **Key Metrics:**
+
 ```
 Average question length: 210.69 chars
 Average answer length: 486.46 chars
@@ -149,8 +168,10 @@ Quality distribution:
 ## Documentation Updates
 
 ### 1. README.md
+
 **File:** `examples/llm/README.md`
 **Added:**
+
 - Complete TXT2QA section with quickstart guides
 - Side-by-side comparison of vLLM vs NIM
 - Configuration reference
@@ -160,6 +181,7 @@ Quality distribution:
 - Advanced usage examples
 
 **Sections:**
+
 - Features overview
 - Quick start for both backends
 - Pipeline stages explanation
@@ -171,11 +193,14 @@ Quality distribution:
 - Citation information
 
 ### 2. Success Logs
+
 **Files:**
+
 - `examples/llm/logs/vllm_success.log`
 - `examples/llm/logs/nim_success.log`
 
 **Content:**
+
 - Complete run logs showing successful execution
 - Initialization steps
 - Pipeline phase results
@@ -183,13 +208,16 @@ Quality distribution:
 - Performance measurements
 
 ### 3. CHANGELOG.md
+
 **File:** `CHANGELOG.md`
 **Added:**
+
 - Documentation improvements
 - Bug fixes with descriptions
 - Enhanced error handling
 
 **Categories:**
+
 - Added: Documentation and examples
 - Changed: Improved error handling
 - Fixed: 4 critical bugs documented
@@ -197,12 +225,14 @@ Quality distribution:
 ## Verification Commands
 
 ### Run vLLM Backend
+
 ```bash
 python3 examples/llm/txt2qa.py \
   --config examples/llm/txt2qa_config/text_config_vllm.yaml
 ```
 
 ### Run NIM Backend
+
 ```bash
 export NVIDIA_API_KEY="your-key-here"
 python3 examples/llm/txt2qa.py \
@@ -210,6 +240,7 @@ python3 examples/llm/txt2qa.py \
 ```
 
 ### Check Output
+
 ```bash
 # Count generated QA pairs
 wc -l techqa_output/all_qa_pairs_batch_0.jsonl
@@ -224,15 +255,15 @@ jq -r '.qa_pairs[].quality_score' techqa_output/all_qa_pairs_batch_0.jsonl
 ## Files Modified
 
 1. `torch_geometric/llm/models/qa_gen.py` - Core bug fixes
-2. `examples/llm/README.md` - Comprehensive documentation
-3. `CHANGELOG.md` - Change tracking
-4. `examples/llm/txt2qa_config/text_config_nim.yaml` - Path updates
+1. `examples/llm/README.md` - Comprehensive documentation
+1. `CHANGELOG.md` - Change tracking
+1. `examples/llm/txt2qa_config/text_config_nim.yaml` - Path updates
 
 ## Files Created
 
 1. `examples/llm/logs/vllm_success.log` - vLLM success log
-2. `examples/llm/logs/nim_success.log` - NIM success log
-3. `examples/llm/DEPLOYMENT_SUMMARY.md` - This file
+1. `examples/llm/logs/nim_success.log` - NIM success log
+1. `examples/llm/DEPLOYMENT_SUMMARY.md` - This file
 
 ## Success Criteria Met
 
@@ -247,24 +278,29 @@ jq -r '.qa_pairs[].quality_score' techqa_output/all_qa_pairs_batch_0.jsonl
 ## Next Steps for Users
 
 1. **Choose Backend:**
+
    - vLLM: For high throughput with local GPUs
    - NIM: For highest quality without GPU requirements
 
-2. **Install Dependencies:**
+1. **Install Dependencies:**
+
    - vLLM: `pip install vllm faiss-gpu`
    - NIM: Get API key from https://build.nvidia.com/
 
-3. **Configure:**
+1. **Configure:**
+
    - Edit config YAML for your data paths
    - Adjust quality thresholds and complexity
    - Select models based on requirements
 
-4. **Run:**
+1. **Run:**
+
    - Follow quickstart in README.md
    - Monitor logs for progress
    - Verify output quality
 
-5. **Deploy:**
+1. **Deploy:**
+
    - Integrate generated QA pairs into RAG systems
    - Use for fine-tuning language models
    - Build question-answering applications

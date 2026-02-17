@@ -9,9 +9,9 @@
 | [`git_mol.py`](./git_mol.py)           | Example for GIT-Mol: A Multi-modal Large Language Model for Molecular Science with Graph, Image, and Text                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | [`protein_mpnn.py`](./protein_mpnn.py) | Example for [Robust deep learning--based protein sequence design using ProteinMPNN](https://www.biorxiv.org/content/10.1101/2022.06.03.494563v1)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | [`txt2kg_rag.py`](./txt2kg_rag.py)     | Full end 2 end RAG pipeline using TXT2KG and Vector and Graph RAG with a GNN to achieve state of the art results. Uses the [techQA dataset](https://paperswithcode.com/dataset/techqa) but can be extended to handle any RAG dataset with a corpus of documents and an associated set of Q+A pairs to be split for train/eval/test. See [Stanford GNN+LLM Talk](https://www.nvidia.com/en-us/on-demand/session/other25-nv-0003/) for more details. Note that the TechQA data requires only a single document to answer each question so it can be viewed as a toy example. To see significant accuracy boosts from GNN+LLM TXT2KG based RAG, use data that requires multiple text chunks to answer a question. In cases where single document can answer, basic RAG should be sufficient. |
-| [`txt2qa.py`](./txt2qa.py)             | Synthetic QA data generation pipeline for creating high-quality, multi-hop reasoning question-answer pairs from text documents. Supports both local vLLM models and NVIDIA NIM API. Features include artifact extraction, validation, hard negative mining, and LLM-based evaluation. Perfect for generating training data for RAG systems. See [detailed guide](#txt2qa-synthetic-qa-generation) below.                                                                                                                                                                                                                                                                                                                                                                                      |
+| [`txt2qa.py`](./txt2qa.py)             | Synthetic QA data generation pipeline for creating high-quality, multi-hop reasoning question-answer pairs from text documents. Supports both local vLLM models and NVIDIA NIM API. Features include artifact extraction, validation, hard negative mining, and LLM-based evaluation. Perfect for generating training data for RAG systems. See [detailed guide](#txt2qa-synthetic-qa-generation) below.                                                                                                                                                                                                                                                                                                                                                                                  |
 
----
+______________________________________________________________________
 
 ## TXT2QA: Synthetic QA Generation
 
@@ -32,10 +32,12 @@ The `txt2qa.py` script generates high-quality, multi-hop reasoning question-answ
 #### Option 1: Local Models (vLLM)
 
 **Requirements:**
+
 - NVIDIA GPU with sufficient VRAM (recommend 24GB+ for 7B models)
 - CUDA-compatible drivers
 
 **Setup:**
+
 ```bash
 # Install dependencies
 pip install vllm torch faiss-gpu
@@ -45,6 +47,7 @@ python examples/llm/txt2qa.py --config examples/llm/txt2qa_config/text_config_vl
 ```
 
 **Configuration** (`text_config_vllm.yaml`):
+
 ```yaml
 backend: "vllm"
 gen_model: "Qwen/Qwen2.5-7B-Instruct"
@@ -55,6 +58,7 @@ vllm_gpu_memory_utilization:
 ```
 
 **Expected Output:**
+
 - Quality scores: 8-9/10
 - Throughput: ~1-2 QA pairs/minute
 - GPU memory usage: ~17GB peak
@@ -64,10 +68,12 @@ See full log: [`logs/vllm_success.log`](logs/vllm_success.log)
 #### Option 2: NVIDIA NIM API
 
 **Requirements:**
+
 - NVIDIA API key (get one at https://build.nvidia.com/)
 - No GPU required!
 
 **Setup:**
+
 ```bash
 # Set API key
 export NVIDIA_API_KEY="your-api-key-here"
@@ -77,6 +83,7 @@ python examples/llm/txt2qa.py --config examples/llm/txt2qa_config/text_config_ni
 ```
 
 **Configuration** (`text_config_nim.yaml`):
+
 ```yaml
 backend: "nim"
 gen_model: "nvdev/nvidia/llama-3.1-nemotron-ultra-253b-v1"
@@ -84,6 +91,7 @@ embedding_model: "nvdev/nvidia/llama-3.2-nv-embedqa-1b-v2"
 ```
 
 **Expected Output:**
+
 - Quality scores: 9-10/10 (higher quality than local models)
 - Throughput: ~0.5-1 QA pairs/minute (API latency)
 - Cost: Pay-per-use API pricing
@@ -95,13 +103,13 @@ See full log: [`logs/nim_success.log`](logs/nim_success.log)
 The generation pipeline consists of 8 stages:
 
 1. **Loading**: Read and segment input documents
-2. **Artifact Extraction**: Extract key concepts, definitions, relationships
-3. **QA Generation**: Generate initial question-answer pairs
-4. **Validation**: Verify answers exist in source text using hybrid approach
-5. **Hard Negative Mining**: Find plausible but incorrect answer segments
-6. **Negative Generation**: Create convincing wrong answers
-7. **Evaluation**: Score quality using LLM-as-a-judge
-8. **Filtering**: Keep only high-quality pairs above threshold
+1. **Artifact Extraction**: Extract key concepts, definitions, relationships
+1. **QA Generation**: Generate initial question-answer pairs
+1. **Validation**: Verify answers exist in source text using hybrid approach
+1. **Hard Negative Mining**: Find plausible but incorrect answer segments
+1. **Negative Generation**: Create convincing wrong answers
+1. **Evaluation**: Score quality using LLM-as-a-judge
+1. **Filtering**: Keep only high-quality pairs above threshold
 
 ### Configuration Options
 
@@ -164,39 +172,45 @@ Generated QA pairs are saved in JSONL format with rich metadata:
 
 ### Performance Comparison
 
-| Metric | vLLM (Local) | NIM (API) |
-|--------|-------------|-----------|
-| Quality Score | 8.5/10 | 9.3/10 |
-| Throughput | 1-2 pairs/min | 0.5-1 pairs/min |
-| GPU Required | Yes (24GB+) | No |
-| Setup Complexity | Medium | Easy |
-| Cost | Hardware only | Pay-per-use |
-| Model Size | 7B params | 253B params |
-| Best For | High throughput | Highest quality |
+| Metric           | vLLM (Local)    | NIM (API)       |
+| ---------------- | --------------- | --------------- |
+| Quality Score    | 8.5/10          | 9.3/10          |
+| Throughput       | 1-2 pairs/min   | 0.5-1 pairs/min |
+| GPU Required     | Yes (24GB+)     | No              |
+| Setup Complexity | Medium          | Easy            |
+| Cost             | Hardware only   | Pay-per-use     |
+| Model Size       | 7B params       | 253B params     |
+| Best For         | High throughput | Highest quality |
 
 ### Troubleshooting
 
 **Issue: "AttributeError: 'LLMClient' object has no attribute 'is_local'"**
+
 - **Fixed in current version** - Update to latest code
 
 **Issue: "AssertionError in FAISS search"**
+
 - **Cause**: Embedding dimension mismatch from old indexes
 - **Solution**: Delete old indexes: `rm -rf output_dir/embedding_data/`
 
 **Issue: "Expecting value: line 1 column 1 (char 0)"**
+
 - **Fixed in current version** - Better JSON parsing with markdown cleanup
 
 **Issue: All QA pairs filtered out (0 validated)**
+
 - **Cause**: FAISS L2 distance vs cosine similarity bug
 - **Fixed in current version** - Proper distance conversion
 
 **Issue: Out of GPU memory**
+
 - **Solution**: Reduce `vllm_gpu_memory_utilization` in config
 - **Alternative**: Use NIM API (no GPU required)
 
 ### Advanced Usage
 
 **Custom Data Sources:**
+
 ```yaml
 input_dir: "/path/to/your/documents"
 output_dir: "/path/to/output"
@@ -209,6 +223,7 @@ huggingface_files:
 ```
 
 **Model Selection (vLLM):**
+
 ```yaml
 models:
   qwen_1.5b: "Qwen/Qwen2.5-1.5B-Instruct"    # Faster, lower quality
@@ -217,6 +232,7 @@ models:
 ```
 
 **Model Selection (NIM):**
+
 ```yaml
 models:
   mixtral: "nvdev/mistralai/mixtral-8x22b-instruct-v0.1"
@@ -228,9 +244,11 @@ models:
 ### Example Outputs
 
 **Sample High-Quality Question (Multi-hop, 4 reasoning steps):**
+
 > "How does the CVSS Base Score of 4.2 for CVE-2018-2800 relate to the CVSS Base Score of 7.4 for CVE-2018-2783, and what does this imply for the overall risk assessment of these vulnerabilities in the context of the IBM Security SiteProtector System?"
 
 **Quality Assessment:**
+
 - Relevance: 10/10
 - Accuracy: 9/10
 - Context Support: 10/10
