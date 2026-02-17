@@ -20,6 +20,7 @@ os.environ.setdefault('RAY_OBJECT_STORE_ALLOW_SLOW_STORAGE', '1')
 
 # Set multiprocessing start method before any other imports
 import multiprocessing
+
 try:
     multiprocessing.set_start_method('spawn', force=True)
 except RuntimeError:
@@ -1145,10 +1146,10 @@ if __name__ == '__main__':
 
     # Run the system with proper resource cleanup
     with QAGenerator(
-        config_path,
-        overwrite=args.overwrite,
-        batch=args.batch,
-        batch_size=args.batch_size,
+            config_path,
+            overwrite=args.overwrite,
+            batch=args.batch,
+            batch_size=args.batch_size,
     ) as generator:
         # Process files
         asyncio.run(generator.process_directory())
