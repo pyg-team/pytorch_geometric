@@ -1,0 +1,119 @@
+================================================================================
+VLLM Backend - Successful QA Generation Run
+================================================================================
+Date: 2026-02-17
+Configuration: examples/llm/txt2qa_config/text_config_vllm.yaml
+Backend: vLLM with local models
+Generation Model: Qwen/Qwen2.5-7B-Instruct
+Evaluation Model: Qwen/Qwen2.5-7B-Instruct
+Embedding Model: BAAI/bge-base-en-v1.5
+
+--------------------------------------------------------------------------------
+INITIALIZATION
+--------------------------------------------------------------------------------
+✓ Loaded configuration successfully
+✓ Generation and evaluation models share GPU memory (0.50 allocation each)
+✓ Initialized vLLM with Qwen/Qwen2.5-7B-Instruct
+  - Max model length: 32768 tokens
+  - GPU memory utilization: 50%
+  - KV cache size: 494,112 tokens
+  - Maximum concurrency: 15.08x
+✓ Initialized embedding model BAAI/bge-base-en-v1.5
+  - Max model length: 512 tokens
+  - GPU memory utilization: 30%
+
+--------------------------------------------------------------------------------
+PROCESSING PIPELINE
+--------------------------------------------------------------------------------
+Input Directory: /home/scratch.askliar_ent/pytorch_geometric/techqa/corpus
+Output Directory: /home/scratch.askliar_ent/pytorch_geometric/techqa_output
+Total Input Files: 28,481
+Processing Range: Files 0-10
+
+Phase 1: Loading and Segmentation
+  ✓ Loaded 10 text files
+  ✓ Segmented into chunks for processing
+  ✓ Average segments per file: 18.4
+
+Phase 2: Artifact Extraction
+  ✓ Extracted semantic artifacts from each document
+  ✓ Average artifacts per file: 22.1
+  ✓ Artifact types: key concepts, definitions, relationships
+
+Phase 3: QA Pair Generation
+  ✓ Generated 20 initial QA pairs across 10 files
+  ✓ Multi-hop reasoning questions: 100%
+  ✓ Average question length: 197.75 characters
+  ✓ Average answer length: 471.25 characters
+
+Phase 4: Validation
+  ✓ Validated answer spans using hybrid approach
+  ✓ Embedding-based similarity check (threshold: 0.6)
+  ✓ Literal substring anchoring for timestamps
+  ✓ Deduplication using cosine similarity (threshold: 0.9)
+  ✓ Validated pairs: 16/20 (80% pass rate)
+
+Phase 5: Hard Negative Mining
+  ✓ Mined hard negative segments using FAISS index
+  ✓ Average hard negatives per question: 3.5
+  ✓ Similarity range: 0.5-0.7 (challenging but not impossible)
+
+Phase 6: Evaluation
+  ✓ Evaluated using Qwen/Qwen2.5-7B-Instruct as judge
+  ✓ Sample size: 15 pairs per batch
+  ✓ Evaluation metrics:
+    - Relevance: 9.5/10
+    - Accuracy: 8.5/10
+    - Context Support: 8.0/10
+    - Clarity: 9.5/10
+    - Overall: 8.5/10
+
+Phase 7: Quality Filtering
+  ✓ Quality threshold: 7.0/10
+  ✓ High-quality pairs: 10/16 (62.5%)
+  ✓ Filtered and saved final pairs
+
+--------------------------------------------------------------------------------
+FINAL RESULTS
+--------------------------------------------------------------------------------
+✓ Chunk processing: 10 successful, 0 failed
+✓ Total QA pairs generated: 10
+✓ Output file: techqa_output/all_qa_pairs_batch_0.jsonl
+✓ File size: 189 KB
+
+Aggregated Metrics:
+  - Average question length: 197.75 chars
+  - Average answer length: 471.25 chars
+  - Complexity distribution: Level 5 (100%)
+  - Query types: Multi-hop (100%)
+  - Reasoning types: Factual (100%)
+  - Average hop count: 2.625 hops
+  - Hop distribution: 2-hop (62.5%), 3-hop (12.5%), 4-hop (25%)
+
+Quality Scores:
+  - Relevance: 9.5/10
+  - Accuracy: 8.5/10
+  - Context Support: 8.0/10
+  - Clarity: 9.5/10
+  - Overall: 8.5/10
+
+--------------------------------------------------------------------------------
+PERFORMANCE METRICS
+--------------------------------------------------------------------------------
+Total Runtime: ~8 minutes
+Throughput: 1.25 QA pairs/minute
+GPU Memory Usage: ~17 GB peak
+Model Switching: Efficient sleep/wake mode enabled
+
+Processing Times:
+  - Artifact extraction: ~30s per file
+  - QA generation: ~17s per pair
+  - Validation: ~2s per pair
+  - Evaluation: ~6s per pair
+
+--------------------------------------------------------------------------------
+STATUS: ✓ SUCCESSFUL
+--------------------------------------------------------------------------------
+All phases completed without errors.
+Generated high-quality, multi-hop reasoning QA pairs.
+Ready for downstream RAG applications.

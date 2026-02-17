@@ -7,9 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Added comprehensive user documentation for `txt2qa.py` synthetic QA generation pipeline in `examples/llm/README.md`
+- Added success log examples for both vLLM and NIM backends in `examples/llm/logs/`
+
 ### Changed
 
 - Dropped support for TorchScript in `GATConv` and `GATv2Conv` for correctness ([#10596](https://github.com/pyg-team/pytorch_geometric/pull/10596))
+- Improved JSON parsing in LLM evaluation to handle markdown code blocks proactively
+- Enhanced error handling in `torch_geometric/llm/models/qa_gen.py` with better fallback mechanisms
 
 ### Deprecated
 
@@ -17,6 +22,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fixed `AttributeError: 'LLMClient' object has no attribute 'is_local'` in `cleanup()` method by using existing `backend` attribute
+- Fixed critical FAISS L2 distance to cosine similarity conversion bug in `validate_answer_spans_hybrid()` that caused all QA pairs to be incorrectly rejected during validation
+- Fixed JSON parsing errors in LLM evaluation by cleaning markdown code blocks before parsing
+- Fixed embedding dimension mismatch issues in FAISS indexes between different embedding models
 - Fixed `return_attention_weights: bool` being not respected in `GATConv` and `GATv2Conv` ([#10596](https://github.com/pyg-team/pytorch_geometric/pull/10596))
 - Fixed download links for politifact and gossipcop datasets of `UPFD` ([#10558](https://github.com/pyg-team/pytorch_geometric/pull/10558))
 

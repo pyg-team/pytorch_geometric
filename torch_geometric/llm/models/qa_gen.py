@@ -17,6 +17,7 @@ import numpy as np
 import pandas as pd
 import torch
 from jinja2 import Template
+from json_repair import repair_json
 from openai import OpenAI
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -34,11 +35,12 @@ ARTIFACT TYPES TO EXTRACT:
 {{artifact_descriptions}}
 
 INSTRUCTIONS:
-1. Extract up to {{max_artifacts}} artifacts for each relevant type
-2. Focus on the most significant and informative elements
+1. Extract EXACTLY {{max_artifacts}} artifacts for each relevant type - NO MORE
+2. Focus ONLY on the most significant and informative elements
 3. Provide clear, concise descriptions for each artifact
 4. Include context about why each artifact is important
 5. Ensure artifacts are specific and actionable for Q&A generation
+6. CRITICAL: Do NOT exceed {{max_artifacts}} items per type. Stop generating after {{max_artifacts}} items.
 
 Output your evaluation as a valid JSON object with the following structure:
 ```json
@@ -171,7 +173,10 @@ class LLMClient:
         backend: str = 'nim',
         api_key: Optional[str] = None,
         tensor_parallel_size: int = 1,
-        gpu_memory_utilization: float = 0.9,
+        gpu_memory_utilization: float = 0.9,  # Deprecated, kept for backward compatibility
+        gpu_memory_utilization_generation: Optional[float] = None,
+        gpu_memory_utilization_embedding: Optional[float] = None,
+        gpu_memory_utilization_evaluation: Optional[float] = None,
         max_model_len: Optional[int] = None,
         max_num_batched_tokens: Optional[int] = None,
         enable_sleep_mode: bool = True,
@@ -188,7 +193,11 @@ class LLMClient:
             backend: Backend to use (NIM or VLLM)
             api_key: API key (for NIM backend)
             tensor_parallel_size: Number of GPUs for tensor parallelism (VLLM)
-            gpu_memory_utilization: GPU memory utilization 0-1 (VLLM)
+            gpu_memory_utilization: GPU memory utilization 0-1 (VLLM) \
+                [deprecated, use per-model params]
+            gpu_memory_utilization_generation: GPU memory for generation model
+            gpu_memory_utilization_embedding: GPU memory for embedding model
+            gpu_memory_utilization_evaluation: GPU memory for evaluation model
             max_model_len: Maximum context length (VLLM)
             max_num_batched_tokens: Maximum batched tokens (VLLM)
             enable_sleep_mode: Whether to enable sleep mode for VLLM models
@@ -203,7 +212,57 @@ class LLMClient:
         self.embedding_model_name = embedding_model or generation_model
         self.api_key = api_key
         self.tensor_parallel_size = tensor_parallel_size
-        self.gpu_memory_utilization = gpu_memory_utilization
+
+        # Handle per-model GPU memory utilization
+        # Use per-model values if provided, otherwise fall back to single value
+        gpu_mem_gen = (gpu_memory_utilization_generation
+                       if gpu_memory_utilization_generation is not None else
+                       gpu_memory_utilization)
+        gpu_mem_emb = (gpu_memory_utilization_embedding
+                       if gpu_memory_utilization_embedding is not None else
+                       gpu_memory_utilization)
+        gpu_mem_eval = (gpu_memory_utilization_evaluation
+                        if gpu_memory_utilization_evaluation is not None else
+                        gpu_memory_utilization)
+
+        # Optimize GPU memory allocation when models are shared
+        # If generation and evaluation use the same model, use the max of both
+        # settings to ensure sufficient memory
+        if self.generation_model_name == self.evaluation_model_name:
+            shared_gen_eval_mem = max(gpu_mem_gen, gpu_mem_eval)
+            self.gpu_memory_utilization_generation = shared_gen_eval_mem
+            self.gpu_memory_utilization_evaluation = shared_gen_eval_mem
+            logger.info(
+                'Generation and evaluation models are identical (%s), '
+                'using shared GPU memory allocation: %.2f',
+                self.generation_model_name, shared_gen_eval_mem)
+        else:
+            self.gpu_memory_utilization_generation = gpu_mem_gen
+            self.gpu_memory_utilization_evaluation = gpu_mem_eval
+
+        # Handle embedding model GPU memory
+        if self.embedding_model_name == self.generation_model_name:
+            # Embedding uses generation model - use max of both settings
+            self.gpu_memory_utilization_embedding = max(
+                gpu_mem_emb, self.gpu_memory_utilization_generation)
+            logger.info(
+                'Embedding model is same as generation model (%s), '
+                'using shared GPU memory allocation: %.2f',
+                self.embedding_model_name,
+                self.gpu_memory_utilization_embedding)
+        elif self.embedding_model_name == self.evaluation_model_name:
+            # Embedding uses evaluation model - use max of both settings
+            self.gpu_memory_utilization_embedding = max(
+                gpu_mem_emb, self.gpu_memory_utilization_evaluation)
+            logger.info(
+                'Embedding model is same as evaluation model (%s), '
+                'using shared GPU memory allocation: %.2f',
+                self.embedding_model_name,
+                self.gpu_memory_utilization_embedding)
+        else:
+            # Embedding model is separate
+            self.gpu_memory_utilization_embedding = gpu_mem_emb
+
         self.max_model_len = max_model_len
         self.max_num_batched_tokens = max_num_batched_tokens
         self.enable_sleep_mode = (enable_sleep_mode if backend == 'vllm'
@@ -226,7 +285,7 @@ class LLMClient:
         self.generation_client = self._create_vllm_client(
             self.generation_model_name,
             tensor_parallel_size=self.tensor_parallel_size,
-            gpu_memory_utilization=self.gpu_memory_utilization,
+            gpu_memory_utilization=self.gpu_memory_utilization_generation,
             max_model_len=self.max_model_len,
             max_num_batched_tokens=self.max_num_batched_tokens,
             enable_sleep_mode=self.enable_sleep_mode,
@@ -239,7 +298,7 @@ class LLMClient:
             self.evaluation_client = self._create_vllm_client(
                 self.evaluation_model_name,
                 tensor_parallel_size=self.tensor_parallel_size,
-                gpu_memory_utilization=self.gpu_memory_utilization,
+                gpu_memory_utilization=self.gpu_memory_utilization_evaluation,
                 max_model_len=self.max_model_len,
                 max_num_batched_tokens=self.max_num_batched_tokens,
                 enable_sleep_mode=self.enable_sleep_mode,
@@ -256,7 +315,7 @@ class LLMClient:
             self.embedding_client = self._create_vllm_client(
                 self.embedding_model_name,
                 tensor_parallel_size=self.tensor_parallel_size,
-                gpu_memory_utilization=self.gpu_memory_utilization,
+                gpu_memory_utilization=self.gpu_memory_utilization_embedding,
                 max_model_len=None,
                 max_num_batched_tokens=None,
                 enable_sleep_mode=self.enable_sleep_mode,
@@ -277,7 +336,7 @@ class LLMClient:
             self.generation_client = self._create_vllm_client(
                 self.generation_model_name,
                 tensor_parallel_size=self.tensor_parallel_size,
-                gpu_memory_utilization=self.gpu_memory_utilization,
+                gpu_memory_utilization=self.gpu_memory_utilization_generation,
                 max_model_len=self.max_model_len,
                 max_num_batched_tokens=self.max_num_batched_tokens,
                 enable_sleep_mode=self.enable_sleep_mode,
@@ -317,6 +376,14 @@ class LLMClient:
             raise ImportError('vLLM is not installed. \
                     Please install it with: pip install vllm') from err
 
+        # Set environment variables for vLLM multiprocessing compatibility
+        os.environ.setdefault('VLLM_WORKER_MULTIPROC_METHOD', 'spawn')
+        # Prevent Ray from interfering with CUDA device visibility
+        os.environ.setdefault('RAY_EXPERIMENTAL_NOSET_CUDA_VISIBLE_DEVICES',
+                              '1')
+        # Prevent Ray from using too much shared memory
+        os.environ.setdefault('RAY_OBJECT_STORE_ALLOW_SLOW_STORAGE', '1')
+
         logger.info('Initializing local vLLM with model: %s (task=%s)', model,
                     task)
         llm_kwargs = {
@@ -324,13 +391,18 @@ class LLMClient:
             'tensor_parallel_size': tensor_parallel_size,
             'gpu_memory_utilization': gpu_memory_utilization,
             'enable_sleep_mode': enable_sleep_mode,
+            # Disable custom all-reduce for better CUDA compatibility
+            'disable_custom_all_reduce': True,
         }
         if max_model_len is not None:
             llm_kwargs['max_model_len'] = max_model_len
         if max_num_batched_tokens is not None:
             llm_kwargs['max_num_batched_tokens'] = max_num_batched_tokens
-        if task == 'embed':
-            llm_kwargs['task'] = 'embed'
+
+        # Note: task parameter removed for compatibility with vLLM 0.15.1
+        # vLLM will auto-detect embedding models from model architecture
+        # if task == 'embed':
+        #     llm_kwargs['task'] = 'embed'
 
         vllm_model = LLM(**llm_kwargs, enforce_eager=True,
                          trust_remote_code=True)
@@ -520,6 +592,49 @@ class LLMClient:
                 embeddings.append(response.data[0].embedding)
             return embeddings
 
+    def cleanup(self):
+        """Explicitly cleanup vLLM engines and their resources."""
+        if self.backend != Backend.VLLM:
+            return
+
+        logger.info("Cleaning up vLLM engines...")
+
+        # Delete engines to trigger their __del__ methods which cleanup
+        # process groups
+        for attr_name in [
+                'generation_client', 'evaluation_client', 'embedding_client'
+        ]:
+            client = getattr(self, attr_name, None)
+            if client is not None:
+                try:
+                    # Force garbage collection of vLLM engine
+                    delattr(self, attr_name)
+                    del client
+                except Exception as e:
+                    logger.warning(f"Error cleaning up {attr_name}: {e}")
+
+        # Give time for cleanup to complete
+        import time
+        time.sleep(1)
+
+        logger.info("vLLM engine cleanup complete")
+
+    def __enter__(self):
+        """Context manager entry."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context manager exit with cleanup."""
+        self.cleanup()
+        return False
+
+    def __del__(self):
+        """Destructor to ensure cleanup on garbage collection."""
+        try:
+            self.cleanup()
+        except Exception:
+            pass  # Suppress errors in destructor
+
 
 class QAGenerationState(TypedDict):
     """State for the QA generation workflow."""
@@ -603,7 +718,7 @@ class ArtifactExtractor:
 
     def extract_artifacts(
             self, text: str,
-            max_artifacts_per_type: int = 8) -> List[Dict[str, Any]]:
+            max_artifacts_per_type: int = 3) -> List[Dict[str, Any]]:
         """Extract semantic artifacts from transcript text using LLM.
 
         Args:
@@ -704,23 +819,32 @@ class ArtifactExtractor:
             try:
                 artifact_data = json.loads(json_str)
             except Exception as e:
-                logger.error(
-                    'Error in parse_artifacts_response: %s. json_str: %s',
-                    e,
-                    json_str,
+                logger.warning(
+                    'Error in parse_artifacts_response: %s. Attempting to repair JSON...',
+                    str(e)[:200],
                 )
-                logger.info('Try again')
                 try:
-                    # Remove only from the very beginning and very end
-                    cleaned = re.sub(r'^```json\s*', '',
-                                     json_str)  # Remove from start
-                    cleaned = re.sub(r'\s*```$', '',
-                                     cleaned)  # Remove from end
-                    return json.loads(cleaned)
+                    # Try to repair malformed JSON using json_repair
+                    repaired_json = repair_json(json_str)
+                    artifact_data = json.loads(repaired_json)
+                    logger.info('Successfully repaired and parsed JSON with %d artifact types',
+                               len(artifact_data))
                 except Exception as e1:
-                    logger.error('Error again in parse_artifacts_response: %s',
-                                 e1)
-                    raise
+                    # If json_repair fails, try truncation recovery
+                    try:
+                        last_complete = json_str.rfind('},')
+                        if last_complete > 0:
+                            truncated = json_str[:last_complete + 1] + '\n  ]\n}'
+                            artifact_data = json.loads(truncated)
+                            logger.info('Recovered %d items from truncated JSON',
+                                       sum(len(v) if isinstance(v, list) else 1 for v in artifact_data.values()))
+                        else:
+                            logger.warning('Could not repair JSON, skipping this response')
+                            return []
+                    except Exception as e2:
+                        logger.warning('Could not recover from JSON error: %s, skipping this response',
+                                     str(e2)[:200])
+                        return []
             # Structure artifacts with type information
             for artifact_type, items in artifact_data.items():
                 if isinstance(items, list):
@@ -1248,28 +1372,105 @@ def _normalize_segment_metadata(
 
 
 def extract_json_from_response(response_text: str) -> List[dict]:
-    match = re.search(r'\[.*?\]', response_text, re.DOTALL)
-    if not match:
-        raise ValueError('No JSON array found in response text.')
+    """Extract JSON array from LLM response, handling nested structures.
+
+    Uses bracket counting to properly handle nested arrays and objects,
+    rather than regex which fails with nested structures.
+    """
+    # Step 1: Clean markdown code blocks
+    cleaned = response_text.strip()
+    cleaned = re.sub(r'^```(?:json)?\s*', '', cleaned)
+    cleaned = re.sub(r'\s*```$', '', cleaned)
+
+    # Step 2: Try direct parsing first (fastest path)
     try:
-        return json.loads(match.group(0))
-    except Exception as e:
-        logger.error(
-            'Error in extract_json_from_response : %s. Response_text: %s',
-            e,
-            response_text,
-        )
-        logger.info('Try again')
+        data = json.loads(cleaned)
+        if isinstance(data, list):
+            return data
+        if isinstance(data, dict):
+            # Wrap dict in list for compatibility
+            return [data]
+    except json.JSONDecodeError:
+        pass
+
+    # Step 3: Find JSON array/object with bracket counting
+    def find_json_bounds(text: str):
+        """Find start and end of first complete JSON structure."""
+        start_idx = None
+        bracket_char = None
+
+        # Find first [ or {
+        for i, char in enumerate(text):
+            if char in '[{':
+                start_idx = i
+                bracket_char = char
+                break
+
+        if start_idx is None:
+            return None
+
+        # Count brackets to find matching end
+        close_char = ']' if bracket_char == '[' else '}'
+        depth = 0
+        in_string = False
+        escape_next = False
+
+        for i in range(start_idx, len(text)):
+            char = text[i]
+
+            # Handle string escaping
+            if escape_next:
+                escape_next = False
+                continue
+            if char == '\\':
+                escape_next = True
+                continue
+
+            # Track string boundaries
+            if char == '"':
+                in_string = not in_string
+                continue
+
+            # Only count brackets outside strings
+            if not in_string:
+                if char == bracket_char:
+                    depth += 1
+                elif char == close_char:
+                    depth -= 1
+                    if depth == 0:
+                        return (start_idx, i + 1)
+
+        return None
+
+    bounds = find_json_bounds(cleaned)
+    if bounds:
+        start, end = bounds
+        json_str = cleaned[start:end]
         try:
-            # Remove only from the very beginning and very end
-            cleaned = re.sub(r'^```json\s*', '',
-                             response_text)  # Remove from start
-            cleaned = re.sub(r'^```\s*', '', cleaned)  # Remove from start
-            cleaned = re.sub(r'\s*```$', '', cleaned)  # Remove from end
-            return json.loads(cleaned)
-        except Exception as e1:
-            logger.error('Error again in extract_json_from_response: %s', e1)
-            raise
+            data = json.loads(json_str)
+            if isinstance(data, list):
+                return data
+            if isinstance(data, dict):
+                return [data]
+        except json.JSONDecodeError as e:
+            logger.error(
+                'Error parsing extracted JSON: %s. Extracted text: %s',
+                e, json_str[:500]
+            )
+
+    # Step 4: Last resort - old regex fallback
+    logger.warning(
+        'Falling back to regex extraction (may fail with nested structures)')
+    match = re.search(r'\[.*?\]', response_text, re.DOTALL)
+    if match:
+        try:
+            return json.loads(match.group(0))
+        except json.JSONDecodeError:
+            pass
+
+    logger.error('Failed to extract JSON from response: %s',
+                 response_text[:500])
+    raise ValueError('No valid JSON array found in response text.')
 
 
 def extract_timeline_from_response(response_text: str) -> Dict[str, Any]:
@@ -2866,8 +3067,12 @@ def get_embeddings(
     embs = []
     for i in range(0, len(texts), batch_size):
         batch = texts[i:i + batch_size]
+        # Truncate texts to fit embedding model's max length (512 tokens)
+        # Approximate: 1 token ~= 4 characters, so 400 tokens ~= 1600 chars
+        batch_truncated = [text[:1600] if len(text) > 1600 else text
+                          for text in batch]
         resp = client.embed(
-            prompts=batch,
+            prompts=batch_truncated,
             input_type=input_type,
         )
         embs.extend(resp)
@@ -2922,14 +3127,21 @@ def validate_answer_spans_hybrid(
             continue
 
         # --- Stage 1: embedding check ---
+        # Truncate answer to fit embedding model's max length (512 tokens)
+        # Approximate: 1 token ~= 4 characters, so 400 tokens ~= 1600 chars
+        ans_truncated = ans[:1600] if len(ans) > 1600 else ans
         resp = client.embed(
-            prompts=[ans],
+            prompts=[ans_truncated],
             input_type='query',
         )
         q_emb = np.array(resp, dtype=np.float32)
         faiss.normalize_L2(q_emb)
         D, I = index.search(q_emb, 1)  # noqa: E741
-        if float(D[0][0]) < sim_threshold:
+        # Convert L2 distance to cosine similarity for normalized vectors
+        # cosine_similarity = 1 - (L2_distance^2 / 2)
+        l2_dist = float(D[0][0])
+        cosine_sim = 1.0 - (l2_dist * l2_dist / 2.0)
+        if cosine_sim < sim_threshold:
             continue  # drop if too dissimilar
 
         # at this point we have an index hit
@@ -2993,10 +3205,13 @@ def deduplicate_qa(
         return []
 
     # 2) Embed all questions in one batch
+    # Truncate questions to fit embedding model's max length (512 tokens)
+    # Questions should be short, but truncate just in case
+    questions_truncated = [q[:1600] if len(q) > 1600 else q for q in questions]
     # api_key = os.getenv("NVIDIA_API_KEY")
     # client = OpenAI(base_url="https://integrate.api.nvidia.com/v1", \
     # api_key=api_key)
-    resp = client.embed(prompts=questions, input_type='query')
+    resp = client.embed(prompts=questions_truncated, input_type='query')
     # 3) Build embedding matrix and L2‑normalize
     embs = np.array(resp, dtype=np.float32)
     norms = np.linalg.norm(embs, axis=1, keepdims=True)
@@ -3388,8 +3603,8 @@ async def generate_negative_answers_node(
             'num_negatives is 0. Negative answers will not be generated')
         return {'qa_pairs': qa_pairs}
 
-    logger.info('Generating negative answers using model: \
-            {client.generation_model_name}')
+    logger.info(f'Generating negative answers using model: '
+                f'{client.generation_model_name}')
 
     # Get full transcript text
     segment_text = transcription_segment_text(segments)
@@ -3503,19 +3718,25 @@ async def llm_evaluate_qa_pair(
     logger.debug('llm_evaluate_qa_pair using %s', client.evaluation_model_name)
     try:
         response_text = client.evaluate(messages, temperature=0)
-        return json.loads(response_text)
-    except Exception as e:
-        logger.error('Error in QA evaluation: %s.', e)
-        logger.info('Try again')
+
+        # Clean markdown code fences if present
+        cleaned = response_text.strip()
+        if cleaned.startswith('```'):
+            # Remove markdown code blocks (e.g., ```json\n...\n```)
+            cleaned = re.sub(r'^```(?:json)?\s*', '', cleaned)
+            cleaned = re.sub(r'\s*```$', '', cleaned)
+
+        # Try to parse the cleaned response
         try:
-            # Remove only from the very beginning and very end
-            cleaned = re.sub(r'^```json\s*', '',
-                             response_text)  # Remove from start
-            cleaned = re.sub(r'\s*```$', '', cleaned)  # Remove from end
             return json.loads(cleaned)
-        except Exception as e1:
-            logger.error(f'Error again in QA evaluation: {e1}. \
-                Response_text: {response_text}')
+        except json.JSONDecodeError as json_err:
+            # If JSON is still invalid, try using json_repair
+            logger.warning('Invalid JSON from evaluation model, attempting repair: %s', json_err)
+            from json_repair import repair_json
+            return json.loads(repair_json(cleaned))
+
+    except Exception as e:
+        logger.error(f'Error in QA evaluation: {e}. Response_text: {response_text if "response_text" in locals() else "N/A"}')
 
         # Return a default evaluation on error
         return {

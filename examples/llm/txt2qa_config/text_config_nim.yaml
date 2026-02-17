@@ -2,8 +2,8 @@
 # This file contains all the settings for the QA generation workflow
 
 # Input and Output Directories
-input_dir: "/Users/askliar/src/gnn/techqa/corpus"
-output_dir: "/Users/askliar/src/gnn/qa_test"
+input_dir: "/home/scratch.askliar_ent/pytorch_geometric/techqa/corpus"
+output_dir: "/home/scratch.askliar_ent/pytorch_geometric/techqa_output_nim"
 
 # Optional: HuggingFace Dataset Download Configuration
 # Uncomment to enable automatic dataset download if input_dir doesn't exist

@@ -12,6 +12,19 @@ from glob import glob
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
+# Set environment variables for vLLM multiprocessing compatibility
+# Must be set before vLLM imports
+os.environ.setdefault('VLLM_WORKER_MULTIPROC_METHOD', 'spawn')
+os.environ.setdefault('RAY_EXPERIMENTAL_NOSET_CUDA_VISIBLE_DEVICES', '1')
+os.environ.setdefault('RAY_OBJECT_STORE_ALLOW_SLOW_STORAGE', '1')
+
+# Set multiprocessing start method before any other imports
+import multiprocessing
+try:
+    multiprocessing.set_start_method('spawn', force=True)
+except RuntimeError:
+    pass
+
 import yaml
 from langgraph.graph import StateGraph
 from langgraph.graph.state import CompiledStateGraph
@@ -101,6 +114,23 @@ class QAGenerator:
             if vllm_max_num_batched_tokens is not None else self.config.get(
                 'vllm_max_num_batched_tokens', None))
 
+        # Handle gpu_memory_utilization - can be a single value or per-model dict
+        gpu_mem_config = self.config.get('vllm_gpu_memory_utilization',
+                                         vllm_gpu_memory_utilization)
+        if isinstance(gpu_mem_config, dict):
+            # Per-model configuration
+            vllm_gpu_memory_utilization_generation = gpu_mem_config.get(
+                'generation', 0.9)
+            vllm_gpu_memory_utilization_embedding = gpu_mem_config.get(
+                'embedding', 0.5)
+            vllm_gpu_memory_utilization_evaluation = gpu_mem_config.get(
+                'evaluation', 0.9)
+        else:
+            # Single value for all models (backward compatibility)
+            vllm_gpu_memory_utilization_generation = gpu_mem_config
+            vllm_gpu_memory_utilization_embedding = gpu_mem_config
+            vllm_gpu_memory_utilization_evaluation = gpu_mem_config
+
         # Initialize client based on backend
         self.client = LLMClient(
             generation_model=self.gen_model,
@@ -109,7 +139,12 @@ class QAGenerator:
             backend=self.backend,
             api_key=api_key,
             tensor_parallel_size=vllm_tensor_parallel_size,
-            gpu_memory_utilization=vllm_gpu_memory_utilization,
+            gpu_memory_utilization_generation=
+            vllm_gpu_memory_utilization_generation,
+            gpu_memory_utilization_embedding=
+            vllm_gpu_memory_utilization_embedding,
+            gpu_memory_utilization_evaluation=
+            vllm_gpu_memory_utilization_evaluation,
             max_model_len=vllm_max_model_len,
             max_num_batched_tokens=vllm_max_num_batched_tokens,
             enable_sleep_mode=True,
@@ -1032,6 +1067,16 @@ class QAGenerator:
             logger.error(e)
             return 'Visualization not available'
 
+    def __enter__(self):
+        """Context manager entry."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context manager exit with cleanup."""
+        if hasattr(self, 'client') and self.client:
+            self.client.cleanup()
+        return False
+
 
 if __name__ == '__main__':
     # Parse command line arguments
@@ -1098,14 +1143,14 @@ if __name__ == '__main__':
 
     logger.info('Loading configuration from: %s', config_path)
 
-    # Run the system
-    generator = QAGenerator(
+    # Run the system with proper resource cleanup
+    with QAGenerator(
         config_path,
         overwrite=args.overwrite,
         batch=args.batch,
         batch_size=args.batch_size,
-    )
-
-    # Process files
-    asyncio.run(generator.process_directory())
-    # logger.info(generator.visualize_workflow())
+    ) as generator:
+        # Process files
+        asyncio.run(generator.process_directory())
+        logger.info('Processing complete')
+        # logger.info(generator.visualize_workflow())

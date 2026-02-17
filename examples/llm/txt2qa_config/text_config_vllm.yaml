@@ -2,15 +2,15 @@
 # This file contains all the settings for the QA generation workflow
 
 # Input and Output Directories
-input_dir: "/Users/askliar/src/gnn/techqa/corpus"
-output_dir: "/Users/askliar/src/gnn/qa_test"
+input_dir: "/home/scratch.askliar_ent/pytorch_geometric/techqa/corpus"
+output_dir: "/home/scratch.askliar_ent/pytorch_geometric/techqa_output"
 
 # Optional: HuggingFace Dataset Download Configuration
 # Uncomment to enable automatic dataset download if input_dir doesn't exist
-# huggingface_repo_id: "nvidia/TechQA-RAG-Eval"
-# huggingface_repo_type: "dataset"
-# huggingface_files:
-#   corpus: "corpus.zip"
+huggingface_repo_id: "nvidia/TechQA-RAG-Eval"
+huggingface_repo_type: "dataset"
+huggingface_files:
+  corpus: "corpus.zip"
 
 # for modality = video, run process_keyframe_workflow to create enhanced transcription data
 modality: "text"
@@ -19,43 +19,46 @@ modality: "text"
 backend: "vllm"
 
 # vLLM Engine Configuration
-vllm_max_model_len: 32768  # Maximum context length
+vllm_max_model_len: 32768  # Maximum context length (increased for better generation)
 vllm_max_num_batched_tokens: 32768  # On CPU platforms, must be >= max_model_len
 
+# GPU Memory Utilization per model type
+# Embedding models typically use less memory than generation/evaluation models
+# NOTE: If generation and evaluation models are the same, they share a single
+# allocation using the maximum of both settings (no duplicate allocation)
+vllm_gpu_memory_utilization:
+  generation: 0.5      # GPU memory for generation model
+  embedding: 0.3       # GPU memory for embedding model (typically smaller)
+  evaluation: 0.5      # GPU memory for evaluation model (ignored if same as generation)
+
 # Model Configuration
-gen_model: "meta-llama/Llama-3.1-8B-Instruct"
+gen_model: "Qwen/Qwen2.5-7B-Instruct"
 models:
   # Choose one or more models to use for QA generation
-  # mixtral: "mistralai/Mixtral-8x22B-Instruct-v0.1"
-  # llama_70b: "meta-llama/Llama-3.1-70B-Instruct"
-  # llama_405b: "meta-llama/Llama-3.1-405B-Instruct"
-  llama_8b: "meta-llama/Llama-3.1-8B-Instruct"
+  qwen: "Qwen/Qwen2.5-7B-Instruct"
 
 model_progression:
-  - "mistralai/Mixtral-8x22B-Instruct-v0.1"
-  - "meta-llama/Llama-3.1-70B-Instruct"
-  - "meta-llama/Llama-3.1-405B-Instruct"
-  - "meta-llama/Llama-3.1-8B-Instruct"
+  - "Qwen/Qwen2.5-7B-Instruct"
 
 # Embedding model for validation and deduplication
 # Note: nvidia/llama-3.2-nv-embedqa-1b-v2 requires transformers>=5.0.0.dev0
-embedding_model: "BAAI/bge-small-en-v1.5"
+embedding_model: "BAAI/bge-base-en-v1.5"
 
 # Evaluation Configuration
 evaluation:
-  model: "meta-llama/Llama-3.1-8B-Instruct"
+  model: "Qwen/Qwen2.5-7B-Instruct"
   sample_size: 15  # Number of QA pairs to evaluate if there are many
   quality_threshold: 7.0  # Minimum acceptable quality score (1-10)
 
 use_artifact: true
 
 # Processing Configuration
-num_pairs: 7      # Number of QA pairs to generate per file
-num_negatives: 2   # Number of negative answers per question (0 = none)
+num_pairs: 3      # Number of QA pairs to generate per file
+num_negatives: 1   # Number of negative answers per question (0 = none)
 dedup_threshold: 0.6  # Similarity threshold for deduplication
-parts: 3           # Number of parts to split transcript for diverse sampling
-pairs_per_shard: 10         # Number of QA pairs each shard workflow should generate
-max_parallel_shards: 6      # Maximum shard workflows to run concurrently
+parts: 2           # Number of parts to split transcript for diverse sampling
+pairs_per_shard: 5         # Number of QA pairs each shard workflow should generate
+max_parallel_shards: 2      # Maximum shard workflows to run concurrently
 enable_hard_negatives: true  # Toggle hard negative mining
 
 # Validation Settings
