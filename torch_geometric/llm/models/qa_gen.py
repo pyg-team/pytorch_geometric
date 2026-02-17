@@ -831,15 +831,14 @@ class ArtifactExtractor:
                     artifact_data = json.loads(repaired_json)
                     logger.info(
                         'Successfully repaired and parsed JSON'
-                        ' with %d artifact types',
-                        len(artifact_data))
+                        ' with %d artifact types', len(artifact_data))
                 except Exception:
                     # If json_repair fails, try truncation recovery
                     try:
                         last_complete = json_str.rfind('},')
                         if last_complete > 0:
-                            truncated = (json_str[:last_complete + 1]
-                                         + '\n  ]\n}')
+                            truncated = (json_str[:last_complete + 1] +
+                                         '\n  ]\n}')
                             artifact_data = json.loads(truncated)
                             n_items = sum(
                                 len(v) if isinstance(v, list) else 1
@@ -848,9 +847,8 @@ class ArtifactExtractor:
                                 'Recovered %d items from truncated JSON',
                                 n_items)
                         else:
-                            logger.warning(
-                                'Could not repair JSON, skipping'
-                                ' this response')
+                            logger.warning('Could not repair JSON, skipping'
+                                           ' this response')
                             return []
                     except Exception as e2:
                         logger.warning(
@@ -3752,8 +3750,7 @@ async def llm_evaluate_qa_pair(
 
     except Exception as e:
         resp = response_text if 'response_text' in locals() else 'N/A'
-        logger.error(
-            'Error in QA evaluation: %s. Response_text: %s', e, resp)
+        logger.error('Error in QA evaluation: %s. Response_text: %s', e, resp)
 
         # Return a default evaluation on error
         return {
