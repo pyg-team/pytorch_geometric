@@ -10,9 +10,6 @@ inputs:
   cuda-version:
     required: false
     default: cpu
-  torchvision-version:
-    required: false
-    default: '0.23.0'
   full_install:
     required: false
     default: true
@@ -77,7 +74,18 @@ runs:
     - name: Install torchvision
       if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' }}
       run: |
-        uv pip install torchvision==${{ inputs.torchvision-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
+        if [ ${{ inputs.torch-version }} == '2.10.0' ]; then
+          TORCHVISION_VERSION=0.25.0
+        elif [ ${{ inputs.torch-version }} == '2.9.0' ]; then
+          TORCHVISION_VERSION=0.24.0
+        elif [ ${{ inputs.torch-version }} == '2.8.0' ]; then
+          TORCHVISION_VERSION=0.23.0
+        elif [ ${{ inputs.torch-version }} == '2.7.0' ]; then
+          TORCHVISION_VERSION=0.22.0
+        elif [ ${{ inputs.torch-version }} == '2.6.0' ]; then
+          TORCHVISION_VERSION=0.21.0
+        fi
+        uv pip install torchvision==${TORCHVISION_VERSION} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
       shell: bash
 
     - name: Install extension packages
