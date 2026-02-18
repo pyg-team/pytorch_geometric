@@ -290,7 +290,6 @@ def _multiproc_helper(rank, in_chunks_per_proc, py_fn, llm_fn, NIM_KEY,
 
 
 def _get_num_procs():
-    num_proc = None
     if hasattr(os, "sched_getaffinity"):
         try:
             num_proc = len(os.sched_getaffinity(0)) / (2)
