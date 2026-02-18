@@ -69,3 +69,18 @@ jobs:
   #         "torch-version": ["2.8.0"],
   #         "cuda-version": ["cu128"]
   #       }
+
+  check-status:
+    if: always()
+    needs:
+      - pytest
+      - full
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          if [ "${{ needs.pytest.result }}" = "failure" ] || \
+             [ "${{ needs.full.result }}" = "failure" ] || \
+             [ "${{ needs.pytest.result }}" = "cancelled" ] || \
+             [ "${{ needs.full.result }}" = "cancelled" ]; then
+            exit 1
+          fi
