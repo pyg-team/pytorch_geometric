@@ -779,7 +779,6 @@ if __name__ == '__main__':
             data_lists = update_data_lists(args, data_lists)
     else:
         data_lists = make_dataset(args)
-    exit(0)
     batch_size = args.batch_size
     eval_batch_size = args.eval_batch_size
     train_loader = DataLoader(data_lists["train"], batch_size=batch_size,
