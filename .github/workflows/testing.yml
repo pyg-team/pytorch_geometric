@@ -45,7 +45,7 @@ jobs:
           { "os": "windows-2022", "python-version": "3.10", "torch-version": "2.8.0", "cuda-version": "cpu" }
         ]}
 
-  full:
+  pytest-full:
     if: ${{ github.repository == 'pyg-team/pytorch_geometric' && github.event_name == 'schedule' }}
     uses: ./.github/workflows/_testing.yml
     with:
@@ -70,17 +70,17 @@ jobs:
   #         "cuda-version": ["cu128"]
   #       }
 
-  check-status:
-    if: always()
+  status:
+    if: always() && github.event_name == 'pull_request'
     needs:
       - pytest
-      - full
+      - pytest-full
     runs-on: ubuntu-latest
     steps:
       - run: |
           if [ "${{ needs.pytest.result }}" = "failure" ] || \
-             [ "${{ needs.full.result }}" = "failure" ] || \
+             [ "${{ needs.pytest-full.result }}" = "failure" ] || \
              [ "${{ needs.pytest.result }}" = "cancelled" ] || \
-             [ "${{ needs.full.result }}" = "cancelled" ]; then
+             [ "${{ needs.pytest-full.result }}" = "cancelled" ]; then
             exit 1
           fi
