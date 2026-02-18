@@ -20,7 +20,7 @@ jobs:
     outputs:
       triggered: ${{ steps.check.outputs.triggered }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 2
       - id: check
@@ -42,7 +42,7 @@ jobs:
             'pyproject.toml'
             'codecov.yml'
             '.github/actions/setup/action.yml'
-            '.github/workflows/testing_latest.yml'
+            '.github/workflows/testing.yml'
             '.github/workflows/_testing.yml'
           )
 
