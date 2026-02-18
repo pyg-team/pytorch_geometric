@@ -18,10 +18,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Removed
 
 ### Fixed
-
-- Fixed `AttributeError: 'LLMClient' object has no attribute 'is_local'` in `cleanup()` method by using existing `backend` attribute ([#10559](https://github.com/pyg-team/pytorch_geometric/pull/10559))
-- Fixed critical FAISS L2 distance to cosine similarity conversion bug in `validate_answer_spans_hybrid()` that caused all QA pairs to be incorrectly rejected during validation ([#10559](https://github.com/pyg-team/pytorch_geometric/pull/10559))
-- Fixed JSON parsing errors in LLM evaluation by cleaning markdown code blocks before parsing ([#10559](https://github.com/pyg-team/pytorch_geometric/pull/10559))
 - Fixed embedding dimension mismatch issues in FAISS indexes between different embedding models ([#10559](https://github.com/pyg-team/pytorch_geometric/pull/10559))
 - Fixed `return_attention_weights: bool` being not respected in `GATConv` and `GATv2Conv` ([#10596](https://github.com/pyg-team/pytorch_geometric/pull/10596))
 - Fixed download links for politifact and gossipcop datasets of `UPFD` ([#10558](https://github.com/pyg-team/pytorch_geometric/pull/10558))
