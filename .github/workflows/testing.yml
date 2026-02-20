@@ -4,23 +4,7 @@ on:  # yamllint disable-line rule:truthy
   push:
     branches:
       - master
-    paths:
-      - 'torch_geometric/**'
-      - 'test/**'
-      - 'pyproject.toml'
-      - 'codecov.yml'
-      - '.github/actions/setup/action.yml'
-      - '.github/workflows/testing_latest.yml'
-      - '.github/workflows/_testing.yml'
   pull_request:
-    paths:
-      - 'torch_geometric/**'
-      - 'test/**'
-      - 'pyproject.toml'
-      - 'codecov.yml'
-      - '.github/actions/setup/action.yml'
-      - '.github/workflows/testing_latest.yml'
-      - '.github/workflows/_testing.yml'
   schedule:
     - cron: "0 6 * * *"  # Everyday at 6:00am UTC/10:00pm PST
 
@@ -31,8 +15,50 @@ concurrency:
   cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
 
 jobs:
+  trigger:
+    runs-on: ubuntu-latest
+    outputs:
+      triggered: ${{ steps.check.outputs.triggered }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+      - id: check
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "triggered=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if [ "${{ github.event_name }}" = "push" ]; then
+            BASE=${{ github.event.before }}
+          else
+            BASE=${{ github.event.pull_request.base.sha }}
+          fi
+
+          PATHS=(
+            'torch_geometric/'
+            'test/'
+            'pyproject.toml'
+            'codecov.yml'
+            '.github/actions/setup/action.yml'
+            '.github/workflows/testing.yml'
+            '.github/workflows/_testing.yml'
+          )
+
+          CHANGED=$(git diff --name-only "$BASE" HEAD)
+          for path in "${PATHS[@]}"; do
+            if echo "$CHANGED" | grep -q "^${path}"; then
+              echo "triggered=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          done
+
+          echo "triggered=false" >> "$GITHUB_OUTPUT"
+
   pytest:
-    if: ${{ github.repository == 'pyg-team/pytorch_geometric' && github.event_name != 'schedule' }}
+    needs: trigger
+    if: ${{ needs.trigger.outputs.triggered == 'true' && github.repository == 'pyg-team/pytorch_geometric' && github.event_name != 'schedule' }}
     uses: ./.github/workflows/_testing.yml
     with:
       test-matrix: |
@@ -45,7 +71,8 @@ jobs:
           { "os": "windows-2022", "python-version": "3.10", "torch-version": "2.8.0", "cuda-version": "cpu" }
         ]}
 
-  full:
+  pytest-full:
+    # Only run this on nightly schedule for now.
     if: ${{ github.repository == 'pyg-team/pytorch_geometric' && github.event_name == 'schedule' }}
     uses: ./.github/workflows/_testing.yml
     with:
@@ -69,3 +96,18 @@ jobs:
   #         "torch-version": ["2.8.0"],
   #         "cuda-version": ["cu128"]
   #       }
+
+  status:
+    if: always() && github.event_name == 'pull_request'
+    needs:
+      - pytest
+      - pytest-full
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          if [ "${{ needs.pytest.result }}" = "failure" ] || \
+             [ "${{ needs.pytest-full.result }}" = "failure" ] || \
+             [ "${{ needs.pytest.result }}" = "cancelled" ] || \
+             [ "${{ needs.pytest-full.result }}" = "cancelled" ]; then
+            exit 1
+          fi
