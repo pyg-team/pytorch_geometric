@@ -30,7 +30,8 @@ import yaml  # noqa: E402
 from langgraph.graph import StateGraph  # noqa: E402
 from langgraph.graph.state import CompiledStateGraph  # noqa: E402
 
-from torch_geometric.llm.models.qa_gen import (  # noqa: E402
+# yapf: disable
+from torch_geometric.llm.models.qa_gen import (  # noqa: E402  # isort: skip
     LLMClient,
     QAGenerationState,
     TaskStatus,
@@ -52,6 +53,7 @@ from torch_geometric.llm.models.qa_gen import (  # noqa: E402
     store_results,
     validate_qa_pairs,
 )
+# yapf: enable
 
 logger = logging.getLogger(__name__)
 
@@ -230,9 +232,9 @@ class QAGenerator:
         huggingface_repo_id = self.config.get('huggingface_repo_id', None)
 
         assert input_dir or huggingface_repo_id, (
-            "Configuration must specify at least one data source: "
+            'Configuration must specify at least one data source: '
             "either 'input_dir' (local path) or 'huggingface_repo_id' "
-            "(HuggingFace repository)")
+            '(HuggingFace repository)')
 
     def _maybe_download_dataset(self) -> Optional[Path]:
         """Check if dataset needs to be downloaded and prompt user.
@@ -256,20 +258,20 @@ class QAGenerator:
             return None
 
         # Prompt user for download
-        print(f"Input directory not found: {input_dir}")
-        print("Would you like to download the dataset from HuggingFace?")
-        print(f"Repository: {huggingface_repo_id}")
-        user_input = input("Y/N: ")
+        print(f'Input directory not found: {input_dir}')
+        print('Would you like to download the dataset from HuggingFace?')
+        print(f'Repository: {huggingface_repo_id}')
+        user_input = input('Y/N: ')
 
-        if user_input.lower() in ["y", "yes"]:
-            print("Downloading data...")
+        if user_input.lower() in ['y', 'yes']:
+            print('Downloading data...')
             downloaded_path = self._download_from_huggingface()
             return downloaded_path
-        elif user_input.lower() in ["n", "no"]:
-            logger.error("Download declined by user")
+        elif user_input.lower() in ['n', 'no']:
+            logger.error('Download declined by user')
             return None
         else:
-            logger.error("Invalid user input")
+            logger.error('Invalid user input')
             return None
 
     def _download_from_huggingface(self) -> Optional[Path]:
