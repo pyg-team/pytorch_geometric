@@ -58,6 +58,7 @@ benchmark=[
     "wandb",
 ]
 rag=[
+    "faiss-cpu",
     "json_repair",
     "pcst_fast",
     "datasets",
