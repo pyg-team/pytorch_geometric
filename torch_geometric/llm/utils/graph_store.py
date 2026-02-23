@@ -4,7 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import FeatureStore
-from torch_geometric.distributed import LocalGraphStore
+from torch_geometric.distributed.local_graph_store import LocalGraphStore
 from torch_geometric.sampler import (
     BidirectionalNeighborSampler,
     NodeSamplerInput,
