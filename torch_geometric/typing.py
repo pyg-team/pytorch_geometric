@@ -57,6 +57,7 @@ try:
             WITH_GMM = False
             WITH_SEGMM = False
     WITH_SAMPLED_OP = hasattr(pyg_lib.ops, 'sampled_add')
+    WITH_SPLINE = hasattr(pyg_lib.ops, 'spline_basis')
     WITH_SOFTMAX = hasattr(pyg_lib.ops, 'softmax_csr')
     WITH_INDEX_SORT = hasattr(pyg_lib.ops, 'index_sort')
     WITH_METIS = hasattr(pyg_lib, 'partition')
@@ -84,6 +85,7 @@ except Exception as e:
     WITH_GMM = False
     WITH_SEGMM = False
     WITH_SAMPLED_OP = False
+    WITH_SPLINE = False
     WITH_SOFTMAX = False
     WITH_INDEX_SORT = False
     WITH_METIS = False
@@ -144,16 +146,6 @@ except Exception as e:
             raise ImportError(f"'{key}' requires 'torch-cluster'")
 
     torch_cluster = TorchCluster()
-
-try:
-    import torch_spline_conv  # noqa
-    WITH_TORCH_SPLINE_CONV = True
-except Exception as e:
-    if not isinstance(e, ImportError):  # pragma: no cover
-        warnings.warn(
-            f"An issue occurred while importing 'torch-spline-conv'. "
-            f"Disabling its usage. Stacktrace: {e}", stacklevel=2)
-    WITH_TORCH_SPLINE_CONV = False
 
 try:
     import torch_sparse  # noqa
