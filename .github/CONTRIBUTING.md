@@ -23,11 +23,11 @@ To develop PyG on your machine, here are some tips:
    print(torch.__version__)
    ```
 
-1. *(Optional)* Follow the [installation instructions](https://github.com/pyg-team/pytorch_geometric#installation) to install `pyg-lib`, `torch-scatter`, `torch-sparse`, `torch-cluster` and `torch-spline-conv` (if you haven't already).
+1. *(Optional)* Follow the [installation instructions](https://github.com/pyg-team/pytorch_geometric#installation) to install `pyg-lib`, `torch-scatter`, `torch-sparse`, and `torch-cluster` (if you haven't already).
    Note that this step is optional and only necessary if you develop a feature that uses one of these libraries.
 
    ```bash
-   pip install pyg-lib torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
+   pip install pyg-lib torch-scatter torch-sparse torch-cluster -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
    ```
 
    where `${TORCH}` should be replaced by your PyTorch version (*e.g.*, `2.8.0`), and `${CUDA}` should be replaced by your CUDA version (*e.g.*, `cpu`, `cu126`, `cu128`, or `cu129`).
