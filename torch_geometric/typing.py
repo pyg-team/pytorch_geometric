@@ -150,9 +150,8 @@ except Exception as e:
 try:
     import torch_spline_conv  # noqa
     warnings.warn(
-        "'torch-spline-conv' is no longer necessary and will be removed in a "
-        "future release. Its functionality has been migrated to 'pyg-lib'. "
-        "Please uninstall it via 'pip uninstall torch-spline-conv'.",
+        "'torch-spline-conv' is no longer necessary and is being ignored. "
+        "Its functionality has been migrated to 'pyg-lib'.",
         DeprecationWarning,
         stacklevel=2,
     )
