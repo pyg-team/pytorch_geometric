@@ -148,6 +148,19 @@ except Exception as e:
     torch_cluster = TorchCluster()
 
 try:
+    import torch_spline_conv  # noqa
+    warnings.warn(
+        "'torch-spline-conv' is no longer necessary and will be removed in a "
+        "future release. Its functionality has been migrated to 'pyg-lib'. "
+        "Please uninstall it via 'pip uninstall torch-spline-conv'.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
+    del torch_spline_conv
+except Exception:
+    pass
+
+try:
     import torch_sparse  # noqa
     from torch_sparse import SparseStorage, SparseTensor
     WITH_TORCH_SPARSE = True
