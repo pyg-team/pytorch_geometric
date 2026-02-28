@@ -10,15 +10,10 @@ CLIENT_INITD = False
 CLIENT = None
 GLOBAL_NIM_KEY = ""
 SYSTEM_PROMPT = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Separate each with a new line. Do not output anything else. Try to focus on key triples that form a connected graph."  # noqa
-
-
-def _safe_worker(args):
-    try:
-        return _multiproc_helper(*args)
-
-    except Exception as e:
-        return {"error": str(e), "rank": args[0]}
-
+MAX_OUTER_RETRIES = 5  # Maximum number of times the entire multiprocessing job is retried.
+RETRY_DELAY = 5        # Fixed sleep time (in seconds) between outer retries.
+MAX_NIM_RETRIES = 200  # Maximum number of attempts to call the NIM API inside one worker.
+BASE_DELAY = 0.5       # Initial wait time before retrying a failed network call.
 
 class TXT2KG():
     """A class to convert text data into a Knowledge Graph (KG) format.
@@ -145,58 +140,79 @@ class TXT2KG():
             # If no QA_pair, use the current doc_id_counter as the key
             key = self.doc_id_counter
 
-        # Handle empty text (context-less QA pairs)
-        if txt == "":
-            self.relevant_triples[key] = []
-        else:
-            # Chunk the text into smaller pieces for processing
-            chunks = _chunk_text(txt, chunk_size=self.chunk_size)
-
-            if self.local_LM:
-                # For debugging purposes...
-                # process chunks sequentially on the local LM
-                self.relevant_triples[key] = _llm_then_python_parse(
-                    chunks, _parse_n_check_triples,
-                    self._chunk_to_triples_str_local)
-            else:
-                # Create deterministic chunk assignment
-                num_procs = min(len(chunks), _get_num_procs())
-                meta_chunk_size = int(len(chunks) / num_procs)
-                in_chunks_per_proc = [
-                    chunks[j *
-                           meta_chunk_size:min((j + 1) *
-                                               meta_chunk_size, len(chunks))]
-                    for j in range(num_procs)
-                ]
-
-                # Run workers via starmap for deterministic ordering
-                worker_args = [(
-                    rank,
-                    in_chunks_per_proc[rank],
-                    _parse_n_check_triples,
-                    _chunk_to_triples_str_cloud,
-                    self.NVIDIA_API_KEY,
-                    self.NIM_MODEL,
-                    self.ENDPOINT_URL,
-                ) for rank in range(num_procs)]
-
-                with mp.get_context("spawn").Pool(num_procs) as pool:
-                    results = pool.map(_safe_worker, worker_args)
-
-                # Error handling
-                for r in results:
-                    if isinstance(r, dict) and "error" in r:
-                        raise RuntimeError("KG extraction failed in worker "
-                                           f"{r['rank']}: {r['error']}")
-
-                # Deterministic merge
-                flat_triples = [t for sublist in results for t in sublist]
-                flat_triples.sort()
-
-                self.relevant_triples[key] = flat_triples
+        self.relevant_triples[key] = self._extract_relevant_triples(txt)
 
         # Increment the doc_id_counter for the next document
         self.doc_id_counter += 1
+
+    def _extract_relevant_triples(
+            self,
+            txt: str,
+            max_retries: int = MAX_OUTER_RETRIES,
+            retry_delay: float = RETRY_DELAY
+    ) -> List[Tuple[str, str, str]]:
+        # Handle empty text (context-less QA pairs)
+        if txt == "":
+            return []
+
+        # Chunk the text into smaller pieces for processing
+        chunks = _chunk_text(txt, chunk_size=self.chunk_size)
+
+        if self.local_LM:
+            # For debugging purposes...
+            # process chunks sequentially on the local LM
+            return  _llm_then_python_parse(
+                chunks, _parse_n_check_triples,
+                self._chunk_to_triples_str_local)
+
+        # Create deterministic chunk assignment
+        import math
+        num_procs = min(len(chunks), _get_num_procs())
+        chunk_size = math.ceil(len(chunks) / num_procs)
+        in_chunks_per_proc = [
+            chunks[j * chunk_size:min((j + 1) * chunk_size, len(chunks))]
+            for j in range(num_procs)
+        ]
+
+        # Run workers via starmap for deterministic ordering
+        worker_args = [(
+            rank,
+            in_chunks_per_proc[rank],
+            _parse_n_check_triples,
+            _chunk_to_triples_str_cloud,
+            self.NVIDIA_API_KEY,
+            self.NIM_MODEL,
+            self.ENDPOINT_URL,
+        ) for rank in range(num_procs)]
+
+        for attempt in range(max_retries):
+            try:
+                with mp.get_context("spawn").Pool(num_procs) as pool:
+                    results = pool.starmap(_multiproc_helper, worker_args)
+                break  # success
+
+            except Exception as e:
+                if attempt == max_retries - 1:
+                    raise  # re-raise on final failure
+
+                print(f"[Retry {attempt+1}/{max_retries}] "
+                      f"Multiprocessing failed: {e}")
+            time.sleep(retry_delay)
+
+        # Deterministic merge
+        flat_triples = [
+            tuple(t)
+            for sublist in results
+            for t in sublist
+        ]
+        flat_triples.sort(
+            key=lambda x: tuple(
+                s.casefold() if isinstance(s, str) else s
+                for s in x
+            )
+        )
+
+        return flat_triples
 
 
 known_reasoners = [
@@ -205,7 +221,6 @@ known_reasoners = [
     "nemotron-super-49b-v1_5",
     "gpt-oss",
 ]
-
 
 def _chunk_to_triples_str_cloud(
         txt: str, GLOBAL_NIM_KEY='',
@@ -287,11 +302,30 @@ def _llm_then_python_parse(chunks, py_fn, llm_fn, **kwargs):
     return relevant_triples
 
 
-def _multiproc_helper(rank, chunks_for_rank, py_fn, llm_fn, NIM_KEY, NIM_MODEL,
-                      ENDPOINT_URL):
-    return _llm_then_python_parse(chunks_for_rank, py_fn, llm_fn,
-                                  GLOBAL_NIM_KEY=NIM_KEY, NIM_MODEL=NIM_MODEL,
-                                  ENDPOINT_URL=ENDPOINT_URL)
+def _multiproc_helper(rank, chunks_for_rank, py_fn, llm_fn,
+                      NIM_KEY, NIM_MODEL, ENDPOINT_URL,
+                      max_retries=MAX_NIM_RETRIES, base_delay=BASE_DELAY):
+
+    for attempt in range(max_retries):
+        try:
+            return _llm_then_python_parse(
+                chunks_for_rank,
+                py_fn,
+                llm_fn,
+                GLOBAL_NIM_KEY=NIM_KEY,
+                NIM_MODEL=NIM_MODEL,
+                ENDPOINT_URL=ENDPOINT_URL,
+            )
+
+        except Exception as e:
+            # Optional: restrict to network-related exceptions only
+            if attempt == max_retries - 1:
+                raise
+
+            # exponential backoff with jitter
+            sleep_time = base_delay * (2 ** min(attempt, 6))
+            sleep_time += random.uniform(0, 0.1)
+            time.sleep(sleep_time)
 
 
 def _get_num_procs():
