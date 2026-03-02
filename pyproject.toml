@@ -58,6 +58,8 @@ benchmark=[
     "wandb",
 ]
 rag=[
+    "faiss-cpu",
+    "json_repair",
     "pcst_fast",
     "datasets",
     "transformers",
@@ -65,6 +67,7 @@ rag=[
     "sentencepiece",
     "accelerate",
     "torchmetrics",
+    "langgraph"
 ]
 test=[
     "onnx",
