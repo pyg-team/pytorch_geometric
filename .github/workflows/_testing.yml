@@ -6,6 +6,9 @@ on:  # yamllint disable-line rule:truthy
       test-matrix:
         type: string
         required: true
+      timeout-minutes:
+        type: int
+        required: true
 
 
 defaults:
@@ -39,12 +42,12 @@ jobs:
       - name: Install main package (Windows)
         if: ${{ runner.os == 'Windows' }}
         run: |
-          uv pip install -e ".[test]"
+          uv pip install -e ".[test,rag]"
 
       - name: Install main package
         if: ${{ runner.os != 'Windows' }}
         run: |
-          uv pip install -e ".[full,test]"
+          uv pip install -e ".[full,test,rag]"
 
       - name: Check installation
         run: |
@@ -54,7 +57,7 @@ jobs:
         shell: bash
 
       - name: Run tests
-        timeout-minutes: 20
+        timeout-minutes: ${{ inputs.timeout-minutes }}
         run: |
           pytest --cov --cov-report=xml --durations 10
         env:
