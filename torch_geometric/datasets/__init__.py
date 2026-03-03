@@ -85,6 +85,7 @@ from .protein_mpnn_dataset import ProteinMPNNDataset
 from .tag_dataset import TAGDataset
 from .city import CityNetwork
 from .teeth3ds import Teeth3DS
+from .movie_lens_1b import MovieLens1B
 
 from .dbp15k import DBP15K
 from .aminer import AMiner
@@ -242,6 +243,7 @@ synthetic_datasets = [
     'BA2MotifDataset',
     'BAMultiShapesDataset',
     'BAShapes',
+    'MovieLens1B',
 ]
 
 __all__ = homo_datasets + hetero_datasets + hyper_datasets + synthetic_datasets
