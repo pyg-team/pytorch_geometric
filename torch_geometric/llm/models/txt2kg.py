@@ -10,10 +10,10 @@ CLIENT_INITD = False
 CLIENT = None
 GLOBAL_NIM_KEY = ""
 SYSTEM_PROMPT = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Separate each with a new line. Do not output anything else. Try to focus on key triples that form a connected graph."  # noqa
-MAX_OUTER_RETRIES = 5  # Maximum number of times the entire multiprocessing job is retried.
-RETRY_DELAY = 5  # Fixed sleep time (in seconds) between outer retries.
-MAX_NIM_RETRIES = 200  # Maximum number of attempts to call the NIM API inside one worker.
-BASE_DELAY = 0.5  # Initial wait time before retrying a failed network call.
+MAX_OUTER_RETRIES = 5  # Maximum number of times the entire multiprocessing job is retried. # noqa
+RETRY_DELAY = 5        # Fixed sleep time (in seconds) between outer retries.
+MAX_NIM_RETRIES = 200  # Maximum number of attempts to call the NIM API inside one worker.  # noqa
+BASE_DELAY = 0.5       # Initial wait time before retrying a failed network call.
 
 
 class TXT2KG():
@@ -313,8 +313,9 @@ def _multiproc_helper(rank, chunks_for_rank, py_fn, llm_fn, NIM_KEY, NIM_MODEL,
                 raise
 
             # exponential backoff with jitter
+            from random import uniform
             sleep_time = base_delay * (2**min(attempt, 6))
-            sleep_time += random.uniform(0, 0.1)
+            sleep_time += uniform(0, 0.1)
             time.sleep(sleep_time)
 
 
