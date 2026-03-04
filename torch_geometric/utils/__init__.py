@@ -46,6 +46,7 @@ from .convert import to_trimesh, from_trimesh
 from .convert import to_cugraph, from_cugraph
 from .convert import to_dgl, from_dgl
 from .smiles import from_rdmol, to_rdmol, from_smiles, to_smiles
+from .relbench import from_relbench
 from .random import (erdos_renyi_graph, stochastic_blockmodel_graph,
                      barabasi_albert_graph)
 from ._negative_sampling import (negative_sampling, batched_negative_sampling,
@@ -135,6 +136,7 @@ __all__ = [
     'to_rdmol',
     'from_smiles',
     'to_smiles',
+    'from_relbench',
     'erdos_renyi_graph',
     'stochastic_blockmodel_graph',
     'barabasi_albert_graph',
