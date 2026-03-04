@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Added bipartite pooling operator from `"DeepTreeGANv2: Iterative Pooling of Point Clouds" <https://arxiv.org/abs/2312.00042>`.
+
 ### Changed
 
 - Dropped support for TorchScript in `GATConv` and `GATv2Conv` for correctness ([#10596](https://github.com/pyg-team/pytorch_geometric/pull/10596))
