@@ -1,6 +1,6 @@
-import pytest
 import gc
 
+import pytest
 import torch
 
 from torch_geometric.llm.models import LLM, GRetriever
@@ -105,8 +105,8 @@ def test_g_retriever_many_tokens() -> None:
 
 from torch_geometric.llm.models.g_retriever import _align_dtype
 
-
 DTYPES = [torch.float32, torch.float16]
+
 
 def _dtype_id(val):
     # Called for each individual parameter value
@@ -122,7 +122,6 @@ def _dtype_id(val):
     ids=lambda val: _dtype_id(val),
 )
 def test_align_dtype(llm_dtype, input_dtype):
-
     class DummyLLM(torch.nn.Module):
         def __init__(self, dtype):
             super().__init__()
