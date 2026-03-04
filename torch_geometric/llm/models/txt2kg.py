@@ -388,14 +388,15 @@ def _merge_triples_deterministically(
     reproducible sorted list of tuples.
 
     Args:
-        triples (List[List[Triple]]): A list of lists of triples,
-            where each triple is a list or tuple of strings or other comparable values.
-            Typically, each inner list comes from a worker or a partial computation.
+        triples (List[List[Triple]]): A list of lists of triples, where each
+            triple is a list or tuple of strings or other comparable values.
+            Typically, each inner list comes from a worker.
 
     Returns:
-        List[Tuple[str, ...]]: A flattened list of triples as tuples, sorted deterministically.
-            Sorting is Unicode-safe and reproducible across Python versions using `str.casefold()`.
-            Tuples are immutable to ensure hashability and stability in dicts/sets.
+        List[Tuple[str, ...]]: A flattened list of triples as tuples, sorted
+            deterministically. Sorting is Unicode-safe and reproducible across
+            Python versions using `str.casefold()`. Tuples are immutable to
+            ensure hashability and stability in dicts/sets.
     """
     # Flatten all sublists and convert inner lists to tuples
     flat_triples = [
