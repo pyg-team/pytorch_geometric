@@ -380,11 +380,10 @@ def _chunk_text(text: str, chunk_size: int = 512) -> list[str]:
 
 Triple = Union[List[str], Tuple[str, ...]]
 
+
 def _merge_triples_deterministically(
-        triples: List[List[Triple]]
-) -> List[Tuple[str, ...]]:
-    """
-    Flatten a list of lists of triples and return a deterministic,
+        triples: List[List[Triple]]) -> List[Tuple[str, ...]]:
+    """Flatten a list of lists of triples and return a deterministic,
     reproducible sorted list of tuples.
 
     Args:
@@ -398,18 +397,10 @@ def _merge_triples_deterministically(
             Tuples are immutable to ensure hashability and stability in dicts/sets.
     """
     # Flatten all sublists and convert inner lists to tuples
-    flat_triples = [
-        tuple(t)
-        for sublist in triples
-        for t in sublist
-    ]
+    flat_triples = [tuple(t) for sublist in triples for t in sublist]
 
     # Deterministic sort (Unicode-safe, casefold for strings)
-    flat_triples.sort(
-        key=lambda triple: tuple(
-            s.casefold() if isinstance(s, str) else s
-            for s in triple
-        )
-    )
+    flat_triples.sort(key=lambda triple: tuple(
+        s.casefold() if isinstance(s, str) else s for s in triple))
 
     return flat_triples
