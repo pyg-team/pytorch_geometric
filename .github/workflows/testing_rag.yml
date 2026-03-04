@@ -41,6 +41,7 @@ jobs:
           bash -c 'pytest test/llm/models/test_g_retriever.py -m rag --cov --cov-report=xml -v; E=$?; [[ $E == 0 || $E == 139 ]] && exit 0 || exit $E'
           bash -c 'pytest test/datasets/ -m rag --cov --cov-report=xml -v; E=$?; [[ $E == 0 || $E == 139 ]] && exit 0 || exit $E'
           pytest test/llm/models/test_llm.py -m rag -v
+          pytest test/llm/models/test_txt2kg.py -m rag -v
           pytest test/llm/models/test_sentence_transformer.py -m rag -v
           pytest test/llm/utils/ -m rag -v
           pytest test/llm/test_rag_loader.py -m rag -v

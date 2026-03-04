@@ -1,6 +1,6 @@
 import os
 import time
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, Union
 
 import torch
 import torch.multiprocessing as mp
@@ -196,12 +196,7 @@ class TXT2KG():
                       f"Multiprocessing failed: {e}")
             time.sleep(retry_delay)
 
-        # Deterministic merge
-        flat_triples = [tuple(t) for sublist in results for t in sublist]
-        flat_triples.sort(key=lambda x: tuple(
-            s.casefold() if isinstance(s, str) else s for s in x))
-
-        return flat_triples
+        return _merge_triples_deterministically(results)
 
 
 known_reasoners = [
@@ -381,3 +376,40 @@ def _chunk_text(text: str, chunk_size: int = 512) -> list[str]:
         text = text[best_split:].lstrip()
 
     return chunks
+
+
+Triple = Union[List[str], Tuple[str, ...]]
+
+def _merge_triples_deterministically(
+        triples: List[List[Triple]]
+) -> List[Tuple[str, ...]]:
+    """
+    Flatten a list of lists of triples and return a deterministic,
+    reproducible sorted list of tuples.
+
+    Args:
+        triples (List[List[Triple]]): A list of lists of triples,
+            where each triple is a list or tuple of strings or other comparable values.
+            Typically, each inner list comes from a worker or a partial computation.
+
+    Returns:
+        List[Tuple[str, ...]]: A flattened list of triples as tuples, sorted deterministically.
+            Sorting is Unicode-safe and reproducible across Python versions using `str.casefold()`.
+            Tuples are immutable to ensure hashability and stability in dicts/sets.
+    """
+    # Flatten all sublists and convert inner lists to tuples
+    flat_triples = [
+        tuple(t)
+        for sublist in triples
+        for t in sublist
+    ]
+
+    # Deterministic sort (Unicode-safe, casefold for strings)
+    flat_triples.sort(
+        key=lambda triple: tuple(
+            s.casefold() if isinstance(s, str) else s
+            for s in triple
+        )
+    )
+
+    return flat_triples
