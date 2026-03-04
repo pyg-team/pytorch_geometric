@@ -35,6 +35,9 @@ Complete documentation on RAPIDS graph packages, including `cugraph`, `cugraph-p
 
 ## Examples with Intel GPUs (XPUs)
 
-| Example                                                        | Scalability            | Description                                                              |
-| -------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------ |
-| [`distributed_sampling_xpu.py`](./distributed_sampling_xpu.py) | single-node, multi-gpu | Example for training GNNs on a homogeneous graph with neighbor sampling. |
+Please refer to the [guide](https://github.com/pyg-team/pytorch_geometric/tree/master/benchmark/multi_gpu/training#running-benchmark-on-intel-gpu) for environment setup on Intel GPUs.
+
+| Example                                                                            | Scalability            | Description                                                                                |
+| ---------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------ |
+| [`distributed_sampling_xpu.py`](./distributed_sampling_xpu.py)                     | single-node, multi-gpu | Example for training GNNs on a homogeneous graph with neighbor sampling.                   |
+| [`distributed_sampling_multinode_xpu.py`](./distributed_sampling_multinode_xpu.py) | multi-node, multi-gpu  | Example for training GNNs on a homogeneous graph with neighbor sampling on multiple nodes. |
