@@ -136,6 +136,7 @@ def arg_parse():
             'SAGE',
             'GAT',
             'GCN',
+            'AERO',
             # TODO: Uncomment when we add support for disjoint sampling
             # 'SGFormer',
         ],
@@ -145,8 +146,14 @@ def arg_parse():
         "--num_heads",
         type=int,
         default=1,
-        help="If using GATConv or GT, number of attention heads to use",
+        help="If using GATConv, GT, or AERO, number of attention heads to use",
     )
+    parser.add_argument('--iterations', type=int, default=10,
+                        help='number of propagation iterations for AERO model')
+    parser.add_argument('--lambd', type=float, default=1.0,
+                        help='decay weight parameter for AERO model')
+    parser.add_argument('--add_dropout', action='store_true',
+                        help='apply dropout before final layer for AERO model')
     parser.add_argument('--tempdir_root', type=str, default=None)
     args = parser.parse_args()
     return args
@@ -277,6 +284,18 @@ if __name__ == '__main__':
         model = torch_geometric.nn.models.GraphSAGE(
             dataset.num_features, args.hidden_channels, args.num_layers,
             dataset.num_classes).cuda()
+    elif args.model == "AERO":
+        model = torch_geometric.nn.models.AEROGNN(
+            in_channels=dataset.num_features,
+            hidden_channels=args.hidden_channels,
+            num_layers=args.num_layers,
+            out_channels=dataset.num_classes,
+            iterations=args.iterations,
+            heads=args.num_heads,
+            lambd=args.lambd,
+            dropout=args.dropout,
+            add_dropout=args.add_dropout,
+        ).cuda()
     elif args.model == 'SGFormer':
         # TODO add support for this with disjoint sampling
         model = torch_geometric.nn.models.SGFormer(
