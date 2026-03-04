@@ -4,6 +4,7 @@ import pytest
 import torch
 
 from torch_geometric.llm.models import LLM, GRetriever
+from torch_geometric.llm.models.g_retriever import _align_dtype
 from torch_geometric.nn import GAT
 from torch_geometric.testing import onlyRAG, withPackage
 
@@ -102,8 +103,6 @@ def test_g_retriever_many_tokens() -> None:
     gc.collect()
     torch.cuda.empty_cache()
 
-
-from torch_geometric.llm.models.g_retriever import _align_dtype
 
 DTYPES = [torch.float32, torch.float16]
 
