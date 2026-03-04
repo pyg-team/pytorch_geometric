@@ -1,5 +1,5 @@
-from torch_geometric.testing import onlyRAG
 from torch_geometric.llm.models.txt2kg import _merge_triples_deterministically
+from torch_geometric.testing import onlyRAG
 
 
 @onlyRAG
@@ -56,4 +56,3 @@ def test_merge_triples_deterministically_singleton():
 
     merged = _merge_triples_deterministically(results)
     assert merged == [("only", "one", "triple")]
-
