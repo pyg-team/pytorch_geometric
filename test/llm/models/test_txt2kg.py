@@ -4,7 +4,6 @@ from torch_geometric.llm.models.txt2kg import (
     _merge_triples_deterministically,
     _parse_n_check_triples,
 )
-from torch_geometric.testing import onlyRAG
 
 
 def test_init_local_lm_flag():
