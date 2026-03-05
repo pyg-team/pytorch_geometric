@@ -1,8 +1,8 @@
 from torch_geometric.llm.models.txt2kg import (
-     TXT2KG,
-     _parse_n_check_triples,
-     _chunk_text,
-     _merge_triples_deterministically,
+    TXT2KG,
+    _chunk_text,
+    _merge_triples_deterministically,
+    _parse_n_check_triples,
 )
 from torch_geometric.testing import onlyRAG
 
@@ -26,8 +26,11 @@ def test_chunk_text_simple_sentence():
     # Only makes chunks at sentence boundaries
     assert any("Hello" in c for c in chunks)
 
+
 class DummyLLM:
-    def __init__(self): pass
+    def __init__(self):
+        pass
+
     def inference(self, *args, **kwargs):
         return ["(X,edge,Y)"]
 
@@ -59,11 +62,8 @@ def test_add_doc_to_KG(monkeypatch):
     model = TXT2KG(local_LM=True, chunk_size=10)
 
     # Mock only the LLM output stage
-    monkeypatch.setattr(
-        model,
-        "_chunk_to_triples_str_local",
-        lambda *_: "(A,rel,B)\n(C,rel,D)"
-    )
+    monkeypatch.setattr(model, "_chunk_to_triples_str_local",
+                        lambda *_: "(A,rel,B)\n(C,rel,D)")
 
     model.add_doc_2_KG("Some text")
 
