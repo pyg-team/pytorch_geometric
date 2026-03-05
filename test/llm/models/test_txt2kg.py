@@ -7,14 +7,12 @@ from torch_geometric.llm.models.txt2kg import (
 from torch_geometric.testing import onlyRAG
 
 
-@onlyRAG
 def test_init_local_lm_flag():
     model = TXT2KG(local_LM=True, chunk_size=20)
     assert model.local_LM is True
     assert model.initd_LM is False
 
 
-@onlyRAG
 def test_parse_n_check_triples_formats():
     s = "(A, rel, B)\n(C, rel2, D)"
     parsed = _parse_n_check_triples(s)
@@ -22,7 +20,6 @@ def test_parse_n_check_triples_formats():
     assert ("C", "rel2", "D") in parsed
 
 
-@onlyRAG
 def test_chunk_text_simple_sentence():
     text = "Hello world. Another sentence!"
     chunks = _chunk_text(text, chunk_size=10)
@@ -35,7 +32,6 @@ class DummyLLM:
         return ["(X,edge,Y)"]
 
 
-@onlyRAG
 def test_local_lm_integration(monkeypatch):
     model = TXT2KG(local_LM=True)
 
@@ -52,7 +48,6 @@ def test_local_lm_integration(monkeypatch):
     assert model.time_to_parse > 0
 
 
-@onlyRAG
 def test_add_doc_empty(monkeypatch):
     model = TXT2KG(local_LM=True)
     model.add_doc_2_KG("", QA_pair=None)
@@ -60,7 +55,6 @@ def test_add_doc_empty(monkeypatch):
 
 
 # Mock LLM + parsing on real text:
-@onlyRAG
 def test_add_doc_to_KG(monkeypatch):
     model = TXT2KG(local_LM=True, chunk_size=10)
 
@@ -80,7 +74,6 @@ def test_add_doc_to_KG(monkeypatch):
     assert model.doc_id_counter == 1
 
 
-@onlyRAG
 def test_merge_triples_deterministically_basic():
     # Simple case: multiple sublists, strings only
     results = [
@@ -99,7 +92,6 @@ def test_merge_triples_deterministically_basic():
     assert merged == expected
 
 
-@onlyRAG
 def test_merge_triples_deterministically_unicode_and_nonstring():
     # Include unicode and a numeric element to cover else branch in lambda
     results = [
@@ -118,7 +110,6 @@ def test_merge_triples_deterministically_unicode_and_nonstring():
     assert merged == expected
 
 
-@onlyRAG
 def test_merge_triples_deterministically_empty():
     # Edge case: empty input
     results = []
@@ -127,7 +118,6 @@ def test_merge_triples_deterministically_empty():
     assert merged == []
 
 
-@onlyRAG
 def test_merge_triples_deterministically_singleton():
     # Edge case: single sublist, single triple
     results = [[["only", "one", "triple"]]]
