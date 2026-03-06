@@ -22,7 +22,7 @@ except ImportError:
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
 
 
-def _safe_auto_tokenizer(model_name: str):
+def _safe_auto_tokenizer(model_name: str) -> PreTrainedTokenizerBase:
     try:
         from transformers import AutoTokenizer
         return AutoTokenizer.from_pretrained(model_name)
@@ -31,6 +31,7 @@ def _safe_auto_tokenizer(model_name: str):
             from transformers import BertTokenizer
             return BertTokenizer.from_pretrained(model_name)
         elif "gpt2" in model_name:
+            from transformers import GPT2Tokenizer
             return GPT2Tokenizer.from_pretrained(model_name)
         else:
             raise RuntimeError(f"Unsupported legacy model: {model_name}")
