@@ -320,8 +320,7 @@ def _get_num_procs():
             num_proc = len(os.sched_getaffinity(0)) / (2)
         except Exception:
             num_proc = os.cpu_count() / (2)
-            pass
-        
+
     return int(num_proc)
 
 
