@@ -1,8 +1,12 @@
+import time
+
+import torch_geometric.llm.models.txt2kg as txt2kg
 from torch_geometric.llm.models.txt2kg import (
     TXT2KG,
     _chunk_text,
     _merge_triples_deterministically,
     _parse_n_check_triples,
+    _multiproc_helper
 )
 from torch_geometric.testing import onlyRAG
 
@@ -124,3 +128,136 @@ def test_merge_triples_deterministically_singleton():
 
     merged = _merge_triples_deterministically(results)
     assert merged == [("only", "one", "triple")]
+
+
+def test_chunk_to_triples_str_cloud(monkeypatch):
+    import torch_geometric.llm.models.txt2kg as txt2kg
+
+    # Reset globals for deterministic behavior
+    txt2kg.CLIENT_INITD = False
+
+    # ---- Dummy streaming objects ----
+    class DummyDelta:
+        def __init__(self, content):
+            self.content = content
+
+    class DummyChoice:
+        def __init__(self, content):
+            self.delta = DummyDelta(content)
+
+    class DummyChunk:
+        def __init__(self, content):
+            self.choices = [DummyChoice(content)]
+
+    def dummy_stream(*args, **kwargs):
+        yield DummyChunk("(A,")
+        yield DummyChunk("rel,")
+        yield DummyChunk("B)")
+
+    # ---- Dummy OpenAI client ----
+    class DummyClient:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        class chat:
+            class completions:
+                @staticmethod
+                def create(*args, **kwargs):
+                    return dummy_stream()
+
+    monkeypatch.setattr("openai.OpenAI", DummyClient)
+
+    out = txt2kg._chunk_to_triples_str_cloud("text")
+
+    assert out == "(A,rel,B)"
+
+
+def dummy_multiproc_helper(
+    rank,
+    chunks,
+    py_fn,
+    llm_fn,
+    NIM_KEY,
+    NIM_MODEL,
+    ENDPOINT_URL,
+    max_retries=3,
+    base_delay=0,
+):
+    return [("A", "rel", "B")]
+
+
+def test_extract_relevant_triples_cloud(monkeypatch):
+
+    model = TXT2KG(local_LM=False, chunk_size=10)
+
+    # Mock the multiproc helper (module-level)
+    monkeypatch.setattr(
+        txt2kg,
+        "_multiproc_helper",
+        dummy_multiproc_helper
+    )
+
+    triples = model._extract_relevant_triples("Some text")
+    assert ("A", "rel", "B") in triples
+
+
+def test_multiproc_helper_success(monkeypatch):
+    # Dummy LLM/Python parser
+    def dummy_llm_fn(x, **kwargs):
+        return ["llm:" + str(x)]
+
+    def dummy_py_fn(x):
+        return ["py:" + str(i) for i in x]
+
+    # Patch _llm_then_python_parse
+    monkeypatch.setattr(
+        "torch_geometric.llm.models.txt2kg._llm_then_python_parse",
+        lambda chunks, py_fn, llm_fn, **kwargs: ["PARSED:" + str(chunks)]
+    )
+
+    # Input chunks for rank 0
+    chunks_for_rank = ["chunk0", "chunk1"]
+
+    result = _multiproc_helper(
+        rank=0,
+        chunks_for_rank=chunks_for_rank,
+        py_fn=dummy_py_fn,
+        llm_fn=dummy_llm_fn,
+        NIM_KEY="dummy",
+        NIM_MODEL="dummy",
+        ENDPOINT_URL="dummy",
+        max_retries=3,
+        base_delay=0.01  # keep backoff small in tests
+    )
+
+    assert result == ["PARSED:['chunk0', 'chunk1']"]
+
+
+def test_multiproc_helper_retry(monkeypatch):
+    attempts = []
+
+    def failing_parse(chunks, py_fn, llm_fn, **kwargs):
+        attempts.append(1)
+        if len(attempts) < 3:
+            raise RuntimeError("fail")
+        return ["SUCCESS"]
+
+    monkeypatch.setattr(
+        "torch_geometric.llm.models.txt2kg._llm_then_python_parse",
+        failing_parse
+    )
+
+    result = _multiproc_helper(
+        rank=0,
+        chunks_for_rank=["chunk"],
+        py_fn=lambda x: x,
+        llm_fn=lambda x: x,
+        NIM_KEY="dummy",
+        NIM_MODEL="dummy",
+        ENDPOINT_URL="dummy",
+        max_retries=5,
+        base_delay=0  # instant retries for test
+    )
+
+    assert result == ["SUCCESS"]
+    assert len(attempts) == 3  # retried twice, succeeded on 3rd
