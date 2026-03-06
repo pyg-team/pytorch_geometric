@@ -9,6 +9,8 @@ from torch_geometric.typing import SparseTensor, TensorFrame
 from torch_geometric.utils import narrow
 
 T = TypeVar("T")
+SeparateFn = Callable[..., Any]
+SeparateFnMap = Dict[Type[Any], SeparateFn]
 
 
 def separate(
@@ -18,7 +20,7 @@ def separate(
     slice_dict: Any,
     inc_dict: Any = None,
     decrement: bool = True,
-    separate_fn_map: Optional[Dict[Any, Callable[..., Any]]] = None,
+    separate_fn_map: Optional[SeparateFnMap] = None,
 ) -> T:
     # Separates the individual element from a `batch` at index `idx`.
     # `separate` can handle both homogeneous and heterogeneous data objects by
@@ -74,7 +76,7 @@ def _separate(
     batch: BaseData,
     store: BaseStorage,
     decrement: bool,
-    separate_fn_map: Optional[Dict[Any, Callable[..., Any]]] = None,
+    separate_fn_map: Optional[SeparateFnMap] = None,
 ) -> Any:
     elem_type = type(values)
 

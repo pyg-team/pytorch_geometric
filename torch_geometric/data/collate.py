@@ -30,6 +30,8 @@ from torch_geometric.utils import cumsum, is_sparse, is_torch_sparse_tensor
 from torch_geometric.utils.sparse import cat
 
 T = TypeVar("T")
+CollateFn = Callable[..., Tuple[Any, Any, Any]]
+CollateFnMap = Dict[Type[Any], CollateFn]
 SliceDictType = Dict[str, Union[Tensor, Dict[str, Tensor]]]
 IncDictType = Dict[str, Union[Tensor, Dict[str, Tensor]]]
 
@@ -41,7 +43,7 @@ def collate(
     add_batch: bool = True,
     follow_batch: Optional[Iterable[str]] = None,
     exclude_keys: Optional[Iterable[str]] = None,
-    collate_fn_map: Optional[Dict[Any, Callable[..., Tuple[Any, Any, Any]]]] = None,
+    collate_fn_map: Optional[CollateFnMap] = None,
 ) -> Tuple[T, SliceDictType, IncDictType]:
     # Collates a list of `data` objects into a single object of type `cls`.
     # `collate` can handle both homogeneous and heterogeneous data objects by
@@ -156,7 +158,7 @@ def _collate(
     data_list: List[BaseData],
     stores: List[BaseStorage],
     increment: bool,
-    collate_fn_map: Optional[Dict[Any, Callable[..., Tuple[Any, Any, Any]]]] = None,
+    collate_fn_map: Optional[CollateFnMap] = None,
 ) -> Tuple[Any, Any, Any]:
     elem = values[0]
     elem_type = type(elem)

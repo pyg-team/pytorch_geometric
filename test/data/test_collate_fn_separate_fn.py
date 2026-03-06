@@ -272,3 +272,54 @@ def test_separate_fn_map_isinstance_dispatch_for_subclass_batch_value():
     assert isinstance(batch.foo, FooBatch)
     assert isinstance(out0.foo, FooBatch)
     assert torch.equal(out0.foo.x, data_list[0].foo.x)
+
+
+def test_collate_fn_map_prefers_exact_type_match():
+    data_list = [
+        Data(foo=FooChild(torch.tensor([1]))),
+        Data(foo=FooChild(torch.tensor([2, 3]))),
+    ]
+
+    batch, _, _ = collate(
+        Data,
+        data_list=data_list,
+        increment=True,
+        add_batch=False,
+        collate_fn_map={
+            Foo: foo_collate,
+            FooChild: foobatch_collate,
+        },
+    )
+
+    assert isinstance(batch.foo, FooBatch)
+
+
+def test_separate_fn_map_prefers_exact_type_match():
+    data_list = [
+        Data(foo=Foo(torch.tensor([1, 2]))),
+        Data(foo=Foo(torch.tensor([3]))),
+    ]
+
+    batch, slice_dict, inc_dict = collate(
+        Data,
+        data_list=data_list,
+        increment=True,
+        add_batch=False,
+        collate_fn_map={Foo: foobatch_collate},
+    )
+
+    out0 = separate(
+        Data,
+        batch=batch,
+        idx=0,
+        slice_dict=slice_dict,
+        inc_dict=inc_dict,
+        decrement=True,
+        separate_fn_map={
+            Foo: foo_separate,
+            FooBatch: foobatch_separate,
+        },
+    )
+
+    assert isinstance(out0.foo, FooBatch)
+    assert torch.equal(out0.foo.x, data_list[0].foo.x)
