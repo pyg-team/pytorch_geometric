@@ -1,12 +1,10 @@
-import time
-
 import torch_geometric.llm.models.txt2kg as txt2kg
 from torch_geometric.llm.models.txt2kg import (
     TXT2KG,
     _chunk_text,
     _merge_triples_deterministically,
+    _multiproc_helper,
     _parse_n_check_triples,
-    _multiproc_helper
 )
 
 
@@ -190,11 +188,7 @@ def test_extract_relevant_triples_cloud(monkeypatch):
     model = TXT2KG(local_LM=False, chunk_size=10)
 
     # Mock the multiproc helper (module-level)
-    monkeypatch.setattr(
-        txt2kg,
-        "_multiproc_helper",
-        dummy_multiproc_helper
-    )
+    monkeypatch.setattr(txt2kg, "_multiproc_helper", dummy_multiproc_helper)
 
     triples = model._extract_relevant_triples("Some text")
     assert ("A", "rel", "B") in triples
@@ -211,8 +205,7 @@ def test_multiproc_helper_success(monkeypatch):
     # Patch _llm_then_python_parse
     monkeypatch.setattr(
         "torch_geometric.llm.models.txt2kg._llm_then_python_parse",
-        lambda chunks, py_fn, llm_fn, **kwargs: ["PARSED:" + str(chunks)]
-    )
+        lambda chunks, py_fn, llm_fn, **kwargs: ["PARSED:" + str(chunks)])
 
     # Input chunks for rank 0
     chunks_for_rank = ["chunk0", "chunk1"]
@@ -243,8 +236,7 @@ def test_multiproc_helper_retry(monkeypatch):
 
     monkeypatch.setattr(
         "torch_geometric.llm.models.txt2kg._llm_then_python_parse",
-        failing_parse
-    )
+        failing_parse)
 
     result = _multiproc_helper(
         rank=0,
