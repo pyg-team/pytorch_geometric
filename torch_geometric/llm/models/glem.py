@@ -83,9 +83,11 @@ class GLEM(torch.nn.Module):
             from transformers import AutoModelForSequenceClassification
             model_class = AutoModelForSequenceClassification
 
-        self.lm = model_class.from_pretrained(
-            lm_to_use, num_labels=out_channels, torch_dtype=lm_dtype,
-            offload_folder="offload", trust_remote_code=True)
+        self.lm = model_class.from_pretrained(lm_to_use,
+                                              num_labels=out_channels,
+                                              torch_dtype=lm_dtype,
+                                              offload_folder="offload",
+                                              trust_remote_code=True)
 
         if lm_use_lora:
             from peft import (
