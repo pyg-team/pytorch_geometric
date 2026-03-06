@@ -6,9 +6,7 @@ from collections import defaultdict
 from typing import Callable, Optional
 
 import numpy as np
-import pandas as pd
 import torch
-from sklearn.model_selection import train_test_split
 from tqdm import tqdm
 
 from torch_geometric.data import Data, HeteroData, InMemoryDataset, extract_zip
@@ -57,7 +55,7 @@ def _download_with_tqdm(url: str, filepath: str) -> None:
 class RelSCH(InMemoryDataset):
     r"""The homogeneous variant (RelSC-H) of the RelSC
     benchmark dataset from the `"A Benchmark Dataset for
-      Graph Regression with Homogeneous and
+    Graph Regression with Homogeneous and
     Multi-Relational Variants" <https://arxiv.org/pdf/2505.23875>`_ paper.
 
     RelSC is a graph-regression dataset built from
@@ -67,12 +65,11 @@ class RelSCH(InMemoryDataset):
 
     For more information, tutorials, and scripts to reproduce paper results or
     build your own dataset, please visit the `Official Project Page
-    <https://github.com/MarcusVukojevic/
-    graph_regression_datasets>`_.
+    <https://github.com/MarcusVukojevic/graph_regression_datasets>`_.
 
     .. note::
         The target values are normalized execution
-         times in the range :obj:`[0, 1]`.
+        times in the range :obj:`[0, 1]`.
 
     **STATS:**
 
@@ -198,6 +195,9 @@ class RelSCH(InMemoryDataset):
         return edge_index, edge_attr
 
     def process(self):
+        import pandas as pd
+        from sklearn.model_selection import train_test_split
+
         json_path = _find_file(self.raw_dir, self.raw_file_names[0])
         csv_path = _find_file(self.raw_dir, self.raw_file_names[1])
 
@@ -293,8 +293,7 @@ class RelSCM(InMemoryDataset):
     r"""The multi-relational variant (RelSC-M)
     of the RelSC benchmark dataset from
     the `"A Benchmark Dataset for Graph Regression with Homogeneous and
-    Multi-Relational Variants"
-    <https://arxiv.org/pdf/2505.23875>`_ paper.
+    Multi-Relational Variants" <https://arxiv.org/pdf/2505.23875>`_ paper.
 
     RelSC is a multi-relational graph dataset where nodes
     preserve their original structure, connecting
@@ -303,8 +302,7 @@ class RelSCM(InMemoryDataset):
 
     For more information, tutorials, and scripts to reproduce paper results or
     build your own dataset, please visit the `Official Project Page
-    <https://github.com/MarcusVukojevic/
-    graph_regression_datasets>`_.
+    <https://github.com/MarcusVukojevic/graph_regression_datasets>`_.
 
     .. note::
         The target values are normalized execution
@@ -454,6 +452,9 @@ class RelSCM(InMemoryDataset):
         return new_edges
 
     def process(self):
+        import pandas as pd
+        from sklearn.model_selection import train_test_split
+
         json_path = _find_file(self.raw_dir, self.raw_file_names[0])
         csv_path = _find_file(self.raw_dir, self.raw_file_names[1])
 
