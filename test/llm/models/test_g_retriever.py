@@ -1,8 +1,10 @@
 import gc
 
+import pytest
 import torch
 
 from torch_geometric.llm.models import LLM, GRetriever
+from torch_geometric.llm.models.g_retriever import _align_dtype
 from torch_geometric.nn import GAT
 from torch_geometric.testing import onlyRAG, withPackage
 
@@ -100,3 +102,34 @@ def test_g_retriever_many_tokens() -> None:
     del model, llm, gnn
     gc.collect()
     torch.cuda.empty_cache()
+
+
+DTYPES = [torch.float32, torch.float16]
+
+
+def _dtype_id(val):
+    # Called for each individual parameter value
+    if isinstance(val, torch.dtype):
+        return str(val).replace("torch.", "")
+    return str(val)
+
+
+@onlyRAG
+@pytest.mark.parametrize(
+    "llm_dtype,input_dtype",
+    [(ld, idt) for ld in DTYPES for idt in DTYPES],
+    ids=lambda val: _dtype_id(val),
+)
+def test_align_dtype(llm_dtype, input_dtype):
+    class DummyLLM(torch.nn.Module):
+        def __init__(self, dtype):
+            super().__init__()
+            self.linear = torch.nn.Linear(4, 4).to(dtype)
+
+        def parameters(self):
+            return self.linear.parameters()
+
+    llm = DummyLLM(llm_dtype)
+    x = torch.randn(2, 4, dtype=input_dtype)
+    out = _align_dtype(x, llm)
+    assert out.dtype == llm_dtype
