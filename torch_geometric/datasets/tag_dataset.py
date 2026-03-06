@@ -30,6 +30,8 @@ def _safe_auto_tokenizer(model_name: str):
         if "bert" in model_name:
             from transformers import BertTokenizer
             return BertTokenizer.from_pretrained(model_name)
+        elif "gpt2" in model_name:
+            return GPT2Tokenizer.from_pretrained(model_name)
         else:
             raise RuntimeError(f"Unsupported legacy model: {model_name}")
 
