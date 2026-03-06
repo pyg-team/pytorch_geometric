@@ -1,6 +1,7 @@
+import types
+
 import pytest
 import torch
-import types
 
 from torch_geometric.llm.models.glem import GLEM, deal_nan
 
@@ -72,7 +73,6 @@ class DummyLM(torch.nn.Module):
 
 def test_glem_bert_tiny_branch(monkeypatch):
     """Covers the BertForSequenceClassification branch."""
-
     from transformers import BertForSequenceClassification
 
     def fake_from_pretrained(*args, **kwargs):
@@ -97,7 +97,6 @@ def test_glem_bert_tiny_branch(monkeypatch):
 
 def test_glem_auto_model_branch(monkeypatch):
     """Covers the AutoModelForSequenceClassification branch."""
-
     from transformers import AutoModelForSequenceClassification
 
     def fake_from_pretrained(*args, **kwargs):
