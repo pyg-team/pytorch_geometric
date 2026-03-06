@@ -9,7 +9,6 @@ from torch_geometric.llm.models.txt2kg import (
     _parse_n_check_triples,
     _multiproc_helper
 )
-from torch_geometric.testing import onlyRAG
 
 
 def test_init_local_lm_flag():
