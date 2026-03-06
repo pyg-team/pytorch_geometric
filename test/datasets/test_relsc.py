@@ -24,20 +24,13 @@ def create_dummy_data(raw_dir, project_name):
             2  # num_nodes
         ]
 
-    dummy_json[keys[0]] = [
-        [
-            [[6], [3]],
-            [[0, 1]] * 11,  # 11 collegamenti fittizi
-            [[i] for i in range(1, 12)]  # 11 feature di archi distinte
-        ],
-        2
-    ]
+    dummy_json[keys[0]] = [[[[6], [3]], [[0, 1]] * 11,
+                            [[i] for i in range(1, 12)]], 2]
 
     json_path = os.path.join(raw_dir, f"{project_name}.json")
     with open(json_path, 'w') as f:
         json.dump(dummy_json, f)
 
-    # Crea un finto file CSV con 4 valori per i nostri 4 grafi
     dummy_csv = pd.DataFrame({'Key': keys, 'Value': [10.0, 20.0, 30.0, 40.0]})
     csv_path = os.path.join(raw_dir, f"y_{project_name}.csv")
     dummy_csv.to_csv(csv_path, index=False)
@@ -78,7 +71,5 @@ def test_relsc_m(mock_download, tmp_path):
     data = dataset[0]
     assert isinstance(data, HeteroData)
     assert 'y' in data
-
-    # Verifica che le chiavi semantiche siano state generate
     assert 'declarations' in data.node_types
     assert 'control_flow' in data.node_types
