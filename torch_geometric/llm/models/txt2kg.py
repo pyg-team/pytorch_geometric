@@ -315,11 +315,15 @@ def _multiproc_helper(rank, chunks_for_rank, py_fn, llm_fn, NIM_KEY, NIM_MODEL,
 
 
 def _get_num_procs():
+    num_proc = None
     if hasattr(os, "sched_getaffinity"):
         try:
             num_proc = len(os.sched_getaffinity(0)) / (2)
         except Exception:
-            num_proc = os.cpu_count() / (2)
+            pass
+
+    if num_proc == None:
+        num_proc = os.cpu_count() / (2)
 
     return int(num_proc)
 
