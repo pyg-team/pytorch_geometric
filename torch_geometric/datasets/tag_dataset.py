@@ -22,6 +22,21 @@ except ImportError:
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
 
 
+def _safe_auto_tokenizer(model_name: str):
+    try:
+        from transformers import AutoTokenizer
+        return AutoTokenizer.from_pretrained(model_name)
+    except ValueError:
+        if "bert" in model_name:
+            from transformers import BertTokenizer
+            return BertTokenizer.from_pretrained(model_name)
+        elif "gpt2" in model_name:
+            from transformers import GPT2Tokenize
+            return GPT2Tokenizer.from_pretrained(model_name)
+        else:
+            raise RuntimeError(f"Unsupported legacy model: {model_name}")
+
+
 class TAGDataset(InMemoryDataset):
     r"""The Text Attributed Graph datasets from the
     `"Learning on Large-scale Text-attributed Graphs via Variational Inference"
@@ -85,8 +100,7 @@ class TAGDataset(InMemoryDataset):
         self.text = text
         self.llm_prediction_topk = 5
         self.tokenizer_name = tokenizer_name
-        from transformers import AutoTokenizer
-        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+        self.tokenizer = _safe_auto_tokenizer(tokenizer_name)
         if self.tokenizer.pad_token_id is None:
             self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
         if self.tokenizer.pad_token is None:
