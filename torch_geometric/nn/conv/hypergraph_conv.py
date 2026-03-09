@@ -191,6 +191,16 @@ class HypergraphConv(MessagePassing):
 
         out = self.propagate(hyperedge_index, x=x, norm=B, alpha=alpha,
                              size=(num_nodes, num_edges))
+
+        # Apply hyperedge weights W to the intermediate edge representation.
+        # Per the formula X' = D^{-1} H W B^{-1} H^T X Theta, the diagonal
+        # weight matrix W must scale edge features between the two message
+        # passing steps (node-to-edge followed by edge-to-node):
+        if self.use_attention:
+            out = out * hyperedge_weight.view(-1, 1, 1)
+        else:
+            out = out * hyperedge_weight.view(-1, 1)
+
         out = self.propagate(hyperedge_index.flip([0]), x=out, norm=D,
                              alpha=alpha, size=(num_edges, num_nodes))
 
