@@ -65,6 +65,45 @@ class TensorAttr(CastMixin):
 
     # Convenience methods #####################################################
 
+    def equal(self, obj: 'TensorAttr') -> bool:
+        r"""Safely compares two :class:`TensorAttr` objects.
+        Handles tensor/ndarray/slice comparisons without triggering ambiguous
+        boolean value errors.
+
+        Args:
+            obj (TensorAttr): The other TensorAttr object to compare with.
+
+        Returns:
+            bool: True if both TensorAttr objects are equal, False otherwise.
+        """
+        if not isinstance(obj, TensorAttr):
+            return False
+
+        def _equal(a: Any, b: Any) -> bool:
+            # Handle torch.Tensor
+            if isinstance(a, torch.Tensor) and isinstance(b, torch.Tensor):
+                return torch.equal(a, b)
+            # Handle numpy.ndarray
+            if isinstance(a, np.ndarray) and isinstance(b, np.ndarray):
+                return bool(np.array_equal(a, b))
+            # Handle slice objects
+            if isinstance(a, slice) and isinstance(b, slice):
+                return (a.start, a.stop, a.step) == (b.start, b.stop, b.step)
+            # Handle mixed tensor/array types - they are never equal
+            if (isinstance(a, torch.Tensor) and isinstance(b, np.ndarray)):
+                return False
+            if (isinstance(a, np.ndarray) and isinstance(b, torch.Tensor)):
+                return False
+            # Handle cases where one is a tensor/array and other is not
+            if (isinstance(a, (torch.Tensor, np.ndarray))
+                    or isinstance(b, (torch.Tensor, np.ndarray))):
+                return False
+            return a == b
+
+        return (_equal(self.group_name, obj.group_name)
+                and _equal(self.attr_name, obj.attr_name)
+                and _equal(self.index, obj.index))
+
     def is_set(self, key: str) -> bool:
         r"""Whether an attribute is set in :obj:`TensorAttr`."""
         assert key in self.__dataclass_fields__
@@ -243,7 +282,7 @@ class AttrView(CastMixin):
         """
         if not isinstance(obj, AttrView):
             return False
-        return self._store == obj._store and self._attr == obj._attr
+        return self._store == obj._store and self._attr.equal(obj._attr)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}(store={self._store}, '

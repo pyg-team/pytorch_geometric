@@ -430,7 +430,13 @@ def eval_type(value: Any, _globals: Dict[str, Any]) -> Type:
     r"""Returns the type hint of a string."""
     if isinstance(value, str):
         value = typing.ForwardRef(value)
-    return typing._eval_type(value, _globals, None)  # type: ignore
+    # Python 3.13 deprecates calling `_eval_type` without `type_params`.
+    # Use version check to avoid try-except overhead.
+    if sys.version_info >= (3, 13):
+        return typing._eval_type(value, _globals, None,
+                                 type_params=())  # type: ignore[attr-defined]
+    else:
+        return typing._eval_type(value, _globals, None)  # type: ignore
 
 
 def type_repr(obj: Any, _globals: Dict[str, Any]) -> str:
