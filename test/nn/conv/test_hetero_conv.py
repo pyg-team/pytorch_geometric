@@ -14,6 +14,11 @@ from torch_geometric.nn import (
     MessagePassing,
     SAGEConv,
 )
+from torch_geometric.nn.aggr import (
+    AttentionalAggregation,
+    MaxAggregation,
+    MeanAggregation,
+)
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
     get_random_edge_index,
@@ -175,6 +180,120 @@ def test_hetero_conv_with_dot_syntax_node_types():
 
     assert len(out_dict) == 2
     assert out_dict['src.paper'].size() == (50, 64)
+    assert out_dict['author'].size() == (30, 64)
+
+
+def test_hetero_conv_with_attentional_aggregation():
+    data = HeteroData()
+    data['paper'].x = torch.randn(50, 32)
+    data['author'].x = torch.randn(30, 64)
+    data['paper', 'paper'].edge_index = get_random_edge_index(50, 50, 200)
+    data['paper', 'author'].edge_index = get_random_edge_index(50, 30, 100)
+    data['author', 'paper'].edge_index = get_random_edge_index(30, 50, 100)
+
+    # Test with AttentionalAggregation
+    gate_nn = torch.nn.Linear(64, 1)
+    aggr = AttentionalAggregation(gate_nn)
+
+    conv = HeteroConv(
+        {
+            ('paper', 'to', 'paper'): GCNConv(-1, 64),
+            ('author', 'to', 'paper'): SAGEConv((-1, -1), 64),
+            ('paper', 'to', 'author'): GATConv(
+                (-1, -1), 64, add_self_loops=False),
+        },
+        aggr=aggr,
+    )
+
+    # Check that parameters include both conv and aggregation parameters
+    assert len(list(conv.parameters())) > 0
+    assert str(conv) == 'HeteroConv(num_relations=3)'
+
+    out_dict = conv(
+        data.x_dict,
+        data.edge_index_dict,
+    )
+
+    assert len(out_dict) == 2
+    assert out_dict['paper'].size() == (50, 64)
+    assert out_dict['author'].size() == (30, 64)
+
+    # Test reset_parameters
+    conv.reset_parameters()
+
+
+def test_hetero_conv_with_attentional_aggregation_and_nn():
+    data = HeteroData()
+    data['paper'].x = torch.randn(50, 32)
+    data['author'].x = torch.randn(30, 64)
+    data['paper', 'paper'].edge_index = get_random_edge_index(50, 50, 200)
+    data['paper', 'author'].edge_index = get_random_edge_index(50, 30, 100)
+    data['author', 'paper'].edge_index = get_random_edge_index(30, 50, 100)
+
+    # Test with AttentionalAggregation with both gate_nn and nn
+    gate_nn = torch.nn.Linear(64, 1)
+    nn = torch.nn.Linear(64, 64)
+    aggr = AttentionalAggregation(gate_nn, nn)
+
+    conv = HeteroConv(
+        {
+            ('paper', 'to', 'paper'): GCNConv(-1, 64),
+            ('author', 'to', 'paper'): SAGEConv((-1, -1), 64),
+            ('paper', 'to', 'author'): GATConv(
+                (-1, -1), 64, add_self_loops=False),
+        },
+        aggr=aggr,
+    )
+
+    out_dict = conv(
+        data.x_dict,
+        data.edge_index_dict,
+    )
+
+    assert len(out_dict) == 2
+    assert out_dict['paper'].size() == (50, 64)
+    assert out_dict['author'].size() == (30, 64)
+
+
+def test_hetero_conv_with_aggregation_modules():
+    """Test HeteroConv with various Aggregation module types."""
+    data = HeteroData()
+    data['paper'].x = torch.randn(50, 32)
+    data['author'].x = torch.randn(30, 64)
+    data['paper', 'paper'].edge_index = get_random_edge_index(50, 50, 200)
+    data['paper', 'author'].edge_index = get_random_edge_index(50, 30, 100)
+    data['author', 'paper'].edge_index = get_random_edge_index(30, 50, 100)
+
+    # Test with MaxAggregation
+    conv = HeteroConv(
+        {
+            ('paper', 'to', 'paper'): GCNConv(-1, 64),
+            ('author', 'to', 'paper'): SAGEConv((-1, -1), 64),
+            ('paper', 'to', 'author'): GATConv(
+                (-1, -1), 64, add_self_loops=False),
+        },
+        aggr=MaxAggregation(),
+    )
+
+    out_dict = conv(data.x_dict, data.edge_index_dict)
+    assert len(out_dict) == 2
+    assert out_dict['paper'].size() == (50, 64)
+    assert out_dict['author'].size() == (30, 64)
+
+    # Test with MeanAggregation
+    conv = HeteroConv(
+        {
+            ('paper', 'to', 'paper'): GCNConv(-1, 64),
+            ('author', 'to', 'paper'): SAGEConv((-1, -1), 64),
+            ('paper', 'to', 'author'): GATConv(
+                (-1, -1), 64, add_self_loops=False),
+        },
+        aggr=MeanAggregation(),
+    )
+
+    out_dict = conv(data.x_dict, data.edge_index_dict)
+    assert len(out_dict) == 2
+    assert out_dict['paper'].size() == (50, 64)
     assert out_dict['author'].size() == (30, 64)
 
 
