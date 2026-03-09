@@ -143,7 +143,7 @@ class GRetriever(torch.nn.Module):
         if self.gnn is not None:
             x = self.encode(x, edge_index, batch, edge_attr)
             x = self.projector(x)
-            x = _align_dtype(x, self.llm_generator)
+            x = self._align_dtype(x, self.llm_generator)
             xs = x.split(1, dim=0)
 
             # Handle case where theres more than one embedding for each sample
@@ -252,10 +252,10 @@ class GRetriever(torch.nn.Module):
                 f')')
 
 
-def _align_dtype(x: torch.Tensor,
-                 llm_generator: torch.nn.Module) -> torch.Tensor:
-    llm_dtype = next(iter(llm_generator.parameters())).dtype
-    if x.dtype != llm_dtype:
-        x = x.to(llm_dtype)
+    def _align_dtype(self, x: torch.Tensor,
+                     llm_generator: torch.nn.Module) -> torch.Tensor:
+        llm_dtype = next(iter(llm_generator.parameters())).dtype
+        if x.dtype != llm_dtype:
+            x = x.to(llm_dtype)
 
-    return x
+        return x

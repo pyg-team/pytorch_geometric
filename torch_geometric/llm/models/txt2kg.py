@@ -322,7 +322,7 @@ def _get_num_procs():
         except Exception:
             pass
 
-    if num_proc == None:
+    if num_proc is None:
         num_proc = os.cpu_count() / (2)
 
     return int(num_proc)

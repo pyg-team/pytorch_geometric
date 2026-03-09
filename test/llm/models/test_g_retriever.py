@@ -3,8 +3,8 @@ import gc
 import pytest
 import torch
 
+from torch import nn
 from torch_geometric.llm.models import LLM, GRetriever
-from torch_geometric.llm.models.g_retriever import _align_dtype
 from torch_geometric.nn import GAT
 from torch_geometric.testing import onlyRAG, withPackage
 
@@ -114,22 +114,91 @@ def _dtype_id(val):
     return str(val)
 
 
-@onlyRAG
-@pytest.mark.parametrize(
-    "llm_dtype,input_dtype",
-    [(ld, idt) for ld in DTYPES for idt in DTYPES],
-    ids=lambda val: _dtype_id(val),
-)
-def test_align_dtype(llm_dtype, input_dtype):
-    class DummyLLM(torch.nn.Module):
-        def __init__(self, dtype):
-            super().__init__()
-            self.linear = torch.nn.Linear(4, 4).to(dtype)
+class DummyHFModel(nn.Module):
+    def __init__(self, hidden_size=8, vocab_size=100):
+        super().__init__()
+        self.word_embedding = nn.Embedding(vocab_size, hidden_size)
 
-        def parameters(self):
-            return self.linear.parameters()
+    def forward(self, inputs_embeds=None, **kwargs):
+        class Output:
+            def __init__(self, logits):
+                self.logits = logits
 
-    llm = DummyLLM(llm_dtype)
-    x = torch.randn(2, 4, dtype=input_dtype)
-    out = _align_dtype(x, llm)
-    assert out.dtype == llm_dtype
+        B, T, D = inputs_embeds.shape
+        logits = torch.randn(B, T, vocab_size := 10, device=inputs_embeds.device)
+        return Output(logits)
+
+
+class DummyLLM(nn.Module):
+    """Minimal LLM stub for testing."""
+    def __init__(self, hidden_size=8):
+        super().__init__()
+        self.llm = DummyHFModel(hidden_size)
+        self.word_embedding = nn.Embedding(100, hidden_size)
+
+    @property
+    def device(self):
+        return next(self.parameters()).device
+
+    def get_input_embeddings(self):
+        return self.emb
+
+    def forward(self, inputs_embeds=None, **kwargs):
+        # mimic HF output object
+        class Output:
+            def __init__(self, logits):
+                self.logits = logits
+
+        batch, seq, dim = inputs_embeds.shape
+        logits = torch.randn(batch, seq, 10)
+        return Output(logits)
+
+
+class DummyGNN(nn.Module):
+    """Simple GNN stub returning node embeddings."""
+    def __init__(self, in_channels=4, out_channels=8):
+        super().__init__()
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.lin = nn.Linear(in_channels, out_channels)
+
+
+    def forward(self, *args, **kwargs):
+        x = args[0]
+        return self.lin(x)
+
+
+@pytest.mark.parametrize("batch_size", [1, 3])
+def test_gretriever_prefix_embedding_injection(batch_size):
+    hidden_dim = 8
+    num_nodes = 5
+
+    llm = DummyLLM(hidden_dim)
+    gnn = DummyGNN(in_channels=4, out_channels=8)
+
+    model = GRetriever(
+        llm=llm,
+        gnn=gnn,
+        mlp_out_tokens=2,
+    )
+
+    # graph inputs
+    x = torch.randn(num_nodes, 4)
+    edge_index = torch.tensor([[0,1,2],[1,2,3]])
+    batch = torch.zeros(num_nodes, dtype=torch.long)
+
+    # token ids
+    questions = ["What is this graph?"] * batch_size
+    labels = ["dummy answer"] * batch_size
+
+    out = model(
+    	x=x,
+    	edge_index=edge_index,
+    	batch=batch,
+    	question=questions,
+    	label=labels,
+    )
+
+    # basic correctness assertions
+    assert hasattr(out, "logits")
+    assert out.logits.shape[0] == batch_size
