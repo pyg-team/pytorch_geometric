@@ -251,7 +251,6 @@ class GRetriever(torch.nn.Module):
                 f'  gnn={self.gnn},\n'
                 f')')
 
-
     def _align_dtype(self, x: torch.Tensor,
                      llm_generator: torch.nn.Module) -> torch.Tensor:
         llm_dtype = next(iter(llm_generator.parameters())).dtype

@@ -2,8 +2,8 @@ import gc
 
 import pytest
 import torch
-
 from torch import nn
+
 from torch_geometric.llm.models import LLM, GRetriever
 from torch_geometric.nn import GAT
 from torch_geometric.testing import onlyRAG, withPackage
@@ -125,7 +125,8 @@ class DummyHFModel(nn.Module):
                 self.logits = logits
 
         B, T, D = inputs_embeds.shape
-        logits = torch.randn(B, T, vocab_size := 10, device=inputs_embeds.device)
+        logits = torch.randn(B, T, vocab_size := 10,
+                             device=inputs_embeds.device)
         return Output(logits)
 
 
@@ -162,7 +163,6 @@ class DummyGNN(nn.Module):
         self.out_channels = out_channels
         self.lin = nn.Linear(in_channels, out_channels)
 
-
     def forward(self, *args, **kwargs):
         x = args[0]
         return self.lin(x)
@@ -184,7 +184,7 @@ def test_gretriever_prefix_embedding_injection(batch_size):
 
     # graph inputs
     x = torch.randn(num_nodes, 4)
-    edge_index = torch.tensor([[0,1,2],[1,2,3]])
+    edge_index = torch.tensor([[0, 1, 2], [1, 2, 3]])
     batch = torch.zeros(num_nodes, dtype=torch.long)
 
     # token ids
@@ -192,11 +192,11 @@ def test_gretriever_prefix_embedding_injection(batch_size):
     labels = ["dummy answer"] * batch_size
 
     out = model(
-    	x=x,
-    	edge_index=edge_index,
-    	batch=batch,
-    	question=questions,
-    	label=labels,
+        x=x,
+        edge_index=edge_index,
+        batch=batch,
+        question=questions,
+        label=labels,
     )
 
     # basic correctness assertions
