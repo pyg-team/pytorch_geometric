@@ -6,7 +6,7 @@ inputs:
     default: '3.10'
   torch-version:
     required: false
-    default: '2.8.0'
+    default: '2.10.0'
   cuda-version:
     required: false
     default: cpu

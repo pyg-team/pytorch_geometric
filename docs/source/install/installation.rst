@@ -1,7 +1,7 @@
 Installation
 ============
 
-:pyg:`PyG` is available for :python:`Python 3.10` to :python:`Python 3.13`.
+:pyg:`PyG` is available for :python:`Python 3.10` to :python:`Python 3.14`.
 
 .. note::
    We do not recommend installation as a root user on your system :python:`Python`.
@@ -47,14 +47,14 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
    .. code-block:: none
 
       python -c "import torch; print(torch.__version__)"
-      >>> 2.6.0
+      >>> 2.10.0
 
 #. Find the CUDA version :pytorch:`PyTorch` was installed with:
 
    .. code-block:: none
 
       python -c "import torch; print(torch.version.cuda)"
-      >>> 12.6
+      >>> 12.8
 
 #. Install the relevant packages:
 
@@ -64,6 +64,8 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
 
    where :obj:`${TORCH}` and :obj:`${CUDA}` should be replaced by the specific :pytorch:`PyTorch` and CUDA versions, respectively:
 
+   * :pytorch:`PyTorch` 2.10.*: :obj:`${TORCH}=2.10.0` and :obj:`${CUDA}=cpu|cu126|cu128|cu130`
+   * :pytorch:`PyTorch` 2.9.*: :obj:`${TORCH}=2.9.0` and :obj:`${CUDA}=cpu|cu126|cu128|cu130`
    * :pytorch:`PyTorch` 2.8.*: :obj:`${TORCH}=2.8.0` and :obj:`${CUDA}=cpu|cu126|cu128|cu129`
    * :pytorch:`PyTorch` 2.7.*: :obj:`${TORCH}=2.7.0` and :obj:`${CUDA}=cpu|cu118|cu126|cu128`
    * :pytorch:`PyTorch` 2.6.*: :obj:`${TORCH}=2.6.0` and :obj:`${CUDA}=cpu|cu118|cu124|cu126`
@@ -75,19 +77,19 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
    * :pytorch:`PyTorch` 2.0.*: :obj:`${TORCH}=2.0.0` and :obj:`${CUDA}=cpu|cu117|cu118`
    * :pytorch:`PyTorch` 1.13.*: :obj:`${TORCH}=1.13.0` and :obj:`${CUDA}=cpu|cu116|cu117`
 
-   For example, for :pytorch:`PyTorch` 2.8.* and CUDA 12.9, type:
+   For example, for :pytorch:`PyTorch` 2.10.* and CUDA 13.0, type:
 
    .. code-block:: none
 
-      pip install pyg_lib torch_scatter torch_sparse torch_cluster -f https://data.pyg.org/whl/torch-2.8.0+cu129.html
+      pip install pyg_lib torch_scatter torch_sparse torch_cluster -f https://data.pyg.org/whl/torch-2.10.0+cu130.html
 
-   For example, for :pytorch:`PyTorch` 2.6.* and CUDA 12.6, type:
+   For example, for :pytorch:`PyTorch` 2.9.* and CUDA 12.8, type:
 
    .. code-block:: none
 
-      pip install pyg_lib torch_scatter torch_sparse torch_cluster -f https://data.pyg.org/whl/torch-2.6.0+cu126.html
+      pip install pyg_lib torch_scatter torch_sparse torch_cluster -f https://data.pyg.org/whl/torch-2.9.0+cu128.html
 
-**Note:** Binaries of older versions are also provided for :pytorch:`PyTorch` 1.4.0, 1.5.0, 1.6.0, 1.7.0/1.7.1, 1.8.0/1.8.1, 1.9.0, 1.10.0/1.10.1/1.10.2, 1.11.0, 1.12.0/1.12.1, 1.13.0/1.13.1, 2.0.0/2.0.1, 2.1.0/2.1.1/2.1.2, 2.2.0/2.2.1/2.2.2, 2.3.0/2.3.1, 2.4.0/2.4.1, and 2.5.0/2.5.1 (following the same procedure).
+**Note:** Binaries of older versions are also provided for :pytorch:`PyTorch` 1.4.0, 1.5.0, 1.6.0, 1.7.0/1.7.1, 1.8.0/1.8.1, 1.9.0, 1.10.0/1.10.1/1.10.2, 1.11.0, 1.12.0/1.12.1, 1.13.0/1.13.1, 2.0.0/2.0.1, 2.1.0/2.1.1/2.1.2, 2.2.0/2.2.1/2.2.2, 2.3.0/2.3.1, 2.4.0/2.4.1, 2.5.0/2.5.1, 2.6.0, and 2.7.0/2.7.1 (following the same procedure).
 **For older versions, you need to explicitly specify the latest supported version number** or install via :obj:`pip install --no-index` in order to prevent a manual installation from source.
 You can look up the latest supported version number `here <https://data.pyg.org/whl>`__.
 
