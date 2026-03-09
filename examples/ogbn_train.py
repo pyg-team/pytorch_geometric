@@ -147,7 +147,7 @@ def train(epoch: int) -> tuple[Tensor, float]:
         loss.backward()
         optimizer.step()
 
-        total_loss += float(loss)
+        total_loss += float(loss.detach())
         total_correct += int(out.argmax(dim=-1).eq(y).sum())
         pbar.update(batch.batch_size)
 

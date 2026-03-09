@@ -198,7 +198,7 @@ def train():
         loss = criterion(out.view(-1), data.y.to(torch.float))
         loss.backward()
         optimizer.step()
-        total_loss += float(loss) * data.num_graphs
+        total_loss += float(loss.detach()) * data.num_graphs
 
     return total_loss / len(train_dataset)
 

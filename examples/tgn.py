@@ -147,7 +147,7 @@ def train():
         loss.backward()
         optimizer.step()
         memory.detach()
-        total_loss += float(loss) * batch.num_events
+        total_loss += float(loss.detach()) * batch.num_events
 
     return total_loss / train_data.num_events
 
