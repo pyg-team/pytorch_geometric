@@ -1,10 +1,10 @@
 import gc
+from contextlib import nullcontext
+from types import SimpleNamespace
 
 import pytest
 import torch
 from torch import nn
-from contextlib import nullcontext
-from types import SimpleNamespace
 
 from torch_geometric.llm.models import LLM, GRetriever
 from torch_geometric.nn import GAT
@@ -114,8 +114,9 @@ class DummyHFModel(nn.Module):
 
     def forward(self, inputs_embeds=None, **kwargs):
         B, T, _ = inputs_embeds.shape
-        logits = torch.randn(B, T, self.vocab_size, device=inputs_embeds.device)
-        loss=torch.tensor(0.0, device=inputs_embeds.device)
+        logits = torch.randn(B, T, self.vocab_size,
+                             device=inputs_embeds.device)
+        loss = torch.tensor(0.0, device=inputs_embeds.device)
         loss.logits = logits
         return SimpleNamespace(
             logits=logits,
