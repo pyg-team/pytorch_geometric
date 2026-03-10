@@ -131,7 +131,7 @@ class DummyLLM:
         self.device = torch.device("cpu")
         self.autocast_context = nullcontext()
 
-    def _get_embeds(self, question):
+    def _get_embeds(self, question, *args):
         batch_size = len(question)
         seq_len = 4
         hidden = self.word_embedding.embedding_dim
