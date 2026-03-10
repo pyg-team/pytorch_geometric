@@ -148,7 +148,7 @@ class TXT2KG():
 
     def _extract_relevant_triples(
             self, txt: str, max_retries: int = MAX_OUTER_RETRIES,
-            retry_delay: float = RETRY_DELAY) -> List[Tuple[str, str, str]]:
+            retry_delay: float = RETRY_DELAY,) -> List[Tuple[str, str, str]]:
         # Handle empty text (context-less QA pairs)
         if txt == "":
             return []
