@@ -147,8 +147,11 @@ class TXT2KG():
         self.doc_id_counter += 1
 
     def _extract_relevant_triples(
-            self, txt: str, max_retries: int = MAX_OUTER_RETRIES,
-            retry_delay: float = RETRY_DELAY,) -> List[Tuple[str, str, str]]:
+        self,
+        txt: str,
+        max_retries: int = MAX_OUTER_RETRIES,
+        retry_delay: float = RETRY_DELAY,
+    ) -> List[Tuple[str, str, str]]:
         # Handle empty text (context-less QA pairs)
         if txt == "":
             return []
