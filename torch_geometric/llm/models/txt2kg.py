@@ -289,7 +289,7 @@ def _llm_then_python_parse(chunks, py_fn, llm_fn, **kwargs):
 
 def _multiproc_helper(rank, chunks_for_rank, py_fn, llm_fn, NIM_KEY, NIM_MODEL,
                       ENDPOINT_URL, max_retries=MAX_NIM_RETRIES,
-                      base_delay=BASE_DELAY):
+                      base_delay=BASE_DELAY,):
 
     for attempt in range(max_retries):
         try:
