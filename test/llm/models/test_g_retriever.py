@@ -104,16 +104,6 @@ def test_g_retriever_many_tokens() -> None:
     torch.cuda.empty_cache()
 
 
-DTYPES = [torch.float32, torch.float16]
-
-
-def _dtype_id(val):
-    # Called for each individual parameter value
-    if isinstance(val, torch.dtype):
-        return str(val).replace("torch.", "")
-    return str(val)
-
-
 class DummyHFModel(nn.Module):
     def __init__(self, hidden_size=8, vocab_size=100):
         super().__init__()
@@ -129,29 +119,59 @@ class DummyHFModel(nn.Module):
         return Output(logits)
 
 
+class DummyTokenizer:
+    def __call__(self, texts, return_tensors=None, padding=True):
+        if isinstance(texts, str):
+            texts = [texts]
+
+        batch = len(texts)
+        seq_len = 4  # fixed dummy length
+
+        return {
+            "input_ids": torch.zeros(batch, seq_len, dtype=torch.long),
+            "attention_mask": torch.ones(batch, seq_len, dtype=torch.long),
+        }
+
+
 class DummyLLM(nn.Module):
-    """Minimal LLM stub for testing."""
-    def __init__(self, hidden_size=8):
+    def __init__(self, hidden_dim, vocab_size=100):
         super().__init__()
-        self.llm = DummyHFModel(hidden_size)
-        self.word_embedding = nn.Embedding(100, hidden_size)
 
-    @property
-    def device(self):
-        return next(self.parameters()).device
+        self.hidden_dim = hidden_dim
+        self.word_embedding = nn.Embedding(vocab_size, hidden_dim)
 
+        self.tokenizer = DummyTokenizer()
+        self.device = torch.device("cpu")
+
+    # required by some wrappers
     def get_input_embeddings(self):
-        return self.emb
+        return self.word_embedding
 
-    def forward(self, inputs_embeds=None, **kwargs):
-        # mimic HF output object
-        class Output:
-            def __init__(self, logits):
-                self.logits = logits
+    # used by GRetriever for prefix injection
+    def _get_embeds(self, input_ids=None, inputs_embeds=None, **kwargs):
+        if inputs_embeds is not None:
+            return inputs_embeds
+        return self.word_embedding(input_ids)
 
-        batch, seq, dim = inputs_embeds.shape
-        logits = torch.randn(batch, seq, 10)
-        return Output(logits)
+    def forward(
+        self,
+        input_ids=None,
+        inputs_embeds=None,
+        attention_mask=None,
+        labels=None,
+        **kwargs,
+    ):
+        if inputs_embeds is None:
+            inputs_embeds = self.word_embedding(input_ids)
+
+        batch, seq, hidden = inputs_embeds.shape
+
+        logits = torch.randn(batch, seq, hidden, device=inputs_embeds.device)
+
+        return {
+            "loss": torch.tensor(0.0, device=inputs_embeds.device),
+            "logits": logits,
+        }
 
 
 class DummyGNN(nn.Module):
