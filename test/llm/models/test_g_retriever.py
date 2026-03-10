@@ -3,6 +3,8 @@ import gc
 import pytest
 import torch
 from torch import nn
+from contextlib import nullcontext
+from types import SimpleNamespace
 
 from torch_geometric.llm.models import LLM, GRetriever
 from torch_geometric.nn import GAT
@@ -105,74 +107,38 @@ def test_g_retriever_many_tokens() -> None:
 
 
 class DummyHFModel(nn.Module):
-    def __init__(self, hidden_size=8, vocab_size=100):
+    def __init__(self, vocab_size=10):
         super().__init__()
-        self.word_embedding = nn.Embedding(vocab_size, hidden_size)
+        self.vocab_size = vocab_size
+        self.dummy = nn.Parameter(torch.zeros(1))
 
     def forward(self, inputs_embeds=None, **kwargs):
-        class Output:
-            def __init__(self, logits):
-                self.logits = logits
-
-        B, T, D = inputs_embeds.shape
-        logits = torch.randn(B, T, vocab_size := 10,
-                             device=inputs_embeds.device)
-        return Output(logits)
-
-
-class DummyTokenizer:
-    def __call__(self, texts, return_tensors=None, padding=True):
-        if isinstance(texts, str):
-            texts = [texts]
-
-        batch = len(texts)
-        seq_len = 4  # fixed dummy length
-
-        return {
-            "input_ids": torch.zeros(batch, seq_len, dtype=torch.long),
-            "attention_mask": torch.ones(batch, seq_len, dtype=torch.long),
-        }
+        B, T, _ = inputs_embeds.shape
+        logits = torch.randn(B, T, self.vocab_size, device=inputs_embeds.device)
+        loss=torch.tensor(0.0, device=inputs_embeds.device)
+        loss.logits = logits
+        return SimpleNamespace(
+            logits=logits,
+            loss=loss,
+        )
 
 
-class DummyLLM(nn.Module):
-    def __init__(self, hidden_dim, vocab_size=100):
-        super().__init__()
-
-        self.hidden_dim = hidden_dim
-        self.word_embedding = nn.Embedding(vocab_size, hidden_dim)
-
-        self.tokenizer = DummyTokenizer()
+class DummyLLM:
+    def __init__(self, hidden_dim):
+        self.word_embedding = nn.Embedding(100, hidden_dim)
+        self.llm = DummyHFModel()
         self.device = torch.device("cpu")
+        self.autocast_context = nullcontext()
 
-    # required by some wrappers
-    def get_input_embeddings(self):
-        return self.word_embedding
+    def _get_embeds(self, question):
+        batch_size = len(question)
+        seq_len = 4
+        hidden = self.word_embedding.embedding_dim
 
-    # used by GRetriever for prefix injection
-    def _get_embeds(self, input_ids=None, inputs_embeds=None, **kwargs):
-        if inputs_embeds is not None:
-            return inputs_embeds
-        return self.word_embedding(input_ids)
+        inputs_embeds = torch.randn(batch_size, seq_len, hidden)
+        attention_mask = torch.ones(batch_size, seq_len, dtype=torch.long)
 
-    def forward(
-        self,
-        input_ids=None,
-        inputs_embeds=None,
-        attention_mask=None,
-        labels=None,
-        **kwargs,
-    ):
-        if inputs_embeds is None:
-            inputs_embeds = self.word_embedding(input_ids)
-
-        batch, seq, hidden = inputs_embeds.shape
-
-        logits = torch.randn(batch, seq, hidden, device=inputs_embeds.device)
-
-        return {
-            "loss": torch.tensor(0.0, device=inputs_embeds.device),
-            "logits": logits,
-        }
+        return inputs_embeds, attention_mask, None
 
 
 class DummyGNN(nn.Module):
