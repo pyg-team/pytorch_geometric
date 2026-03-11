@@ -289,7 +289,7 @@ def kg_cpu():
     return TXT2KG(local_LM=True)
 
 
-def test_add_doc_empty_text(kg_cpu):
+def test_add_doc_empty_text_cpu(kg_cpu):
     """Cover the empty text branch (lines 194-201)."""
     kg_cpu.add_doc_2_KG(txt="")
     # doc_id_counter starts at 0
@@ -297,7 +297,7 @@ def test_add_doc_empty_text(kg_cpu):
     assert kg_cpu.doc_id_counter == 1
 
 
-def test_add_doc_empty_text_with_QA_pair(kg_cpu):
+def test_add_doc_empty_text_with_QA_pair_cpu(kg_cpu):
     """Cover QA_pair key path with empty text."""
     qa = ("What is PyG?", "Graph ML library")
     kg_cpu.add_doc_2_KG(txt="", QA_pair=qa)
