@@ -255,3 +255,28 @@ def test_multiproc_helper_retry(monkeypatch):
 
     assert result == ["SUCCESS"]
     assert len(attempts) == 3  # retried twice, succeeded on 3rd
+
+
+def test_add_doc_empty_text():
+    kg = TXT2KG(local_LM=True)
+
+    kg.add_doc_2_KG(txt="")
+
+    # first doc uses doc_id_counter=0 as key
+    assert 0 in kg.relevant_triples
+    assert kg.relevant_triples[0] == []
+
+    # doc counter should increment
+    assert kg.doc_id_counter == 1
+
+
+def test_add_doc_empty_text_with_QA_pair():
+    kg = TXT2KG(local_LM=True)
+
+    qa = ("What is PyG?", "Graph ML library")
+
+    kg.add_doc_2_KG(txt="", QA_pair=qa)
+
+    assert qa in kg.relevant_triples
+    assert kg.relevant_triples[qa] == []
+
