@@ -50,8 +50,8 @@ class DummyTokenizer:
 
         for l in lengths:
             pad = max_len - l
-            ids.append([0]*pad + list(range(1, l+1)))
-            mask.append([0]*pad + [1]*l)
+            ids.append([0] * pad + list(range(1, l + 1)))
+            mask.append([0] * pad + [1] * l)
 
         return DummyBatch({
             "input_ids": torch.tensor(ids),
@@ -60,7 +60,6 @@ class DummyTokenizer:
 
 
 class DummyModel(torch.nn.Module):
-
     def get_input_embeddings(self):
         return torch.nn.Embedding(100, 8)
 
@@ -96,10 +95,8 @@ def test_llm_prepare_inputs(dummy_llm):
     emb = dummy_llm.model.get_input_embeddings()
     inputs_embeds = emb(input_ids)
 
-    out = dummy_llm.model(
-        inputs_embeds=inputs_embeds,
-        attention_mask=attention_mask
-    )
+    out = dummy_llm.model(inputs_embeds=inputs_embeds,
+                          attention_mask=attention_mask)
 
     assert inputs_embeds.shape[0] == 2
     assert attention_mask.shape == input_ids.shape

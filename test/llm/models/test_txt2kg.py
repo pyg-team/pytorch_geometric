@@ -279,4 +279,3 @@ def test_add_doc_empty_text_with_QA_pair():
 
     assert qa in kg.relevant_triples
     assert kg.relevant_triples[qa] == []
-
