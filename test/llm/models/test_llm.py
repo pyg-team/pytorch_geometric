@@ -48,10 +48,10 @@ class DummyTokenizer:
         ids = []
         mask = []
 
-        for l in lengths:
-            pad = max_len - l
-            ids.append([0] * pad + list(range(1, l + 1)))
-            mask.append([0] * pad + [1] * l)
+        for seq_len in lengths:
+            padding = max_len - seq_len
+            ids.append([0] * padding + list(range(1, seq_len + 1)))
+            mask.append([0] * padding + [1] * seq_len)
 
         return DummyBatch({
             "input_ids": torch.tensor(ids),
