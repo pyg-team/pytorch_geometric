@@ -1,5 +1,6 @@
 import sys
 import types
+
 import pytest
 
 import torch_geometric.llm.models.txt2kg as txt2kg
@@ -305,15 +306,12 @@ def test_add_doc_empty_text_with_QA_pair(kg_cpu):
 
 
 def test_add_doc_nonempty_text_placeholder(kg_cpu, monkeypatch):
-    """
-    Minimal coverage for non-empty text branch.
+    """Minimal coverage for non-empty text branch.
     Avoids importing the real LLM.
     """
-
     # Patch the module-level function _llm_then_python_parse
-    monkeypatch.setattr(
-        txt2kg, "_llm_then_python_parse", lambda chunks, *args, **kwargs: []
-    )
+    monkeypatch.setattr(txt2kg, "_llm_then_python_parse",
+                        lambda chunks, *args, **kwargs: [])
 
     # Call add_doc_2_KG with non-empty text
     kg_cpu.add_doc_2_KG(txt="some text")
@@ -321,4 +319,3 @@ def test_add_doc_nonempty_text_placeholder(kg_cpu, monkeypatch):
     # Ensure doc_id_counter incremented and key exists
     key = kg_cpu.doc_id_counter - 1
     assert key in kg_cpu.relevant_triples
-
