@@ -14,65 +14,65 @@ Task = Literal["sssp", "diam", "ecc", "energy", "charge"]
 Split = Literal["train", "val", "test"]
 
 
-class ECHO(InMemoryDataset):
-    r"""The **ECHO** dataset introduced in
-        `"Can You Hear Me Now? A Benchmark for Long-Range Graph Propagation"
-        <https://openreview.net/forum?id=DgkWFPZMPp>`_.
+class ECHOBenchmark(InMemoryDataset):
+    r"""The **ECHOBenchmark** dataset introduced in
+    `"Can You Hear Me Now? A Benchmark for Long-Range Graph Propagation"
+    <https://openreview.net/forum?id=DgkWFPZMPp>`_.
 
-        ECHO is a benchmark for evaluating long-range graph propagation
-        capabilities of graph neural networks. It contains five graph
-        tasks:
+    ECHO is a benchmark for evaluating long-range graph propagation
+    capabilities of graph neural networks. It contains five graph
+    tasks:
 
-        - ``sssp`` (Single-Source Shortest Path)
-        - ``diam`` (Graph Diameter)
-        - ``ecc`` (Node Eccentricity)
-        - ``energy`` (Molecular Energy)
-        - ``charge`` (Molecular Partial Charge)
+    - ``sssp`` (Single-Source Shortest Path)
+    - ``diam`` (Graph Diameter)
+    - ``ecc`` (Node Eccentricity)
+    - ``energy`` (Molecular Energy)
+    - ``charge`` (Molecular Partial Charge)
 
-        Each task provides three predefined splits (``train``, ``val``,
-        ``test``), where every split consists of a list of homogeneous
-        :class:`torch_geometric.data.Data` objects.
+    Each task provides three predefined splits (``train``, ``val``,
+    ``test``), where every split consists of a list of homogeneous
+    :class:`torch_geometric.data.Data` objects.
 
-        The dataset is hosted on HuggingFace at:
-        https://huggingface.co/datasets/gmander44/echo
+    The dataset is hosted on HuggingFace at:
+    https://huggingface.co/datasets/gmander44/echo
 
-        Args:
-            root (str): Root directory where the dataset should be saved.
-            task (str): One of
-                ``{'sssp', 'diam', 'ecc', 'energy', 'charge'}``.
-            split (str): One of ``{'train', 'val', 'test'}``.
-            transform (callable, optional): A function/transform that takes in a
-                :class:`torch_geometric.data.Data` object and returns a transformed
-                version. The data object will be transformed before every access.
-                (default: :obj:`None`)
-            pre_transform (callable, optional): A function/transform that takes in
-                a :class:`torch_geometric.data.Data` object and returns a
-                transformed version. The data object will be transformed before
-                being saved to disk. (default: :obj:`None`)
-            pre_filter (callable, optional): A function that takes in a
-                :class:`torch_geometric.data.Data` object and returns a boolean
-                value, indicating whether the data object should be included in the
-                final dataset. (default: :obj:`None`)
-            force_reload (bool, optional): Whether to re-process the dataset.
-                (default: :obj:`False`)
+    Args:
+        root (str): Root directory where the dataset should be saved.
+        task (str): One of
+            ``{'sssp', 'diam', 'ecc', 'energy', 'charge'}``.
+        split (str): One of ``{'train', 'val', 'test'}``.
+        transform (callable, optional): A function/transform that takes in a
+            :class:`torch_geometric.data.Data` object and returns a transformed
+            version. The data object will be transformed before every access.
+            (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            a :class:`torch_geometric.data.Data` object and returns a
+            transformed version. The data object will be transformed before
+            being saved to disk. (default: :obj:`None`)
+        pre_filter (callable, optional): A function that takes in a
+            :class:`torch_geometric.data.Data` object and returns a boolean
+            value, indicating whether the data object should be included in the
+            final dataset. (default: :obj:`None`)
+        force_reload (bool, optional): Whether to re-process the dataset.
+            (default: :obj:`False`)
 
-        Example:
-            >>> from torch_geometric.datasets import ECHO
-            >>> train = ECHO(root='data/ECHO', task='sssp', split='train')
-            >>> len(train)
-            >>> data = train[0]
+    Example:
+        >>> from torch_geometric.datasets import ECHOBenchmark
+        >>> train = ECHOBenchmark(root='data/ECHOBenchmark', task='sssp', split='train')
+        >>> len(train)
+        >>> data = train[0]
 
-        **Citation:**
+    **Citation:**
 
-        .. code-block:: bibtex
+    .. code-block:: bibtex
 
-            @inproceedings{echobenchmark,
-            title={Can You Hear Me Now? A Benchmark for Long-Range Graph Propagation},
-            author={Miglior, Luca and Tolloso, Matteo and Gravina, Alessio and Bacciu, Davide},
-            booktitle={The Fourteenth International Conference on Learning Representations},
-            year={2026},
-            url={https://openreview.net/forum?id=DgkWFPZMPp}
-            }
+        @inproceedings{echobenchmark,
+        title={Can You Hear Me Now? A Benchmark for Long-Range Graph Propagation},
+        author={Miglior, Luca and Tolloso, Matteo and Gravina, Alessio and Bacciu, Davide},
+        booktitle={The Fourteenth International Conference on Learning Representations},
+        year={2026},
+        url={https://openreview.net/forum?id=DgkWFPZMPp}
+        }
     """
 
 
@@ -142,12 +142,12 @@ class ECHO(InMemoryDataset):
 
     @property
     def raw_dir(self) -> str:
-        # Put ECHO raw files under a subfolder to keep root tidy.
-        return os.path.join(self.root, "raw", "echo", self.task)
+        # Put ECHOBenchmark raw files under a subfolder to keep root tidy.
+        return os.path.join(self.root, "raw", "echobenchmark", self.task)
 
     @property
     def processed_dir(self) -> str:
-        return os.path.join(self.root, "processed", "echo", self.task)
+        return os.path.join(self.root, "processed", "echobenchmark", self.task)
 
     @property
     def processed_file_names(self) -> List[str]:
@@ -166,7 +166,9 @@ class ECHO(InMemoryDataset):
     def download(self) -> None:
         urls_for_task = self.URLS.get(self.task)
         if urls_for_task is None:
-            raise RuntimeError(f"Missing URLs for task '{self.task}' in ECHO.URLS")
+            raise RuntimeError(
+                f"Missing URLs for task '{self.task}' in ECHOBenchmark.URLS"
+            )
 
         os.makedirs(self.raw_dir, exist_ok=True)
 
@@ -174,16 +176,26 @@ class ECHO(InMemoryDataset):
             url = urls_for_task.get(s)
             if url is None:
                 raise RuntimeError(
-                    f"Missing URL for task='{self.task}', split='{s}' in ECHO.URLS"
+                    f"Missing URL for task='{self.task}', split='{s}' in ECHOBenchmark.URLS"
                 )
 
-            # Download to raw_dir (keeps original filename, e.g. train_data.pt)
-            path = download_url(url, self.raw_dir)
+            # Download into raw_dir (keeps remote filename, e.g. train_data.pt):
+            download_url(url, self.raw_dir)
 
-            # Rename to the standard name expected by raw_file_names/process:
-            target = os.path.join(self.raw_dir, f"{s}.pt")
-            if path != target:
-                os.replace(path, target)
+            # Compute expected downloaded filename from the URL and rename it:
+            basename = url.split("/")[-1].split("?")[0]  # train_data.pt
+            src = os.path.join(self.raw_dir, basename)
+            dst = os.path.join(self.raw_dir, f"{s}.pt")  # train.pt
+
+            if not os.path.exists(src):
+                # As a fallback, if HF/redirect changed filename, try to find a single *.pt:
+                candidates = [p for p in os.listdir(self.raw_dir) if p.endswith(".pt")]
+                raise FileNotFoundError(
+                    f"Expected downloaded file '{src}' not found. Found: {candidates}"
+                )
+
+            if src != dst:
+                os.replace(src, dst)
 
     def process(self) -> None:
         os.makedirs(self.processed_dir, exist_ok=True)
@@ -197,13 +209,13 @@ class ECHO(InMemoryDataset):
 
             if not isinstance(data_list, list):
                 raise TypeError(
-                    f"ECHO expected a list of Data in '{raw_path}', got {type(data_list)}"
+                    f"ECHOBenchmark expected a list of Data in '{raw_path}', got {type(data_list)}"
                 )
 
             for i, item in enumerate(data_list[:5]):
                 if not isinstance(item, Data):
                     raise TypeError(
-                        f"ECHO expected list[Data] in '{raw_path}', but element {i} is {type(item)}"
+                        f"ECHOBenchmark expected list[Data] in '{raw_path}', but element {i} is {type(item)}"
                     )
 
             if self.pre_filter is not None:
