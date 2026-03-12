@@ -91,7 +91,7 @@ class TXT2KG():
         # call LLM on text
         chunk_start_time = time.time()
         if not self.initd_LM:
-            from torch_geometric.nn.nlp import LLM
+            from torch_geometric.llm.models import LLM
             LM_name = "VAGOsolutions/SauerkrautLM-v2-14b-DPO"
             self.model = LLM(LM_name).eval()
             self.initd_LM = True
@@ -100,7 +100,8 @@ class TXT2KG():
         # for debug
         self.total_chars_parsed += len(txt)
         self.time_to_parse += round(time.time() - chunk_start_time, 2)
-        self.avg_chars_parsed_per_sec = self.total_chars_parsed / self.time_to_parse  # noqa
+        self.avg_chars_parsed_per_sec = self.total_chars_parsed / (
+            self.time_to_parse + 1e-6)  # noqa
         return out_str
 
     def add_doc_2_KG(
