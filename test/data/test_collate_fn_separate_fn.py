@@ -26,7 +26,8 @@ def foo_collate(
 ):
     xs = [v.x for v in values]
     sizes = torch.tensor([x.size(0) for x in xs], dtype=torch.long)
-    slices = torch.cat([torch.zeros(1, dtype=torch.long), sizes.cumsum(0)], dim=0)
+    slices = torch.cat([torch.zeros(1, dtype=torch.long),
+                        sizes.cumsum(0)], dim=0)
     return Foo(torch.cat(xs, dim=0)), slices, None
 
 
@@ -61,7 +62,8 @@ def foobatch_collate(
 ):
     xs = [v.x for v in values]
     sizes = torch.tensor([x.size(0) for x in xs], dtype=torch.long)
-    slices = torch.cat([torch.zeros(1, dtype=torch.long), sizes.cumsum(0)], dim=0)
+    slices = torch.cat([torch.zeros(1, dtype=torch.long),
+                        sizes.cumsum(0)], dim=0)
     return FooBatch(torch.cat(xs, dim=0)), slices, None
 
 
@@ -97,7 +99,8 @@ def mapobj_collate(
 ):
     xs = [v.x for v in values]
     sizes = torch.tensor([x.size(0) for x in xs], dtype=torch.long)
-    slices = torch.cat([torch.zeros(1, dtype=torch.long), sizes.cumsum(0)], dim=0)
+    slices = torch.cat([torch.zeros(1, dtype=torch.long),
+                        sizes.cumsum(0)], dim=0)
     value = {"x": torch.cat(xs, dim=0)}
     slice_dict = {"x": slices}
     return value, slice_dict, None
@@ -122,9 +125,12 @@ def seqobj_collate(
     bs_ = [v.b for v in values]
     a_sizes = torch.tensor([x.size(0) for x in as_], dtype=torch.long)
     b_sizes = torch.tensor([x.size(0) for x in bs_], dtype=torch.long)
-    a_slices = torch.cat([torch.zeros(1, dtype=torch.long), a_sizes.cumsum(0)], dim=0)
-    b_slices = torch.cat([torch.zeros(1, dtype=torch.long), b_sizes.cumsum(0)], dim=0)
-    return [torch.cat(as_, dim=0), torch.cat(bs_, dim=0)], [a_slices, b_slices], None
+    a_slices = torch.cat([torch.zeros(1, dtype=torch.long),
+                          a_sizes.cumsum(0)], dim=0)
+    b_slices = torch.cat([torch.zeros(1, dtype=torch.long),
+                          b_sizes.cumsum(0)], dim=0)
+    return [torch.cat(as_, dim=0),
+            torch.cat(bs_, dim=0)], [a_slices, b_slices], None
 
 
 def test_collate_separate_fn_map_roundtrip():
@@ -160,11 +166,17 @@ def test_collate_separate_fn_map_isinstance_dispatch_and_recursion():
     data_list = [
         Data(
             foo=FooChild(torch.tensor([1])),
-            nested={"foo": Foo(torch.tensor([2, 3])), "t": torch.tensor([4])},
+            nested={
+                "foo": Foo(torch.tensor([2, 3])),
+                "t": torch.tensor([4])
+            },
         ),
         Data(
             foo=FooChild(torch.tensor([5, 6])),
-            nested={"foo": Foo(torch.tensor([7])), "t": torch.tensor([8, 9])},
+            nested={
+                "foo": Foo(torch.tensor([7])),
+                "t": torch.tensor([8, 9])
+            },
         ),
     ]
 
