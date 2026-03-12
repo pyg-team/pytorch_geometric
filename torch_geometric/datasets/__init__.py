@@ -85,6 +85,8 @@ from .protein_mpnn_dataset import ProteinMPNNDataset
 from .tag_dataset import TAGDataset
 from .city import CityNetwork
 from .teeth3ds import Teeth3DS
+from .echo import ECHO
+
 
 from .dbp15k import DBP15K
 from .aminer import AMiner
@@ -207,6 +209,7 @@ homo_datasets = [
     'TAGDataset',
     'CityNetwork',
     'Teeth3DS',
+    'ECHO',
 ]
 
 hetero_datasets = [
