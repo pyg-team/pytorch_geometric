@@ -4,6 +4,7 @@ import pytest
 import torch
 
 from torch_geometric.llm.models.glem import GLEM, deal_nan
+from torch_geometric.testing import withPackage
 
 
 def test_deal_nan_tensor_replaces_nans():
@@ -71,6 +72,7 @@ class DummyLM(torch.nn.Module):
         return types.SimpleNamespace(logits=torch.zeros((1, self.num_labels)))
 
 
+@withPackage('transformers')
 def test_glem_bert_tiny_branch(monkeypatch):
     """Covers the BertForSequenceClassification branch."""
     from transformers import BertForSequenceClassification
