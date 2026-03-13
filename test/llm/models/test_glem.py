@@ -97,6 +97,7 @@ def test_glem_bert_tiny_branch(monkeypatch):
     assert model.lm.num_labels == 3
 
 
+@withPackage('transformers')
 def test_glem_auto_model_branch(monkeypatch):
     """Covers the AutoModelForSequenceClassification branch."""
     from transformers import AutoModelForSequenceClassification
