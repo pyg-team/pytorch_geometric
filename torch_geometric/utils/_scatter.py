@@ -70,8 +70,9 @@ def scatter(
         return src.new_zeros(size).scatter_add_(dim, index, src)
 
     if reduce == 'mean':
-        count = src.new_zeros(dim_size)
-        count.scatter_add_(0, index, src.new_ones(src.size(dim)))
+        count = src.new_zeros(dim_size, dtype=torch.int)
+        count.scatter_add_(0, index, src.new_ones(src.size(dim),
+                                                  dtype=torch.int))
         count = count.clamp(min=1)
 
         index = broadcast(index, src, dim)
