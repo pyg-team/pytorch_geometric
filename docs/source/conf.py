@@ -42,7 +42,7 @@ suppress_warnings = ['autodoc.import_object']
 intersphinx_mapping = {
     'python': ('https://docs.python.org/', None),
     # 'numpy': ('http://docs.scipy.org/doc/numpy', None),
-    'pandas': ('https://pandas.pydata.org/pandas-docs/stable', None),
+    'pandas': ('https://pandas.pydata.org/docs', None),
     'torch': ('https://pytorch.org/docs/main', None),
 }
 
