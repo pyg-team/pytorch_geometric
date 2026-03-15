@@ -28,6 +28,8 @@ For an example on [Relational Deep Learning](https://arxiv.org/abs/2312.04615) w
 
 For examples on using `torch.compile`, see the examples under [`examples/compile`](./compile).
 
+For examples on scaling PyG up via multi-GPUs, see the examples under [`examples/multi_gpu`](./multi_gpu).
+
 For examples on working with heterogeneous data, see the examples under [`examples/hetero`](./hetero).
 
 For examples on co-training LLMs with GNNs, see the examples under [`examples/llm`](./llm).
