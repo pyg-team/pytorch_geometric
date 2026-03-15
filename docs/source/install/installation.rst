@@ -194,13 +194,13 @@ If :conda:`null` :obj:`conda` does not pick up the correct CUDA version of :pyg:
 Accelerating PyG with NVIDIA cuGraph GNN
 ----------------------------------------
 
-:pyg:`PyG` can optionally leverage NVIDIA's `cuGraph <https://github.com/rapidsai/cugraph>`_ to accelerate neighbor sampling and multi-GPU training on large-scale graphs (2x-8x data loading speedups on billion-edge graphs).
+:pyg:`PyG` can optionally leverage NVIDIA's `cuGraph <https://github.com/rapidsai/cugraph>`_ to accelerate neighbor sampling and achieve better scalability for multi-GPU training on large-scale graphs (2x-8x data loading speedups on billion-edge graphs).
 
 NVIDIA currently recommends the `NVIDIA PyG Container <https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pyg>`_ on NGC as the most reliable way to use cuGraph integration with :pyg:`PyG`. For other installation methods, refer to the `cuGraph GNN repository <https://github.com/rapidsai/cugraph-gnn>`_ and/or the `RAPIDS installation guide <https://docs.rapids.ai/install>`_.
 
 .. note::
 
-   **cuGraph GNN is optional** — all :pyg:`PyG` functionality, including multi-GPU training, works without it. However, for users with NVIDIA GPUs, cuGraph can provide significant speedups for neighbor sampling and data loading, especially on large-scale graphs.
+   **cuGraph GNN is optional** — all :pyg:`PyG` functionality, including multi-GPU training, works without it. However, for users with NVIDIA GPUs, cuGraph can provide significant speedups and better scalability for neighbor sampling and data loading, especially on large-scale graphs.
 
 `cuGraph <https://github.com/rapidsai/cugraph>`_ is a collection of packages focused on GPU-accelerated graph analytics including support for property graphs and scaling up to thousands of GPUs. cuGraph supports the creation and manipulation of graphs followed by the execution of scalable fast graph algorithms. It is part of the `RAPIDS <https://rapids.ai>`_ accelerated data science framework.
 
