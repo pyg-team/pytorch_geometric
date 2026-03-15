@@ -64,7 +64,7 @@ def train():
     loss.backward()
     optimizer.step()
     scheduler.step()
-    return float(loss)
+    return float(loss.detach())
 
 
 @torch.no_grad()
