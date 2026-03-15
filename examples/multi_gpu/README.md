@@ -11,8 +11,8 @@ Refer to [our installation guide](https://pytorch-geometric.readthedocs.io/en/la
 
 | Example                                                                            | Scalability | Description                                                                                                                    |
 | ---------------------------------------------------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| [`distributed_batching.py`](./distributed_batching.py)                             | single-node | Training GNNs on multiple graphs.                                                                                              |
-| [`distributed_sampling.py`](./distributed_sampling.py)                             | single-node | Training GNNs on a homogeneous graph with neighbor sampling.                                                                   |
+| [`distributed_batching.py`](./distributed_batching.py)                             | single-node | Graph-level prediction on many small graphs (ogbg-molhiv) using `DataLoader` with `DistributedSampler`.                        |
+| [`distributed_sampling.py`](./distributed_sampling.py)                             | single-node | Node-level classification on a single large graph (Reddit) using `NeighborLoader` for multi-hop subgraph sampling.             |
 | [`distributed_sampling_multinode.py`](./distributed_sampling_multinode.py)         | multi-node  | Training GNNs on a homogeneous graph with neighbor sampling on multiple nodes.                                                 |
 | [`distributed_sampling_multinode.sbatch`](./distributed_sampling_multinode.sbatch) | multi-node  | Submitting a training job to a Slurm cluster using [`distributed_sampling_multinode.py`](./distributed_sampling_multinode.py). |
 | [`papers100m_gcn.py`](./papers100m_gcn.py)                                         | single-node | Training GNNs on the `ogbn-papers100M` homogeneous graph w/ ~1.6B edges.                                                       |
