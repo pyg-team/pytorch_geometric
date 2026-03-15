@@ -3,7 +3,8 @@
 This folder contains a plethora of examples covering different GNN use-cases.
 This readme highlights some key examples.
 
-Note: We recommend the [NVIDIA PyG Container](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pyg/tags) for best results and easiest setup with NVIDIA GPUs.
+> [!NOTE]
+> We recommend the [NVIDIA PyG Container](https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pyg/tags) for best results and easiest setup with NVIDIA GPUs. See the [cuGraph installation guide](https://pytorch-geometric.readthedocs.io/en/latest/install/installation.html#accelerating-pyg-with-nvidia-cugraph-gnn) for details.
 
 A great and simple example to start with is [`gcn.py`](./gcn.py), showing a user how to train a [`GCN`](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.models.GCN.html) model for node-level prediction on small-scale homogeneous data.
 
