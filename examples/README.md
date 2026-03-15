@@ -13,6 +13,8 @@ For an improved GNN based link prediction approach using Attract-Repel embedding
 
 To see an example for doing link prediction with an advanced Graph Transformer called [`LPFormer`](https://arxiv.org/abs/2310.11009), see \[`lpformer.py`\].
 
+For examples on [Open Graph Benchmark](https://ogb.stanford.edu/) datasets, see the `ogbn_*.py` examples:
+
 - [`ogbn_train.py`](./ogbn_train.py) is an example for training a GNN on the large-scale `ogbn-papers100m` dataset, containing approximately ~1.6B edges or the medium scale `ogbn-products` dataset, ~62M edges.
   - Uses SGFormer (a kind of GraphTransformer) by default.
   - [SGFormer Paper](https://arxiv.org/pdf/2306.10759)
