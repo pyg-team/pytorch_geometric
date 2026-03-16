@@ -151,7 +151,7 @@ try:
     import torch_spline_conv  # noqa
     warnings.warn(
         "'torch-spline-conv' is no longer necessary and is being ignored. "
-        "Its functionality has been migrated to 'pyg-lib'.",
+        "Its functionality has been migrated to 'pyg-lib>=0.6.0'.",
         DeprecationWarning,
         stacklevel=2,
     )
