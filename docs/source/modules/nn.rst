@@ -304,6 +304,9 @@ Model Transformations
 DataParallel Layers
 -------------------
 
+.. warning::
+   :class:`~torch_geometric.nn.data_parallel.DataParallel` is deprecated. Please use :class:`torch.nn.parallel.DistributedDataParallel` instead.
+
 .. automodule:: torch_geometric.nn.data_parallel
    :members:
 
