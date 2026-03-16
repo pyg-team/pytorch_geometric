@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Deprecated
 
-- Deprecated support for `torch-spline-conv` in favor of `pyg-lib` ([#10622](https://github.com/pyg-team/pytorch_geometric/pull/10622))
+- Deprecated support for `torch-spline-conv` in favor of `pyg-lib>=0.6.0` ([#10622](https://github.com/pyg-team/pytorch_geometric/pull/10622))
 
 ### Removed
 
