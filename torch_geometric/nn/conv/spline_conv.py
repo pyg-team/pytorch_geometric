@@ -75,7 +75,7 @@ class SplineConv(MessagePassing):
         super().__init__(aggr=aggr, **kwargs)
 
         if spline_basis is None:
-            raise ImportError("'SplineConv' requires 'pyg-lib'")
+            raise ImportError("'SplineConv' requires 'pyg-lib>=0.6.0'")
 
         self.in_channels = in_channels
         self.out_channels = out_channels

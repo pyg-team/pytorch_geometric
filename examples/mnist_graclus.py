@@ -19,7 +19,7 @@ from torch_geometric.utils import normalized_cut
 if not WITH_TORCH_CLUSTER:
     quit("This example requires 'torch-cluster'")
 if not WITH_SPLINE:
-    quit("This example requires 'pyg-lib'")
+    quit("This example requires 'pyg-lib>=0.6.0'")
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')
 transform = T.Cartesian(cat=False)

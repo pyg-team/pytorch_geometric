@@ -1,3 +1,4 @@
+import importlib.util
 import inspect
 import os
 import typing
@@ -147,17 +148,13 @@ except Exception as e:
 
     torch_cluster = TorchCluster()
 
-try:
-    import torch_spline_conv  # noqa
+if importlib.util.find_spec('torch_spline_conv') is not None:
     warnings.warn(
         "'torch-spline-conv' is no longer necessary and is being ignored. "
         "Its functionality has been migrated to 'pyg-lib>=0.6.0'.",
         DeprecationWarning,
         stacklevel=2,
     )
-    del torch_spline_conv
-except Exception:
-    pass
 
 try:
     import torch_sparse  # noqa
