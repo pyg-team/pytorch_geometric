@@ -33,6 +33,10 @@ If you want to utilize the full set of features from :pyg:`PyG`, there exists se
 * `torch-sparse <https://github.com/rusty1s/pytorch_sparse>`__: :class:`SparseTensor` support, see `here <https://pytorch-geometric.readthedocs.io/en/latest/advanced/sparse_tensor.html>`__
 * `torch-cluster <https://github.com/rusty1s/pytorch_cluster>`__: Graph clustering routines
 
+.. note::
+   ``torch-spline-conv`` is no longer required as a separate package.
+   Its functionality has been migrated to ``pyg-lib>=0.6.0``.
+
 These packages come with their own CPU and GPU kernel implementations based on the :pytorch:`null` `PyTorch C++/CUDA/hip(ROCm) extension interface <https://github.com/pytorch/extension-cpp/>`_.
 For a basic usage of :pyg:`PyG`, these dependencies are **fully optional**.
 We recommend to start with a minimal installation, and install additional dependencies once you start to actually need them.
