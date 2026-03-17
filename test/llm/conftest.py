@@ -1,3 +1,6 @@
 import pytest
 
-pytestmark = pytest.mark.rag
+
+def pytest_collection_modifyitems(items):
+    for item in items:
+        item.add_marker(pytest.mark.rag)
