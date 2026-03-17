@@ -13,15 +13,15 @@ from torch_geometric.testing import withCUDA, withPackage
 @withPackage('transformers')
 @pytest.mark.parametrize('batch_size', [None, 1])
 @pytest.mark.parametrize('verbose', [True, False])
-@pytest.mark.parametrize('pooling_strategy',
-                         ['mean', 'last', 'cls', 'last_hidden_state'])
+@pytest.mark.parametrize('pooling_strategy', ['mean', 'last', 'cls', 'last_hidden_state'])
 def test_sentence_transformer(batch_size, pooling_strategy, device, verbose):
+    model_name = 'bert-base-uncased'
     model = SentenceTransformer(
-        model_name='prajjwal1/bert-tiny',
+        model_name=model_name,
         pooling_strategy=pooling_strategy,
     ).to(device)
     assert model.device == device
-    assert str(model) == 'SentenceTransformer(model_name=prajjwal1/bert-tiny)'
+    assert str(model) == f'SentenceTransformer(model_name={model_name})'
 
     text = [
         "this is a basic english text",

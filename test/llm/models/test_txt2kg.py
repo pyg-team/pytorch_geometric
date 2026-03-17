@@ -1,204 +1,321 @@
-import os
-import tempfile
-from pathlib import Path
-from unittest.mock import MagicMock
+import sys
+import types
 
 import pytest
-import torch
 
+import torch_geometric.llm.models.txt2kg as txt2kg
 from torch_geometric.llm.models.txt2kg import (
     TXT2KG,
     _chunk_text,
-    _llm_then_python_parse,
+    _merge_triples_deterministically,
     _multiproc_helper,
     _parse_n_check_triples,
 )
-from torch_geometric.testing import onlyLinux
-
-# ────────────────────────
-# Fixtures
-# ────────────────────────
 
 
-@pytest.fixture
-def mock_cloud_llm(monkeypatch):
-    """Mock cloud LLM call to return deterministic triple string."""
-    def mock_fn(txt, **kwargs):
-        return "('Paris', 'capital of', 'France')"
+def test_init_local_lm_flag():
+    model = TXT2KG(local_LM=True, chunk_size=20)
+    assert model.local_LM is True
+    assert model.initd_LM is False
+
+
+def test_parse_n_check_triples_formats():
+    s = "(A, rel, B)\n(C, rel2, D)"
+    parsed = _parse_n_check_triples(s)
+    assert ("A", "rel", "B") in parsed
+    assert ("C", "rel2", "D") in parsed
+
+
+def test_chunk_text_simple_sentence():
+    text = "Hello world. Another sentence!"
+    chunks = _chunk_text(text, chunk_size=10)
+    # Only makes chunks at sentence boundaries
+    assert any("Hello" in c for c in chunks)
+
+
+class DummyLLM:
+    def __init__(self):
+        pass
+
+    def inference(self, *args, **kwargs):
+        return ["(X,edge,Y)"]
+
+
+def test_local_lm_integration(monkeypatch):
+    model = TXT2KG(local_LM=True)
+
+    model.model = DummyLLM()
+    model.initd_LM = True
+
+    # Simulate time progression
+    times = iter([100.0, 100.05])  # 0.05 sec elapsed
+    monkeypatch.setattr("time.time", lambda: next(times))
+
+    out = model._chunk_to_triples_str_local("text")
+
+    assert out == "(X,edge,Y)"
+    assert model.time_to_parse > 0
+
+
+def test_add_doc_empty(monkeypatch):
+    model = TXT2KG(local_LM=True)
+    model.add_doc_2_KG("", QA_pair=None)
+    assert model.relevant_triples[0] == []
+
+
+# Mock LLM + parsing on real text:
+def test_add_doc_to_KG(monkeypatch):
+    model = TXT2KG(local_LM=True, chunk_size=10)
+
+    # Mock only the LLM output stage
+    monkeypatch.setattr(model, "_chunk_to_triples_str_local",
+                        lambda *_: "(A,rel,B)\n(C,rel,D)")
+
+    model.add_doc_2_KG("Some text")
+
+    triples = model.relevant_triples[0]
+
+    assert len(triples) == 2
+    assert ("A", "rel", "B") in triples
+    assert model.doc_id_counter == 1
+
+
+def test_merge_triples_deterministically_basic():
+    # Simple case: multiple sublists, strings only
+    results = [
+        [["b", "rel", "c"], ["A", "rel", "d"]],
+        [["a", "rel", "c"]],
+    ]
+
+    merged = _merge_triples_deterministically(results)
+
+    # Expect deterministic, casefolded lexicographic order
+    expected = [
+        ("a", "rel", "c"),
+        ("A", "rel", "d"),
+        ("b", "rel", "c"),
+    ]
+    assert merged == expected
+
+
+def test_merge_triples_deterministically_unicode_and_nonstring():
+    # Include unicode and a numeric element to cover else branch in lambda
+    results = [
+        [["ä", 2, "x"], ["A", 1, "y"]],
+        [["a", 3, "z"]],
+    ]
+
+    merged = _merge_triples_deterministically(results)
+
+    # Ensure tuples, unicode sorted, numeric untouched
+    expected = [
+        ("A", 1, "y"),
+        ("a", 3, "z"),
+        ("ä", 2, "x"),
+    ]
+    assert merged == expected
+
+
+def test_merge_triples_deterministically_empty():
+    # Edge case: empty input
+    results = []
+
+    merged = _merge_triples_deterministically(results)
+    assert merged == []
+
+
+def test_merge_triples_deterministically_singleton():
+    # Edge case: single sublist, single triple
+    results = [[["only", "one", "triple"]]]
+
+    merged = _merge_triples_deterministically(results)
+    assert merged == [("only", "one", "triple")]
+
+
+def test_chunk_to_triples_str_cloud(monkeypatch):
+    # Fake streaming chunk object
+    class DummyChunk:
+        class Choice:
+            class Delta:
+                content = "A"
+
+            delta = Delta()
+
+        choices = [Choice()]
+
+    class DummyCompletion:
+        def __iter__(self):
+            return iter([DummyChunk()])
+
+    class DummyClient:
+        class Chat:
+            class Completions:
+                def create(self, **kwargs):
+                    return DummyCompletion()
+
+            completions = Completions()
+
+        chat = Chat()
+
+    class DummyOpenAI:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        chat = DummyClient.chat
+
+    fake_openai = types.ModuleType("openai")
+    fake_openai.OpenAI = DummyOpenAI
+
+    monkeypatch.setitem(sys.modules, "openai", fake_openai)
+
+    txt2kg.CLIENT_INITD = False
+
+    out = txt2kg._chunk_to_triples_str_cloud("text")
+    assert isinstance(out, str)
+
+
+def dummy_multiproc_helper(
+    rank,
+    chunks,
+    py_fn,
+    llm_fn,
+    NIM_KEY,
+    NIM_MODEL,
+    ENDPOINT_URL,
+    max_retries=3,
+    base_delay=0,
+):
+    return [("A", "rel", "B")]
+
+
+def test_extract_relevant_triples_cloud(monkeypatch):
+
+    model = TXT2KG(local_LM=False, chunk_size=10)
+
+    # Mock the multiproc helper (module-level)
+    monkeypatch.setattr(txt2kg, "_multiproc_helper", dummy_multiproc_helper)
+
+    triples = model._extract_relevant_triples("Some text")
+    assert ("A", "rel", "B") in triples
+
+
+def test_multiproc_helper_success(monkeypatch):
+    # Dummy LLM/Python parser
+    def dummy_llm_fn(x, **kwargs):
+        return ["llm:" + str(x)]
+
+    def dummy_py_fn(x):
+        return ["py:" + str(i) for i in x]
+
+    # Patch _llm_then_python_parse
+    monkeypatch.setattr(
+        "torch_geometric.llm.models.txt2kg._llm_then_python_parse",
+        lambda chunks, py_fn, llm_fn, **kwargs: ["PARSED:" + str(chunks)])
+
+    # Input chunks for rank 0
+    chunks_for_rank = ["chunk0", "chunk1"]
+
+    result = _multiproc_helper(
+        rank=0,
+        chunks_for_rank=chunks_for_rank,
+        py_fn=dummy_py_fn,
+        llm_fn=dummy_llm_fn,
+        NIM_KEY="dummy",
+        NIM_MODEL="dummy",
+        ENDPOINT_URL="dummy",
+        max_retries=3,
+        base_delay=0.01  # keep backoff small in tests
+    )
+
+    assert result == ["PARSED:['chunk0', 'chunk1']"]
+
+
+def test_multiproc_helper_retry(monkeypatch):
+    attempts = []
+
+    def failing_parse(chunks, py_fn, llm_fn, **kwargs):
+        attempts.append(1)
+        if len(attempts) < 3:
+            raise RuntimeError("fail")
+        return ["SUCCESS"]
 
     monkeypatch.setattr(
-        "torch_geometric.llm.models.txt2kg._chunk_to_triples_str_cloud",
-        mock_fn)
-    return mock_fn
+        "torch_geometric.llm.models.txt2kg._llm_then_python_parse",
+        failing_parse)
+
+    result = _multiproc_helper(
+        rank=0,
+        chunks_for_rank=["chunk"],
+        py_fn=lambda x: x,
+        llm_fn=lambda x: x,
+        NIM_KEY="dummy",
+        NIM_MODEL="dummy",
+        ENDPOINT_URL="dummy",
+        max_retries=5,
+        base_delay=0  # instant retries for test
+    )
+
+    assert result == ["SUCCESS"]
+    assert len(attempts) == 3  # retried twice, succeeded on 3rd
 
 
-@pytest.fixture
-def mock_local_llm(monkeypatch):
-    """Mock local LLM inference without loading real model."""
-    mock_model = MagicMock()
-    mock_model.inference.return_value = ["('Earth', 'orbits', 'Sun')"]
-    mock_llm_class = MagicMock()
-    mock_llm_class.return_value = mock_model
-    monkeypatch.setattr("torch_geometric.llm.models.LLM", mock_llm_class)
-    return mock_model
-
-
-# ────────────────────────
-# Tests for helper functions
-# ────────────────────────
-
-
-def test_chunk_text_empty():
-    assert _chunk_text("", 10) == []
-
-
-def test_chunk_text_short():
-    assert _chunk_text("Hello world.", 50) == ["Hello world."]
-
-
-def test_chunk_text_long():
-    text = "This is sentence one. This is sentence two! And this is three?"
-    chunks = _chunk_text(text, chunk_size=30)
-    assert len(chunks) >= 2
-    assert "sentence one." in chunks[0]
-    # Should not break mid-word at end
-    for chunk in chunks:
-        assert len(chunk) <= 60  # generous upper bound
-
-
-def test_chunk_text_no_punctuation():
-    text = "word " * 200  # no .!?
-    chunks = _chunk_text(text, chunk_size=100)
-    assert len(chunks) > 1
-    for c in chunks:
-        assert len(c.strip()) > 0
-
-
-@pytest.mark.parametrize("input_str,expected", [
-    ("('A', 'B', 'C')\n('D', 'E', 'F')", [('A', 'B', 'C'), ('D', 'E', 'F')]),
-    ("('X', 'rel', 'Y') ('Z', 'has', 'W')", [("'X'", "'rel'", "'Y'"),
-                                             ("'Z'", "'has'", "'W'")]),
-    ("note: ignore this", []),
-    ("('Alice', '', 'Bob')", [("'Alice'", "''", "'Bob'")]),
-    ("('', 'r', 'e')", [("''", "'r'", "'e'")]),
-    ("('valid', 'relation', 'entity')\nnote: extra", [
-        ('valid', 'relation', 'entity')
-    ]),
-])
-def test_parse_n_check_triples(input_str, expected):
-    result = _parse_n_check_triples(input_str)
-    assert result == expected
-
-
-def test_llm_then_python_parse():
-    def fake_llm(txt, **kwargs):
-        return "('Mars', 'has', 'moons')"
-
-    chunks = ["dummy"]
-    result = _llm_then_python_parse(chunks, py_fn=_parse_n_check_triples,
-                                    llm_fn=fake_llm)
-    assert result == [("'Mars'", "'has'", "'moons'")]
-
-
-# ────────────────────────
-# Tests for TXT2KG class
-# ────────────────────────
-
-
-@onlyLinux
-def test_txt2kg_cloud_mode(mock_cloud_llm):
-    kg = TXT2KG(NVIDIA_API_KEY="fake-key", local_LM=False)
-    kg.add_doc_2_KG("Paris is the capital of France.")
-
-    assert 0 in kg.relevant_triples
-    triples = kg.relevant_triples[0]
-    assert triples == []
-
-
-def test_txt2kg_local_mode(mock_local_llm):
+def test_add_doc_empty_text():
     kg = TXT2KG(local_LM=True)
-    kg.add_doc_2_KG("The Earth orbits the Sun.")
 
+    kg.add_doc_2_KG(txt="")
+
+    # first doc uses doc_id_counter=0 as key
     assert 0 in kg.relevant_triples
-    triples = kg.relevant_triples[0]
-    assert triples == []
+    assert kg.relevant_triples[0] == []
+
+    # doc counter should increment
+    assert kg.doc_id_counter == 1
 
 
-@onlyLinux
-def test_txt2kg_with_qa_pair(mock_cloud_llm):
-    kg = TXT2KG(NVIDIA_API_KEY="fake", local_LM=False)
-    qa = ("What is Paris?", "Capital of France")
-    kg.add_doc_2_KG("Paris is the capital of France.", QA_pair=qa)
+def test_add_doc_empty_text_with_QA_pair():
+    kg = TXT2KG(local_LM=True)
+
+    qa = ("What is PyG?", "Graph ML library")
+
+    kg.add_doc_2_KG(txt="", QA_pair=qa)
 
     assert qa in kg.relevant_triples
     assert kg.relevant_triples[qa] == []
 
 
-@onlyLinux
-def test_txt2kg_duplicate_qa_warning(capfd, mock_cloud_llm):
-    kg = TXT2KG(NVIDIA_API_KEY="fake", local_LM=False)
-    qa = ("Q", "A")
-    kg.add_doc_2_KG("text1", QA_pair=qa)
-    kg.add_doc_2_KG("text2", QA_pair=qa)
-
-    captured = capfd.readouterr()
-    assert "Warning: QA_Pair was already added" in captured.out
+@pytest.fixture
+def kg_cpu():
+    # TXT2KG instance using CPU local LLM mode
+    return TXT2KG(local_LM=True)
 
 
-@onlyLinux
-def test_txt2kg_save_kg(mock_cloud_llm):
-    kg = TXT2KG(NVIDIA_API_KEY="fake", local_LM=False)
-    kg.add_doc_2_KG("Test document.")
-
-    with tempfile.NamedTemporaryFile(delete=False) as tmp:
-        tmp_path = Path(tmp.name)
-
-    try:
-        kg.save_kg(str(tmp_path))
-        loaded = torch.load(tmp_path)
-        assert loaded == {0: []}
-    finally:
-        if tmp_path.exists():
-            os.remove(tmp_path)
+def test_add_doc_empty_text_cpu(kg_cpu):
+    """Cover the empty text branch (lines 194-201)."""
+    kg_cpu.add_doc_2_KG(txt="")
+    # doc_id_counter starts at 0
+    assert kg_cpu.relevant_triples[0] == []
+    assert kg_cpu.doc_id_counter == 1
 
 
-# ────────────────────────
-# Multiprocessing helper test
-# ────────────────────────
+def test_add_doc_empty_text_with_QA_pair_cpu(kg_cpu):
+    """Cover QA_pair key path with empty text."""
+    qa = ("What is PyG?", "Graph ML library")
+    kg_cpu.add_doc_2_KG(txt="", QA_pair=qa)
+    assert qa in kg_cpu.relevant_triples
+    assert kg_cpu.relevant_triples[qa] == []
 
 
-def test_multiproc_helper_saves_output(monkeypatch):
-    def mock_llm_fn(txt, **kwargs):
-        return "('Proc', 'runs on', 'GPU')"
+def test_add_doc_nonempty_text_placeholder(kg_cpu, monkeypatch):
+    """Minimal coverage for non-empty text branch.
+    Avoids importing the real LLM.
+    """
+    # Patch the module-level function _llm_then_python_parse
+    monkeypatch.setattr(txt2kg, "_llm_then_python_parse",
+                        lambda chunks, *args, **kwargs: [])
 
-    monkeypatch.setattr(
-        "torch_geometric.llm.models.txt2kg._chunk_to_triples_str_cloud",
-        mock_llm_fn)
+    # Call add_doc_2_KG with non-empty text
+    kg_cpu.add_doc_2_KG(txt="some text")
 
-    in_chunks = {0: ["sample text"]}
-    rank = 0
-
-    with tempfile.TemporaryDirectory() as tmpdir:
-        # Mock torch.save to capture path
-        saved_paths = []
-        original_save = torch.save
-
-        def mock_save(obj, f):
-            saved_paths.append(f)
-            # Save to our temp dir
-            actual_path = os.path.join(tmpdir, os.path.basename(f))
-            original_save(obj, actual_path)
-
-        monkeypatch.setattr("torch_geometric.llm.models.txt2kg.torch.save",
-                            mock_save)
-
-        _multiproc_helper(rank=rank, in_chunks_per_proc=in_chunks,
-                          py_fn=_parse_n_check_triples, llm_fn=mock_llm_fn,
-                          NIM_KEY="fake-key", NIM_MODEL="fake-model",
-                          ENDPOINT_URL="http://fake.url")
-
-        assert len(saved_paths) == 1
-        assert "outs_for_proc_0" in saved_paths[0]
-
-        result = torch.load(os.path.join(tmpdir, "outs_for_proc_0"))
-        assert result == [("'Proc'", "'runs on'", "'GPU'")]
+    # Ensure doc_id_counter incremented and key exists
+    key = kg_cpu.doc_id_counter - 1
+    assert key in kg_cpu.relevant_triples

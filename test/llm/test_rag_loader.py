@@ -217,7 +217,7 @@ def test_rag_loader_integration(tmp_path):
         ["Spain", "in_continent", "Europe"],
     ]
 
-    encoder_model = SentenceTransformer('prajjwal1/bert-tiny')
+    encoder_model = SentenceTransformer('bert-base-uncased')
     # Create graph from triplets
     graph_data = create_graph_from_triples(triplets, encoder_model.encode)
 
