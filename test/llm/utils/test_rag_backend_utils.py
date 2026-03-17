@@ -2,7 +2,6 @@ import os
 import tempfile
 from typing import List, Tuple
 
-import pytest
 import torch
 
 from torch_geometric.data import Data
@@ -23,7 +22,6 @@ def test_preprocess_triplet():
     assert processed == ('alice', 'works with', 'bob')
 
 
-@pytest.mark.rag
 def test_batch_knn():
     query_embeddings = torch.randn(2, 64)
     candidate_embeddings = torch.randn(10, 64)
@@ -82,7 +80,6 @@ def test_empty_graph():
     assert desc.strip() == 'node_id,text\n\nsrc,edge_attr,dst'
 
 
-@pytest.mark.rag
 def test_topk_zero():
     data, textual_nodes, textual_edges = create_mock_data()
     q_emb = torch.randn(1, 16)
@@ -120,7 +117,6 @@ def create_mock_graph_and_triples():
     return triples, graph
 
 
-@pytest.mark.rag
 @onlyLinux
 def test_apply_retrieval_via_pcst_isolated_node():
     triples, graph = create_mock_graph_and_triples()

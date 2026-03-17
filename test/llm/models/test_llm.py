@@ -14,7 +14,6 @@ def test_get_llm_kwargs():
     assert kwargs == {'revision': 'main'}
 
 
-@pytest.mark.rag
 @withPackage('transformers', 'accelerate')
 @pytest.mark.parametrize('sys_prompt',
                          ['You are an agent, answer my questions.', None])
@@ -100,7 +99,6 @@ def dummy_llm():
     return llm
 
 
-@pytest.mark.rag
 def test_llm_prepare_inputs(dummy_llm):
     prompts = ["hello", "hi"]
 
@@ -121,14 +119,12 @@ def test_llm_prepare_inputs(dummy_llm):
     assert out.logits.shape[:2] == inputs_embeds.shape[:2]
 
 
-@pytest.mark.rag
 def test_llm_single_prompt(dummy_llm):
     encoded = dummy_llm.tokenizer(["test"])
 
     assert encoded["input_ids"].shape[0] == 1
 
 
-@pytest.mark.rag
 def test_llm_variable_lengths(dummy_llm):
     prompts = ["a", "abcdef", "abc"]
 

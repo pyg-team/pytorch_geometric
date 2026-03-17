@@ -11,7 +11,6 @@ from torch_geometric.nn import GAT
 from torch_geometric.testing import withPackage
 
 
-@pytest.mark.rag
 @withPackage('transformers', 'sentencepiece', 'accelerate', 'peft')
 @pytest.mark.parametrize('use_lora', [True, False])
 def test_g_retriever(use_lora: bool) -> None:
@@ -60,7 +59,6 @@ def test_g_retriever(use_lora: bool) -> None:
     torch.cuda.empty_cache()
 
 
-@pytest.mark.rag
 @withPackage('transformers', 'sentencepiece', 'accelerate', 'peft')
 def test_g_retriever_many_tokens() -> None:
     llm = LLM(model_name='Qwen/Qwen3-0.6B', dtype=torch.float32,
