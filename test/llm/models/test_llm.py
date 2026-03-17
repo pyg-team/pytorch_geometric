@@ -99,7 +99,6 @@ def dummy_llm():
     return llm
 
 
-@onlyRAG
 def test_llm_prepare_inputs(dummy_llm):
     prompts = ["hello", "hi"]
 
@@ -120,14 +119,12 @@ def test_llm_prepare_inputs(dummy_llm):
     assert out.logits.shape[:2] == inputs_embeds.shape[:2]
 
 
-@onlyRAG
 def test_llm_single_prompt(dummy_llm):
     encoded = dummy_llm.tokenizer(["test"])
 
     assert encoded["input_ids"].shape[0] == 1
 
 
-@onlyRAG
 def test_llm_variable_lengths(dummy_llm):
     prompts = ["a", "abcdef", "abc"]
 
