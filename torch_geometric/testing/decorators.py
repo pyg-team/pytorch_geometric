@@ -15,11 +15,6 @@ from torch_geometric.typing import WITH_METIS, WITH_PYG_LIB, WITH_TORCH_SPARSE
 from torch_geometric.visualization.graph import has_graphviz
 
 
-def is_rag_test() -> bool:
-    r"""Whether to run the RAG test suite."""
-    return os.getenv('RAG_TEST', '0') == '1'
-
-
 def is_full_test() -> bool:
     r"""Whether to run the full but time-consuming test suite."""
     return os.getenv('FULL_TEST', '0') == '1'

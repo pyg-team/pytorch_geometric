@@ -41,7 +41,6 @@ jobs:
           bash -c 'pytest test/llm --cov --cov-report=xml -v; E=$?; [[ $E == 0 || $E == 139 ]] && exit 0 || exit $E'
         shell: bash
         env:
-          RAG_TEST: "1"
           TOKENIZERS_PARALLELISM: "false"
           OMP_NUM_THREADS: "1"
           MKL_NUM_THREADS: "1"
