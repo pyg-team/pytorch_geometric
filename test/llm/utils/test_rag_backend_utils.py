@@ -120,6 +120,7 @@ def create_mock_graph_and_triples():
     return triples, graph
 
 
+@pytest.mark.rag
 @onlyLinux
 def test_apply_retrieval_via_pcst_isolated_node():
     triples, graph = create_mock_graph_and_triples()
