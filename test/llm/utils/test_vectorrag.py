@@ -44,6 +44,7 @@ def test_save_load(sample_documents, sample_model, tmp_path):
     assert retriever.model == loaded_retriever.model
 
 
+@pytest.mark.rag
 def test_query(sample_documents, sample_model):
     """Test query functionality of DocumentRetriever."""
     retriever = DocumentRetriever(sample_documents, model=sample_model)

@@ -40,6 +40,7 @@ class TestKNNRAGFeatureStore:
 
         return store
 
+    @pytest.mark.rag
     def test_retrieve_seed_nodes_single_query(self):
         """Test retrieve_seed_nodes with a single query."""
         store = self.create_feature_store()
@@ -75,6 +76,7 @@ class TestKNNRAGFeatureStore:
             assert torch.equal(result, expected_indices)
             assert torch.equal(query_enc, mock_query_enc)
 
+    @pytest.mark.rag
     def test_retrieve_seed_nodes_multiple_queries(self):
         """Test retrieve_seed_nodes with multiple queries."""
         store = self.create_feature_store()

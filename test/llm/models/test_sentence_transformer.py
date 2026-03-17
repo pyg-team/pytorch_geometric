@@ -9,6 +9,7 @@ from torch_geometric.llm.models.sentence_transformer import (
 from torch_geometric.testing import withCUDA, withPackage
 
 
+@pytest.mark.rag
 @withCUDA
 @withPackage('transformers')
 @pytest.mark.parametrize('batch_size', [None, 1])
