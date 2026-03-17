@@ -38,7 +38,7 @@ jobs:
         timeout-minutes: 15
         run: |
           # ignore mysterious segfault (139) if tests pass since this does not repro locally
-          bash -c 'pytest test/llm --cov --cov-report=xml -v; E=$?; [[ $E == 0 || $E == 139 ]] && exit 0 || exit $E'
+          bash -c 'pytest -m rag --cov --cov-report=xml -v; E=$?; [[ $E == 0 || $E == 139 ]] && exit 0 || exit $E'
         shell: bash
         env:
           TOKENIZERS_PARALLELISM: "false"
