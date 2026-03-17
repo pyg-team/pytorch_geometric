@@ -13,7 +13,8 @@ from torch_geometric.testing import withCUDA, withPackage
 @withPackage('transformers')
 @pytest.mark.parametrize('batch_size', [None, 1])
 @pytest.mark.parametrize('verbose', [True, False])
-@pytest.mark.parametrize('pooling_strategy', ['mean', 'last', 'cls', 'last_hidden_state'])
+@pytest.mark.parametrize('pooling_strategy',
+                         ['mean', 'last', 'cls', 'last_hidden_state'])
 def test_sentence_transformer(batch_size, pooling_strategy, device, verbose):
     model_name = 'bert-base-uncased'
     model = SentenceTransformer(
