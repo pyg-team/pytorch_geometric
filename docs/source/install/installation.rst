@@ -28,11 +28,14 @@ Additional Libraries
 
 If you want to utilize the full set of features from :pyg:`PyG`, there exists several additional libraries you may want to install:
 
-* `pyg-lib <https://github.com/pyg-team/pyg-lib>`__: Heterogeneous GNN operators and graph sampling routines
+* `pyg-lib <https://github.com/pyg-team/pyg-lib>`__: Heterogeneous GNN operators, graph sampling routines, and :class:`~torch_geometric.nn.conv.SplineConv` support
 * `torch-scatter <https://github.com/rusty1s/pytorch_scatter>`__: Accelerated and efficient sparse reductions
 * `torch-sparse <https://github.com/rusty1s/pytorch_sparse>`__: :class:`SparseTensor` support, see `here <https://pytorch-geometric.readthedocs.io/en/latest/advanced/sparse_tensor.html>`__
 * `torch-cluster <https://github.com/rusty1s/pytorch_cluster>`__: Graph clustering routines
-* `torch-spline-conv <https://github.com/rusty1s/pytorch_spline_conv>`__: :class:`~torch_geometric.nn.conv.SplineConv` support
+
+.. note::
+   ``torch-spline-conv`` is no longer required as a separate package.
+   Its functionality has been migrated to ``pyg-lib>=0.6.0``.
 
 These packages come with their own CPU and GPU kernel implementations based on the :pytorch:`null` `PyTorch C++/CUDA/hip(ROCm) extension interface <https://github.com/pytorch/extension-cpp/>`_.
 For a basic usage of :pyg:`PyG`, these dependencies are **fully optional**.
@@ -61,7 +64,7 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
 
    .. code-block:: none
 
-      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
+      pip install pyg_lib torch_scatter torch_sparse torch_cluster -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
 
    where :obj:`${TORCH}` and :obj:`${CUDA}` should be replaced by the specific :pytorch:`PyTorch` and CUDA versions, respectively:
 
@@ -82,13 +85,13 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
 
    .. code-block:: none
 
-      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.10.0+cu130.html
+      pip install pyg_lib torch_scatter torch_sparse torch_cluster -f https://data.pyg.org/whl/torch-2.10.0+cu130.html
 
    For example, for :pytorch:`PyTorch` 2.9.* and CUDA 12.8, type:
 
    .. code-block:: none
 
-      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.9.0+cu128.html
+      pip install pyg_lib torch_scatter torch_sparse torch_cluster -f https://data.pyg.org/whl/torch-2.9.0+cu128.html
 
 **Note:** Binaries of older versions are also provided for :pytorch:`PyTorch` 1.4.0, 1.5.0, 1.6.0, 1.7.0/1.7.1, 1.8.0/1.8.1, 1.9.0, 1.10.0/1.10.1/1.10.2, 1.11.0, 1.12.0/1.12.1, 1.13.0/1.13.1, 2.0.0/2.0.1, 2.1.0/2.1.1/2.1.2, 2.2.0/2.2.1/2.2.2, 2.3.0/2.3.1, 2.4.0/2.4.1, 2.5.0/2.5.1, 2.6.0, and 2.7.0/2.7.1 (following the same procedure).
 **For older versions, you need to explicitly specify the latest supported version number** or install via :obj:`pip install --no-index` in order to prevent a manual installation from source.
@@ -160,7 +163,6 @@ In case a specific version is not supported by `our wheels <https://data.pyg.org
       pip install --verbose torch_scatter
       pip install --verbose torch_sparse
       pip install --verbose torch_cluster
-      pip install --verbose torch_spline_conv
 
 In rare cases, CUDA or :python:`Python` path problems can prevent a successful installation.
 :obj:`pip` may even signal a successful installation, but execution simply crashes with :obj:`Segmentation fault (core dumped)`.
