@@ -14,8 +14,7 @@ def test_molecule_gpt() -> None:
         # model_name='lmsys/vicuna-7b-v1.5',
         model_name='Qwen/Qwen3-0.6B',
         num_params=1,
-        dtype=torch.bfloat16,
-    )
+        dtype=torch.float32)
     graph_encoder = GINEConv(nn=Seq(Lin(16, 16), ReLU(), Lin(16, 16)),
                              train_eps=True, edge_dim=16)
 
