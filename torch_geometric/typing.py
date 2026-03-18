@@ -1,3 +1,4 @@
+import importlib.util
 import inspect
 import os
 import typing
@@ -17,6 +18,9 @@ WITH_PT25 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 5
 WITH_PT26 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 6
 WITH_PT27 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 7
 WITH_PT28 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 8
+WITH_PT29 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 9
+WITH_PT210 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 10
+WITH_PT211 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 11
 WITH_PT113 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 13
 
 WITH_WINDOWS = os.name == 'nt'
@@ -57,6 +61,7 @@ try:
             WITH_GMM = False
             WITH_SEGMM = False
     WITH_SAMPLED_OP = hasattr(pyg_lib.ops, 'sampled_add')
+    WITH_SPLINE = hasattr(pyg_lib.ops, 'spline_basis')
     WITH_SOFTMAX = hasattr(pyg_lib.ops, 'softmax_csr')
     WITH_INDEX_SORT = hasattr(pyg_lib.ops, 'index_sort')
     WITH_METIS = hasattr(pyg_lib, 'partition')
@@ -84,6 +89,7 @@ except Exception as e:
     WITH_GMM = False
     WITH_SEGMM = False
     WITH_SAMPLED_OP = False
+    WITH_SPLINE = False
     WITH_SOFTMAX = False
     WITH_INDEX_SORT = False
     WITH_METIS = False
@@ -145,15 +151,13 @@ except Exception as e:
 
     torch_cluster = TorchCluster()
 
-try:
-    import torch_spline_conv  # noqa
-    WITH_TORCH_SPLINE_CONV = True
-except Exception as e:
-    if not isinstance(e, ImportError):  # pragma: no cover
-        warnings.warn(
-            f"An issue occurred while importing 'torch-spline-conv'. "
-            f"Disabling its usage. Stacktrace: {e}", stacklevel=2)
-    WITH_TORCH_SPLINE_CONV = False
+if importlib.util.find_spec('torch_spline_conv') is not None:
+    warnings.warn(
+        "'torch-spline-conv' is no longer necessary and is being ignored. "
+        "Its functionality has been migrated to 'pyg-lib>=0.6.0'.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
 
 try:
     import torch_sparse  # noqa
