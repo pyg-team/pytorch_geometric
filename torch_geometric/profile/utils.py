@@ -123,10 +123,9 @@ def get_gpu_memory_from_nvidia_smi(  # pragma: no cover
         lines = output.decode('utf-8').split('\n')[1:-1]
         mem_list = []
         for line in lines:
-            val = line.split()[0]
-            if val != '[N/A]':
-                mem_list.append(int(val))
-            else:
+            try:
+                mem_list.append(int(line.split()[0]))
+            except (TypeError, ValueError):
                 mem_list.append(None)
         return mem_list
 

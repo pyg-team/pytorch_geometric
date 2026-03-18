@@ -53,7 +53,7 @@ class TestKNNRAGFeatureStore:
 
         expected_indices = torch.tensor([0, 3, 7, 2, 9])
 
-        with patch('torch_geometric.utils.rag.feature_store.batch_knn'
+        with patch('torch_geometric.llm.utils.feature_store.batch_knn'
                    ) as mock_batch_knn:
             # Mock batch_knn to return an iterator
             def mock_generator():
@@ -91,7 +91,7 @@ class TestKNNRAGFeatureStore:
             torch.tensor([0, 3, 7, 2, 9])
         ]
 
-        with patch('torch_geometric.utils.rag.feature_store.batch_knn'
+        with patch('torch_geometric.llm.utils.feature_store.batch_knn'
                    ) as mock_batch_knn:
 
             def mock_generator():

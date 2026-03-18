@@ -266,10 +266,13 @@ class GATv2Conv(MessagePassing):
             edge_index (torch.Tensor or SparseTensor): The edge indices.
             edge_attr (torch.Tensor, optional): The edge features.
                 (default: :obj:`None`)
-            return_attention_weights (bool, optional): If set to :obj:`True`,
-                will additionally return the tuple
-                :obj:`(edge_index, attention_weights)`, holding the computed
-                attention weights for each edge. (default: :obj:`None`)
+            return_attention_weights (bool, optional):
+                Will additionally return the tuple
+                :obj:`(edge_index, attention_weights)` whenever it is set to
+                a value, regardless of its actual value
+                (might be `True` or `False`), holding the computed attention
+                weights for each edge.
+                (default: :obj:`None`)
         """
         H, C = self.heads, self.out_channels
 
@@ -339,7 +342,7 @@ class GATv2Conv(MessagePassing):
         if self.bias is not None:
             out = out + self.bias
 
-        if isinstance(return_attention_weights, bool):
+        if return_attention_weights:
             if isinstance(edge_index, Tensor):
                 if is_torch_sparse_tensor(edge_index):
                     # TODO TorchScript requires to return a tuple
@@ -349,8 +352,8 @@ class GATv2Conv(MessagePassing):
                     return out, (edge_index, alpha)
             elif isinstance(edge_index, SparseTensor):
                 return out, edge_index.set_value(alpha, layout='coo')
-        else:
-            return out
+
+        return out
 
     def edge_update(self, x_j: Tensor, x_i: Tensor, edge_attr: OptTensor,
                     index: Tensor, ptr: OptTensor,
