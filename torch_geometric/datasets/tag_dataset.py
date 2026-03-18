@@ -42,8 +42,7 @@ def _safe_auto_tokenizer(model_name: str) -> PreTrainedTokenizerBase:
             return GPT2Tokenizer.from_pretrained(model_name)
         else:
             raise RuntimeError(
-                f"Unsupported legacy model: {model_name}"
-            ) from err
+                f"Unsupported legacy model: {model_name}") from err
 
 
 class TAGDataset(InMemoryDataset):
