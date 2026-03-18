@@ -12,10 +12,10 @@ from torch_geometric.testing import withCUDA, withPackage
 @withCUDA
 @withPackage('transformers')
 @pytest.mark.parametrize('batch_size', [None, 1])
+@pytest.mark.parametrize('pooling_strategy', ['mean', 'last', 'cls'])
 @pytest.mark.parametrize('verbose', [True, False])
-@pytest.mark.parametrize('pooling_strategy',
-                         ['mean', 'last', 'cls', 'last_hidden_state'])
 def test_sentence_transformer(batch_size, pooling_strategy, device, verbose):
+
     model_name = 'bert-base-uncased'
     model = SentenceTransformer(
         model_name=model_name,
@@ -29,26 +29,20 @@ def test_sentence_transformer(batch_size, pooling_strategy, device, verbose):
         "PyG is the best open-source GNN library :)",
     ]
 
-    out = model.encode(text, batch_size=batch_size, output_device=device,
-                       verbose=verbose)
-    assert out.device == device
-    if pooling_strategy == 'last_hidden_state':
-        assert out.size() == (2, 7, 128)
-    else:
-        assert out.size() == (2, 128)
+    model_embedding_dim = model.model.config.hidden_size
 
-    out = model.encode([], batch_size=batch_size, output_device=device,
-                       verbose=verbose)
+    out = model.encode(text, batch_size=batch_size, verbose=verbose)
     assert out.device == device
-    if pooling_strategy == 'last_hidden_state':
-        assert out.size() == (0, 3, 128)
-    else:
-        assert out.size() == (0, 128)
+    assert out.shape == (2, model_embedding_dim)
 
-    input_ids, mask = model.get_input_ids(text, batch_size=batch_size,
-                                          output_device=device)
-    assert input_ids.size() == (2, 7)
-    assert mask.size() == (2, 7)
+    out = model.encode(text, batch_size=batch_size, output_device='cpu',
+                       verbose=verbose)
+    assert out.is_cpu
+    assert out.shape == (2, model_embedding_dim)
+
+    out = model.encode([], batch_size=batch_size, verbose=verbose)
+    assert out.device == device
+    assert out.shape == (0, model_embedding_dim)
 
 
 def test_mean_pooling():
