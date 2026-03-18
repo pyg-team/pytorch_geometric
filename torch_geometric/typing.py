@@ -18,6 +18,9 @@ WITH_PT25 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 5
 WITH_PT26 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 6
 WITH_PT27 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 7
 WITH_PT28 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 8
+WITH_PT29 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 9
+WITH_PT210 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 10
+WITH_PT211 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 11
 WITH_PT113 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 13
 
 WITH_WINDOWS = os.name == 'nt'
