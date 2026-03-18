@@ -30,7 +30,7 @@ def test_llm(sys_prompt, context, use_embedding) -> None:
     )
     assert str(model) == 'LLM(Qwen/Qwen3-0.6B)'
 
-    embedding = [torch.randn(1, 1024).to(model.device)
+    embedding = [torch.randn(1, 1024, dtype=torch.bfloat16).to(model.device)
                  ] if use_embedding else None
     loss = model(question, answer, context=context, embedding=embedding)
     assert isinstance(loss, Tensor)
