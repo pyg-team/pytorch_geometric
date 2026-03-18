@@ -33,7 +33,7 @@ def _safe_auto_tokenizer(model_name: str) -> PreTrainedTokenizerBase:
     try:
         from transformers import AutoTokenizer
         return AutoTokenizer.from_pretrained(model_name)
-    except ValueError:
+    except ValueError as err:
         if "bert" in model_name:
             from transformers import BertTokenizer
             return BertTokenizer.from_pretrained(model_name)
@@ -42,7 +42,8 @@ def _safe_auto_tokenizer(model_name: str) -> PreTrainedTokenizerBase:
             return GPT2Tokenizer.from_pretrained(model_name)
         else:
             raise RuntimeError(
-                f"Unsupported legacy model: {model_name}")  # noqa: B904
+                f"Unsupported legacy model: {model_name}"
+            ) from err
 
 
 class TAGDataset(InMemoryDataset):
