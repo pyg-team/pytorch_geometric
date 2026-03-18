@@ -6,12 +6,7 @@ import pytest
 
 from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.datasets.web_qsp_dataset import KGQABaseDataset
-from torch_geometric.testing import (
-    onlyFullTest,
-    onlyOnline,
-    onlyRAG,
-    withPackage,
-)
+from torch_geometric.testing import onlyFullTest, onlyOnline, withPackage
 
 
 @pytest.mark.skip(reason="Times out")
@@ -144,7 +139,7 @@ def create_mock_graphs(tmp_path: str, train_size: int, val_size: int,
     return mock_load_dataset, ds
 
 
-@onlyRAG
+@pytest.mark.rag
 @withPackage("datasets", "pandas")
 def test_kgqa_base_dataset(tmp_path, monkeypatch):
 
