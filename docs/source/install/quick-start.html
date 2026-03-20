@@ -75,9 +75,9 @@
 
 <script>
   var torchList = [
+    ['torch-2.10.0', 'PyTorch 2.10.*'],
+    ['torch-2.9.0', 'PyTorch 2.9.*'],
     ['torch-2.8.0', 'PyTorch 2.8.*'],
-    ['torch-2.7.0', 'PyTorch 2.7.*'],
-    ['torch-2.6.0', 'PyTorch 2.6.*'],
   ];
 
   var osList = [
@@ -92,12 +92,10 @@
   ];
 
   var cudaList = [
-    ['cu118', '11.8'],
-    ['cu121', '12.1'],
-    ['cu124', '12.4'],
     ['cu126', '12.6'],
     ['cu128', '12.8'],
     ['cu129', '12.9'],
+    ['cu130', '13.0'],
     ['cpu', 'CPU'],
   ];
 
@@ -116,32 +114,16 @@
       $("#command pre").text('# macOS binaries do not support CUDA');
     }
 
-    else if (torch == "torch-2.6.0" && cuda == "cu121") {
-      $("#command pre").text('# PyTorch version does not support CUDA 12.1');
+    else if (torch == "torch-2.8.0" && cuda == "cu130") {
+      $("#command pre").text('# PyTorch version does not support CUDA 13.0');
     }
 
-    else if (torch == "torch-2.6.0" && cuda == "cu128") {
-      $("#command pre").text('# PyTorch version does not support CUDA 12.8');
+    else if (torch == "torch-2.9.0" && cuda == "cu129") {
+      $("#command pre").text('# PyTorch version does not support CUDA 12.9');
     }
 
-    else if (torch == "torch-2.7.0" && cuda == "cu121") {
-      $("#command pre").text('# PyTorch version does not support CUDA 12.1');
-    }
-
-    else if (torch == "torch-2.7.0" && cuda == "cu124") {
-      $("#command pre").text('# PyTorch version does not support CUDA 12.4');
-    }
-
-    else if (torch == "torch-2.8.0" && cuda == "cu118") {
-      $("#command pre").text('# PyTorch version does not support CUDA 11.8');
-    }
-
-    else if (torch == "torch-2.8.0" && cuda == "cu121") {
-      $("#command pre").text('# PyTorch version does not support CUDA 11.8');
-    }
-
-    else if (torch == "torch-2.8.0" && cuda == "cu124") {
-      $("#command pre").text('# PyTorch version does not support CUDA 12.4');
+    else if (torch == "torch-2.10.0" && cuda == "cu129") {
+      $("#command pre").text('# PyTorch version does not support CUDA 12.9');
     }
 
     else if (package == "conda") {
@@ -149,7 +131,7 @@
     }
 
     else {
-      $("#command pre").text(`pip install torch_geometric\n\n# Optional dependencies:\npip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
+      $("#command pre").text(`pip install torch_geometric\n\n# Optional dependencies:\npip install pyg_lib torch_scatter torch_sparse torch_cluster -f https://data.pyg.org/whl/${$("#command").attr("torch")}+${$("#command").attr("cuda")}.html`);
     }
   }
 

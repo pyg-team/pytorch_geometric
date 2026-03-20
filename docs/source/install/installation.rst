@@ -1,7 +1,7 @@
 Installation
 ============
 
-:pyg:`PyG` is available for :python:`Python 3.10` to :python:`Python 3.13`.
+:pyg:`PyG` is available for :python:`Python 3.10` to :python:`Python 3.14`.
 
 .. note::
    We do not recommend installation as a root user on your system :python:`Python`.
@@ -28,11 +28,14 @@ Additional Libraries
 
 If you want to utilize the full set of features from :pyg:`PyG`, there exists several additional libraries you may want to install:
 
-* `pyg-lib <https://github.com/pyg-team/pyg-lib>`__: Heterogeneous GNN operators and graph sampling routines
+* `pyg-lib <https://github.com/pyg-team/pyg-lib>`__: Heterogeneous GNN operators, graph sampling routines, and :class:`~torch_geometric.nn.conv.SplineConv` support
 * `torch-scatter <https://github.com/rusty1s/pytorch_scatter>`__: Accelerated and efficient sparse reductions
 * `torch-sparse <https://github.com/rusty1s/pytorch_sparse>`__: :class:`SparseTensor` support, see `here <https://pytorch-geometric.readthedocs.io/en/latest/advanced/sparse_tensor.html>`__
 * `torch-cluster <https://github.com/rusty1s/pytorch_cluster>`__: Graph clustering routines
-* `torch-spline-conv <https://github.com/rusty1s/pytorch_spline_conv>`__: :class:`~torch_geometric.nn.conv.SplineConv` support
+
+.. note::
+   ``torch-spline-conv`` is no longer required as a separate package.
+   Its functionality has been migrated to ``pyg-lib>=0.6.0``.
 
 These packages come with their own CPU and GPU kernel implementations based on the :pytorch:`null` `PyTorch C++/CUDA/hip(ROCm) extension interface <https://github.com/pytorch/extension-cpp/>`_.
 For a basic usage of :pyg:`PyG`, these dependencies are **fully optional**.
@@ -48,23 +51,25 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
    .. code-block:: none
 
       python -c "import torch; print(torch.__version__)"
-      >>> 2.6.0
+      >>> 2.10.0
 
 #. Find the CUDA version :pytorch:`PyTorch` was installed with:
 
    .. code-block:: none
 
       python -c "import torch; print(torch.version.cuda)"
-      >>> 12.6
+      >>> 12.8
 
 #. Install the relevant packages:
 
    .. code-block:: none
 
-      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
+      pip install pyg_lib torch_scatter torch_sparse torch_cluster -f https://data.pyg.org/whl/torch-${TORCH}+${CUDA}.html
 
    where :obj:`${TORCH}` and :obj:`${CUDA}` should be replaced by the specific :pytorch:`PyTorch` and CUDA versions, respectively:
 
+   * :pytorch:`PyTorch` 2.10.*: :obj:`${TORCH}=2.10.0` and :obj:`${CUDA}=cpu|cu126|cu128|cu130`
+   * :pytorch:`PyTorch` 2.9.*: :obj:`${TORCH}=2.9.0` and :obj:`${CUDA}=cpu|cu126|cu128|cu130`
    * :pytorch:`PyTorch` 2.8.*: :obj:`${TORCH}=2.8.0` and :obj:`${CUDA}=cpu|cu126|cu128|cu129`
    * :pytorch:`PyTorch` 2.7.*: :obj:`${TORCH}=2.7.0` and :obj:`${CUDA}=cpu|cu118|cu126|cu128`
    * :pytorch:`PyTorch` 2.6.*: :obj:`${TORCH}=2.6.0` and :obj:`${CUDA}=cpu|cu118|cu124|cu126`
@@ -76,19 +81,19 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
    * :pytorch:`PyTorch` 2.0.*: :obj:`${TORCH}=2.0.0` and :obj:`${CUDA}=cpu|cu117|cu118`
    * :pytorch:`PyTorch` 1.13.*: :obj:`${TORCH}=1.13.0` and :obj:`${CUDA}=cpu|cu116|cu117`
 
-   For example, for :pytorch:`PyTorch` 2.8.* and CUDA 12.9, type:
+   For example, for :pytorch:`PyTorch` 2.10.* and CUDA 13.0, type:
 
    .. code-block:: none
 
-      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.8.0+cu129.html
+      pip install pyg_lib torch_scatter torch_sparse torch_cluster -f https://data.pyg.org/whl/torch-2.10.0+cu130.html
 
-   For example, for :pytorch:`PyTorch` 2.6.* and CUDA 12.6, type:
+   For example, for :pytorch:`PyTorch` 2.9.* and CUDA 12.8, type:
 
    .. code-block:: none
 
-      pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.6.0+cu126.html
+      pip install pyg_lib torch_scatter torch_sparse torch_cluster -f https://data.pyg.org/whl/torch-2.9.0+cu128.html
 
-**Note:** Binaries of older versions are also provided for :pytorch:`PyTorch` 1.4.0, 1.5.0, 1.6.0, 1.7.0/1.7.1, 1.8.0/1.8.1, 1.9.0, 1.10.0/1.10.1/1.10.2, 1.11.0, 1.12.0/1.12.1, 1.13.0/1.13.1, 2.0.0/2.0.1, 2.1.0/2.1.1/2.1.2, 2.2.0/2.2.1/2.2.2, 2.3.0/2.3.1, 2.4.0/2.4.1, and 2.5.0/2.5.1 (following the same procedure).
+**Note:** Binaries of older versions are also provided for :pytorch:`PyTorch` 1.4.0, 1.5.0, 1.6.0, 1.7.0/1.7.1, 1.8.0/1.8.1, 1.9.0, 1.10.0/1.10.1/1.10.2, 1.11.0, 1.12.0/1.12.1, 1.13.0/1.13.1, 2.0.0/2.0.1, 2.1.0/2.1.1/2.1.2, 2.2.0/2.2.1/2.2.2, 2.3.0/2.3.1, 2.4.0/2.4.1, 2.5.0/2.5.1, 2.6.0, and 2.7.0/2.7.1 (following the same procedure).
 **For older versions, you need to explicitly specify the latest supported version number** or install via :obj:`pip install --no-index` in order to prevent a manual installation from source.
 You can look up the latest supported version number `here <https://data.pyg.org/whl>`__.
 
@@ -158,7 +163,6 @@ In case a specific version is not supported by `our wheels <https://data.pyg.org
       pip install --verbose torch_scatter
       pip install --verbose torch_sparse
       pip install --verbose torch_cluster
-      pip install --verbose torch_spline_conv
 
 In rare cases, CUDA or :python:`Python` path problems can prevent a successful installation.
 :obj:`pip` may even signal a successful installation, but execution simply crashes with :obj:`Segmentation fault (core dumped)`.
@@ -187,12 +191,26 @@ If :conda:`null` :obj:`conda` does not pick up the correct CUDA version of :pyg:
 
    conda install pyg=*=*cu* -c pyg
 
-Enabling Accelerated cuGraph GNNs
----------------------------------
+.. _install-cugraph:
 
-Currently, NVIDIA recommends `NVIDIA PyG Container <https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pyg/tags>_` to use cuGraph integration in PyG.
-This functionality is planned to be enabled through cuDNN which is part of PyTorch builds. We still recommend using the NVIDIA PyG Container regardless to have the fastest and most stable build of the NVIDIA CUDA stack combined with PyTorch and PyG.
+Accelerating PyG with NVIDIA cuGraph GNN
+----------------------------------------
 
+:pyg:`PyG` can optionally leverage NVIDIA's `cuGraph <https://github.com/rapidsai/cugraph>`_ to accelerate neighbor sampling and achieve better scalability for multi-GPU training on large-scale graphs (2x-8x data loading speedups on billion-edge graphs).
+
+NVIDIA currently recommends the `NVIDIA PyG Container <https://catalog.ngc.nvidia.com/orgs/nvidia/containers/pyg>`_ on NGC as the most reliable way to use cuGraph integration with :pyg:`PyG`. For other installation methods, refer to the `cuGraph GNN repository <https://github.com/rapidsai/cugraph-gnn>`_ and/or the `RAPIDS installation guide <https://docs.rapids.ai/install>`_.
+
+.. note::
+
+   **cuGraph GNN is optional** — all :pyg:`PyG` functionality, including multi-GPU training, works without it. However, for users with NVIDIA GPUs, cuGraph can provide significant speedups and better scalability for neighbor sampling and data loading, especially on large-scale graphs.
+
+`cuGraph <https://github.com/rapidsai/cugraph>`_ is a collection of packages focused on GPU-accelerated graph analytics including support for property graphs and scaling up to thousands of GPUs. cuGraph supports the creation and manipulation of graphs followed by the execution of scalable fast graph algorithms. It is part of the `RAPIDS <https://rapids.ai>`_ accelerated data science framework.
+
+`cuGraph GNN <https://github.com/rapidsai/cugraph-gnn>`_ is a collection of GPU-accelerated plugins that support :pytorch:`PyTorch` and :pyg:`PyG` natively through the *cuGraph-PyG* and *WholeGraph* subprojects. cuGraph GNN is built on top of cuGraph, leveraging its low-level `pylibcugraph <https://github.com/rapidsai/cugraph/tree/branch-25.08/python/pylibcugraph>`_ API and C++ primitives for sampling and other GNN operations (`libcugraph <https://github.com/rapidsai/cugraph/tree/branch-25.08/python/libcugraph>`_). It also includes the :obj:`libwholegraph` and :obj:`pylibwholegraph` libraries for high-performance distributed edgelist and embedding storage. Users have the option of working with these lower-level libraries directly, or through the higher-level API in cuGraph-PyG that directly implements the :class:`~torch_geometric.data.GraphStore`, :class:`~torch_geometric.data.FeatureStore`, :class:`~torch_geometric.loader.NodeLoader`, and :class:`~torch_geometric.loader.LinkLoader` interfaces.
+
+Complete documentation on RAPIDS graph packages, including ``cugraph``, ``cugraph-pyg``, ``pylibwholegraph``, and ``pylibcugraph`` is available on the `RAPIDS docs pages <https://docs.rapids.ai/api/cugraph/nightly/graph_support>`_.
+
+See `rapidsai/cugraph-gnn examples on GitHub <https://github.com/rapidsai/cugraph-gnn/tree/branch-25.12/python/cugraph-pyg/cugraph_pyg/examples>`_ for fully scalable PyG example workflows.
 
 Frequently Asked Questions
 --------------------------

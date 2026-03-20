@@ -27,6 +27,7 @@ classifiers=[
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: 3 :: Only",
 ]
 dependencies=[
@@ -65,6 +66,7 @@ rag=[
     "sentencepiece",
     "accelerate",
     "torchmetrics",
+    "peft",
 ]
 test=[
     "onnx",
@@ -204,7 +206,7 @@ filterwarnings = [
     "ignore:.*did not already require gradients, required_grads has been set automatically:UserWarning",
     # Filter `pytorch_lightning` warnings:
     "ignore:GPU available but not used:UserWarning",
-    "error::DeprecationWarning",
+    "error:.*torch_geometric.*:DeprecationWarning",
     # TODO(rishipuri98): Remove usage of `torch_geometric.distributed` from `torch_geometric.llm`
     "ignore:.*torch_geometric.distributed.*:DeprecationWarning",
     # Filter `torch.jit.*` deprication warnings:

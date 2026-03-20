@@ -358,6 +358,7 @@ def index_kg(args, context_docs):
     triples = list(
         chain.from_iterable(triple_set
                             for triple_set in relevant_triples.values()))
+    triples = [preprocess_triplet(triplet) for triplet in triples]
     triples = list(dict.fromkeys(triples))
     raw_triples_path = args.dataset + "/{m}--{t}--raw_triples.pt"
 
@@ -461,7 +462,7 @@ def make_dataset(args):
         embedding_method_kwargs={
             "batch_size": min(len(triples), sent_trans_batch_size),
             "verbose": True
-        }, pre_transform=preprocess_triplet)
+        })
 
     print("Creating the graph and feature stores...")
     # creating the graph and feature stores
@@ -709,7 +710,7 @@ def train(args, train_loader, val_loader):
             wandb.finish()
 
         torch.cuda.empty_cache()
-        torch.cuda.reset_max_memory_allocated()
+        torch.cuda.reset_peak_memory_stats()
         model.eval()
         if not args.dont_save_model:
             save_params_dict(model, save_path=save_name)
