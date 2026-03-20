@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fixed DimeNet pretrained checkpoint loading for compatibility with Tensorflow v2.X
 - Fixed `return_attention_weights: bool` being not respected in `GATConv` and `GATv2Conv` ([#10596](https://github.com/pyg-team/pytorch_geometric/pull/10596))
 - Fixed download links for politifact and gossipcop datasets of `UPFD` ([#10558](https://github.com/pyg-team/pytorch_geometric/pull/10558))
 
