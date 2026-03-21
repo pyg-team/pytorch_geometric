@@ -87,7 +87,7 @@ class GLEM(torch.nn.Module):
                                               num_labels=out_channels,
                                               torch_dtype=lm_dtype,
                                               offload_folder="offload",
-                                              trust_remote_code=True)
+                                              trust_remote_code=True,)
 
         if lm_use_lora:
             from peft import (
