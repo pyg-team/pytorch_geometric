@@ -1,17 +1,45 @@
-# torch_geometric/datasets/echo.py
-
-from __future__ import annotations
 
 import os
-from typing import Callable, Dict, List, Literal, Optional
-
 import torch
+import os.path as osp
+from tqdm import tqdm
+from typing import Callable, Optional
+from torch_geometric.data import InMemoryDataset, download_url
 
-from torch_geometric.data import Data, InMemoryDataset, download_url
+urls = {
+    'charge_train': 'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-chem/charge/train_data.pt',
+    'charge_val': 'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-chem/charge/val_data.pt',
+    'charge_test': 'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-chem/charge/test_data.pt',
+
+    'energy_train': 'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-chem/energy/train_data.pt',
+    'energy_val': 'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-chem/energy/val_data.pt',
+    'energy_test': 'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-chem/energy/test_data.pt',
+
+    'synth_train': 'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-synth/train_data.pt',
+    'synth_val': 'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-synth/val_data.pt',
+    'synth_test': 'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-synth/test_data.pt',
+}
+
+backup_urls = {
+    'charge_train': 'https://zenodo.org/records/19185560/files/charge-train.pt',
+    'charge_val': 'https://zenodo.org/records/19185560/files/charge-val.pt',
+    'charge_test': 'https://zenodo.org/records/19185560/files/charge-test.pt',
+
+    'energy_train': 'https://zenodo.org/records/19185560/files/energy-train.pt',
+    'energy_val': 'https://zenodo.org/records/19185560/files/energy-val.pt',
+    'energy_test': 'https://zenodo.org/records/19185560/files/energy-test.pt',
+
+    'synth_train': 'https://zenodo.org/records/19185560/files/synth-train.pt',
+    'synth_val': 'https://zenodo.org/records/19185560/files/synth-val.pt',
+    'synth_test': 'https://zenodo.org/records/19185560/files/synth-test.pt',
+}
 
 
-Task = Literal["sssp", "diam", "ecc", "energy", "charge"]
-Split = Literal["train", "val", "test"]
+
+NODE_LVL_TASKS = ['sssp', 'ecc', 'charge']
+GRAPH_LVL_TASKS = ['diam', 'energy']
+TASKS = NODE_LVL_TASKS + GRAPH_LVL_TASKS
+
 
 
 class ECHOBenchmark(InMemoryDataset):
@@ -20,8 +48,7 @@ class ECHOBenchmark(InMemoryDataset):
     <https://openreview.net/forum?id=DgkWFPZMPp>`_.
 
     ECHO is a benchmark for evaluating long-range graph propagation
-    capabilities of graph neural networks. It contains five graph
-    tasks:
+    capabilities of graph neural networks. It contains five tasks:
 
     - ``sssp`` (Single-Source Shortest Path)
     - ``diam`` (Graph Diameter)
@@ -34,7 +61,9 @@ class ECHOBenchmark(InMemoryDataset):
     :class:`torch_geometric.data.Data` objects.
 
     The dataset is hosted on HuggingFace at:
-    https://huggingface.co/datasets/gmander44/echo
+    https://huggingface.co/datasets/lucamiglior/echo-benchmark
+
+    See the original `source code <https://github.com/Graph-ECHO-Benchmark/ECHO>` for more details on the individual datasets.
 
     Args:
         root (str): Root directory where the dataset should be saved.
@@ -60,8 +89,8 @@ class ECHOBenchmark(InMemoryDataset):
         >>> from torch_geometric.datasets import ECHOBenchmark
         >>> train = ECHOBenchmark(root='data/ECHOBenchmark', task='sssp', split='train')
         >>> len(train)
-        >>> data = train[0]
 
+        
     **Citation:**
 
     .. code-block:: bibtex
@@ -75,154 +104,117 @@ class ECHOBenchmark(InMemoryDataset):
         }
     """
 
+    def __init__(self, 
+                 root: str, 
+                 task: str, 
+                 split: str = 'train', 
+                 transform: Optional[Callable] = None, 
+                 pre_transform: Optional[Callable] = None, 
+                 pre_filter: Optional[Callable] = None,
+                 force_reload: bool = False, 
+                 **kwargs):
+        """_summary_
 
-    URLS: Dict[str, Dict[str, str]] = {
-        "sssp": {
-            "train": "https://huggingface.co/datasets/gmander44/echo/resolve/main/echo-synth/sssp/train_data.pt",
-            "val":   "https://huggingface.co/datasets/gmander44/echo/resolve/main/echo-synth/sssp/val_data.pt",
-            "test":  "https://huggingface.co/datasets/gmander44/echo/resolve/main/echo-synth/sssp/test_data.pt",
-        },
-        "diam": {
-            "train": "https://huggingface.co/datasets/gmander44/echo/resolve/main/echo-synth/diam/train_data.pt",
-            "val":   "https://huggingface.co/datasets/gmander44/echo/resolve/main/echo-synth/diam/val_data.pt",
-            "test":  "https://huggingface.co/datasets/gmander44/echo/resolve/main/echo-synth/diam/test_data.pt",
-        },
-        "ecc": {
-            "train": "https://huggingface.co/datasets/gmander44/echo/resolve/main/echo-synth/ecc/train_data.pt",
-            "val":   "https://huggingface.co/datasets/gmander44/echo/resolve/main/echo-synth/ecc/val_data.pt",
-            "test":  "https://huggingface.co/datasets/gmander44/echo/resolve/main/echo-synth/ecc/test_data.pt",
-        },
-        "energy": {
-            "train": "https://huggingface.co/datasets/gmander44/echo/resolve/main/echo-synth/energy/train_data.pt",
-            "val":   "https://huggingface.co/datasets/gmander44/echo/resolve/main/echo-synth/energy/val_data.pt",
-            "test":  "https://huggingface.co/datasets/gmander44/echo/resolve/main/echo-synth/energy/test_data.pt",
-        },
-        "charge": {
-            "train": "https://huggingface.co/datasets/gmander44/echo/resolve/main/echo-charge/train_data.pt",
-            "val":   "https://huggingface.co/datasets/gmander44/echo/resolve/main/echo-charge/val_data.pt",
-            "test":  "https://huggingface.co/datasets/gmander44/echo/resolve/main/echo-charge/test_data.pt",
-        },
-    }
+        Parameters
+        ----------
+        root : str
+            _description_
+        task : str
+            _description_
+        split : str, optional
+            _description_, by default 'train'
+        transform : Optional[Callable], optional
+            _description_, by default None
+        pre_transform : Optional[Callable], optional
+            _description_, by default None
+        pre_filter : Optional[Callable], optional
+            _description_, by default None
+        force_reload : bool, optional
+            _description_, by default False
+        """
+        assert task in TASKS, f'{task} is not in {TASKS}'
+        assert split in ['train', 'val', 'test']
 
-    tasks = sorted(URLS.keys())
-    splits = ["train", "val", "test"]
-
-    def __init__(
-        self,
-        root: str,
-        task: Task,
-        split: Split,
-        transform: Optional[Callable] = None,
-        pre_transform: Optional[Callable] = None,
-        pre_filter: Optional[Callable] = None,
-        force_reload: bool = False,
-    ) -> None:
-        self.task = str(task)
-        self.split = str(split)
-
-        if self.task not in self.tasks:
-            raise ValueError(
-                f"Invalid task '{self.task}'. Expected one of {self.tasks}."
-            )
-        if self.split not in self.splits:
-            raise ValueError(
-                f"Invalid split '{self.split}'. Expected one of {self.splits}."
-            )
-
-        super().__init__(
-            root=root,
-            transform=transform,
-            pre_transform=pre_transform,
-            pre_filter=pre_filter,
-            force_reload=force_reload,
-        )
-
-        path = self.processed_paths[self._processed_index()]
-        self.load(path)
-
+        self.split = split
+        self.task = task
+        super().__init__(root, pre_transform=pre_transform, pre_filter=pre_filter,
+                         transform=transform, force_reload=force_reload, **kwargs)
+        
+        self.data, self.slices = torch.load(self.processed_paths[0], weights_only=False)
+    
+    @property
+    def num_classes(self) -> int:
+            return 1 # NOTE: all tasks are regression tasks with a single target value per node/graph
+    
+    @property
+    def is_node_level_task(self) -> bool:
+        return self.task in NODE_LVL_TASKS
+    
     @property
     def raw_dir(self) -> str:
-        # Put ECHOBenchmark raw files under a subfolder to keep root tidy.
-        return os.path.join(self.root, "raw", "echobenchmark", self.task)
+        return osp.join(self.root, self.task, self.split, 'raw')
 
     @property
     def processed_dir(self) -> str:
-        return os.path.join(self.root, "processed", "echobenchmark", self.task)
-
+        return osp.join(self.root, self.task, self.split, 'processed')
+    
     @property
-    def processed_file_names(self) -> List[str]:
-        # 3 processed artifacts per task
-        return [f"{self.task}_{s}.pt" for s in self.splits]
-
-    def _processed_index(self) -> int:
-        split_to_idx = {"train": 0, "val": 1, "test": 2}
-        return split_to_idx[self.split]
-
+    def processed_file_names(self):
+        return [f"{self.task}_{self.split}.pt"] 
+    
     @property
-    def raw_file_names(self) -> List[str]:
-        # Standard split filenames inside raw_dir:
-        return [f"{s}.pt" for s in self.splits]
+    def processed_paths(self):
+        return [osp.join(self.processed_dir, file_name) for file_name in self.processed_file_names]
 
-    def download(self) -> None:
-        urls_for_task = self.URLS.get(self.task)
-        if urls_for_task is None:
-            raise RuntimeError(
-                f"Missing URLs for task '{self.task}' in ECHOBenchmark.URLS"
-            )
+    @property 
+    def raw_file_names(self):
+        return [f'{self.split}_data.pt']
 
-        os.makedirs(self.raw_dir, exist_ok=True)
-
-        for s in self.splits:
-            url = urls_for_task.get(s)
-            if url is None:
-                raise RuntimeError(
-                    f"Missing URL for task='{self.task}', split='{s}' in ECHOBenchmark.URLS"
-                )
-
-            # Download into raw_dir (keeps remote filename, e.g. train_data.pt):
+    def download(self):
+        print(f'Downloading {self.task} data for split {self.split}')
+        print(f'Raw dir: {self.raw_dir}')
+        prefix = 'synth' if self.task in ['diam', 'ecc', 'sssp'] else self.task         
+        url = urls[f'{prefix}_{self.split}']
+        try:
             download_url(url, self.raw_dir)
+        except:
+            b_url = backup_urls[f'{prefix}_{self.split}']
+            print(f'Failed to download from {url}, trying {b_url} instead')
+            downloaded_file = download_url(b_url, self.raw_dir)
+            # rename file to match expected raw_file_names
+            expected_file = osp.join(self.raw_dir, f'{self.split}_data.pt')
+            os.rename(downloaded_file, expected_file)
 
-            # Compute expected downloaded filename from the URL and rename it:
-            basename = url.split("/")[-1].split("?")[0]  # train_data.pt
-            src = os.path.join(self.raw_dir, basename)
-            dst = os.path.join(self.raw_dir, f"{s}.pt")  # train.pt
+    def process(self):
+        data_list = torch.load(self.raw_paths[0], weights_only=False)
 
-            if not os.path.exists(src):
-                # As a fallback, if HF/redirect changed filename, try to find a single *.pt:
-                candidates = [p for p in os.listdir(self.raw_dir) if p.endswith(".pt")]
-                raise FileNotFoundError(
-                    f"Expected downloaded file '{src}' not found. Found: {candidates}"
-                )
+        processed_data_list = []
+        for i, data in tqdm(enumerate(data_list), total=len(data_list), desc=f'Processing {self.task} data'):
+            
+            if self.task == 'diam':
+                data_list[i].y = data.y[:, 1][0] / 40.0 # We normalize the target wrt the max value, which by design is 40 
+            elif self.task == 'ecc':    
+                data_list[i].y = data.y[:, 0] / 40.0 # We normalize the target wrt the max value, which by design is 40 
+            elif self.task == 'sssp':
+                data_list[i].y = data.y[:, 2] / 40.0 # We normalize the target wrt the max value, which by design is 40 
+            elif self.task == 'charge':
+                data_list[i].y = data.y[:, 0]
+            elif self.task == 'energy':
+                data_list[i].y = data.y[:, 0] # This target is already normalized in the original dataset as the log10(original_graph_energy)
+            
+            data_list[i].y = data_list[i].y.unsqueeze(-1) # shape [num_nodes, 1] for node-level tasks, shape [1] for graph-level tasks
+            if self.task == 'diam':
+                data_list[i].y = data_list[i].y.unsqueeze(-1) # shape [1, 1] for graph-level tasks
 
-            if src != dst:
-                os.replace(src, dst)
+            data_list[i].x = torch.tensor(data.x).float()
 
-    def process(self) -> None:
-        os.makedirs(self.processed_dir, exist_ok=True)
-
-        for s in self.splits:
-            raw_path = os.path.join(self.raw_dir, f"{s}.pt")
-            try:
-                data_list = torch.load(raw_path, weights_only=False)
-            except TypeError:
-                data_list = torch.load(raw_path)
-
-            if not isinstance(data_list, list):
-                raise TypeError(
-                    f"ECHOBenchmark expected a list of Data in '{raw_path}', got {type(data_list)}"
-                )
-
-            for i, item in enumerate(data_list[:5]):
-                if not isinstance(item, Data):
-                    raise TypeError(
-                        f"ECHOBenchmark expected list[Data] in '{raw_path}', but element {i} is {type(item)}"
-                    )
-
-            if self.pre_filter is not None:
-                data_list = [d for d in data_list if self.pre_filter(d)]
-
+            if self.pre_filter is not None and not self.pre_filter(data):
+                continue
+            
             if self.pre_transform is not None:
-                data_list = [self.pre_transform(d) for d in data_list]
+                data_list[i] = self.pre_transform(data_list[i])
 
-            out_path = os.path.join(self.processed_dir, f"{self.task}_{s}.pt")
-            self.save(data_list, out_path)
+            processed_data_list.append(data_list[i])
+   
+        data, slices = self.collate(processed_data_list)
+        torch.save((data, slices), self.processed_paths[0])
