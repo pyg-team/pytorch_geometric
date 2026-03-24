@@ -1,4 +1,4 @@
-"""Minimal example for :class:`ECHOBenchmark`, following the experimental design 
+"""Minimal example for :class:`ECHOBenchmark`, following the experimental design
 of the original ECHO Benchmark reference code:
 https://github.com/Graph-ECHO-Benchmark/ECHO/
 
@@ -8,7 +8,6 @@ Usage:
     python examples/echo_benchmark.py --task diam --epochs 20
     python examples/echo_benchmark.py --task energy --batch_size 16
 """
-
 
 import argparse
 import os
@@ -28,7 +27,6 @@ from torch_geometric.nn import (
     global_mean_pool,
 )
 
-
 # NODE_LEVEL_TASKS = {"sssp", "ecc", "charge"}
 # GRAPH_LEVEL_TASKS = {"diam", "energy"}
 
@@ -41,18 +39,12 @@ def set_seed(seed: int) -> None:
 
 
 class GCN(nn.Module):
-    # A simple GCN model that supports both node-level and graph-level tasks 
+    # A simple GCN model that supports both node-level and graph-level tasks
     # as designed in the original ECHO Benchmark reference code.
     # https://github.com/Graph-ECHO-Benchmark/ECHO/blob/main/models/gnn.py
 
-    def __init__(
-        self,
-        input_dim: int,
-        hidden_dim: int,
-        output_dim: int,
-        num_layers: int,
-        node_level_task: bool
-    ) -> None:
+    def __init__(self, input_dim: int, hidden_dim: int, output_dim: int,
+                 num_layers: int, node_level_task: bool) -> None:
         super().__init__()
         self.node_level_task = node_level_task
 
@@ -61,29 +53,26 @@ class GCN(nn.Module):
             GCNConv(
                 in_channels=hidden_dim,
                 out_channels=hidden_dim,
-            )
-            for _ in range(num_layers)
+            ) for _ in range(num_layers)
         ])
 
         readout_dim = hidden_dim if node_level_task else hidden_dim * 3
-        
+
         # The readout layer structure from the original ECHO Benchmark reference code
-        self.readout = nn.Sequential(
-            nn.Linear(readout_dim, hidden_dim // 2),
-            nn.LeakyReLU(),
-            nn.Linear(hidden_dim // 2, output_dim)
-        )
+        self.readout = nn.Sequential(nn.Linear(readout_dim, hidden_dim // 2),
+                                     nn.LeakyReLU(),
+                                     nn.Linear(hidden_dim // 2, output_dim))
 
     def forward(self, data: Data) -> torch.Tensor:
         x, edge_index, batch = data.x, data.edge_index, data.batch
-        edge_attr = data.edge_attr if hasattr(data, 'edge_attr') else None
+        data.edge_attr if hasattr(data, 'edge_attr') else None
 
         h = self.encoder(x)
         for conv in self.convs:
             h = conv(h, edge_index)
-            
+
         if not self.node_level_task:
-            # Concatenate global add, max, and mean pooling results 
+            # Concatenate global add, max, and mean pooling results
             # as in the original ECHO Benchmark reference code
             h = torch.cat([
                 global_add_pool(h, batch),
@@ -142,14 +131,14 @@ def evaluate(
         total_loss += float(log10_mse_loss(pred, target))
 
         if task == "energy":
-            # The ECHO_Benchmark normalizes the target values as the 
-            # log10(original_graph_energy), so we need to apply the inverse 
+            # The ECHO_Benchmark normalizes the target values as the
+            # log10(original_graph_energy), so we need to apply the inverse
             # transformation to get the original energy values before computing MAE and MSE
-            pred = torch.pow(10.0, pred) 
+            pred = torch.pow(10.0, pred)
             target = torch.pow(10.0, target)
         elif task in {"sssp", "ecc", "diam"}:
-            # The ECHO_Benchmark normalizes the target values for sssp, ecc, and 
-            # diam by dividing by 40.0 during training 
+            # The ECHO_Benchmark normalizes the target values for sssp, ecc, and
+            # diam by dividing by 40.0 during training
             pred *= 40.0
             target *= 40.0
 
@@ -165,8 +154,7 @@ def evaluate(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Minimal example for ECHOBenchmark.",
-    )
+        description="Minimal example for ECHOBenchmark.", )
     parser.add_argument("--root", type=str, default="data/ECHOBenchmark")
     parser.add_argument(
         "--task",
@@ -187,7 +175,8 @@ def main() -> None:
     set_seed(args.seed)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    train_dataset = ECHOBenchmark(root=args.root, task=args.task, split="train")
+    train_dataset = ECHOBenchmark(root=args.root, task=args.task,
+                                  split="train")
     val_dataset = ECHOBenchmark(root=args.root, task=args.task, split="val")
     test_dataset = ECHOBenchmark(root=args.root, task=args.task, split="test")
 
@@ -196,9 +185,12 @@ def main() -> None:
     output_dim = train_dataset.num_classes
     node_level_task = train_dataset.is_node_level_task
 
-    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False)
-    test_loader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False)
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size,
+                              shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=args.batch_size,
+                            shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=args.batch_size,
+                             shuffle=False)
 
     model = GCN(
         input_dim=input_dim,
@@ -207,7 +199,6 @@ def main() -> None:
         num_layers=args.num_layers,
         node_level_task=node_level_task,
     ).to(device)
-
 
     optimizer = torch.optim.Adam(
         model.parameters(),
@@ -223,7 +214,7 @@ def main() -> None:
         f"input_dim={input_dim} edge_dim={edge_dim} output_dim={output_dim} device={device}"
     )
 
-    for epoch in range(1, args.epochs+1):
+    for epoch in range(1, args.epochs + 1):
         train_loss = train(
             model,
             train_loader,
@@ -242,13 +233,11 @@ def main() -> None:
             best_val_loss = val_metrics["loss"]
             torch.save((epoch, model.state_dict()), "best_model.pth")
 
-        print(
-            f"epoch={epoch} "
-            f"train_loss={train_loss:.6f} "
-            f"val_loss={val_metrics['loss']:.6f} "
-            f"val_mae={val_metrics['mae']:.6f} "
-            f"val_mse={val_metrics['mse']:.6f}"
-        )
+        print(f"epoch={epoch} "
+              f"train_loss={train_loss:.6f} "
+              f"val_loss={val_metrics['loss']:.6f} "
+              f"val_mae={val_metrics['mae']:.6f} "
+              f"val_mse={val_metrics['mse']:.6f}")
 
     epoch, ckpt = torch.load("best_model.pth")
     model.load_state_dict(ckpt)
@@ -258,13 +247,11 @@ def main() -> None:
         device=device,
         task=args.task,
     )
-    print(
-        f"best_epoch={epoch} "
-        f"best_val_loss={best_val_loss:.6f} "
-        f"test_loss={test_metrics['loss']:.6f} "
-        f"test_mae={test_metrics['mae']:.6f} "
-        f"test_mse={test_metrics['mse']:.6f}"
-    )
+    print(f"best_epoch={epoch} "
+          f"best_val_loss={best_val_loss:.6f} "
+          f"test_loss={test_metrics['loss']:.6f} "
+          f"test_mae={test_metrics['mae']:.6f} "
+          f"test_mse={test_metrics['mse']:.6f}")
 
 
 if __name__ == "__main__":
