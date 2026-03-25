@@ -14,7 +14,9 @@ Usage:
     ``python relbench_example.py``
     ``python relbench_example.py --epochs 50 --hidden_channels 128``
 """
+
 import argparse
+from typing import Tuple
 
 import torch
 import torch.nn.functional as F
@@ -24,7 +26,8 @@ from torch_geometric.nn import Linear, SAGEConv, to_hetero
 from torch_geometric.utils import from_relbench
 
 parser = argparse.ArgumentParser(
-    description='Train a heterogeneous GNN on a RelBench dataset.')
+    description='Train a heterogeneous GNN on a RelBench dataset.'
+)
 parser.add_argument('--hidden_channels', type=int, default=64)
 parser.add_argument('--lr', type=float, default=0.005)
 parser.add_argument('--epochs', type=int, default=30)
@@ -38,14 +41,16 @@ print('Loading RelBench rel-f1 dataset...')
 dataset = get_dataset('rel-f1', download=True)
 db = dataset.get_db()
 data = from_relbench(db)
-print(f'Graph: {len(data.node_types)} node types, '
-      f'{len(data.edge_types)} edge types')
+print(
+    f'Graph: {len(data.node_types)} node types, '
+    f'{len(data.edge_types)} edge types'
+)
 
 # 2. Prepare a node regression target.
 # `from_relbench` preserves the original DataFrame column order from RelBench.
 # In rel-f1, the 'standings' table has 'points' as its first numeric column:
 target_type = 'standings'
-y = data[target_type].x[:, 0].clone()  # points column (index 0 in rel-f1)
+y = data[target_type].x[:, 0]  # points column (index 0 in rel-f1)
 data[target_type].x = data[target_type].x[:, 1:]  # remove from input features
 
 # 3. Clean up features — fill NaN and standardize per column:
@@ -65,9 +70,9 @@ perm = torch.randperm(num_nodes)
 train_mask = torch.zeros(num_nodes, dtype=torch.bool)
 val_mask = torch.zeros(num_nodes, dtype=torch.bool)
 test_mask = torch.zeros(num_nodes, dtype=torch.bool)
-train_mask[perm[:int(0.6 * num_nodes)]] = True
-val_mask[perm[int(0.6 * num_nodes):int(0.8 * num_nodes)]] = True
-test_mask[perm[int(0.8 * num_nodes):]] = True
+train_mask[perm[: int(0.6 * num_nodes)]] = True
+val_mask[perm[int(0.6 * num_nodes) : int(0.8 * num_nodes)]] = True
+test_mask[perm[int(0.8 * num_nodes) :]] = True
 
 # Normalize target using training set statistics only (prevents data leakage):
 y_mean = y[train_mask].mean()
@@ -92,7 +97,11 @@ class GNN(torch.nn.Module):
         self.conv2 = SAGEConv((-1, -1), hidden_channels)
         self.lin = Linear(-1, 1)
 
-    def forward(self, x, edge_index):
+    def forward(
+        self,
+        x: torch.Tensor,
+        edge_index: torch.Tensor,
+    ) -> torch.Tensor:
         x = self.conv1(x, edge_index).relu()
         x = self.conv2(x, edge_index).relu()
         return self.lin(x)
@@ -108,40 +117,45 @@ with torch.no_grad():
 optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
 
-def train() -> float:
+def train() -> torch.Tensor:
     model.train()
     optimizer.zero_grad()
     pred = model(data.x_dict, data.edge_index_dict)[target_type].squeeze(-1)
     loss = F.mse_loss(pred[train_mask], y_norm[train_mask])
     loss.backward()
     optimizer.step()
-    return float(loss)
+    return loss
 
 
 @torch.no_grad()
-def test():
+def test() -> Tuple[float, float, float]:
     model.eval()
     pred = model(data.x_dict, data.edge_index_dict)[target_type].squeeze(-1)
-    pred_orig = pred * y_std + y_mean  # denormalize for interpretable MAE
+    # denormalize for interpretable MAE
+    pred *= y_std
+    pred += y_mean
 
-    train_mae = float((pred_orig[train_mask] - y[train_mask]).abs().mean())
-    val_mae = float((pred_orig[val_mask] - y[val_mask]).abs().mean())
-    test_mae = float((pred_orig[test_mask] - y[test_mask]).abs().mean())
+    train_mae = float((pred[train_mask] - y[train_mask]).abs().mean())
+    val_mae = float((pred[val_mask] - y[val_mask]).abs().mean())
+    test_mae = float((pred[test_mask] - y[test_mask]).abs().mean())
     return train_mae, val_mae, test_mae
 
 
-print(
-    f'\nTraining {args.epochs} epochs on "{target_type}" point prediction...')
+print(f'\nTraining {args.epochs} epochs on "{target_type}" point prediction...')
 print(f'Target stats (train): mean={y_mean:.2f}, std={y_std:.2f}\n')
 
 for epoch in range(1, args.epochs + 1):
     loss = train()
     if epoch % 5 == 0 or epoch == 1:
         train_mae, val_mae, test_mae = test()
-        print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, '
-              f'Train MAE: {train_mae:.2f}, Val MAE: {val_mae:.2f}, '
-              f'Test MAE: {test_mae:.2f} points')
+        print(
+            f'Epoch: {epoch:03d}, Loss: {loss:.4f}, '
+            f'Train MAE: {train_mae:.2f}, Val MAE: {val_mae:.2f}, '
+            f'Test MAE: {test_mae:.2f} points'
+        )
 
 train_mae, val_mae, test_mae = test()
-print(f'\nFinal — Train MAE: {train_mae:.2f}, Val MAE: {val_mae:.2f}, '
-      f'Test MAE: {test_mae:.2f} points')
+print(
+    f'\nFinal — Train MAE: {train_mae:.2f}, Val MAE: {val_mae:.2f}, '
+    f'Test MAE: {test_mae:.2f} points'
+)
