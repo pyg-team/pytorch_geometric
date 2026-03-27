@@ -9,11 +9,11 @@ from torch_geometric.typing import OptTensor, torch_cluster
 
 from .avg_pool import avg_pool, avg_pool_neighbor_x, avg_pool_x
 from .glob import global_add_pool, global_max_pool, global_mean_pool
-from .knn import (KNNIndex, L2KNNIndex, MIPSKNNIndex, ApproxL2KNNIndex,
-                  ApproxMIPSKNNIndex)
+from .knn import KNNIndex, L2KNNIndex, MIPSKNNIndex, ApproxL2KNNIndex, ApproxMIPSKNNIndex
 from .graclus import graclus
 from .max_pool import max_pool, max_pool_neighbor_x, max_pool_x
 from .topk_pool import TopKPooling
+from .spa_pool import SPAPooling
 from .sag_pool import SAGPooling
 from .edge_pool import EdgePooling
 from .cluster_pool import ClusterPooling
@@ -123,7 +123,7 @@ def knn_graph(
     k: int,
     batch: OptTensor = None,
     loop: bool = False,
-    flow: str = 'source_to_target',
+    flow: str = "source_to_target",
     cosine: bool = False,
     num_workers: int = 1,
     batch_size: Optional[int] = None,
@@ -166,7 +166,8 @@ def knn_graph(
         warnings.warn(
             "Input tensor 'x' and 'batch' are on different devices "
             "in 'knn_graph'. Performing blocking device transfer",
-            stacklevel=2)
+            stacklevel=2,
+        )
         batch = batch.to(x.device)
 
     if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
@@ -242,7 +243,7 @@ def radius_graph(
     batch: OptTensor = None,
     loop: bool = False,
     max_num_neighbors: int = 32,
-    flow: str = 'source_to_target',
+    flow: str = "source_to_target",
     num_workers: int = 1,
     batch_size: Optional[int] = None,
 ) -> Tensor:
@@ -290,7 +291,8 @@ def radius_graph(
         warnings.warn(
             "Input tensor 'x' and 'batch' are on different devices "
             "in 'radius_graph'. Performing blocking device transfer",
-            stacklevel=2)
+            stacklevel=2,
+        )
         batch = batch.to(x.device)
 
     if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
@@ -338,37 +340,38 @@ def nearest(
 
 
 __all__ = [
-    'global_add_pool',
-    'global_mean_pool',
-    'global_max_pool',
-    'KNNIndex',
-    'L2KNNIndex',
-    'MIPSKNNIndex',
-    'ApproxL2KNNIndex',
-    'ApproxMIPSKNNIndex',
-    'TopKPooling',
-    'SAGPooling',
-    'EdgePooling',
-    'ClusterPooling',
-    'ASAPooling',
-    'PANPooling',
-    'MemPooling',
-    'max_pool',
-    'avg_pool',
-    'max_pool_x',
-    'max_pool_neighbor_x',
-    'avg_pool_x',
-    'avg_pool_neighbor_x',
-    'graclus',
-    'voxel_grid',
-    'fps',
-    'knn',
-    'knn_graph',
-    'approx_knn',
-    'approx_knn_graph',
-    'radius',
-    'radius_graph',
-    'nearest',
+    "global_add_pool",
+    "global_mean_pool",
+    "global_max_pool",
+    "KNNIndex",
+    "L2KNNIndex",
+    "MIPSKNNIndex",
+    "ApproxL2KNNIndex",
+    "ApproxMIPSKNNIndex",
+    "TopKPooling",
+    "SPAPooling",
+    "SAGPooling",
+    "EdgePooling",
+    "ClusterPooling",
+    "ASAPooling",
+    "PANPooling",
+    "MemPooling",
+    "max_pool",
+    "avg_pool",
+    "max_pool_x",
+    "max_pool_neighbor_x",
+    "avg_pool_x",
+    "avg_pool_neighbor_x",
+    "graclus",
+    "voxel_grid",
+    "fps",
+    "knn",
+    "knn_graph",
+    "approx_knn",
+    "approx_knn_graph",
+    "radius",
+    "radius_graph",
+    "nearest",
 ]
 
 classes = __all__
