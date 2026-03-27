@@ -1,6 +1,7 @@
 import torch
 import torch.nn.functional as F
 from torch import Tensor
+
 from torch_geometric.nn.conv import GCNConv, GraphConv
 from torch_geometric.nn.pool.select import SelectTopK
 from torch_geometric.utils import cumsum, degree, dense_to_sparse, scatter
@@ -25,7 +26,6 @@ class SelectSageModule(torch.nn.Module):
         act (str): Activation function applied to scores.
             (default: :obj:`"tanh"`)
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -71,8 +71,7 @@ class SelectSageModule(torch.nn.Module):
 
 
 class SelectTopKModule(torch.nn.Module):
-    r"""
-    Node selection module based on a learned projection vector (TopK-style).
+    r"""Node selection module based on a learned projection vector (TopK-style).
 
     Args:
         in_channels (int): Size of each input node feature vector.
@@ -84,7 +83,6 @@ class SelectTopKModule(torch.nn.Module):
         act (str): Activation function applied to scores.
             (default: :obj:`"tanh"`)
     """
-
     def __init__(
         self,
         in_channels: int,
@@ -132,7 +130,6 @@ class AssociationModule(torch.nn.Module):
         attention_dim (int, optional): Dimension of the attention space.
             Required when :obj:`mode="attn"`. (default: :obj:`None`)
     """
-
     def __init__(
         self,
         mode: str = "scalar",
@@ -144,8 +141,7 @@ class AssociationModule(torch.nn.Module):
         if mode not in ["scalar", "cosine", "attn"]:
             raise NotImplementedError(
                 "Association mode not recognised. "
-                "Available modes: 'scalar', 'cosine', 'attn'."
-            )
+                "Available modes: 'scalar', 'cosine', 'attn'.")
 
         self.mode = mode
 
@@ -153,8 +149,7 @@ class AssociationModule(torch.nn.Module):
             if in_channels is None or attention_dim is None:
                 raise ValueError(
                     "'in_channels' and 'attention_dim' must be set \
-                        when mode='attn'."
-                )
+                        when mode='attn'.")
             self.attention_dim = attention_dim
             self.Wq = torch.nn.Linear(in_channels, attention_dim, bias=False)
             self.Wk = torch.nn.Linear(in_channels, attention_dim, bias=False)
@@ -166,8 +161,7 @@ class AssociationModule(torch.nn.Module):
             self.Wk.reset_parameters()
 
     def forward(self, x: Tensor, xrep: Tensor) -> Tensor:
-        r"""
-        Args:
+        r"""Args:
             x (torch.Tensor): Node embeddings :math:`(N, d)`.
             xrep (torch.Tensor): Representative node embeddings
                 :math:`(k, d)`.
@@ -194,8 +188,7 @@ class AssociationModule(torch.nn.Module):
 
 
 class SPAPooling(torch.nn.Module):
-    r"""
-    The sparse pooling operator from the
+    r"""The sparse pooling operator from the
     `"SpaPool: Soft Partition Assignment Pooling for Graph Neural Networks"
     https://doi.org/10.1007/978-3-032-02215-8_27`_ paper.
 
@@ -258,7 +251,6 @@ class SPAPooling(torch.nn.Module):
         >>> batch = torch.zeros(10, dtype=torch.long)
         >>> out, ei, _, b, perm, score, loss = pool(x, batch, edge_index)
     """
-
     def __init__(
         self,
         ratio: float,
@@ -284,21 +276,17 @@ class SPAPooling(torch.nn.Module):
         self.act = torch.nn.Sigmoid()
 
         if select == "topk":
-            self.select = SelectTopKModule(
-                in_channels=no, ratio=ratio, min_score=min_score, act="tanh"
-            )
+            self.select = SelectTopKModule(in_channels=no, ratio=ratio,
+                                           min_score=min_score, act="tanh")
         elif select == "sagpool":
-            self.select = SelectSageModule(
-                in_channels=no, ratio=ratio, min_score=min_score, act="tanh"
-            )
+            self.select = SelectSageModule(in_channels=no, ratio=ratio,
+                                           min_score=min_score, act="tanh")
         else:
             raise NotImplementedError(
-                "Only 'topk' or 'sagpool' are supported as select modules."
-            )
+                "Only 'topk' or 'sagpool' are supported as select modules.")
 
-        self.association = AssociationModule(
-            asso, in_channels=no, attention_dim=attention_dim
-        )
+        self.association = AssociationModule(asso, in_channels=no,
+                                             attention_dim=attention_dim)
 
         self.reset_parameters()
 
@@ -337,13 +325,11 @@ class SPAPooling(torch.nn.Module):
         # ── Per-graph node counts ────────────────────────────────────────────
         n_nodes = scatter(batch.new_ones(x.size(0)), batch, reduce="sum")
         if self.min_score is None:
-            k_nodes = (
-                        float(self.ratio) * n_nodes.to(x.dtype)
-                    ).ceil().to(torch.long)
+            k_nodes = (float(self.ratio) * n_nodes.to(x.dtype)).ceil().to(
+                torch.long)
         else:
-            k_nodes = scatter(
-                batch[perm].new_ones(xrep.size(0)), batch[perm], reduce="sum"
-            )
+            k_nodes = scatter(batch[perm].new_ones(xrep.size(0)), batch[perm],
+                              reduce="sum")
 
         cumn = cumsum(n_nodes)
         cumk = cumsum(k_nodes)
@@ -406,9 +392,8 @@ class SPAPooling(torch.nn.Module):
         r"""Entropy regularisation loss."""
         return (-S * torch.log(S + 1e-15)).sum(dim=-1).mean()
 
-    def _mincut_loss(
-        self, x: Tensor, edge_index: Tensor, S: Tensor, out_adj: Tensor
-    ) -> Tensor:
+    def _mincut_loss(self, x: Tensor, edge_index: Tensor, S: Tensor,
+                     out_adj: Tensor) -> Tensor:
         r"""MinCut regularisation loss (range :math:`[-1, 0]`)."""
         d = torch.diag(degree(edge_index[0], x.size(0)))
         mincut_den = torch.trace(torch.matmul(torch.matmul(S.T, d), S))
@@ -427,9 +412,8 @@ class SPAPooling(torch.nn.Module):
         for i in range(len(n_nodes)):
             si = S[cumn[i]:cumn[i] + n_nodes[i], cumk[i]:cumk[i] + k_nodes[i]]
             sts = torch.matmul(si.T, si)
-            i_s = torch.eye(k_nodes[i], device=S.device, dtype=S.dtype) / (
-                k_nodes[i] ** 0.5
-            )
+            i_s = torch.eye(k_nodes[i], device=S.device,
+                            dtype=S.dtype) / (k_nodes[i]**0.5)
             loss = loss + torch.norm(sts / torch.norm(sts) - i_s)
         return loss.squeeze(0) / len(k_nodes)
 
@@ -444,11 +428,9 @@ class SPAPooling(torch.nn.Module):
         r"""Collapse regularisation loss."""
         loss = S.new_zeros(1)
         for i in range(len(n_nodes)):
-            si = S[cumn[i]:cumn[i]+n_nodes[i],
-                   cumk[i]:cumk[i]+k_nodes[i]]
-            loss += (
-                    torch.norm(si.sum(0)) * (k_nodes[i] ** 0.5)
-                     ) / n_nodes[i] - 1
+            si = S[cumn[i]:cumn[i] + n_nodes[i], cumk[i]:cumk[i] + k_nodes[i]]
+            loss += (torch.norm(si.sum(0)) *
+                     (k_nodes[i]**0.5)) / n_nodes[i] - 1
         return loss / len(n_nodes)
 
     def _spectr_loss(
@@ -482,9 +464,7 @@ class SPAPooling(torch.nn.Module):
         return loss / len(k_nodes)
 
     def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}("
-            f"n_feature={self.n_feature}, "
-            f"ratio={self.ratio}, "
-            f"loss={self.loss_fn})"
-        )
+        return (f"{self.__class__.__name__}("
+                f"n_feature={self.n_feature}, "
+                f"ratio={self.ratio}, "
+                f"loss={self.loss_fn})")

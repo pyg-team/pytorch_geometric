@@ -118,8 +118,10 @@ def knn(
     :rtype: :class:`torch.Tensor`
     """
     if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
-        return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine, num_workers)
-    return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine, num_workers, batch_size)
+        return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine,
+                                 num_workers)
+    return torch_cluster.knn(x, y, k, batch_x, batch_y, cosine, num_workers,
+                             batch_size)
 
 
 def knn_graph(
@@ -175,10 +177,10 @@ def knn_graph(
         batch = batch.to(x.device)
 
     if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
-        return torch_cluster.knn_graph(x, k, batch, loop, flow, cosine, num_workers)
-    return torch_cluster.knn_graph(
-        x, k, batch, loop, flow, cosine, num_workers, batch_size
-    )
+        return torch_cluster.knn_graph(x, k, batch, loop, flow, cosine,
+                                       num_workers)
+    return torch_cluster.knn_graph(x, k, batch, loop, flow, cosine,
+                                   num_workers, batch_size)
 
 
 def radius(
@@ -235,12 +237,10 @@ def radius(
         inputs to GPU before proceeding.
     """
     if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
-        return torch_cluster.radius(
-            x, y, r, batch_x, batch_y, max_num_neighbors, num_workers
-        )
-    return torch_cluster.radius(
-        x, y, r, batch_x, batch_y, max_num_neighbors, num_workers, batch_size
-    )
+        return torch_cluster.radius(x, y, r, batch_x, batch_y,
+                                    max_num_neighbors, num_workers)
+    return torch_cluster.radius(x, y, r, batch_x, batch_y, max_num_neighbors,
+                                num_workers, batch_size)
 
 
 def radius_graph(
@@ -302,12 +302,10 @@ def radius_graph(
         batch = batch.to(x.device)
 
     if not torch_geometric.typing.WITH_TORCH_CLUSTER_BATCH_SIZE:
-        return torch_cluster.radius_graph(
-            x, r, batch, loop, max_num_neighbors, flow, num_workers
-        )
-    return torch_cluster.radius_graph(
-        x, r, batch, loop, max_num_neighbors, flow, num_workers, batch_size
-    )
+        return torch_cluster.radius_graph(x, r, batch, loop, max_num_neighbors,
+                                          flow, num_workers)
+    return torch_cluster.radius_graph(x, r, batch, loop, max_num_neighbors,
+                                      flow, num_workers, batch_size)
 
 
 def nearest(

@@ -1,5 +1,6 @@
 import pytest
 import torch
+
 from torch_geometric.nn.pool import SPAPooling
 
 
@@ -110,14 +111,14 @@ def test_loss_families(simple_graph, loss_fn):
     assert isinstance(loss, dict)
     assert len(loss) > 0
     for v in loss.values():
-        assert torch.isfinite(v), f"Loss '{loss_fn}' returned a non-finite value"
+        assert torch.isfinite(
+            v), f"Loss '{loss_fn}' returned a non-finite value"
 
 
 def test_manual_loss(simple_graph):
     x, edge_index, batch = simple_graph
-    pool = SPAPooling(
-        ratio=0.5, n_feature=16, loss="manual", regs=["link", "entropy"], no=8
-    )
+    pool = SPAPooling(ratio=0.5, n_feature=16, loss="manual",
+                      regs=["link", "entropy"], no=8)
     *_, loss = pool(x, batch, edge_index)
     assert "link" in loss and "entropy" in loss
 
