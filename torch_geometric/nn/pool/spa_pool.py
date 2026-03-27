@@ -71,7 +71,13 @@ class SelectSageModule(torch.nn.Module):
 
 
 class SelectTopKModule(torch.nn.Module):
+<<<<<<< HEAD
     r"""Node selection module based on a learned projection vector (TopK-style).
+=======
+    r"""
+    Node selection module based on a learned projection vector
+    (TopK-style).
+>>>>>>> 4a02707a (Fix: fixed error E501 to spa_pool.py)
 
     Args:
         in_channels (int): Size of each input node feature vector.
