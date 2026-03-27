@@ -1,9 +1,21 @@
 from typing import List, Optional, Tuple
 
+import pytest
 import torch
 from torch import Tensor
 
 from torch_geometric.utils import coalesce
+
+
+def test_coalesce_overflow():
+    edge_index = torch.tensor([[0, 1], [1, 0]])
+    with pytest.raises(ValueError):
+        coalesce(edge_index, num_nodes=int(1e10))
+
+    torch._dynamo.config.capture_dynamic_output_shape_ops = True
+    coalesce_compiled = torch.compile(coalesce, fullgraph=True)
+    with pytest.raises(torch._dynamo.exc.TorchRuntimeError):
+        coalesce_compiled(edge_index, num_nodes=int(1e10))
 
 
 def test_coalesce():
@@ -72,6 +84,10 @@ def test_coalesce_jit():
     ) -> Tuple[Tensor, List[Tensor]]:
         return coalesce(edge_index, edge_attr)
 
+    @torch.jit.script
+    def wrapper4(edge_index: Tensor, num_nodes: int) -> Tensor:
+        return coalesce(edge_index, num_nodes=num_nodes)
+
     edge_index = torch.tensor([[2, 1, 1, 0], [1, 2, 0, 1]])
     edge_attr = torch.tensor([[1], [2], [3], [4]])
 
@@ -91,3 +107,9 @@ def test_coalesce_jit():
     assert len(out[1]) == 2
     assert out[1][0].size() == edge_attr.size()
     assert out[1][1].size() == edge_attr.view(-1).size()
+
+    with pytest.raises(
+            torch.jit.Error,
+            match="builtins.ValueError: 'coalesce' will result in an overflow"
+    ):
+        wrapper4(edge_index, num_nodes=int(1e10))
