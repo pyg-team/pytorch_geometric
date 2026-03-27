@@ -9,13 +9,7 @@ from torch_geometric.typing import OptTensor, torch_cluster
 
 from .avg_pool import avg_pool, avg_pool_neighbor_x, avg_pool_x
 from .glob import global_add_pool, global_max_pool, global_mean_pool
-from .knn import (
-    KNNIndex,
-    L2KNNIndex,
-    MIPSKNNIndex,
-    ApproxL2KNNIndex,
-    ApproxMIPSKNNIndex,
-)
+from .knn import KNNIndex, L2KNNIndex, MIPSKNNIndex, ApproxL2KNNIndex, ApproxMIPSKNNIndex
 from .graclus import graclus
 from .max_pool import max_pool, max_pool_neighbor_x, max_pool_x
 from .topk_pool import TopKPooling
@@ -355,6 +349,7 @@ __all__ = [
     "ApproxL2KNNIndex",
     "ApproxMIPSKNNIndex",
     "TopKPooling",
+    "SPAPooling",
     "SAGPooling",
     "EdgePooling",
     "ClusterPooling",
