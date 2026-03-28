@@ -20,6 +20,7 @@ For examples on [Open Graph Benchmark](https://ogb.stanford.edu/) datasets, see 
   - Uses SGFormer (a kind of GraphTransformer) by default.
   - [SGFormer Paper](https://arxiv.org/pdf/2306.10759)
   - [Polynormer](https://arxiv.org/pdf/2403.01232)
+  - [EGT](https://arxiv.org/abs/2108.03348)
   - [Kumo.ai x NVIDIA x Stanford Graph Transformer Webinar](https://www.youtube.com/watch?v=wAYryx3GjLw)
 - [`ogbn_proteins_deepgcn.py`](./ogbn_proteins_deepgcn.py) is an example to showcase how to train deep GNNs on the `ogbn-proteins` dataset.
 - [`ogbn_train_perforatedai.py`](https://github.com/PerforatedAI/PerforatedAI-Examples/tree/master/otherExamples/torch_geometric/OGBNProducts) shows how to optimize the `ogbn_train.py` workflow using [Perforated AI](https://github.com/PerforatedAI/PerforatedAI-API). Perforated AI provides a PyTorch add-on which increases network accuracy by empowering each artificial neuron with artificial dendrites.
