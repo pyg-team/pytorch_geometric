@@ -69,8 +69,7 @@ def from_relbench(db: Any) -> HeteroData:
 
         # Convert numeric feature columns into a node feature tensor:
         feature_cols = [
-            col
-            for col in df.columns
+            col for col in df.columns
             if col not in exclude_cols and df[col].dtype.kind in ('i', 'f')
         ]
         if feature_cols:
@@ -84,8 +83,8 @@ def from_relbench(db: Any) -> HeteroData:
         if table.time_col is not None:
             time_ser = df[table.time_col]
             if time_ser.dtype in [
-                np.dtype('datetime64[s]'),
-                np.dtype('datetime64[ns]'),
+                    np.dtype('datetime64[s]'),
+                    np.dtype('datetime64[ns]'),
             ]:
                 unix_time = time_ser.astype('int64').values
                 if time_ser.dtype == np.dtype('datetime64[ns]'):
@@ -93,8 +92,7 @@ def from_relbench(db: Any) -> HeteroData:
                 data[table_name].time = torch.from_numpy(unix_time)
             else:
                 data[table_name].time = torch.from_numpy(
-                    time_ser.values.astype(np.float64)
-                )
+                    time_ser.values.astype(np.float64))
 
         # Create edges from foreign key relationships:
         for fkey_col, pkey_table_name in table.fkey_col_to_pkey_table.items():
@@ -104,8 +102,7 @@ def from_relbench(db: Any) -> HeteroData:
             mask = ~pkey_index.isna()
             fkey_idx = torch.arange(len(pkey_index))
             pkey_idx = torch.from_numpy(
-                pkey_index[mask].to_numpy(dtype=np.int64)
-            )
+                pkey_index[mask].to_numpy(dtype=np.int64))
             fkey_idx = fkey_idx[torch.from_numpy(mask.to_numpy(dtype=bool))]
 
             # Forward edge: fkey table -> pkey table
