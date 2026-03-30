@@ -74,10 +74,23 @@ class GLEM(torch.nn.Module):
         self.beta = beta
         self.gnn_loss = gnn_loss
         self.lm = lm_to_use
-        from transformers import AutoModelForSequenceClassification
-        self.lm = AutoModelForSequenceClassification.from_pretrained(
-            lm_to_use, num_labels=out_channels, torch_dtype=lm_dtype,
-            offload_folder="offload", trust_remote_code=True)
+
+        # choose the appropriate class
+        if lm_to_use == "prajjwal1/bert-tiny":
+            from transformers import BertForSequenceClassification
+            model_class = BertForSequenceClassification
+        else:
+            from transformers import AutoModelForSequenceClassification
+            model_class = AutoModelForSequenceClassification
+
+        self.lm = model_class.from_pretrained(
+            lm_to_use,
+            num_labels=out_channels,
+            torch_dtype=lm_dtype,
+            offload_folder="offload",
+            trust_remote_code=True,
+        )
+
         if lm_use_lora:
             from peft import (
                 LoraConfig,

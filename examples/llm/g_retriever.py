@@ -1,100 +1,52 @@
-"""This example implements the G-Retriever model
-(https://arxiv.org/abs/2402.07630) using PyG.
-
-G-Retriever significantly reduces hallucinations by 54% compared to the
-stand-alone LLM baseline.
+"""This example provides helper functions for using the G-retriever model
+(https://arxiv.org/abs/2402.07630) in PyG.
 
 Requirements:
 `pip install datasets transformers pcst_fast sentencepiece accelerate`
 
-Example repo for integration with Neo4j Graph DB:
-https://github.com/neo4j-product-examples/neo4j-gnn-llm-example
-Example blog showing 2x accuracy over LLM on real medical data:
-https://developer.nvidia.com/blog/boosting-qa-accuracy-with-graphrag-using-pyg-and-graph-databases/
-"""
-import argparse
-import gc
-import math
-import os.path as osp
-import re
-import time
 
-import pandas as pd
+Example blog showing 2x accuracy over agentic graphRAG on real medical data
+(integration with Neo4j Graph DB):
+https://developer.nvidia.com/blog/boosting-qa-accuracy-with-graphrag-using-pyg-and-graph-databases/
+
+https://github.com/neo4j-product-examples/neo4j-gnn-llm-example
+
+See examples/llm/txt2kg_rag.py for e2e pipeline in PyG including:
+- KG Creation
+- Subgraph Retrieval
+- GNN+LLM Finetuning
+- Testing
+- LLM Judge Eval
+
+"""
+import math
+
 import torch
 from torch import Tensor
-from torch.nn.utils import clip_grad_norm_
-from tqdm import tqdm
-
-from torch_geometric import seed_everything
-from torch_geometric.datasets import CWQDataset, WebQSPDataset
-from torch_geometric.llm.models import LLM, GRetriever
-from torch_geometric.loader import DataLoader
-from torch_geometric.nn.models import GAT
 
 
-def compute_metrics(eval_output):
-    """Compute evaluation metrics (hit, precision, recall, F1).
+def adjust_learning_rate(param_group: dict, LR: float, epoch: int,
+                         num_epochs: int):
+    """Decay learning rate with half-cycle cosine after warmup.
 
-    Parameters:
-    eval_output (list): List of dictionaries containing prediction output.
-
+    Args:
+        param_group (dict): Parameter group.
+        LR (float): Learning rate.
+        epoch (int): current epoch
+        num_epochs (int): total epochs
     Returns:
-    None (prints metrics to console)
+        float: Adjusted learning rate.
     """
-    # Concatenate prediction output into a single DataFrame
-    df = pd.concat([pd.DataFrame(d) for d in eval_output])
-
-    # Initialize lists to store metrics
-    all_hit = []  # Boolean values indicating whether prediction matches label
-    all_precision = []  # List of precision values
-    all_recall = []  # List of recall values
-    all_f1 = []  # List of F1 values
-
-    # Iterate over prediction-label pairs
-    for pred, label in zip(df.pred.tolist(), df.label.tolist()):
-        try:
-            # Preprocess prediction string
-            pred = pred.split('[/s]')[0].strip().split('|')
-
-            # Check if prediction matches label
-            hit = re.findall(pred[0], label)
-            all_hit.append(len(hit) > 0)
-
-            # Compute precision, recall, and F1
-            label = label.split('|')
-            matches = set(pred).intersection(set(label))
-            precision = len(matches) / len(set(pred))
-            recall = len(matches) / len(set(label))
-
-            # Handle division by zero
-            if recall + precision == 0:
-                f1 = 0
-            else:
-                f1 = 2 * precision * recall / (precision + recall)
-
-            # Store metrics
-            all_precision.append(precision)
-            all_recall.append(recall)
-            all_f1.append(f1)
-
-        except Exception as e:
-            # Handle exceptions by printing error message and skipping
-            print(f'Label: {label}')
-            print(f'Pred: {pred}')
-            print(f'Exception: {e}')
-            print('------------------')
-
-    # Compute average metrics
-    hit = sum(all_hit) / len(all_hit)
-    precision = sum(all_precision) / len(all_precision)
-    recall = sum(all_recall) / len(all_recall)
-    f1 = sum(all_f1) / len(all_f1)
-
-    # Print metrics to console
-    print(f'Hit@1: {hit:.4f}')
-    print(f'Precision: {precision:.4f}')
-    print(f'Recall: {recall:.4f}')
-    print(f'F1: {f1:.4f}')
+    min_lr = 5e-6
+    warmup_epochs = 1
+    if epoch < warmup_epochs:
+        lr = LR
+    else:
+        lr = min_lr + (LR - min_lr) * 0.5 * (
+            1.0 + math.cos(math.pi * (epoch - warmup_epochs) /
+                           (num_epochs - warmup_epochs)))
+    param_group['lr'] = lr
+    return lr
 
 
 def save_params_dict(model, save_path):
@@ -133,6 +85,12 @@ def load_params_dict(model, save_path):
     return model
 
 
+def normalize_batch_dtype(batch):
+    batch.x = batch.x.float()
+    if hasattr(batch, "edge_attr") and batch.edge_attr is not None:
+        batch.edge_attr = batch.edge_attr.float()
+
+
 def get_loss(model, batch, model_save_name="gnn+llm") -> Tensor:
     """Compute the loss for a given model and batch of data.
 
@@ -149,6 +107,7 @@ def get_loss(model, batch, model_save_name="gnn+llm") -> Tensor:
         # For LLM models
         return model(batch.question, batch.label, batch.desc)
     else:  # (GNN+LLM)
+        normalize_batch_dtype(batch)
         return model(
             batch.question,  # ["list", "of", "questions", "here"]
             batch.x,  # [num_nodes, num_features]
@@ -180,245 +139,7 @@ def inference_step(model, batch, model_save_name="gnn+llm",
         return model.inference(batch.question, batch.desc,
                                max_out_tokens=max_out_tokens)
     else:  # (GNN+LLM)
+        normalize_batch_dtype(batch)
         return model.inference(batch.question, batch.x, batch.edge_index,
                                batch.batch, batch.edge_attr, batch.desc,
                                max_out_tokens=max_out_tokens)
-
-
-def adjust_learning_rate(param_group: dict, LR: float, epoch: int,
-                         num_epochs: int):
-    """Decay learning rate with half-cycle cosine after warmup.
-
-    Args:
-        param_group (dict): Parameter group.
-        LR (float): Learning rate.
-        epoch (int): current epoch
-        num_epochs (int): total epochs
-
-    Returns:
-        float: Adjusted learning rate.
-    """
-    min_lr = 5e-6
-    warmup_epochs = 1
-    if epoch < warmup_epochs:
-        lr = LR
-    else:
-        lr = min_lr + (LR - min_lr) * 0.5 * (
-            1.0 + math.cos(math.pi * (epoch - warmup_epochs) /
-                           (num_epochs - warmup_epochs)))
-    param_group['lr'] = lr
-    return lr
-
-
-def train(
-        num_epochs,  # Total number of training epochs
-        hidden_channels,  # Number of hidden channels in GNN
-        num_gnn_layers,  # Number of GNN layers
-        batch_size,  # Training batch size
-        eval_batch_size,  # Evaluation batch size
-        lr,  # Initial learning rate
-        llm_model_name,  # `transformers` model name
-        checkpointing=False,  # Whether to checkpoint model
-        cwq=False,  # Whether to train on the CWQ dataset
-        tiny_llama=False,  # Whether to use tiny LLaMA model
-):
-    """Train a GNN+LLM model on WebQSP or CWQ dataset.
-
-    Args:
-        num_epochs (int): Total number of training epochs.
-        hidden_channels (int): Number of hidden channels in GNN.
-        num_gnn_layers (int): Number of GNN layers.
-        batch_size (int): Training batch size.
-        eval_batch_size (int): Evaluation batch size.
-        lr (float): Initial learning rate.
-        llm_model_name (str): The name of the LLM to use.
-        checkpointing (bool, optional): Whether to checkpoint model.
-            Defaults to False.
-        cwq (bool, optional): Whether to train on the CWQ dataset
-            instead of WebQSP.
-        tiny_llama (bool, optional): Whether to use tiny LLaMA model.
-            Defaults to False.
-
-    Returns:
-        None
-    """
-    # Start training time
-    start_time = time.time()
-
-    # Load dataset and create data loaders
-    path = osp.dirname(osp.realpath(__file__))
-    if not cwq:
-        path = osp.join(path, '..', '..', 'data', 'WebQSPDataset')
-        train_dataset = WebQSPDataset(path, split='train')
-        val_dataset = WebQSPDataset(path, split='val')
-        test_dataset = WebQSPDataset(path, split='test')
-    else:
-        path = osp.join(path, '..', '..', 'data', 'CWQDataset')
-        train_dataset = CWQDataset(path, split='train')
-        val_dataset = CWQDataset(path, split='val')
-        test_dataset = CWQDataset(path, split='test')
-
-    seed_everything(42)
-
-    train_loader = DataLoader(train_dataset, batch_size=batch_size,
-                              drop_last=True, pin_memory=True, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=eval_batch_size,
-                            drop_last=False, pin_memory=True, shuffle=False)
-    test_loader = DataLoader(test_dataset, batch_size=eval_batch_size,
-                             drop_last=False, pin_memory=True, shuffle=False)
-
-    # Clean up memory
-    gc.collect()
-    torch.cuda.empty_cache()
-
-    # Create GNN model
-    gnn = GAT(
-        in_channels=1024,
-        hidden_channels=hidden_channels,
-        out_channels=1024,
-        num_layers=num_gnn_layers,
-        heads=4,
-    )
-
-    # Create LLaMA model
-    if tiny_llama:
-        llm = LLM(model_name='TinyLlama/TinyLlama-1.1B-Chat-v0.1', )
-    else:
-        llm = LLM(model_name=llm_model_name)
-
-    # Set model save name
-    model_save_name = 'gnn_llm' if num_gnn_layers != 0 else 'llm'
-    if model_save_name == 'llm':
-        model = llm
-    else:
-        model = GRetriever(llm=llm, gnn=gnn)
-
-    # Create optimizer
-    params = [p for _, p in model.named_parameters() if p.requires_grad]
-    optimizer = torch.optim.AdamW([
-        {
-            'params': params,
-            'lr': lr,
-            'weight_decay': 0.05
-        },
-    ], betas=(0.9, 0.95))
-
-    # Initialize best epoch and best validation loss
-    best_epoch = 0
-    best_val_loss = float('inf')
-
-    # Train model
-    for epoch in range(num_epochs):
-        model.train()
-        epoch_loss = 0
-        if epoch == 0:
-            print(f"Total Preparation Time: {time.time() - start_time:2f}s")
-            start_time = time.time()
-            print("Training beginning...")
-        epoch_str = f'Epoch: {epoch + 1}|{num_epochs}'
-        loader = tqdm(train_loader, desc=epoch_str)
-        for step, batch in enumerate(loader):
-            optimizer.zero_grad()
-            loss = get_loss(model, batch, model_save_name)
-            loss.backward()
-
-            clip_grad_norm_(optimizer.param_groups[0]['params'], 0.1)
-
-            if (step + 1) % 2 == 0:
-                adjust_learning_rate(optimizer.param_groups[0], lr,
-                                     step / len(train_loader) + epoch,
-                                     num_epochs)
-
-            optimizer.step()
-            epoch_loss = epoch_loss + float(loss.detach())
-
-            if (step + 1) % 2 == 0:
-                lr = optimizer.param_groups[0]['lr']
-        train_loss = epoch_loss / len(train_loader)
-        print(epoch_str + f', Train Loss: {train_loss:4f}')
-
-        # Evaluate model
-        val_loss = 0
-        eval_output = []
-        model.eval()
-        with torch.no_grad():
-            for batch in val_loader:
-                loss = get_loss(model, batch, model_save_name)
-                val_loss += loss.item()
-            val_loss = val_loss / len(val_loader)
-            print(epoch_str + f", Val Loss: {val_loss:4f}")
-        if checkpointing and val_loss < best_val_loss:
-            print("Checkpointing best model...")
-            best_val_loss = val_loss
-            best_epoch = epoch
-            save_params_dict(model, f'{model_save_name}_best_val_loss_ckpt.pt')
-
-    # Clean up memory
-    torch.cuda.empty_cache()
-    torch.cuda.reset_peak_memory_stats()
-
-    # Load best checkpoint if necessary
-    if checkpointing and best_epoch != num_epochs - 1:
-        print("Loading best checkpoint...")
-        model = load_params_dict(
-            model,
-            f'{model_save_name}_best_val_loss_ckpt.pt',
-        )
-
-    # Evaluate model on test set
-    model.eval()
-    eval_output = []
-    print("Final evaluation...")
-    progress_bar_test = tqdm(range(len(test_loader)))
-    for batch in test_loader:
-        with torch.no_grad():
-            pred = inference_step(model, batch, model_save_name)
-            eval_data = {
-                'pred': pred,
-                'question': batch.question,
-                'desc': batch.desc,
-                'label': batch.label
-            }
-            eval_output.append(eval_data)
-        progress_bar_test.update(1)
-
-    # Compute metrics
-    compute_metrics(eval_output)
-
-    # Print final training time
-    print(f"Total Training Time: {time.time() - start_time:2f}s")
-
-    # Save model and evaluation output
-    save_params_dict(model, f'{model_save_name}.pt')
-    torch.save(eval_output, f'{model_save_name}_eval_outs.pt')
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--gnn_hidden_channels', type=int, default=1024)
-    parser.add_argument('--num_gnn_layers', type=int, default=4)
-    parser.add_argument('--lr', type=float, default=1e-5)
-    parser.add_argument('--epochs', type=int, default=2)
-    parser.add_argument('--batch_size', type=int, default=8)
-    parser.add_argument('--eval_batch_size', type=int, default=16)
-    parser.add_argument('--checkpointing', action='store_true')
-    parser.add_argument('--cwq', action='store_true')
-    parser.add_argument('--tiny_llama', action='store_true')
-    parser.add_argument('--llm_model_name', type=str,
-                        default="meta-llama/Meta-Llama-3.1-8B-Instruct")
-    args = parser.parse_args()
-
-    start_time = time.time()
-    train(
-        args.epochs,
-        args.gnn_hidden_channels,
-        args.num_gnn_layers,
-        args.batch_size,
-        args.eval_batch_size,
-        args.lr,
-        args.llm_model_name,
-        checkpointing=args.checkpointing,
-        tiny_llama=args.tiny_llama,
-        cwq=args.cwq,
-    )
-    print(f"Total Time: {time.time() - start_time:2f}s")

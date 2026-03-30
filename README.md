@@ -4,14 +4,21 @@
 
 ______________________________________________________________________
 
-[![PyPI Version][pypi-image]][pypi-url]
-[![Testing Status][testing-image]][testing-url]
-[![Linting Status][linting-image]][linting-url]
-[![Docs Status][docs-image]][docs-url]
-[![Contributing][contributing-image]][contributing-url]
-[![Slack][slack-image]][slack-url]
+<div align="center">
 
-**[Documentation](https://pytorch-geometric.readthedocs.io)** | **[PyG 1.0 Paper](https://arxiv.org/abs/1903.02428)** | **[PyG 2.0 Paper](https://arxiv.org/abs/2507.16991)** | **[Colab Notebooks](https://pytorch-geometric.readthedocs.io/en/latest/get_started/colabs.html)** | **[External Resources](https://pytorch-geometric.readthedocs.io/en/latest/external/resources.html)** | **[OGB Examples](https://github.com/snap-stanford/ogb/tree/master/examples)**
+[![PyPI Version][pypi-image]][pypi-url]
+[![PyPI Download][pypi-download-image]][pypi-download-url]
+[![Slack][slack-image]][slack-url]
+[![Contributing][contributing-image]][contributing-url]
+
+**[Documentation](https://pytorch-geometric.readthedocs.io)** |
+**[PyG 1.0 Paper](https://arxiv.org/abs/1903.02428)** |
+**[PyG 2.0 Paper](https://arxiv.org/abs/2507.16991)** |
+**[Colab Notebooks](https://pytorch-geometric.readthedocs.io/en/latest/get_started/colabs.html)** |
+**[External Resources](https://pytorch-geometric.readthedocs.io/en/latest/external/resources.html)** |
+**[OGB Examples](https://github.com/snap-stanford/ogb/tree/master/examples)**
+
+</div>
 
 **PyG** *(PyTorch Geometric)* is a library built upon [PyTorch](https://pytorch.org/) to easily write and train Graph Neural Networks (GNNs) for a wide range of applications related to structured data.
 
@@ -334,7 +341,7 @@ These approaches have been implemented in PyG, and can benefit from the above GN
 
 ## Installation
 
-PyG is available for Python 3.9 to Python 3.13.
+PyG is available for Python 3.10 to Python 3.14.
 
 From **PyG 2.3** onwards, you can install and use PyG **without any external library** required except for PyTorch.
 For this, simply run
@@ -347,11 +354,10 @@ pip install torch_geometric
 
 If you want to utilize the full set of features from PyG, there exists several additional libraries you may want to install:
 
-- **[`pyg-lib`](https://github.com/pyg-team/pyg-lib)**: Heterogeneous GNN operators and graph sampling routines
+- **[`pyg-lib`](https://github.com/pyg-team/pyg-lib)**: Heterogeneous GNN operators, graph sampling routines, and [`SplineConv`](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.SplineConv.html) support
 - **[`torch-scatter`](https://github.com/rusty1s/pytorch_scatter)**: Accelerated and efficient sparse reductions
 - **[`torch-sparse`](https://github.com/rusty1s/pytorch_sparse)**: [`SparseTensor`](https://pytorch-geometric.readthedocs.io/en/latest/advanced/sparse_tensor.html) support
 - **[`torch-cluster`](https://github.com/rusty1s/pytorch_cluster)**: Graph clustering routines
-- **[`torch-spline-conv`](https://github.com/rusty1s/pytorch_spline_conv)**: [`SplineConv`](https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.nn.conv.SplineConv.html) support
 
 These packages come with their own CPU and GPU kernel implementations based on the [PyTorch C++/CUDA/hip(ROCm) extension interface](https://github.com/pytorch/extension-cpp).
 For a basic usage of PyG, these dependencies are **fully optional**.
@@ -359,12 +365,44 @@ We recommend to start with a minimal installation, and install additional depend
 
 For ease of installation of these extensions, we provide `pip` wheels for all major OS/PyTorch/CUDA combinations, see [here](https://data.pyg.org/whl).
 
-#### PyTorch 2.8
+#### PyTorch 2.10
 
-To install the binaries for PyTorch 2.8.0, simply run
+To install the binaries for PyTorch 2.10, simply run
 
 ```
-pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.8.0+${CUDA}.html
+pip install pyg_lib torch_scatter torch_sparse torch_cluster -f https://data.pyg.org/whl/torch-2.10.0+${CUDA}.html
+```
+
+where `${CUDA}` should be replaced by either `cpu`, `cu126`, `cu128`, or `cu130` depending on your PyTorch installation.
+
+|             | `cpu` | `cu126` | `cu128` | `cu130` |
+| ----------- | ----- | ------- | ------- | ------- |
+| **Linux**   | ✅    | ✅      | ✅      | ✅      |
+| **Windows** | ✅    | ✅      | ✅      | ✅      |
+| **macOS**   | ✅    |         |         |         |
+
+#### PyTorch 2.9
+
+To install the binaries for PyTorch 2.9, simply run
+
+```
+pip install pyg_lib torch_scatter torch_sparse torch_cluster -f https://data.pyg.org/whl/torch-2.9.0+${CUDA}.html
+```
+
+where `${CUDA}` should be replaced by either `cpu`, `cu126`, `cu128`, or `cu130` depending on your PyTorch installation.
+
+|             | `cpu` | `cu118` | `cu126` | `cu128` |
+| ----------- | ----- | ------- | ------- | ------- |
+| **Linux**   | ✅    | ✅      | ✅      | ✅      |
+| **Windows** | ✅    | ✅      | ✅      | ✅      |
+| **macOS**   | ✅    |         |         |         |
+
+#### PyTorch 2.8
+
+To install the binaries for PyTorch 2.8, simply run
+
+```
+pip install pyg_lib torch_scatter torch_sparse torch_cluster -f https://data.pyg.org/whl/torch-2.8.0+${CUDA}.html
 ```
 
 where `${CUDA}` should be replaced by either `cpu`, `cu126`, `cu128`, or `cu129` depending on your PyTorch installation.
@@ -375,39 +413,7 @@ where `${CUDA}` should be replaced by either `cpu`, `cu126`, `cu128`, or `cu129`
 | **Windows** | ✅    | ✅      | ✅      | ✅      |
 | **macOS**   | ✅    |         |         |         |
 
-#### PyTorch 2.7
-
-To install the binaries for PyTorch 2.7.0, simply run
-
-```
-pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.7.0+${CUDA}.html
-```
-
-where `${CUDA}` should be replaced by either `cpu`, `cu118`, `cu126`, or `cu128` depending on your PyTorch installation.
-
-|             | `cpu` | `cu118` | `cu126` | `cu128` |
-| ----------- | ----- | ------- | ------- | ------- |
-| **Linux**   | ✅    | ✅      | ✅      | ✅      |
-| **Windows** | ✅    | ✅      | ✅      | ✅      |
-| **macOS**   | ✅    |         |         |         |
-
-#### PyTorch 2.6
-
-To install the binaries for PyTorch 2.6.0, simply run
-
-```
-pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.6.0+${CUDA}.html
-```
-
-where `${CUDA}` should be replaced by either `cpu`, `cu118`, `cu124`, or `cu126` depending on your PyTorch installation.
-
-|             | `cpu` | `cu118` | `cu124` | `cu126` |
-| ----------- | ----- | ------- | ------- | ------- |
-| **Linux**   | ✅    | ✅      | ✅      | ✅      |
-| **Windows** | ✅    | ✅      | ✅      | ✅      |
-| **macOS**   | ✅    |         |         |         |
-
-**Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1, PyTorch 1.8.0/1.8.1, PyTorch 1.9.0, PyTorch 1.10.0/1.10.1/1.10.2, PyTorch 1.11.0, PyTorch 1.12.0/1.12.1, PyTorch 1.13.0/1.13.1, PyTorch 2.0.0/2.0.1, PyTorch 2.1.0/2.1.1/2.1.2, PyTorch 2.2.0/2.2.1/2.2.2, PyTorch 2.3.0/2.3.1, PyTorch 2.4.0/2.4.1, and PyTorch 2.5.0/2.5.1 (following the same procedure).
+**Note:** Binaries of older versions are also provided for PyTorch 1.4.0, PyTorch 1.5.0, PyTorch 1.6.0, PyTorch 1.7.0/1.7.1, PyTorch 1.8.0/1.8.1, PyTorch 1.9.0, PyTorch 1.10.0/1.10.1/1.10.2, PyTorch 1.11.0, PyTorch 1.12.0/1.12.1, PyTorch 1.13.0/1.13.1, PyTorch 2.0.0/2.0.1, PyTorch 2.1.0/2.1.1/2.1.2, PyTorch 2.2.0/2.2.1/2.2.2, PyTorch 2.3.0/2.3.1, PyTorch 2.4.0/2.4.1, PyTorch 2.5.0/2.5.1, PyTorch 2.6.0, and PyTorch 2.7.0/2.7.1 (following the same procedure).
 **For older versions, you might need to explicitly specify the latest supported version number** or install via `pip install --no-index` in order to prevent a manual installation from source.
 You can look up the latest supported version number [here](https://data.pyg.org/whl).
 
@@ -459,15 +465,11 @@ If you notice anything unexpected, please open an [issue](https://github.com/pyg
 If you have any questions or are missing a specific feature, feel free [to discuss them with us](https://github.com/pyg-team/pytorch_geometric/discussions).
 We are motivated to constantly make PyG even better.
 
-[contributing-image]: https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat
+[contributing-image]: https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat&color=4B26A4
 [contributing-url]: https://github.com/pyg-team/pytorch_geometric/blob/master/.github/CONTRIBUTING.md
-[docs-image]: https://readthedocs.org/projects/pytorch-geometric/badge/?version=latest
-[docs-url]: https://pytorch-geometric.readthedocs.io/en/latest
-[linting-image]: https://github.com/pyg-team/pytorch_geometric/actions/workflows/linting.yml/badge.svg
-[linting-url]: https://github.com/pyg-team/pytorch_geometric/actions/workflows/linting.yml
-[pypi-image]: https://badge.fury.io/py/torch-geometric.svg
+[pypi-download-image]: https://img.shields.io/pypi/dm/torch_geometric?color=4B26A4
+[pypi-download-url]: https://pepy.tech/projects/torch_geometric
+[pypi-image]: https://img.shields.io/pypi/pyversions/torch-geometric?color=4B26A4
 [pypi-url]: https://pypi.python.org/pypi/torch-geometric
-[slack-image]: https://img.shields.io/badge/slack-pyg-brightgreen
+[slack-image]: https://img.shields.io/badge/slack-join-white.svg?logo=slack&color=4B26A4
 [slack-url]: https://data.pyg.org/slack.html
-[testing-image]: https://github.com/pyg-team/pytorch_geometric/actions/workflows/testing.yml/badge.svg
-[testing-url]: https://github.com/pyg-team/pytorch_geometric/actions/workflows/testing.yml

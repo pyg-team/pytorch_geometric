@@ -548,6 +548,36 @@ def test_custom_hetero_neighbor_loader():
             assert batch1[edge_type].num_edges == batch2[edge_type].num_edges
 
 
+@onlyNeighborSampler
+def test_custom_hetero_neighbor_loader_duplicate():
+    feature_store = MyFeatureStore()
+    graph_store = MyGraphStore()
+
+    x = torch.arange(10)
+    feature_store.put_tensor(x, group_name='user', attr_name='x', index=None)
+
+    edge_index = get_random_edge_index(10, 10, 20, coalesce=True)
+    graph_store.put_edge_index(
+        edge_index=(edge_index[0], edge_index[1]),
+        edge_type=('user', 'user', 'user'),
+        layout='coo',
+        size=(10, 10),
+    )
+
+    loader = NeighborLoader(
+        (feature_store, graph_store),
+        batch_size=10,
+        input_nodes=('user', range(10)),
+        num_neighbors=[-1] * 2,
+    )
+    batch = next(iter(loader))
+
+    assert batch.node_types == ['user']
+    assert batch['user'].num_nodes == 10
+    assert batch.edge_types == [('user', 'user', 'user')]
+    assert batch['user', 'user'].num_edges == edge_index.size(1)
+
+
 @onlyOnline
 @withPackage('pyg_lib')
 def test_temporal_custom_neighbor_loader_on_karate(get_dataset):

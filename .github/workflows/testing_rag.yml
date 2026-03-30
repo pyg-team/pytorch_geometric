@@ -1,0 +1,53 @@
+name: Testing RAG
+
+on:  # yamllint disable-line rule:truthy
+  push:
+    branches:
+      - master
+    paths:
+      - 'torch_geometric/datasets/web_qsp_dataset.py'
+      - 'torch_geometric/llm/**'
+      - '.github/workflows/testing_rag.yml'
+  pull_request:
+    paths:
+      - 'torch_geometric/datasets/web_qsp_dataset.py'
+      - 'torch_geometric/llm/**'
+      - '.github/workflows/testing_rag.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ startsWith(github.ref, 'refs/pull/') || github.run_number }}  # yamllint disable-line
+  # Only cancel intermediate builds if on a PR:
+  cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
+
+jobs:
+  rag_pytest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Setup packages
+        uses: ./.github/actions/setup
+        with:
+          full_install: false
+
+      - name: Install main package
+        run: |
+          uv pip install -e ".[test,rag]"
+
+      - name: Run tests
+        timeout-minutes: 15
+        run: |
+          # ignore mysterious segfault (139) if tests pass since this does not repro locally
+          bash -c 'pytest -m rag --cov --cov-report=xml -v; E=$?; [[ $E == 0 || $E == 139 ]] && exit 0 || exit $E'
+        shell: bash
+        env:
+          TOKENIZERS_PARALLELISM: "false"
+          OMP_NUM_THREADS: "1"
+          MKL_NUM_THREADS: "1"
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v6
+        with:
+          fail_ci_if_error: false

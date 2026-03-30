@@ -256,14 +256,6 @@ def filter_custom_hetero_store(
     # Construct a new `HeteroData` object:
     data = custom_cls() if custom_cls is not None else HeteroData()
 
-    # Filter edge storage:
-    # TODO support edge attributes
-    for attr in graph_store.get_all_edge_attrs():
-        key = attr.edge_type
-        if key in row_dict and key in col_dict:
-            edge_index = torch.stack([row_dict[key], col_dict[key]], dim=0)
-            data[attr.edge_type].edge_index = edge_index
-
     # Filter node storage:
     required_attrs = []
     for attr in feature_store.get_all_tensor_attrs():
@@ -279,6 +271,14 @@ def filter_custom_hetero_store(
     tensors = feature_store.multi_get_tensor(required_attrs)
     for i, attr in enumerate(required_attrs):
         data[attr.group_name][attr.attr_name] = tensors[i]
+
+    # Filter edge storage:
+    # TODO support edge attributes
+    for attr in graph_store.get_all_edge_attrs():
+        key = attr.edge_type
+        if key in row_dict and key in col_dict:
+            edge_index = torch.stack([row_dict[key], col_dict[key]], dim=0)
+            data[attr.edge_type].edge_index = edge_index
 
     return data
 

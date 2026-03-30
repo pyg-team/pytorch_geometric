@@ -43,7 +43,7 @@ def get_llm_kwargs(required_memory: int, dtype=torch.dtype) -> Dict[str, Any]:
         }
         kwargs['low_cpu_mem_usage'] = True
         kwargs['device_map'] = 'auto'
-        kwargs['torch_dtype'] = dtype
+        kwargs['dtype'] = dtype
 
     return kwargs
 
@@ -88,8 +88,8 @@ class LLM(torch.nn.Module):
                 num_params = float(list(param_count.values())[0] // 10**9)
 
             # A rough heuristic on GPU memory requirements, e.g., we found that
-            # LLAMA2 (7B parameters) fits on a 85GB GPU.
-            required_memory = 85 * num_params / 7
+            # LLAMA3 (8B parameters) fits on a 96GB GPU.
+            required_memory = 96.0 * num_params / 8.0
             kwargs = get_llm_kwargs(required_memory, dtype)
         else:
             gpu_memory: List[int] = []
@@ -102,7 +102,7 @@ class LLM(torch.nn.Module):
             }
             kwargs['low_cpu_mem_usage'] = True
             kwargs['device_map'] = 'auto'
-            kwargs['torch_dtype'] = dtype
+            kwargs['dtype'] = dtype
 
         print(f"Setting up '{model_name}' with configuration: {kwargs}")
         self.tokenizer = AutoTokenizer.from_pretrained(
@@ -124,20 +124,26 @@ class LLM(torch.nn.Module):
                 dummy_convo,
                 tokenize=True,
             )
-            self.tokenizer.bos_token = self.tokenizer.decode(text[0])
+            self.tokenizer.bos_token = self._safe_decode(self.tokenizer, text)
         if self.tokenizer.pad_token_id is None:
             self.tokenizer.pad_token_id = PAD_TOKEN_ID
         if self.tokenizer.padding_side is None:
             self.tokenizer.padding_side = PADDING_SIDE
         self.llm = AutoModelForCausalLM.from_pretrained(model_name, **kwargs)
+        self.llm = self.llm.to(dtype)
         self.word_embedding = self.llm.model.get_input_embeddings()
         if sys_prompt is not None:
             self.sys_prompt = sys_prompt
         else:
             self.sys_prompt = ""
         if 'max_memory' not in kwargs:  # Pure CPU:
-            warnings.warn("LLM is being used on CPU, which may be slow",
-                          stacklevel=2)
+            warnings.warn(
+                "LLM is being used on CPU, which may be slow. This decision "
+                "was made by a rough hueristic that assumes your GPU set up "
+                "does not have enough GPU RAM. This is done to avoid GPU OOM "
+                "errors. If you think this is a mistake, please initialize "
+                "your LLM with the n_gpus param to dictate how many gpus to "
+                "use for the LLM.", stacklevel=2)
             self.device = torch.device('cpu')
             self.autocast_context = nullcontext()
         else:
@@ -146,6 +152,27 @@ class LLM(torch.nn.Module):
                 self.autocast_context = nullcontext()
             else:
                 self.autocast_context = torch.amp.autocast('cuda', dtype=dtype)
+
+    @staticmethod
+    def _safe_decode(tokenizer, tokens) -> str:
+        """Decode token IDs from various Hugging Face tokenizer outputs.
+
+        Supports:
+            - list[int]
+            - list[list[int]]
+            - BatchEncoding
+            - tokenizers.Encoding
+        """
+        if isinstance(tokens, dict):
+            tokens = tokens.get("input_ids", tokens)
+
+        if hasattr(tokens, "ids"):
+            tokens = tokens.ids
+
+        if isinstance(tokens, list) and tokens and isinstance(tokens[0], list):
+            tokens = tokens[0]
+
+        return tokenizer.decode(tokens)
 
     # legacy function - used for Llama 2 style prompting
     def _encode_inputs(
