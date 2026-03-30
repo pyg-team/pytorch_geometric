@@ -68,6 +68,11 @@ class NeighborSampler(BaseSampler):
             :obj:`temporal_strategy` — after filtering to the window,
             :obj:`temporal_strategy` governs how :obj:`num_neighbors`
             neighbors are selected from the remaining candidates.
+            Note that the current implementation uses a conservative
+            batch-level floor (:obj:`min(seed_time) - time_window`), so the
+            effective window may be wider than intended when seed times vary
+            significantly within a batch. A warning is issued when the seed
+            time spread exceeds :obj:`time_window`.
             (default: :obj:`None`)
         weight_attr (str, optional): The name of the edge weight attribute
             for weighted/biased sampling. (default: :obj:`None`)
@@ -475,6 +480,18 @@ class NeighborSampler(BaseSampler):
         kernel's upper-bound temporal filter (:obj:`<= seed_time`) will
         always exclude them.
 
+        .. warning::
+
+            This is a conservative batch-level approximation. The floor is
+            computed as :obj:`min(seed_time) - time_window` across the entire
+            batch, meaning the effective window for seeds with higher
+            timestamps is wider than :obj:`time_window`. The approximation
+            is exact when all seed times in the batch are equal, and
+            degrades as the spread of seed times grows relative to
+            :obj:`time_window`. For per-seed accuracy, native kernel support
+            in :obj:`pyg-lib` is required (see
+            :obj:`WITH_TIME_WINDOW_NEIGHBOR_SAMPLE`).
+
         Uses :obj:`seed_time.min() - time_window` as a conservative global
         floor. Edges within :obj:`[min(seed_time) - time_window, seed_time]`
         are always included; edges below this floor are always excluded.
@@ -488,7 +505,16 @@ class NeighborSampler(BaseSampler):
             if len(all_times) == 0:
                 return self.node_time, self.edge_time
             global_min = torch.stack([t.min() for t in all_times]).min().item()
+            global_max = torch.stack([t.max() for t in all_times]).max().item()
             floor = global_min - self.time_window
+            if global_max - global_min > self.time_window:
+                warnings.warn(
+                    f"The seed time spread ({global_max - global_min}) in "
+                    f"this batch exceeds 'time_window' ({self.time_window}). "
+                    f"The time window filter is a batch-level approximation "
+                    f"and will be wider than intended for seeds with higher "
+                    f"timestamps. For per-seed accuracy, native 'pyg-lib' "
+                    f"support is required.", stacklevel=3)
 
             node_time = None
             if self.node_time is not None:
@@ -504,7 +530,17 @@ class NeighborSampler(BaseSampler):
                 }
         else:
             # Homogeneous: compute global floor across the batch.
-            floor = seed_time.min().item() - self.time_window
+            seed_min = seed_time.min().item()
+            seed_max = seed_time.max().item()
+            floor = seed_min - self.time_window
+            if seed_max - seed_min > self.time_window:
+                warnings.warn(
+                    f"The seed time spread ({seed_max - seed_min}) in this "
+                    f"batch exceeds 'time_window' ({self.time_window}). "
+                    f"The time window filter is a batch-level approximation "
+                    f"and will be wider than intended for seeds with higher "
+                    f"timestamps. For per-seed accuracy, native 'pyg-lib' "
+                    f"support is required.", stacklevel=3)
 
             node_time = None
             if self.node_time is not None:
