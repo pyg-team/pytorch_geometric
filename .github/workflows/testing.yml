@@ -64,11 +64,11 @@ jobs:
       test-matrix: |
         { include: [
           { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "nightly", "cuda-version": "cpu" },
+          { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.10.0", "cuda-version": "cpu" },
+          { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.9.0", "cuda-version": "cpu" },
           { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.8.0", "cuda-version": "cpu" },
-          { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.7.0", "cuda-version": "cpu" },
-          { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.6.0", "cuda-version": "cpu" },
-          { "os": "macos-14", "python-version": "3.10", "torch-version": "2.8.0", "cuda-version": "cpu" },
-          { "os": "windows-2022", "python-version": "3.10", "torch-version": "2.8.0", "cuda-version": "cpu" }
+          { "os": "macos-14", "python-version": "3.10", "torch-version": "2.10.0", "cuda-version": "cpu" },
+          { "os": "windows-2022", "python-version": "3.10", "torch-version": "2.10.0", "cuda-version": "cpu" }
         ]}
 
   pytest-full:
@@ -80,7 +80,7 @@ jobs:
         {
           "os": ["ubuntu-22.04", "macos-14", "windows-2022"],
           "python-version": ["3.10"],
-          "torch-version": ["2.6.0", "2.7.0", "2.8.0", "nightly"],
+          "torch-version": ["2.8.0", "2.9.0", "2.10.0", "nightly"],
           "cuda-version": ["cpu"],
           "full-test": "1"
         }

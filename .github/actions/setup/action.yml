@@ -6,7 +6,7 @@ inputs:
     default: '3.10'
   torch-version:
     required: false
-    default: '2.8.0'
+    default: '2.10.0'
   cuda-version:
     required: false
     default: cpu
@@ -92,5 +92,5 @@ runs:
       if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' }}
       run: |
         uv pip install scipy
-        uv pip install --no-index --upgrade torch-scatter torch-sparse torch-cluster torch-spline-conv -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
+        uv pip install --no-index --upgrade torch-scatter torch-sparse torch-cluster -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
       shell: bash
