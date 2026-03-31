@@ -14,12 +14,35 @@ from torch_geometric.data.data import BaseData
 from torch_geometric.io import fs
 
 try:
+    from transformers import PreTrainedTokenizerBase
+    WITH_TRANSFORMERS = True
+except ImportError:  # pragma: no cover
+    PreTrainedTokenizerBase = None
+    WITH_TRANSFORMERS = False
+
+try:
     from pandas import DataFrame, read_csv
     WITH_PANDAS = True
 except ImportError:
     WITH_PANDAS = False
 
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
+
+
+def _safe_auto_tokenizer(model_name: str) -> PreTrainedTokenizerBase:
+    try:
+        from transformers import AutoTokenizer
+        return AutoTokenizer.from_pretrained(model_name)
+    except ValueError as err:
+        if "bert" in model_name:
+            from transformers import BertTokenizer
+            return BertTokenizer.from_pretrained(model_name)
+        elif "gpt2" in model_name:
+            from transformers import GPT2Tokenizer
+            return GPT2Tokenizer.from_pretrained(model_name)
+        else:
+            raise RuntimeError(
+                f"Unsupported legacy model: {model_name}") from err
 
 
 class TAGDataset(InMemoryDataset):
@@ -85,8 +108,7 @@ class TAGDataset(InMemoryDataset):
         self.text = text
         self.llm_prediction_topk = 5
         self.tokenizer_name = tokenizer_name
-        from transformers import AutoTokenizer
-        self.tokenizer = AutoTokenizer.from_pretrained(tokenizer_name)
+        self.tokenizer = _safe_auto_tokenizer(tokenizer_name)
         if self.tokenizer.pad_token_id is None:
             self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
         if self.tokenizer.pad_token is None:
