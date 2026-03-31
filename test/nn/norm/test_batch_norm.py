@@ -3,6 +3,7 @@ import torch
 
 from torch_geometric.nn import BatchNorm, HeteroBatchNorm
 from torch_geometric.testing import is_full_test, withDevice
+from torch_geometric.typing import WITH_PT212
 
 
 @withDevice
@@ -13,8 +14,14 @@ def test_batch_norm(device, conf):
     norm = BatchNorm(16, affine=conf, track_running_stats=conf, device=device)
     norm.reset_running_stats()
     norm.reset_parameters()
-    assert str(norm) == (f'BatchNorm(16, eps=1e-05, momentum=0.1, '
-                         f'affine={conf}, track_running_stats={conf})')
+    if WITH_PT212:
+        assert str(norm) == (f'BatchNorm(16, eps=1e-05, momentum=0.1, '
+                             f'affine={conf}, bias={conf}, '
+                             f'track_running_stats={conf})')
+    else:
+        assert str(norm) == (f'BatchNorm(16, eps=1e-05, momentum=0.1, '
+                             f'affine={conf}, '
+                             f'track_running_stats={conf})')
 
     if is_full_test():
         torch.jit.script(norm)
