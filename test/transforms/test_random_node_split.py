@@ -144,16 +144,33 @@ def test_random_node_split_on_hetero_data():
 
     data['paper'].x = torch.randn(2000, 16)
     data['paper'].y = torch.randint(4, (2000, ), dtype=torch.long)
-    data['author'].x = torch.randn(300, 16)
+    data['author'].x = torch.randn(1000, 16)
 
-    transform = RandomNodeSplit()
+    # `split='train_rest'` does not use `key`, so all node types get masks:
+    transform = RandomNodeSplit(split='train_rest', num_val=100, num_test=200)
     assert str(transform) == 'RandomNodeSplit(split=train_rest)'
     data = transform(data)
-    assert len(data) == 5
 
-    assert len(data['author']) == 1
-    assert len(data['paper']) == 5
+    assert len(data['author']) == 4   # x, train_mask, val_mask, test_mask
+    assert len(data['paper']) == 5    # x, y, train_mask, val_mask, test_mask
 
-    assert data['paper'].train_mask.sum() == 500
-    assert data['paper'].val_mask.sum() == 500
-    assert data['paper'].test_mask.sum() == 1000
+    assert data['paper'].train_mask.sum() == 2000 - 100 - 200
+    assert data['paper'].val_mask.sum() == 100
+    assert data['paper'].test_mask.sum() == 200
+
+    assert data['author'].train_mask.sum() == 1000 - 100 - 200
+    assert data['author'].val_mask.sum() == 100
+    assert data['author'].test_mask.sum() == 200
+
+    # `split='test_rest'` and `split='random'` still require `key` to be present:
+    data2 = HeteroData()
+    data2['paper'].x = torch.randn(2000, 16)
+    data2['paper'].y = torch.randint(4, (2000, ), dtype=torch.long)
+    data2['author'].x = torch.randn(1000, 16)
+
+    transform2 = RandomNodeSplit(split='test_rest', num_train_per_class=10,
+                                 num_val=100)
+    data2 = transform2(data2)
+
+    assert len(data2['author']) == 1   # no y → skipped
+    assert len(data2['paper']) == 5    # x, y, train_mask, val_mask, test_mask
