@@ -151,8 +151,8 @@ def test_random_node_split_on_hetero_data():
     assert str(transform) == 'RandomNodeSplit(split=train_rest)'
     data = transform(data)
 
-    assert len(data['author']) == 4   # x, train_mask, val_mask, test_mask
-    assert len(data['paper']) == 5    # x, y, train_mask, val_mask, test_mask
+    assert len(data['author']) == 4  # x, train_mask, val_mask, test_mask
+    assert len(data['paper']) == 5  # x, y, train_mask, val_mask, test_mask
 
     assert data['paper'].train_mask.sum() == 2000 - 100 - 200
     assert data['paper'].val_mask.sum() == 100
@@ -172,5 +172,5 @@ def test_random_node_split_on_hetero_data():
                                  num_val=100)
     data2 = transform2(data2)
 
-    assert len(data2['author']) == 1   # no y → skipped
-    assert len(data2['paper']) == 5    # x, y, train_mask, val_mask, test_mask
+    assert len(data2['author']) == 1  # no y → skipped
+    assert len(data2['paper']) == 5  # x, y, train_mask, val_mask, test_mask
