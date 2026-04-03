@@ -35,6 +35,7 @@ dependencies=[
     "fsspec",
     "jinja2",
     "numpy",
+    "packaging",
     "psutil>=5.8.0",
     "pyparsing",
     "requests",
