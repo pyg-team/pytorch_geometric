@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fix `test_batch_norm` to check module attributes instead of relying on string representation ([#10657](https://github.com/pyg-team/pytorch_geometric/pull/10657))
 - Removed an unnecessary device synchronization in `torch_geometric.utils.softmax` ([#10499](https://github.com/pyg-team/pytorch_geometric/pull/10499))
 - Fixed loading of legacy HuggingFace BERT checkpoints ([#10631](https://github.com/pyg-team/pytorch_geometric/pull/10631))
 - Fixed `return_attention_weights: bool` being not respected in `GATConv` and `GATv2Conv` ([#10596](https://github.com/pyg-team/pytorch_geometric/pull/10596))
