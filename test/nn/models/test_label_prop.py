@@ -29,3 +29,18 @@ def test_label_prop():
     # Test post step:
     out = model(y, edge_index, mask, post_step=lambda y: torch.zeros_like(y))
     assert torch.sum(out) == 0.
+
+    # Test that labeled node values are preserved after propagation:
+    y2 = torch.tensor([0, 0, 0, 0, 0, 0, 0, 1, 1])
+    edge_index2 = torch.tensor(
+        [[0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0]])
+    mask2 = torch.tensor(
+        [False, True, True, True, True, True, True, True, True])
+    edge_weight2 = torch.ones(9)
+    model2 = LabelPropagation(num_layers=2, alpha=0.9)
+    out2 = model2(y=y2, edge_index=edge_index2, mask=mask2,
+                  edge_weight=edge_weight2)
+    # Labeled nodes must retain their original one-hot values
+    from torch_geometric.utils import one_hot
+    y2_oh = one_hot(y2)
+    assert torch.allclose(out2[mask2], y2_oh[mask2].float())
