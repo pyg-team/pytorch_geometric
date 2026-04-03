@@ -32,8 +32,8 @@ def test_label_prop():
 
     # Test that labeled node values are preserved after propagation:
     y2 = torch.tensor([0, 0, 0, 0, 0, 0, 0, 1, 1])
-    edge_index2 = torch.tensor(
-        [[0, 1, 2, 3, 4, 5, 6, 7, 8], [0, 0, 0, 0, 0, 0, 0, 0, 0]])
+    edge_index2 = torch.tensor([[0, 1, 2, 3, 4, 5, 6, 7, 8],
+                                [0, 0, 0, 0, 0, 0, 0, 0, 0]])
     mask2 = torch.tensor(
         [False, True, True, True, True, True, True, True, True])
     edge_weight2 = torch.ones(9)
