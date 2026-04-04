@@ -144,16 +144,32 @@ def test_random_node_split_on_hetero_data():
 
     data['paper'].x = torch.randn(2000, 16)
     data['paper'].y = torch.randint(4, (2000, ), dtype=torch.long)
-    data['author'].x = torch.randn(300, 16)
+    data['author'].x = torch.randn(1000, 16)
 
-    transform = RandomNodeSplit()
+    transform = RandomNodeSplit(num_val=100, num_test=200)
     assert str(transform) == 'RandomNodeSplit(split=train_rest)'
     data = transform(data)
     assert len(data) == 5
 
-    assert len(data['author']) == 1
+    assert len(data['author']) == 4
     assert len(data['paper']) == 5
 
-    assert data['paper'].train_mask.sum() == 500
-    assert data['paper'].val_mask.sum() == 500
-    assert data['paper'].test_mask.sum() == 1000
+    assert data['paper'].train_mask.sum() == 1700
+    assert data['paper'].val_mask.sum() == 100
+    assert data['paper'].test_mask.sum() == 200
+
+    assert data['author'].train_mask.sum() == 700
+    assert data['author'].val_mask.sum() == 100
+    assert data['author'].test_mask.sum() == 200
+
+    data = HeteroData()
+    data['paper'].x = torch.randn(2000, 16)
+    data['paper'].y = torch.randint(4, (2000, ), dtype=torch.long)
+    data['author'].x = torch.randn(1000, 16)
+
+    transform = RandomNodeSplit(split='test_rest', num_train_per_class=10,
+                                num_val=100)
+    data = transform(data)
+    
+    assert len(data['author']) == 1
+    assert len(data['paper']) == 5
