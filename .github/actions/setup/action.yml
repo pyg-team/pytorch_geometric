@@ -1,4 +1,5 @@
 name: Setup
+description: 'Sets up the PyTorch Geometric environment'
 
 inputs:
   python-version:
@@ -92,5 +93,9 @@ runs:
       if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' }}
       run: |
         uv pip install scipy
-        uv pip install --no-index --upgrade torch-scatter torch-sparse torch-cluster -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
+        if [ "${{ runner.os }}" == "Windows" ] && [ "${{ inputs.cuda-version }}" == "cu130" ]; then
+          echo "Skipping torch-scatter, torch-sparse, and torch-cluster on Windows CUDA 13.0"
+        else
+          uv pip install --no-index --upgrade torch-scatter torch-sparse torch-cluster -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
+        fi
       shell: bash
