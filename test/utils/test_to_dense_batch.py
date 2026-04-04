@@ -75,11 +75,11 @@ def test_to_dense_batch_disable_dynamic_shapes():
 
     with set_experimental_mode(True, 'disable_dynamic_shapes'):
         with pytest.raises(ValueError, match="'batch_size' needs to be set"):
-            out, mask = to_dense_batch(x, batch, max_num_nodes=6)
+            to_dense_batch(x, batch, max_num_nodes=6)
         with pytest.raises(ValueError, match="'max_num_nodes' needs to be"):
-            out, mask = to_dense_batch(x, batch, batch_size=4)
+            to_dense_batch(x, batch, batch_size=4)
         with pytest.raises(ValueError, match="'batch_size' needs to be set"):
-            out, mask = to_dense_batch(x)
+            to_dense_batch(x)
 
         out, mask = to_dense_batch(x, batch_size=1, max_num_nodes=6)
         assert out.size() == (1, 6, 2)
@@ -88,6 +88,29 @@ def test_to_dense_batch_disable_dynamic_shapes():
         out, mask = to_dense_batch(x, batch, batch_size=3, max_num_nodes=10)
         assert out.size() == (3, 10, 2)
         assert mask.size() == (3, 10)
+
+
+def test_to_dense_batch_overflow():
+    x = torch.tensor([
+        [1.0, 2.0],
+        [3.0, 4.0],
+        [5.0, 6.0],
+        [7.0, 8.0],
+        [9.0, 10.0],
+        [11.0, 12.0],
+    ])
+    batch = torch.tensor([0, 0, 1, 2, 2, 2])
+
+    expected = torch.tensor([
+        [[1.0, 2.0], [3.0, 4.0]],
+        [[5.0, 6.0], [0.0, 0.0]],
+        [[7.0, 8.0], [9.0, 10.0]],
+    ])
+    expected_mask = [[True, True], [True, False], [True, True]]
+
+    out, mask = to_dense_batch(x, batch, max_num_nodes=2, batch_size=3)
+    assert torch.equal(out, expected)
+    assert mask.tolist() == expected_mask
 
 
 @onlyFullTest
