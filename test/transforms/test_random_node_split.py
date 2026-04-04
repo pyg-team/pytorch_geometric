@@ -170,6 +170,6 @@ def test_random_node_split_on_hetero_data():
     transform = RandomNodeSplit(split='test_rest', num_train_per_class=10,
                                 num_val=100)
     data = transform(data)
-    
+
     assert len(data['author']) == 1
     assert len(data['paper']) == 5
