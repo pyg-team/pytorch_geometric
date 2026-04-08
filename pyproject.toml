@@ -106,6 +106,7 @@ full = [
     "torch_geometric[graphgym, modelhub]",
     "torchmetrics",
     "trimesh",
+    "gfn-layer"
 ]
 
 [project.urls]
