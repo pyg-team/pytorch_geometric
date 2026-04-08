@@ -1024,3 +1024,53 @@ def test_temporal_neighbor_loader_single_link():
     assert batch['a'].num_nodes == 10
     assert batch['b'].num_nodes == 10
     assert batch['c'].num_nodes == 0
+
+
+@onlyNeighborSampler
+def test_time_window_homo_neighbor_loader():
+    r"""Test that :obj:`time_window` correctly restricts temporal neighbor
+    sampling by filtering out neighbors outside the window.
+    """
+    # Chain graph: 0-1-2-3-4 with node timestamps matching node index.
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3, 3, 4],
+        [1, 0, 2, 1, 3, 2, 4, 3],
+    ])
+    # Node times: node i has time i.
+    node_time = torch.arange(5, dtype=torch.long)
+
+    data = Data(edge_index=edge_index, time=node_time, num_nodes=5)
+
+    # Sample with input_time=4 and a window of 2: only nodes with
+    # time in [2, 4] should be reachable neighbors.
+    loader = NeighborLoader(
+        data,
+        num_neighbors=[-1, -1],
+        input_nodes=torch.tensor([4]),
+        input_time=torch.tensor([4]),
+        time_attr='time',
+        time_window=2,
+        batch_size=1,
+    )
+
+    batch = next(iter(loader))
+    # All sampled nodes must have time >= input_time - time_window = 2.
+    sampled_times = node_time[batch.n_id]
+    assert (sampled_times >= 4 - 2).all()
+    assert (sampled_times <= 4).all()
+
+
+def test_time_window_requires_time_attr():
+    r"""Test that setting :obj:`time_window` without :obj:`time_attr` raises
+    a :class:`ValueError`.
+    """
+    edge_index = torch.tensor([[0, 1], [1, 0]])
+    data = Data(edge_index=edge_index, num_nodes=2)
+
+    with pytest.raises(ValueError, match="time_window"):
+        NeighborLoader(
+            data,
+            num_neighbors=[-1],
+            time_window=5,
+            batch_size=1,
+        )

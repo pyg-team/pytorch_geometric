@@ -70,6 +70,8 @@ try:
         pyg_lib.sampler.neighbor_sample).parameters)
     WITH_WEIGHTED_NEIGHBOR_SAMPLE = ('edge_weight' in inspect.signature(
         pyg_lib.sampler.neighbor_sample).parameters)
+    WITH_TIME_WINDOW_NEIGHBOR_SAMPLE = ('time_window' in inspect.signature(
+        pyg_lib.sampler.neighbor_sample).parameters)
     try:
         torch.classes.pyg.CPUHashMap  # noqa: B018
         WITH_CPU_HASH_MAP = True
@@ -96,6 +98,7 @@ except Exception as e:
     WITH_METIS = False
     WITH_EDGE_TIME_NEIGHBOR_SAMPLE = False
     WITH_WEIGHTED_NEIGHBOR_SAMPLE = False
+    WITH_TIME_WINDOW_NEIGHBOR_SAMPLE = False
     WITH_CPU_HASH_MAP = False
     WITH_CUDA_HASH_MAP = False
 
