@@ -7,7 +7,7 @@ from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_csc_tensor
 
 
-@pytest.mark.parametrize('attn_type', ['multihead', 'performer'])
+@pytest.mark.parametrize('attn_type', ['multihead', 'performer', 'bigbird'])
 @pytest.mark.parametrize('norm', [None, 'batch_norm', 'layer_norm'])
 def test_gps_conv(norm, attn_type):
     x = torch.randn(4, 16)
@@ -17,6 +17,7 @@ def test_gps_conv(norm, attn_type):
 
     conv = GPSConv(16, conv=SAGEConv(16, 16), heads=4, norm=norm,
                    attn_type=attn_type)
+
     conv.reset_parameters()
     assert str(conv) == (f'GPSConv(16, conv=SAGEConv(16, 16, aggr=mean), '
                          f'heads=4, attn_type={attn_type})')
