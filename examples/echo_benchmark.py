@@ -1,13 +1,9 @@
-"""Minimal example for :class:`ECHOBenchmark`, following the experimental design 
-of the original ECHO Benchmark reference code:
-https://github.com/Graph-ECHO-Benchmark/ECHO/
-
-
-Usage:
-    python examples/echo_benchmark.py --task sssp
-    python examples/echo_benchmark.py --task diam --epochs 20
-    python examples/echo_benchmark.py --task energy --batch_size 16
-"""
+# Minimal example for :class:`ECHOBenchmark`, following the experimental design 
+# of the original ECHO Benchmark reference code: https://github.com/Graph-ECHO-Benchmark/ECHO/
+# Usage:
+#     python examples/echo_benchmark.py --task sssp
+#     python examples/echo_benchmark.py --task diam --epochs 20
+#     python examples/echo_benchmark.py --task energy --batch_size 16
 
 
 import argparse
