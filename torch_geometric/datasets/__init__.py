@@ -86,6 +86,7 @@ from .tag_dataset import TAGDataset
 from .city import CityNetwork
 from .teeth3ds import Teeth3DS
 from .echo_benchmark import ECHOBenchmark
+from .graphland import GraphLandDataset
 
 from .dbp15k import DBP15K
 from .aminer import AMiner
@@ -209,6 +210,7 @@ homo_datasets = [
     'CityNetwork',
     'Teeth3DS',
     'ECHOBenchmark',
+    'GraphLandDataset',
 ]
 
 hetero_datasets = [
