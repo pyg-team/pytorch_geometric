@@ -8,45 +8,47 @@ from tqdm import tqdm
 from torch_geometric.data import InMemoryDataset, download_url
 
 urls = {
-    "charge_train": "https://huggingface.co/datasets/lucamiglior/\
+    "charge_train":
+    "https://huggingface.co/datasets/lucamiglior/\
 echo-benchmark/resolve/main/echo-chem/charge/train_data.pt",
-    "charge_val": "https://huggingface.co/datasets/lucamiglior/\
+    "charge_val":
+    "https://huggingface.co/datasets/lucamiglior/\
 echo-benchmark/resolve/main/echo-chem/charge/val_data.pt",
-    "charge_test": "https://huggingface.co/datasets/lucamiglior/\
+    "charge_test":
+    "https://huggingface.co/datasets/lucamiglior/\
 echo-benchmark/resolve/main/echo-chem/charge/test_data.pt",
-    "energy_train": "https://huggingface.co/datasets/lucamiglior/\
+    "energy_train":
+    "https://huggingface.co/datasets/lucamiglior/\
 echo-benchmark/resolve/main/echo-chem/energy/train_data.pt",
-    "energy_val": "https://huggingface.co/datasets/lucamiglior/\
+    "energy_val":
+    "https://huggingface.co/datasets/lucamiglior/\
 echo-benchmark/resolve/main/echo-chem/energy/val_data.pt",
-    "energy_test": "https://huggingface.co/datasets/lucamiglior/\
+    "energy_test":
+    "https://huggingface.co/datasets/lucamiglior/\
 echo-benchmark/resolve/main/echo-chem/energy/test_data.pt",
-    "synth_train": "https://huggingface.co/datasets/lucamiglior/\
+    "synth_train":
+    "https://huggingface.co/datasets/lucamiglior/\
 echo-benchmark/resolve/main/echo-synth/train_data.pt",
-    "synth_val": "https://huggingface.co/datasets/lucamiglior/\
+    "synth_val":
+    "https://huggingface.co/datasets/lucamiglior/\
 echo-benchmark/resolve/main/echo-synth/val_data.pt",
-    "synth_test": "https://huggingface.co/datasets/lucamiglior/\
+    "synth_test":
+    "https://huggingface.co/datasets/lucamiglior/\
 echo-benchmark/resolve/main/echo-synth/test_data.pt",
 }
 
 backup_urls = {
     "charge_train":
-        "https://zenodo.org/records/19185560/files/charge-train.pt",
-    "charge_val":
-        "https://zenodo.org/records/19185560/files/charge-val.pt",
-    "charge_test":
-        "https://zenodo.org/records/19185560/files/charge-test.pt",
+    "https://zenodo.org/records/19185560/files/charge-train.pt",
+    "charge_val": "https://zenodo.org/records/19185560/files/charge-val.pt",
+    "charge_test": "https://zenodo.org/records/19185560/files/charge-test.pt",
     "energy_train":
-        "https://zenodo.org/records/19185560/files/energy-train.pt",
-    "energy_val":
-        "https://zenodo.org/records/19185560/files/energy-val.pt",
-    "energy_test":
-        "https://zenodo.org/records/19185560/files/energy-test.pt",
-    "synth_train":
-        "https://zenodo.org/records/19185560/files/synth-train.pt",
-    "synth_val":
-        "https://zenodo.org/records/19185560/files/synth-val.pt",
-    "synth_test":
-        "https://zenodo.org/records/19185560/files/synth-test.pt",
+    "https://zenodo.org/records/19185560/files/energy-train.pt",
+    "energy_val": "https://zenodo.org/records/19185560/files/energy-val.pt",
+    "energy_test": "https://zenodo.org/records/19185560/files/energy-test.pt",
+    "synth_train": "https://zenodo.org/records/19185560/files/synth-train.pt",
+    "synth_val": "https://zenodo.org/records/19185560/files/synth-val.pt",
+    "synth_test": "https://zenodo.org/records/19185560/files/synth-test.pt",
 }
 
 NODE_LVL_TASKS = ["sssp", "ecc", "charge"]
@@ -258,9 +260,9 @@ class ECHOBenchmark(InMemoryDataset):
 
         processed_data_list = []
         for i, data in tqdm(
-            enumerate(data_list),
-            total=len(data_list),
-            desc=f"Processing {self.task} data",
+                enumerate(data_list),
+                total=len(data_list),
+                desc=f"Processing {self.task} data",
         ):
             if self.task == "diam":
                 # We normalize the target wrt the max value, which by design is

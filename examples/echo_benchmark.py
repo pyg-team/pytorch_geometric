@@ -164,8 +164,7 @@ def evaluate(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Minimal example for ECHOBenchmark.",
-    )
+        description="Minimal example for ECHOBenchmark.", )
     parser.add_argument("--root", type=str, default="data/ECHOBenchmark")
     parser.add_argument(
         "--task",
@@ -186,9 +185,8 @@ def main() -> None:
     set_seed(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    train_dataset = ECHOBenchmark(
-        root=args.root, task=args.task, split="train"
-    )
+    train_dataset = ECHOBenchmark(root=args.root, task=args.task,
+                                  split="train")
     val_dataset = ECHOBenchmark(root=args.root, task=args.task, split="val")
     test_dataset = ECHOBenchmark(root=args.root, task=args.task, split="test")
 
@@ -220,14 +218,12 @@ def main() -> None:
 
     best_val_loss = float("inf")
 
-    print(
-        f"task={args.task} node_level={node_level_task} "
-        f"num_train_samples={len(train_dataset)} "
-        f"num_val_samples={len(val_dataset)} "
-        f"num_test_samples={len(test_dataset)} "
-        f"input_dim={input_dim} edge_dim={edge_dim} "
-        f"output_dim={output_dim} device={device}"
-    )
+    print(f"task={args.task} node_level={node_level_task} "
+          f"num_train_samples={len(train_dataset)} "
+          f"num_val_samples={len(val_dataset)} "
+          f"num_test_samples={len(test_dataset)} "
+          f"input_dim={input_dim} edge_dim={edge_dim} "
+          f"output_dim={output_dim} device={device}")
 
     for epoch in range(1, args.epochs + 1):
         train_loss = train(
@@ -248,13 +244,11 @@ def main() -> None:
             best_val_loss = val_metrics["loss"]
             torch.save((epoch, model.state_dict()), "best_model.pth")
 
-        print(
-            f"epoch={epoch} "
-            f"train_loss={train_loss:.6f} "
-            f'val_loss={val_metrics["loss"]:.6f} '
-            f'val_mae={val_metrics["mae"]:.6f} '
-            f'val_mse={val_metrics["mse"]:.6f}'
-        )
+        print(f"epoch={epoch} "
+              f"train_loss={train_loss:.6f} "
+              f'val_loss={val_metrics["loss"]:.6f} '
+              f'val_mae={val_metrics["mae"]:.6f} '
+              f'val_mse={val_metrics["mse"]:.6f}')
 
     epoch, ckpt = torch.load("best_model.pth")
     model.load_state_dict(ckpt)
@@ -264,13 +258,11 @@ def main() -> None:
         device=device,
         task=args.task,
     )
-    print(
-        f"best_epoch={epoch} "
-        f"best_val_loss={best_val_loss:.6f} "
-        f'test_loss={test_metrics["loss"]:.6f} '
-        f'test_mae={test_metrics["mae"]:.6f} '
-        f'test_mse={test_metrics["mse"]:.6f}'
-    )
+    print(f"best_epoch={epoch} "
+          f"best_val_loss={best_val_loss:.6f} "
+          f'test_loss={test_metrics["loss"]:.6f} '
+          f'test_mae={test_metrics["mae"]:.6f} '
+          f'test_mse={test_metrics["mse"]:.6f}')
 
 
 if __name__ == "__main__":
