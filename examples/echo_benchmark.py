@@ -52,15 +52,12 @@ class GCN(nn.Module):
         self.node_level_task = node_level_task
 
         self.encoder = nn.Linear(input_dim, hidden_dim)
-        self.convs = nn.ModuleList(
-            [
-                GCNConv(
-                    in_channels=hidden_dim,
-                    out_channels=hidden_dim,
-                )
-                for _ in range(num_layers)
-            ]
-        )
+        self.convs = nn.ModuleList([
+            GCNConv(
+                in_channels=hidden_dim,
+                out_channels=hidden_dim,
+            ) for _ in range(num_layers)
+        ])
 
         readout_dim = hidden_dim if node_level_task else hidden_dim * 3
 
@@ -165,8 +162,7 @@ def evaluate(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description='Minimal example for ECHOBenchmark.',
-    )
+        description='Minimal example for ECHOBenchmark.', )
     parser.add_argument('--root', type=str, default='data/ECHOBenchmark')
     parser.add_argument(
         '--task',
@@ -187,7 +183,8 @@ def main() -> None:
     set_seed(args.seed)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-    train_dataset = ECHOBenchmark(root=args.root, task=args.task, split='train')
+    train_dataset = ECHOBenchmark(root=args.root, task=args.task,
+                                  split='train')
     val_dataset = ECHOBenchmark(root=args.root, task=args.task, split='val')
     test_dataset = ECHOBenchmark(root=args.root, task=args.task, split='test')
 
@@ -196,15 +193,12 @@ def main() -> None:
     output_dim = train_dataset.num_classes
     node_level_task = train_dataset.is_node_level_task
 
-    train_loader = DataLoader(
-        train_dataset, batch_size=args.batch_size, shuffle=True
-    )
-    val_loader = DataLoader(
-        val_dataset, batch_size=args.batch_size, shuffle=False
-    )
-    test_loader = DataLoader(
-        test_dataset, batch_size=args.batch_size, shuffle=False
-    )
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size,
+                              shuffle=True)
+    val_loader = DataLoader(val_dataset, batch_size=args.batch_size,
+                            shuffle=False)
+    test_loader = DataLoader(test_dataset, batch_size=args.batch_size,
+                             shuffle=False)
 
     model = GCN(
         input_dim=input_dim,
@@ -247,13 +241,11 @@ def main() -> None:
             best_val_loss = val_metrics['loss']
             torch.save((epoch, model.state_dict()), 'best_model.pth')
 
-        print(
-            f'epoch={epoch} '
-            f'train_loss={train_loss:.6f} '
-            f'val_loss={val_metrics["loss"]:.6f} '
-            f'val_mae={val_metrics["mae"]:.6f} '
-            f'val_mse={val_metrics["mse"]:.6f}'
-        )
+        print(f'epoch={epoch} '
+              f'train_loss={train_loss:.6f} '
+              f'val_loss={val_metrics["loss"]:.6f} '
+              f'val_mae={val_metrics["mae"]:.6f} '
+              f'val_mse={val_metrics["mse"]:.6f}')
 
     epoch, ckpt = torch.load('best_model.pth')
     model.load_state_dict(ckpt)
@@ -263,13 +255,11 @@ def main() -> None:
         device=device,
         task=args.task,
     )
-    print(
-        f'best_epoch={epoch} '
-        f'best_val_loss={best_val_loss:.6f} '
-        f'test_loss={test_metrics["loss"]:.6f} '
-        f'test_mae={test_metrics["mae"]:.6f} '
-        f'test_mse={test_metrics["mse"]:.6f}'
-    )
+    print(f'best_epoch={epoch} '
+          f'best_val_loss={best_val_loss:.6f} '
+          f'test_loss={test_metrics["loss"]:.6f} '
+          f'test_mae={test_metrics["mae"]:.6f} '
+          f'test_mse={test_metrics["mse"]:.6f}')
 
 
 if __name__ == '__main__':

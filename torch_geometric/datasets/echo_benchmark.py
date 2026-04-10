@@ -8,22 +8,33 @@ from tqdm import tqdm
 from torch_geometric.data import InMemoryDataset, download_url
 
 urls = {
-    'charge_train': 'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-chem/charge/train_data.pt',
-    'charge_val': 'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-chem/charge/val_data.pt',
-    'charge_test': 'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-chem/charge/test_data.pt',
-    'energy_train': 'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-chem/energy/train_data.pt',
-    'energy_val': 'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-chem/energy/val_data.pt',
-    'energy_test': 'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-chem/energy/test_data.pt',
-    'synth_train': 'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-synth/train_data.pt',
-    'synth_val': 'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-synth/val_data.pt',
-    'synth_test': 'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-synth/test_data.pt',
+    'charge_train':
+    'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-chem/charge/train_data.pt',
+    'charge_val':
+    'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-chem/charge/val_data.pt',
+    'charge_test':
+    'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-chem/charge/test_data.pt',
+    'energy_train':
+    'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-chem/energy/train_data.pt',
+    'energy_val':
+    'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-chem/energy/val_data.pt',
+    'energy_test':
+    'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-chem/energy/test_data.pt',
+    'synth_train':
+    'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-synth/train_data.pt',
+    'synth_val':
+    'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-synth/val_data.pt',
+    'synth_test':
+    'https://huggingface.co/datasets/lucamiglior/echo-benchmark/resolve/main/echo-synth/test_data.pt',
 }
 
 backup_urls = {
-    'charge_train': 'https://zenodo.org/records/19185560/files/charge-train.pt',
+    'charge_train':
+    'https://zenodo.org/records/19185560/files/charge-train.pt',
     'charge_val': 'https://zenodo.org/records/19185560/files/charge-val.pt',
     'charge_test': 'https://zenodo.org/records/19185560/files/charge-test.pt',
-    'energy_train': 'https://zenodo.org/records/19185560/files/energy-train.pt',
+    'energy_train':
+    'https://zenodo.org/records/19185560/files/energy-train.pt',
     'energy_val': 'https://zenodo.org/records/19185560/files/energy-val.pt',
     'energy_test': 'https://zenodo.org/records/19185560/files/energy-test.pt',
     'synth_train': 'https://zenodo.org/records/19185560/files/synth-train.pt',
@@ -97,7 +108,6 @@ class ECHOBenchmark(InMemoryDataset):
         url={https://openreview.net/forum?id=DgkWFPZMPp}
         }
     """
-
     def __init__(
         self,
         root: str,
@@ -185,9 +195,8 @@ class ECHOBenchmark(InMemoryDataset):
             **kwargs,
         )
 
-        self.data, self.slices = torch.load(
-            self.processed_paths[0], weights_only=False
-        )
+        self.data, self.slices = torch.load(self.processed_paths[0],
+                                            weights_only=False)
 
     @property
     def num_classes(self) -> int:
@@ -240,9 +249,9 @@ class ECHOBenchmark(InMemoryDataset):
 
         processed_data_list = []
         for i, data in tqdm(
-            enumerate(data_list),
-            total=len(data_list),
-            desc=f'Processing {self.task} data',
+                enumerate(data_list),
+                total=len(data_list),
+                desc=f'Processing {self.task} data',
         ):
             if self.task == 'diam':
                 data_list[i].y = (
@@ -259,19 +268,16 @@ class ECHOBenchmark(InMemoryDataset):
             elif self.task == 'charge':
                 data_list[i].y = data.y[:, 0]
             elif self.task == 'energy':
-                data_list[i].y = data.y[
-                    :, 0
-                ]  # This target is already normalized in the original dataset as the log10(original_graph_energy)
+                data_list[
+                    i].y = data.y[:,
+                                  0]  # This target is already normalized in the original dataset as the log10(original_graph_energy)
 
-            data_list[i].y = data_list[
-                i
-            ].y.unsqueeze(
+            data_list[i].y = data_list[i].y.unsqueeze(
                 -1
             )  # shape [num_nodes, 1] for node-level tasks, shape [1] for graph-level tasks
             if self.task == 'diam':
                 data_list[i].y = data_list[i].y.unsqueeze(
-                    -1
-                )  # shape [1, 1] for graph-level tasks
+                    -1)  # shape [1, 1] for graph-level tasks
 
             data_list[i].x = torch.tensor(data.x).float()
 
