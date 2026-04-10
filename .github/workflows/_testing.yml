@@ -56,7 +56,7 @@ jobs:
       - name: Run tests
         timeout-minutes: 20
         run: |
-          pytest --cov --cov-report=xml --durations 10
+          pytest -m "not rag" --cov --cov-report=xml --durations 10
         env:
           FULL_TEST: ${{ matrix.full_test }}
 

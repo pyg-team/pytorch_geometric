@@ -1,8 +1,8 @@
 import os
+
 import pytest
 
 from torch_geometric.data import Data
-
 from torch_geometric.datasets import ECHOBenchmark  # noqa: E402
 
 
