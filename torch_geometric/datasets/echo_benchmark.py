@@ -122,7 +122,6 @@ class ECHOBenchmark(InMemoryDataset):
         url={https://openreview.net/forum?id=DgkWFPZMPp}
         }
     """
-
     def __init__(
         self,
         root: str,
@@ -203,9 +202,8 @@ class ECHOBenchmark(InMemoryDataset):
             **kwargs,
         )
 
-        self.data, self.slices = torch.load(
-            self.processed_paths[0], weights_only=False
-        )
+        self.data, self.slices = torch.load(self.processed_paths[0],
+                                            weights_only=False)
 
     @property
     def num_classes(self) -> int:
@@ -288,8 +286,7 @@ class ECHOBenchmark(InMemoryDataset):
             data_list[i].y = data_list[i].y.unsqueeze(-1)
             if self.task == "diam":
                 data_list[i].y = data_list[i].y.unsqueeze(
-                    -1
-                )  # shape [1, 1] for graph-level tasks
+                    -1)  # shape [1, 1] for graph-level tasks
 
             data_list[i].x = torch.tensor(data.x).float()
 
