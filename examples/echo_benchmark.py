@@ -1,4 +1,4 @@
-# Minimal example for :class:`ECHOBenchmark`, following the experimental design 
+# Minimal example for :class:`ECHOBenchmark`, following the experimental design
 # of the original ECHO Benchmark reference code: https://github.com/Graph-ECHO-Benchmark/ECHO/
 # Usage:
 #     python examples/echo_benchmark.py --task sssp
