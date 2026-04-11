@@ -260,7 +260,8 @@ def torch_load(
                     warnings.warn(
                         f"{warn_msg} Please use "
                         f"`torch.serialization.{match.group()}` to "
-                        f"allowlist this global.", stacklevel=2)
+                        f"allowlist this global if you trust it.",
+                        stacklevel=2)
                 else:
                     warnings.warn(warn_msg, stacklevel=2)
 
