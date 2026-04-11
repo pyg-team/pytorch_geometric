@@ -143,3 +143,14 @@ def test_torch_load_fallback_warning(tmp_fs_path):
 
     with pytest.warns(FutureWarning, match='weights_only'):
         fs.torch_load(path)
+
+
+@pytest.mark.skipif(
+    not torch_geometric.typing.WITH_PT24,
+    reason='weights_only requires PyTorch >= 2.4',
+)
+def test_torch_load_weights_only_false(tmp_fs_path):
+    path = osp.join(tmp_fs_path, 'data.pt')
+    fs.torch_save(object(), path)
+    out = fs.torch_load(path, weights_only=False)
+    assert isinstance(out, object)
