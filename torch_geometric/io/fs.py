@@ -265,6 +265,16 @@ def torch_load(
                 else:
                     warnings.warn(warn_msg, stacklevel=2)
 
+                warnings.warn(
+                    "Falling back to `weights_only=False` because the file at"
+                    f"'{path}' could not be loaded with `weights_only=True`."
+                    "In a future release, this fallback will be removed. Pass "
+                    "`weights_only=False` explicitly if you need to load "
+                    "custom Python objects, allowlist doesn't work, and you"
+                    "trust the source.",
+                    FutureWarning,
+                    stacklevel=2,
+                )
                 with fsspec.open(path, 'rb') as f:
                     return torch.load(f, map_location, weights_only=False)
             else:
