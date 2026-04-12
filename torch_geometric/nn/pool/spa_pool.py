@@ -71,8 +71,7 @@ class SelectSageModule(torch.nn.Module):
 
 
 class SelectTopKModule(torch.nn.Module):
-    r"""
-    Node selection module based on a learned projection vector (TopK-style).
+    r"""Node selection module based on a learned projection vector (TopK-style).
 
     Args:
         in_channels (int): Size of each input node feature vector.
