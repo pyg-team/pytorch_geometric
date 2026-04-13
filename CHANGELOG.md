@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased] - YYYY-MM-DD
 
 ### Added
+
 - Added `SpaPooling` operator for hierarchical graph pooling ([#10667](https://github.com/pyg-team/pytorch_geometric/pull/10667))
 
 ### Changed
