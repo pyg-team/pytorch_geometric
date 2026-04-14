@@ -169,7 +169,7 @@ def map_annotation(
         args = tuple(map_annotation(a, mapping) for a in args)
         if type(annotation).__name__ == 'GenericAlias':
             # If annotated with `list[...]` or `dict[...]`:
-            annotation = origin[args]
+            annotation = origin[args]  # type: ignore[index]
         else:
             # If annotated with `typing.List[...]` or `typing.Dict[...]`:
             annotation = copy.copy(annotation)

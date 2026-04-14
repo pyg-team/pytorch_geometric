@@ -48,6 +48,6 @@ jobs:
           MKL_NUM_THREADS: "1"
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           fail_ci_if_error: false

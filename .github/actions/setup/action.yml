@@ -26,7 +26,7 @@ runs:
 
     - name: Set up Python ${{ inputs.python-version }}
       run: |
-        uv pip install --upgrade pip setuptools
+        uv pip install --upgrade pip setuptools packaging
       shell: bash
 
     - name: Install numpy
