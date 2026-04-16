@@ -11,11 +11,9 @@ from torch_geometric.sampler import BaseSampler, NeighborSampler
 from torch_geometric.typing import InputEdges, InputNodes, OptTensor
 
 try:
-    # from lightning.pytorch import LightningDataModule as _LightningDataModule
-    from pytorch_lightning import LightningDataModule as _LightningDataModule
+    from lightning.pytorch import LightningDataModule as _LightningDataModule
     _pl_is_available = True
 except ImportError:
-    print("IMPORT ERROR")
     try:
         from pytorch_lightning import \
             LightningDataModule as _LightningDataModule
