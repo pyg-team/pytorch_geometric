@@ -80,9 +80,11 @@ class MovieLens(InMemoryDataset):
 
         model = SentenceTransformer(self.model_name)
         with torch.no_grad():
-            emb = model.encode(df['title'].astype(str).tolist(),
-                               show_progress_bar=True,
-                               convert_to_tensor=True).cpu()
+            emb = model.encode(
+                df['title'].astype(str).tolist(),
+                show_progress_bar=True,
+                convert_to_tensor=True,
+            ).cpu()
 
         data['movie'].x = torch.cat([emb, genres], dim=-1)
 
