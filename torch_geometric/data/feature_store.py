@@ -74,6 +74,13 @@ class TensorAttr(CastMixin):
         r"""Whether the :obj:`TensorAttr` has no unset fields."""
         return all([self.is_set(key) for key in self.__dataclass_fields__])
 
+    def fully_specify(self) -> 'TensorAttr':
+        r"""Sets all :obj:`UNSET` fields to :obj:`None`."""
+        for key in self.__dataclass_fields__:
+            if not self.is_set(key):
+                setattr(self, key, None)
+        return self
+
     def update(self, attr: 'TensorAttr') -> 'TensorAttr':
         r"""Updates an :class:`TensorAttr` with set attributes from another
         :class:`TensorAttr`.
@@ -473,7 +480,9 @@ class FeatureStore(ABC):
         # CastMixin will handle the case of key being a tuple or TensorAttr
         # object:
         key = self._tensor_attr_cls.cast(key)
-        assert key.is_fully_specified()
+        # We need to fully-specify the key for __setitem__ as it does not make
+        # sense to work with a view here:
+        key.fully_specify()
         self.put_tensor(value, key)
 
     def __getitem__(self, key: TensorAttr) -> Any:
