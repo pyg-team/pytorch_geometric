@@ -8,9 +8,9 @@ from torch import Tensor
 def _orthogonal_matrix(dim: int) -> Tensor:
     r"""Get an orthogonal matrix by applying QR decomposition."""
     # Random matrix from normal distribution
-    mat = torch.randn((dim, dim))
+    mat = torch.randn((dim, dim), device='cpu')
     # QR decomposition to two orthogonal matrices
-    q, _ = torch.linalg.qr(mat.cpu(), mode='reduced')
+    q, _ = torch.linalg.qr(mat, mode='reduced')
     return q.t()
 
 
