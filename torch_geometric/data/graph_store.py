@@ -348,3 +348,126 @@ class GraphStore(ABC):
                 self._edge_to_layout(attr, layout, store))
 
         return row_dict, col_dict, perm_dict
+
+
+class RemoteGraphStore(GraphStore):
+    r"""An abstract base class for :class:`GraphStore` implementations whose
+    backing store is accessed remotely, e.g. a graph database or a sampling
+    service.
+
+    Unlike in-memory graph stores, remote stores typically cannot materialise
+    the full edge index efficiently; instead, sampling is pushed to the
+    backend.  The sampling query is the responsibility of the caller (e.g. a
+    :class:`~torch_geometric.sampler.BaseSampler`); the graph store is
+    responsible only for executing it and decoding the result.
+
+    Subclasses implement two hooks:
+
+    * :meth:`_fetch_subgraph` — execute a backend query string for a set of
+      seed nodes and return the raw result record.
+    * :meth:`_decode_subgraph` — convert that raw record into
+      ``(node, row, col)`` COO tensors suitable for consumption by a
+      :class:`~torch_geometric.sampler.BaseSampler`.
+
+    Subclasses must also implement :meth:`get_all_edge_attrs` to advertise
+    their edge types.  :meth:`_put_edge_index` and :meth:`_remove_edge_index`
+    default to ``False`` because remote stores are typically read-only, and
+    :meth:`_get_edge_index` raises :class:`NotImplementedError` by default
+    because pulling the full edge index defeats the purpose of a remote
+    backend — override it if your backend supports it.
+
+    Args:
+        edge_attr_cls (EdgeAttr, optional): A user-defined :class:`EdgeAttr`
+            subclass. (default: :obj:`None`)
+    """
+    def __init__(self, edge_attr_cls: Optional[Any] = None):
+        super().__init__(edge_attr_cls=edge_attr_cls)
+
+    @abstractmethod
+    def _fetch_subgraph(self, query: str, kwargs: dict) -> Any:
+        r"""Execute *query* against the remote backend and return the result.
+
+        The query string and its parameters are supplied by the caller (e.g.
+        the sampler), keeping query definition out of the store.
+
+        Args:
+            query (str): The backend query to execute (e.g. a Cypher string).
+            kwargs (dict): Parameters to pass alongside *query*.
+
+        Returns:
+            The raw backend response (e.g. a list of DB records).
+        """
+
+    @abstractmethod
+    def _decode_subgraph(
+        self,
+        records: Any,
+        seed_nodes: Tensor,
+    ) -> Tuple[Tensor, Tensor, Tensor]:
+        r"""Convert raw *records* from :meth:`_fetch_subgraph` into COO
+        tensors.
+
+        Args:
+            records: The raw backend response returned by
+                :meth:`_fetch_subgraph`.
+            seed_nodes (torch.Tensor): 1-D int64 tensor of seed node IDs.
+                Returned as the node tensor when the backend result is empty.
+
+        Returns:
+            A ``(node, row, col)`` triple where *node* is a 1D tensor of
+            global node IDs in encounter order, and *row* / *col* are COO
+            edge indices into *node* (i.e. local indices).  On an empty
+            result *seed_nodes* is returned as *node* with zero-length
+            *row* and *col*.
+        """
+
+    def sample_from_nodes(
+        self,
+        query: str,
+        kwargs: Any,
+        seed_nodes: Tensor,
+    ) -> Tuple[Tensor, Tensor, Tensor]:
+        r"""Sample a subgraph by executing *query* and decoding the result.
+
+        Orchestrates :meth:`_fetch_subgraph` and :meth:`_decode_subgraph` in
+        a single round-trip.  Intended to be called by a compatible
+        :class:`~torch_geometric.sampler.BaseSampler`.
+
+        Args:
+            query (str): The backend query to execute.
+            kwargs (dict): Parameters to pass alongside *query*.
+            seed_nodes (torch.Tensor): 1-D int64 tensor of seed node IDs,
+                used as a fallback node tensor on an empty backend result.
+
+        Returns:
+            A ``(node, row, col)`` triple — see :meth:`_decode_subgraph`.
+        """
+        records = self._fetch_subgraph(query, kwargs)
+        return self._decode_subgraph(records, seed_nodes)
+
+    # GraphStore ABC ##########################################################
+    @abstractmethod
+    def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
+        r"""Remote stores do not support full edge index retrieval by default.
+
+        Sampling is expected to go through :meth:`_fetch_subgraph` /
+        :meth:`_decode_subgraph` and a compatible
+        :class:`~torch_geometric.sampler.BaseSampler` instead.  Override this
+        method if your backend can efficiently return the entire edge index.
+        """
+
+    def _put_edge_index(
+        self,
+        edge_index: EdgeTensorType,
+        edge_attr: EdgeAttr,
+    ) -> bool:
+        raise NotImplementedError(
+            "Remote stores do not support full edge index retrieval.")
+
+    def _remove_edge_index(self, edge_attr: EdgeAttr) -> bool:
+        raise NotImplementedError(
+            "Remote stores do not support full edge index retrieval.")
+
+    def get_all_edge_attrs(self) -> List[EdgeAttr]:
+        raise NotImplementedError(
+            "Remote stores do not support full edge index retrieval.")

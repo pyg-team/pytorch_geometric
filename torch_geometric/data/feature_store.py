@@ -22,9 +22,10 @@ Major TODOs for future implementation:
 """
 import copy
 from abc import ABC, abstractmethod
+from collections.abc import MutableMapping
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 import numpy as np
 import torch
@@ -514,3 +515,277 @@ class FeatureStore(ABC):
 
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}()'
+
+
+class RemoteFeatureStore(FeatureStore):
+    r"""An abstract base class for :class:`FeatureStore` implementations
+    whose backing store is accessed remotely, e.g. a graph database,
+    key-value store, or feature service.
+
+    Subclasses must implement two hooks that together handle one remote
+    round-trip for an arbitrary set of :class:`TensorAttr` objects sharing
+    the same node index:
+
+    * :meth:`_fetch_remote_attrs` — issue the remote request and return raw
+      records together with the list of node IDs in the order they were
+      returned.
+    * :meth:`_decode_remote_attrs` — convert those raw records into a
+      ``{attr_name: np.ndarray}`` mapping, one dense array per requested
+      attr.
+
+    Subclasses must also satisfy the remaining :class:`FeatureStore`
+    contract by implementing :meth:`_get_tensor`, :meth:`_get_tensor_size`,
+    :meth:`_put_tensor`, :meth:`_remove_tensor`, and
+    :meth:`get_all_tensor_attrs`.
+
+    Args:
+        tensor_attr_cls (TensorAttr, optional): A user-defined
+            :class:`TensorAttr` subclass. (default: :obj:`None`)
+        cache (MutableMapping, optional): Any :class:`MutableMapping` used
+            as a per-node-ID cache keyed by ``(attr_name, node_id)`` tuples.
+            Pass :obj:`None` to disable caching. Override
+            :meth:`_get_cached_values` and :meth:`_update_cached_values` for
+            custom cache strategies. (default: :obj:`None`)
+    """
+    def __init__(
+        self,
+        tensor_attr_cls: Optional[Any] = None,
+        cache: Optional[MutableMapping] = None,
+    ):
+        super().__init__(tensor_attr_cls=tensor_attr_cls)
+        self._cache: Optional[MutableMapping] = cache
+
+    @abstractmethod
+    def _fetch_remote_attrs(
+        self,
+        node_ids: List[int],
+        attrs: List[TensorAttr],
+    ) -> Tuple[Any, List[int]]:
+        r"""Issue a remote request for *node_ids* and *attrs*.
+
+        Args:
+            node_ids (List[int]): The node IDs to fetch.
+            attrs (List[TensorAttr]): The tensor attributes to retrieve.
+                Subclasses use the :obj:`attr_name` fields to decide which
+                properties to include in the query.
+
+        Returns:
+            A ``(records, fetched_node_ids)`` pair where *records* is the
+            raw backend response (e.g. a list of DB records) and
+            *fetched_node_ids* is the list of node IDs in the order they
+            appear in *records*.
+        """
+
+    @abstractmethod
+    def _decode_remote_attrs(
+        self,
+        records: Any,
+        attrs: List[TensorAttr],
+    ) -> Dict[str, np.ndarray]:
+        r"""Convert raw *records* from :meth:`_fetch_remote_attrs` into dense
+        arrays.
+
+        Args:
+            records: The raw backend response returned by
+                :meth:`_fetch_remote_attrs`.
+            attrs (List[TensorAttr]): The tensor attributes that were
+                requested.
+
+        Returns:
+            A ``{attr_name: np.ndarray}`` dict with one entry per attr in
+            *attrs*.  Arrays must be ordered to match the *fetched_node_ids*
+            returned by :meth:`_fetch_remote_attrs`.
+        """
+
+    def _multi_get_tensor(
+        self,
+        attrs: List[TensorAttr],
+    ) -> List[Optional[FeatureTensorType]]:
+        r"""Fetch all *attrs* in as few remote round-trips as possible.
+
+        Attrs are grouped by ``(group_name, index)`` — attrs that share both
+        the same node type and the same node index are fetched together in a
+        single :meth:`_fetch_remote_attrs` call.  This handles both
+        homogeneous graphs (where ``group_name`` is always ``None``) and
+        heterogeneous graphs (where different node types have separate
+        indices).
+
+        .. note::
+            Override :meth:`_fetch_remote_attrs` and
+            :meth:`_decode_remote_attrs` rather than this method to customise
+            remote access behaviour.
+        """
+        if not attrs:
+            return []
+
+        groups: Dict[tuple, List[TensorAttr]] = {}
+        for attr in attrs:
+            # attr with same group name and same nodes that it
+            # wants to fetch are grouped together.
+            key = (attr.group_name, attr.index.numpy().tobytes())
+            groups.setdefault(key, []).append(attr)
+
+        # Fetch each group in one round-trip and store tensors by attr id.
+        result_map: Dict[int, Optional[FeatureTensorType]] = {}
+        for group_attrs in groups.values():
+            node_ids: List[int] = group_attrs[0].index.tolist()
+            n_nodes = len(node_ids)
+            nid_to_pos: Dict[int, int] = {
+                nid: i
+                for i, nid in enumerate(node_ids)
+            }
+
+            cached, missing, missing_attr_names = self._get_cached_values(
+                node_ids, group_attrs)
+
+            fetched_nids: List[int] = []
+            decoded: Dict[str, np.ndarray] = {}
+
+            if missing:
+                fetch_attrs = [
+                    a for a in group_attrs if a.attr_name in missing_attr_names
+                ]
+                records, fetched_nids = self._fetch_remote_attrs(
+                    missing, fetch_attrs)
+                decoded = self._decode_remote_attrs(records, fetch_attrs)
+                group_name = group_attrs[0].group_name
+                self._update_cached_values(
+                    group_name, {
+                        attr.attr_name: {
+                            nid: decoded[attr.attr_name][i]
+                            for i, nid in enumerate(fetched_nids)
+                        }
+                        for attr in fetch_attrs
+                    })
+
+            for attr in group_attrs:
+                name = attr.attr_name
+                sample = (next(iter(cached[name].values()), None)
+                          if cached.get(name) else None)
+                if sample is None and fetched_nids:
+                    sample = decoded[name][0]
+
+                if sample is None:
+                    raise RuntimeError(
+                        f"Could not determine shape for attr '{name}': no "
+                        f"cache hits and the remote store returned no records "
+                        f"for {n_nodes} requested node(s).")
+
+                arr = (np.empty(
+                    (n_nodes,
+                     *sample.shape), dtype=sample.dtype) if sample.ndim > 0
+                       else np.empty(n_nodes, dtype=sample.dtype))
+                for nid, val in cached.get(name, {}).items():
+                    arr[nid_to_pos[nid]] = val
+                if fetched_nids:
+                    pos_array = np.fromiter(
+                        (nid_to_pos[nid] for nid in fetched_nids),
+                        dtype=np.int64,
+                        count=len(fetched_nids),
+                    )
+                    arr[pos_array] = decoded[name]
+                result_map[id(attr)] = torch.from_numpy(arr)
+
+        return [result_map[id(attr)] for attr in attrs]
+
+    def _get_cached_values(
+        self,
+        nids: List[int],
+        attrs: List[TensorAttr],
+    ) -> Tuple[Dict[str, Dict[int, object]], List[int], Set[str]]:
+        r"""Return ``(cached_values, missing_nids, missing_attr_names)`` for a
+        batch of node IDs.
+
+        Cache keys are ``(group_name, attr_name, nid)`` triples so that the
+        same node ID in different node types never collides.
+
+        Args:
+            nids (List[int]): Node IDs to look up.
+            attrs (List[TensorAttr]): Attrs to check for each node.  All
+                attrs in one call are expected to share the same
+                ``group_name``.
+
+        Returns:
+            A ``({attr_name: {nid: value}}, missing_nids, missing_attr_names)``
+            triple. *missing_nids* contains every nid where at least one attr
+            was absent from the cache. *missing_attr_names* contains the attr
+            names that had at least one cache miss, so the caller can avoid
+            fetching attrs that are fully cached.  When no cache is configured
+            all nids and all attr names are treated as misses.
+        """
+        if self._cache is None:
+            return (
+                {
+                    a.attr_name: {}
+                    for a in attrs
+                },
+                list(nids),
+                {a.attr_name
+                 for a in attrs},
+            )
+
+        cached: Dict[str, Dict[int, object]] = {a.attr_name: {} for a in attrs}
+        missing: List[int] = []
+        missing_attr_names: Set[str] = set()
+        for nid in nids:
+            all_hit = True
+            for attr in attrs:
+                key = (attr.group_name, attr.attr_name, nid)
+                val = self._cache.get(key)
+                if val is not None:
+                    cached[attr.attr_name][nid] = val
+                else:
+                    all_hit = False
+                    missing_attr_names.add(attr.attr_name)
+            if not all_hit:
+                missing.append(nid)
+        return cached, missing, missing_attr_names
+
+    def _update_cached_values(
+        self,
+        group_name: Optional[str],
+        values: Dict[str, Dict[int, object]],
+    ) -> None:
+        r"""Write ``{attr_name: {nid: value}}`` into the cache.
+
+        Cache keys are ``(group_name, attr_name, nid)`` triples so that the
+        same node ID in different node types never collides.
+
+        No-op when no cache is configured.
+
+        Args:
+            group_name (str, optional): Node type for all entries being
+                written.  Use ``None`` for homogeneous graphs.
+            values (Dict[str, Dict[int, object]]): Mapping from attr name to
+                a ``{nid: value}`` dict of entries to store.
+        """
+        if self._cache is None:
+            return
+        for attr_name, nid_val_map in values.items():
+            for nid, val in nid_val_map.items():
+                self._cache[(group_name, attr_name, nid)] = val
+
+    # Single-attr access — required by the FeatureStore ABC.
+    # Prefer _multi_get_tensor for remote backends to avoid per-attr
+    # round-trips to the remote store.
+
+    def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
+        raise NotImplementedError(
+            "Tensors should be fetched via _fetch_remote_attrs"
+            "to avoid multiple round trips to the database.")
+
+    @abstractmethod
+    def _get_tensor_size(self, attr: TensorAttr) -> Optional[Tuple[int, ...]]:
+        ...
+
+    @abstractmethod
+    def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
+        ...
+
+    @abstractmethod
+    def _remove_tensor(self, attr: TensorAttr) -> bool:
+        ...
+
+    @abstractmethod
+    def get_all_tensor_attrs(self) -> List[TensorAttr]:
+        ...
