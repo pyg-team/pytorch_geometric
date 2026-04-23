@@ -10,32 +10,18 @@ from torch_geometric.typing import EdgeTensorType
 
 
 class Neo4jGraphStore(RemoteGraphStore):
-    """Lean Neo4j-backed graph store with no benchmarking or profiling.
+    """Neo4j-backed graph store.
 
     Implements all abstract methods of :class:`RemoteGraphStore` against a
     Neo4j database.  The driver is created lazily per process, making this
     safe to use with multi-process DataLoader workers (``num_workers > 0``).
 
-    Sampling queries are **not** defined here — that is the responsibility of
-    the sampler (e.g. :class:`~neo4j_pyg.samplers.Neo4jSampler`).  Use
-    :meth:`sample_from_nodes` to execute an arbitrary Cypher query and
-    :meth:`_fetch_subgraph` / :meth:`_decode_subgraph` to execute the query
-    and convert the result into PyG tensors.
-
     Args:
         uri (str): Bolt URI of the Neo4j instance.
-        user (str): Database username.
-        pwd (str): Database password.
-        database_name (str, optional): Database name. Defaults to
-            ``dataset_name``.
-        dataset_name (str): Logical dataset name used as the default database.
-            (default: ``"neo4j"``)
-        split_property_name (str): Node property that encodes the
-            train/val/test split. (default: ``"split"``)
-        split_property_type (str): ``"int"`` or ``"str"`` — how the split
-            value is stored. (default: ``"int"``)
-        nodeid_property (str): Node property used as the global node ID.
-            (default: ``"nodeId"``)
+        user (str): Username.
+        pwd (str): Password.
+        database_name (str): Database name.
+        nodeid_property (str): Property used as the global node ID.
     """
     def __init__(
         self,
@@ -43,9 +29,6 @@ class Neo4jGraphStore(RemoteGraphStore):
         user: str,
         pwd: str,
         database_name: Optional[str] = None,
-        dataset_name: str = "neo4j",
-        split_property_name: str = "split",
-        split_property_type: str = "int",
         nodeid_property: str = "nodeId",
     ):
         super().__init__()
@@ -53,10 +36,7 @@ class Neo4jGraphStore(RemoteGraphStore):
         self.user = user
         self.pwd = pwd
         self._driver: Optional[Driver] = None
-        self.database_name = database_name if database_name else dataset_name
-        self.dataset_name = dataset_name
-        self.split_property_name = split_property_name
-        self.split_property_type = split_property_type
+        self.database_name = database_name
         self.nodeid_property = nodeid_property
 
     def _get_driver(self) -> Driver:
@@ -95,15 +75,10 @@ class Neo4jGraphStore(RemoteGraphStore):
         """
         empty = torch.zeros(0, dtype=torch.long)
 
-        if record is None or (not record.get("nodes")
-                              and not record.get("nodes_by_hop")):
+        if record is None or not record.get("nodes", None):
             return seed_nodes, empty, empty
 
-        if record.get("nodes"):
-            global_ids = torch.tensor(record["nodes"], dtype=torch.long)
-        else:
-            flat = [nid for hop in record["nodes_by_hop"] for nid in hop]
-            global_ids = torch.tensor(flat, dtype=torch.long)
+        global_ids = torch.tensor(record["nodes"], dtype=torch.long)
 
         global_to_local = {
             int(gid): i
@@ -152,9 +127,33 @@ class Neo4jGraphStore(RemoteGraphStore):
         edge_index: EdgeTensorType,
         edge_attr: EdgeAttr,
     ) -> bool:
-        raise NotImplementedError(
-            "Remote stores do not support full edge index retrieval.")
+        """Write edges to Neo4j via ``MERGE``.
+
+        Values in *edge_index* must be global node IDs stored under
+        ``nodeid_property``.
+        """
+        src_type, rel_type, dst_type = edge_attr.edge_type
+        if isinstance(edge_index, tuple):
+            rows, cols = edge_index
+        else:
+            rows, cols = edge_index[0], edge_index[1]
+        pairs = list(zip(rows.tolist(), cols.tolist()))
+        nid = self.nodeid_property
+        query = (f"UNWIND $pairs AS p "
+                 f"MATCH (a:{src_type} {{{nid}: p[0]}}) "
+                 f"MATCH (b:{dst_type} {{{nid}: p[1]}}) "
+                 f"MERGE (a)-[:{rel_type}]->(b)")
+        with self._get_driver().session(
+                database=self.database_name) as session:
+            session.run(query, pairs=pairs)
+        return True
 
     def _remove_edge_index(self, edge_attr: EdgeAttr) -> bool:
-        raise NotImplementedError(
-            "Remote stores do not support full edge index retrieval.")
+        """Delete all relationships of the given edge type from Neo4j."""
+        src_type, rel_type, dst_type = edge_attr.edge_type
+        query = (f"MATCH (:{src_type})-[r:{rel_type}]->(:{dst_type}) "
+                 f"DELETE r")
+        with self._get_driver().session(
+                database=self.database_name) as session:
+            session.run(query)
+        return True

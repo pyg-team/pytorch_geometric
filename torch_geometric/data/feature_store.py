@@ -534,7 +534,8 @@ class RemoteFeatureStore(FeatureStore):
       attr.
 
     Subclasses must also satisfy the remaining :class:`FeatureStore`
-    contract by implementing :meth:`_get_tensor`, :meth:`_get_tensor_size`,
+    contract by implementing :meth:`_multi_get_tensor`,
+    :meth:`_get_tensor_size`,
     :meth:`_put_tensor`, :meth:`_remove_tensor`, and
     :meth:`get_all_tensor_attrs`.
 
@@ -550,10 +551,17 @@ class RemoteFeatureStore(FeatureStore):
     def __init__(
         self,
         tensor_attr_cls: Optional[Any] = None,
-        cache: Optional[MutableMapping] = None,
     ):
         super().__init__(tensor_attr_cls=tensor_attr_cls)
-        self._cache: Optional[MutableMapping] = cache
+        self._cache = self._init_cache()
+
+    @abstractmethod
+    def _init_cache(self) -> MutableMapping:
+        r"""Initialize the cache.
+
+        Returns:
+            A :class:`MutableMapping` instance.
+        """
 
     @abstractmethod
     def _fetch_remote_attrs(
@@ -635,7 +643,7 @@ class RemoteFeatureStore(FeatureStore):
                 for i, nid in enumerate(node_ids)
             }
 
-            cached, missing, missing_attr_names = self._get_cached_values(
+            cached, missing, missing_attr_names = self._cache_get(
                 node_ids, group_attrs)
 
             fetched_nids: List[int] = []
@@ -649,7 +657,7 @@ class RemoteFeatureStore(FeatureStore):
                     missing, fetch_attrs)
                 decoded = self._decode_remote_attrs(records, fetch_attrs)
                 group_name = group_attrs[0].group_name
-                self._update_cached_values(
+                self._cache_put(
                     group_name, {
                         attr.attr_name: {
                             nid: decoded[attr.attr_name][i]
@@ -688,41 +696,25 @@ class RemoteFeatureStore(FeatureStore):
 
         return [result_map[id(attr)] for attr in attrs]
 
-    def _get_cached_values(
+    def _cache_get(
         self,
         nids: List[int],
         attrs: List[TensorAttr],
     ) -> Tuple[Dict[str, Dict[int, object]], List[int], Set[str]]:
-        r"""Return ``(cached_values, missing_nids, missing_attr_names)`` for a
-        batch of node IDs.
+        r"""Look up *nids* x *attrs* in the cache.
 
-        Cache keys are ``(group_name, attr_name, nid)`` triples so that the
-        same node ID in different node types never collides.
-
-        Args:
-            nids (List[int]): Node IDs to look up.
-            attrs (List[TensorAttr]): Attrs to check for each node.  All
-                attrs in one call are expected to share the same
-                ``group_name``.
+        Override to use a batch-capable backend (e.g. Redis ``MGET``) and
+        avoid one round-trip per key. Cache keys are
+        ``(group_name, attr_name, nid)`` triples.
 
         Returns:
-            A ``({attr_name: {nid: value}}, missing_nids, missing_attr_names)``
-            triple. *missing_nids* contains every nid where at least one attr
-            was absent from the cache. *missing_attr_names* contains the attr
-            names that had at least one cache miss, so the caller can avoid
-            fetching attrs that are fully cached.  When no cache is configured
-            all nids and all attr names are treated as misses.
+            ``(cached, missing_nids, missing_attr_names)`` where *cached* maps
+            ``attr_name -> {nid: value}``, *missing_nids* are nodes with at
+            least one cache miss, and *missing_attr_names* are attrs that had
+            at least one miss.
         """
         if self._cache is None:
-            return (
-                {
-                    a.attr_name: {}
-                    for a in attrs
-                },
-                list(nids),
-                {a.attr_name
-                 for a in attrs},
-            )
+            return {}, list(nids), set()
 
         cached: Dict[str, Dict[int, object]] = {a.attr_name: {} for a in attrs}
         missing: List[int] = []
@@ -730,8 +722,8 @@ class RemoteFeatureStore(FeatureStore):
         for nid in nids:
             all_hit = True
             for attr in attrs:
-                key = (attr.group_name, attr.attr_name, nid)
-                val = self._cache.get(key)
+                val = self._cache.get((attr.group_name, attr.attr_name, nid),
+                                      None)
                 if val is not None:
                     cached[attr.attr_name][nid] = val
                 else:
@@ -741,33 +733,23 @@ class RemoteFeatureStore(FeatureStore):
                 missing.append(nid)
         return cached, missing, missing_attr_names
 
-    def _update_cached_values(
+    def _cache_put(
         self,
         group_name: Optional[str],
         values: Dict[str, Dict[int, object]],
     ) -> None:
-        r"""Write ``{attr_name: {nid: value}}`` into the cache.
+        r"""Write *values* into the cache.
 
-        Cache keys are ``(group_name, attr_name, nid)`` triples so that the
-        same node ID in different node types never collides.
-
-        No-op when no cache is configured.
-
-        Args:
-            group_name (str, optional): Node type for all entries being
-                written.  Use ``None`` for homogeneous graphs.
-            values (Dict[str, Dict[int, object]]): Mapping from attr name to
-                a ``{nid: value}`` dict of entries to store.
+        Override to use a batch-capable backend (e.g. Redis ``MSET``) and
+        avoid one round-trip per entry. Cache keys are
+        ``(group_name, attr_name, nid)`` triples. No-op when no cache is
+        configured.
         """
         if self._cache is None:
             return
         for attr_name, nid_val_map in values.items():
             for nid, val in nid_val_map.items():
                 self._cache[(group_name, attr_name, nid)] = val
-
-    # Single-attr access — required by the FeatureStore ABC.
-    # Prefer _multi_get_tensor for remote backends to avoid per-attr
-    # round-trips to the remote store.
 
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
         raise NotImplementedError(

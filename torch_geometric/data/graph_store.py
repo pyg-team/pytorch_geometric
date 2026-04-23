@@ -369,13 +369,6 @@ class RemoteGraphStore(GraphStore):
       ``(node, row, col)`` COO tensors suitable for consumption by a
       :class:`~torch_geometric.sampler.BaseSampler`.
 
-    Subclasses must also implement :meth:`get_all_edge_attrs` to advertise
-    their edge types.  :meth:`_put_edge_index` and :meth:`_remove_edge_index`
-    default to ``False`` because remote stores are typically read-only, and
-    :meth:`_get_edge_index` raises :class:`NotImplementedError` by default
-    because pulling the full edge index defeats the purpose of a remote
-    backend — override it if your backend supports it.
-
     Args:
         edge_attr_cls (EdgeAttr, optional): A user-defined :class:`EdgeAttr`
             subclass. (default: :obj:`None`)
@@ -421,7 +414,7 @@ class RemoteGraphStore(GraphStore):
             *row* and *col*.
         """
 
-    def sample_from_nodes(
+    def sample_subgraph(
         self,
         query: str,
         kwargs: Any,
@@ -434,13 +427,13 @@ class RemoteGraphStore(GraphStore):
         :class:`~torch_geometric.sampler.BaseSampler`.
 
         Args:
-            query (str): The backend query to execute.
+            query (str): The backend query to execute (e.g. a Cypher string).
             kwargs (dict): Parameters to pass alongside *query*.
-            seed_nodes (torch.Tensor): 1-D int64 tensor of seed node IDs,
-                used as a fallback node tensor on an empty backend result.
+            seed_nodes (torch.Tensor): 1-D int64 tensor of seed node IDs.
+                Returned as the node tensor when the backend result is empty.
 
         Returns:
-            A ``(node, row, col)`` triple — see :meth:`_decode_subgraph`.
+            A ``(node, row, col)`` COO triple.
         """
         records = self._fetch_subgraph(query, kwargs)
         return self._decode_subgraph(records, seed_nodes)
