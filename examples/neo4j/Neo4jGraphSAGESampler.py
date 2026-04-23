@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import List, Optional
 
 from torch_geometric.data.graph_store import RemoteGraphStore
 from torch_geometric.sampler.remote_sampler import RemoteSampler
@@ -6,7 +6,7 @@ from torch_geometric.sampler.remote_sampler import RemoteSampler
 
 class Neo4jGraphSAGESampler(RemoteSampler):
     """Neo4j neighbor sampler structurally equivalent to pyg-lib
-    GraphSAGE sampling.
+    NieghborLoader which performs GraphSAGE sampling.
 
     Performs multi-hop incoming-edge sampling by pushing a pre-compiled Cypher
     query into Neo4j.  The query mirrors pyg-lib's ``_sample`` semantics:
@@ -14,11 +14,6 @@ class Neo4jGraphSAGESampler(RemoteSampler):
     * ``replace=False``, ``disjoint=False``
     * **Take-all rule** — when ``k < 0`` or ``k >= |neighbourhood|``, all
       neighbors are taken (pyg-lib Case 1).
-    * **Order-preserving frontier deduplication** — new nodes are appended in
-      first-encounter order, mirroring pyg-lib's ``Mapper``
-      insertion semantics.
-    * **All edges recorded** — edges to already-visited nodes are included,
-      consistent with pyg-lib's ``add()`` function.
 
     Args:
         graph_store (RemoteGraphStore): Neo4j-backed graph store.
@@ -175,9 +170,3 @@ class Neo4jGraphSAGESampler(RemoteSampler):
 
     def _build_query_params(self, seeds, **kwargs) -> dict:
         return {"seed_ids": seeds.tolist()}
-
-    def _extract_nodes_by_hop(self, record: Any) -> List[List[int]]:
-        """Extract the ``nodes_by_hop`` field from the raw Neo4j record."""
-        if not record:
-            return []
-        return [list(hop) for hop in record.get("nodes_by_hop") or []]

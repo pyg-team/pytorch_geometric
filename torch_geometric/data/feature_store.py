@@ -25,7 +25,7 @@ from abc import ABC, abstractmethod
 from collections.abc import MutableMapping
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import torch
@@ -553,7 +553,7 @@ class RemoteFeatureStore(FeatureStore):
         tensor_attr_cls: Optional[Any] = None,
     ):
         super().__init__(tensor_attr_cls=tensor_attr_cls)
-        self._cache = self._init_cache()
+        self._cache: Optional[MutableMapping] = self._init_cache()
 
     @abstractmethod
     def _init_cache(self) -> MutableMapping:
@@ -566,22 +566,21 @@ class RemoteFeatureStore(FeatureStore):
     @abstractmethod
     def _fetch_remote_attrs(
         self,
-        node_ids: List[int],
         attrs: List[TensorAttr],
     ) -> Tuple[Any, List[int]]:
-        r"""Issue a remote request for *node_ids* and *attrs*.
+        r"""Issue a remote request for *attrs*.
 
         Args:
-            node_ids (List[int]): The node IDs to fetch.
-            attrs (List[TensorAttr]): The tensor attributes to retrieve.
-                Subclasses use the :obj:`attr_name` fields to decide which
-                properties to include in the query.
+            attrs (List[TensorAttr]): The tensor attributes to retrieve. The
+                ``index`` of each attr may already have been narrowed to the
+                subset of node IDs that were not found in the cache.
 
         Returns:
-            A ``(records, fetched_node_ids)`` pair where *records* is the
-            raw backend response (e.g. a list of DB records) and
-            *fetched_node_ids* is the list of node IDs in the order they
-            appear in *records*.
+            A ``(records, fetched_nids)`` pair where *records* is the raw
+            backend response (e.g. a list of DB records) to be passed to
+            :meth:`_decode_remote_attrs`, and *fetched_nids* is the list of
+            node IDs — in the order rows appear in the decoded arrays — that
+            the remote actually returned.
         """
 
     @abstractmethod
@@ -591,165 +590,120 @@ class RemoteFeatureStore(FeatureStore):
         attrs: List[TensorAttr],
     ) -> Dict[str, np.ndarray]:
         r"""Convert raw *records* from :meth:`_fetch_remote_attrs` into dense
-        arrays.
+        arrays, one per requested attr.
 
         Args:
             records: The raw backend response returned by
                 :meth:`_fetch_remote_attrs`.
-            attrs (List[TensorAttr]): The tensor attributes that were
-                requested.
+            attrs (List[TensorAttr]): The attrs that were fetched, in the
+                same order as was passed to :meth:`_fetch_remote_attrs`.
 
         Returns:
             A ``{attr_name: np.ndarray}`` dict with one entry per attr in
-            *attrs*.  Arrays must be ordered to match the *fetched_node_ids*
-            returned by :meth:`_fetch_remote_attrs`.
+            *attrs*. Row ``i`` of each array corresponds to the ``i``-th
+            ``fetched_nid`` returned by :meth:`_fetch_remote_attrs`.
         """
 
     def _multi_get_tensor(
         self,
         attrs: List[TensorAttr],
-    ) -> List[Optional[FeatureTensorType]]:
+    ) -> List[FeatureTensorType]:
         r"""Fetch all *attrs* in as few remote round-trips as possible.
 
-        Attrs are grouped by ``(group_name, index)`` — attrs that share both
-        the same node type and the same node index are fetched together in a
-        single :meth:`_fetch_remote_attrs` call.  This handles both
-        homogeneous graphs (where ``group_name`` is always ``None``) and
-        heterogeneous graphs (where different node types have separate
-        indices).
+        Supports partial cache hits: for each attr the cache may serve a
+        subset of the requested node IDs, and only the uncached node IDs are
+        included in the remote round-trip via attrs whose ``index`` has been
+        narrowed by :meth:`_cache_get`.
 
         .. note::
-            Override :meth:`_fetch_remote_attrs` and
-            :meth:`_decode_remote_attrs` rather than this method to customise
-            remote access behaviour.
+            Override :meth:`_fetch_remote_attrs`,
+            :meth:`_decode_remote_attrs`, :meth:`_cache_get` and
+            :meth:`_cache_put` rather than this method to customise remote
+            access behaviour.
         """
         if not attrs:
             return []
 
-        groups: Dict[tuple, List[TensorAttr]] = {}
+        cached: Dict[str, Dict[int, np.ndarray]]
+        missing_attrs: List[TensorAttr]
+        cached, missing_attrs = self._cache_get(attrs)
+
+        decoded: Dict[str, np.ndarray] = {}
+        fetched_nids: List[int] = []
+        if missing_attrs:
+            records, fetched_nids = self._fetch_remote_attrs(missing_attrs)
+            decoded = self._decode_remote_attrs(records, missing_attrs)
+            self._cache_put({
+                (a.group_name, a.attr_name): {
+                    int(nid): decoded[a.attr_name][i]
+                    for i, nid in enumerate(fetched_nids)
+                }
+                for a in missing_attrs if a.attr_name in decoded
+            })
+
+        result: List[FeatureTensorType] = []
         for attr in attrs:
-            # attr with same group name and same nodes that it
-            # wants to fetch are grouped together.
-            key = (attr.group_name, attr.index.numpy().tobytes())
-            groups.setdefault(key, []).append(attr)
+            name = attr.attr_name
+            nids = attr.index.tolist() if isinstance(
+                attr.index, Tensor) else list(attr.index)
+            nid_to_pos = {int(nid): i for i, nid in enumerate(nids)}
 
-        # Fetch each group in one round-trip and store tensors by attr id.
-        result_map: Dict[int, Optional[FeatureTensorType]] = {}
-        for group_attrs in groups.values():
-            node_ids: List[int] = group_attrs[0].index.tolist()
-            n_nodes = len(node_ids)
-            nid_to_pos: Dict[int, int] = {
-                nid: i
-                for i, nid in enumerate(node_ids)
-            }
+            cached_rows = cached.get(name, {})
 
-            cached, missing, missing_attr_names = self._cache_get(
-                node_ids, group_attrs)
+            sample = next(iter(cached_rows.values()), None)
+            if sample is None and name in decoded and len(decoded[name]):
+                sample = decoded[name][0]
+            if sample is None:
+                raise RuntimeError(
+                    f"Could not determine shape for attr '{name}': no "
+                    f"cache hits and the remote store returned no records.")
 
-            fetched_nids: List[int] = []
-            decoded: Dict[str, np.ndarray] = {}
+            shape = ((len(nids), *sample.shape) if sample.ndim > 0 else
+                     (len(nids), ))
+            out = np.empty(shape, dtype=sample.dtype)
 
-            if missing:
-                fetch_attrs = [
-                    a for a in group_attrs if a.attr_name in missing_attr_names
-                ]
-                records, fetched_nids = self._fetch_remote_attrs(
-                    missing, fetch_attrs)
-                decoded = self._decode_remote_attrs(records, fetch_attrs)
-                group_name = group_attrs[0].group_name
-                self._cache_put(
-                    group_name, {
-                        attr.attr_name: {
-                            nid: decoded[attr.attr_name][i]
-                            for i, nid in enumerate(fetched_nids)
-                        }
-                        for attr in fetch_attrs
-                    })
+            for nid, row in cached_rows.items():
+                out[nid_to_pos[int(nid)]] = row
 
-            for attr in group_attrs:
-                name = attr.attr_name
-                sample = (next(iter(cached[name].values()), None)
-                          if cached.get(name) else None)
-                if sample is None and fetched_nids:
-                    sample = decoded[name][0]
+            if name in decoded and fetched_nids:
+                pos = np.fromiter(
+                    (nid_to_pos[int(nid)]
+                     for nid in fetched_nids if int(nid) in nid_to_pos),
+                    dtype=np.int64,
+                )
+                out[pos] = decoded[name][:len(pos)]
 
-                if sample is None:
-                    raise RuntimeError(
-                        f"Could not determine shape for attr '{name}': no "
-                        f"cache hits and the remote store returned no records "
-                        f"for {n_nodes} requested node(s).")
+            result.append(torch.from_numpy(out))
 
-                arr = (np.empty(
-                    (n_nodes,
-                     *sample.shape), dtype=sample.dtype) if sample.ndim > 0
-                       else np.empty(n_nodes, dtype=sample.dtype))
-                for nid, val in cached.get(name, {}).items():
-                    arr[nid_to_pos[nid]] = val
-                if fetched_nids:
-                    pos_array = np.fromiter(
-                        (nid_to_pos[nid] for nid in fetched_nids),
-                        dtype=np.int64,
-                        count=len(fetched_nids),
-                    )
-                    arr[pos_array] = decoded[name]
-                result_map[id(attr)] = torch.from_numpy(arr)
+        return result
 
-        return [result_map[id(attr)] for attr in attrs]
-
+    @abstractmethod
     def _cache_get(
         self,
-        nids: List[int],
         attrs: List[TensorAttr],
-    ) -> Tuple[Dict[str, Dict[int, object]], List[int], Set[str]]:
-        r"""Look up *nids* x *attrs* in the cache.
-
-        Override to use a batch-capable backend (e.g. Redis ``MGET``) and
-        avoid one round-trip per key. Cache keys are
-        ``(group_name, attr_name, nid)`` triples.
+    ) -> Tuple[Dict[str, Dict[int, np.ndarray]], List[TensorAttr]]:
+        r"""Look up *attrs* in the cache.
 
         Returns:
-            ``(cached, missing_nids, missing_attr_names)`` where *cached* maps
-            ``attr_name -> {nid: value}``, *missing_nids* are nodes with at
-            least one cache miss, and *missing_attr_names* are attrs that had
-            at least one miss.
+            A ``(cached, missing_attrs)`` pair where *cached* maps
+            ``attr_name`` to a ``{nid: row}`` dict of rows served from the
+            cache, and *missing_attrs* is the list of attrs that still need
+            to be fetched remotely — each with its ``index`` narrowed to the
+            uncached node IDs. Fully-cached attrs are omitted from
+            *missing_attrs*.
         """
-        if self._cache is None:
-            return {}, list(nids), set()
 
-        cached: Dict[str, Dict[int, object]] = {a.attr_name: {} for a in attrs}
-        missing: List[int] = []
-        missing_attr_names: Set[str] = set()
-        for nid in nids:
-            all_hit = True
-            for attr in attrs:
-                val = self._cache.get((attr.group_name, attr.attr_name, nid),
-                                      None)
-                if val is not None:
-                    cached[attr.attr_name][nid] = val
-                else:
-                    all_hit = False
-                    missing_attr_names.add(attr.attr_name)
-            if not all_hit:
-                missing.append(nid)
-        return cached, missing, missing_attr_names
-
+    @abstractmethod
     def _cache_put(
         self,
-        group_name: Optional[str],
-        values: Dict[str, Dict[int, object]],
+        values: Dict[Tuple[Optional[NodeType], str], Dict[int, np.ndarray]],
     ) -> None:
         r"""Write *values* into the cache.
 
-        Override to use a batch-capable backend (e.g. Redis ``MSET``) and
-        avoid one round-trip per entry. Cache keys are
-        ``(group_name, attr_name, nid)`` triples. No-op when no cache is
-        configured.
+        Args:
+            values: A ``{attr_name: np.ndarray}`` mapping as returned by
+                :meth:`_decode_remote_attrs`.
         """
-        if self._cache is None:
-            return
-        for attr_name, nid_val_map in values.items():
-            for nid, val in nid_val_map.items():
-                self._cache[(group_name, attr_name, nid)] = val
 
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
         raise NotImplementedError(

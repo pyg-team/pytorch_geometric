@@ -5,7 +5,11 @@ import torch
 from neo4j import Driver, GraphDatabase
 from torch import Tensor
 
-from torch_geometric.data.graph_store import EdgeAttr, RemoteGraphStore
+from torch_geometric.data.graph_store import (
+    EdgeAttr,
+    EdgeLayout,
+    RemoteGraphStore,
+)
 from torch_geometric.typing import EdgeTensorType
 
 
@@ -112,15 +116,30 @@ class Neo4jGraphStore(RemoteGraphStore):
 
     # GraphStore ABC ##########################################################
     def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
-        r"""Remote stores do not support full edge index retrieval by default.
+        src_type, rel_type, dst_type = edge_attr.edge_type
+        nid = self.nodeid_property
 
-        Sampling is expected to go through :meth:`_fetch_subgraph` /
-        :meth:`_decode_subgraph` and a compatible
-        :class:`~torch_geometric.sampler.BaseSampler` instead.  Override this
-        method if your backend can efficiently return the entire edge index.
-        """
-        raise NotImplementedError(
-            "Remote stores do not support full edge index retrieval.")
+        query = (f"MATCH (a:{src_type})-[r:{rel_type}]->(b:{dst_type}) "
+                 f"RETURN a.{nid} AS src, b.{nid} AS dst")
+        with self._get_driver().session(database=self.database_name,
+                                        fetch_size=-1) as session:
+            records = list(session.run(query))
+
+        if not records:
+            empty = torch.zeros(0, dtype=torch.long)
+            return empty, empty
+
+        row = torch.tensor([rec["src"] for rec in records], dtype=torch.long)
+        col = torch.tensor([rec["dst"] for rec in records], dtype=torch.long)
+
+        if edge_attr.layout == EdgeLayout.CSC:
+            col, perm = col.sort()
+            row = row[perm]
+        elif edge_attr.layout == EdgeLayout.CSR:
+            row, perm = row.sort()
+            col = col[perm]
+
+        return row, col
 
     def _put_edge_index(
         self,
