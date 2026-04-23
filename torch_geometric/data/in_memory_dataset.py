@@ -126,9 +126,14 @@ class InMemoryDataset(Dataset):
         data, slices = cls.collate(data_list)
         fs.torch_save((data.to_dict(), slices, data.__class__), path)
 
-    def load(self, path: str, data_cls: Type[BaseData] = Data) -> None:
+    def load(
+        self,
+        path: str,
+        data_cls: Type[BaseData] = Data,
+        weights_only: Optional[bool] = None,
+    ) -> None:
         r"""Loads the dataset from the file path :obj:`path`."""
-        out = fs.torch_load(path)
+        out = fs.torch_load(path, weights_only=weights_only)
         assert isinstance(out, tuple)
         assert len(out) == 2 or len(out) == 3
         if len(out) == 2:  # Backward compatibility.
