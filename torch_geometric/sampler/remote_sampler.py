@@ -23,20 +23,19 @@ class RemoteSampler(BaseSampler):
 
     1. Extract seed node IDs from a
        :class:`~torch_geometric.sampler.NodeSamplerInput`.
-    2. Build backend query parameters via :meth:`_seed_params`.
+    2. Build backend query parameters via :meth:`_build_query_params`.
     3. Execute the pre-compiled query against the remote store via
-       ``RemoteGraphStore._fetch_subgraph``.
-    4. Optionally extract per-hop node lists via :meth:`_extract_nodes_by_hop`.
-    5. Decode the raw record into COO tensors via
-       ``RemoteGraphStore._decode_subgraph``.
-    6. Wrap the result in a :class:`~torch_geometric.sampler.SamplerOutput`.
+       ``RemoteGraphStore.sample_subgraph``.
+    4. Wrap the result in a :class:`~torch_geometric.sampler.SamplerOutput`.
 
-    Subclasses must implement :meth:`_build_node_fanout_query`.  The query is
-    compiled once at construction time and reused for every mini-batch.
+    Subclasses must implement :meth:`_build_node_sampling_query`
+    or :meth:`_build_edge_sampling_query` to support node-
+    or edge-seed sampling. The query is compiled once at
+    construction time and reused for every mini-batch.
 
     Args:
         graph_store (RemoteGraphStore): The remote graph store that executes
-            queries and decodes results.
+            queries and returns results.
         num_neighbors (List[int]): Number of neighbors to sample per hop.
             Negative values mean "take all".
     """
@@ -72,20 +71,48 @@ class RemoteSampler(BaseSampler):
 
     @abstractmethod
     def _build_query_params(self, seeds: Tensor, **kwargs) -> dict:
-        """Return the query parameter dict for the given seed node IDs.
-
-        The default passes seeds under the key ``seed_ids``, which is the
-        convention used by Cypher queries in this codebase.  Override if your
-        backend expects a different parameter name or type.
+        """Build the query parameter dict for the given seed node IDs.
 
         Args:
             seeds (torch.Tensor): 1-D int64 tensor of seed node IDs.
-            **kwargs: Additional keyword arguments (unused).
+            **kwargs: Additional keyword arguments.
 
         Returns:
             dict: Parameter dict passed to
-                ``RemoteGraphStore._fetch_subgraph``.
+                ``RemoteGraphStore.sample_subgraph``.
         """
+
+    def _build_output(
+        self,
+        node,
+        row,
+        col,
+        seeds: Tensor,
+        seed_time,
+    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+        """Wrap ``(node, row, col)`` into the correct output type.
+
+        Returns :class:`~torch_geometric.sampler.HeteroSamplerOutput` when
+        *node* is a dict (heterogeneous result from the graph store), and
+        :class:`~torch_geometric.sampler.SamplerOutput` otherwise.
+        """
+        if isinstance(node, dict):
+            return HeteroSamplerOutput(
+                node=node,
+                row=row,
+                col=col,
+                edge={et: None
+                      for et in row},
+                metadata=(seeds, seed_time),
+            )
+        return SamplerOutput(
+            node=node,
+            row=row,
+            col=col,
+            edge=None,
+            batch=None,
+            metadata=(seeds, seed_time),
+        )
 
     def sample_from_nodes(
         self,
@@ -96,32 +123,26 @@ class RemoteSampler(BaseSampler):
 
         Args:
             index (NodeSamplerInput): Seed node inputs.
-            **kwargs: Additional keyword arguments (unused).
+            **kwargs: Additional keyword arguments.
 
         Returns:
-            SamplerOutput: Sampled subgraph as local COO tensors.
+            Union[SamplerOutput, HeteroSamplerOutput]: Sampled subgraph as
+            local COO tensors.  Returns
+            :class:`~torch_geometric.sampler.HeteroSamplerOutput` when the
+            graph store's :meth:`_decode_subgraph` returns dicts (i.e. the
+            graph is heterogeneous).
         """
-        if self.node_sampling_query is None:
+        if not self.node_sampling_query:
             raise ValueError("Node sampling query is not built.")
 
         seeds = index.node.to(torch.int64)
         seed_time = getattr(index, "time", None)
 
         params = self._build_query_params(seeds, **kwargs)
-        record = self.graph_store._fetch_subgraph(self.node_sampling_query,
-                                                  params)
-        if self.track_nodes_by_hop:
-            self.last_nodes_by_hop = self._extract_nodes_by_hop(record)
-        node, row, col = self.graph_store._decode_subgraph(record, seeds)
+        node, row, col = self.graph_store.sample_subgraph(
+            self.node_sampling_query, params, seeds)
 
-        return SamplerOutput(
-            node=node,
-            row=row,
-            col=col,
-            edge=None,
-            batch=None,
-            metadata=(seeds, seed_time),
-        )
+        return self._build_output(node, row, col, seeds, seed_time)
 
     def sample_from_edges(
         self,
@@ -129,19 +150,25 @@ class RemoteSampler(BaseSampler):
         neg_sampling=None,
         **kwargs,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
-        r"""Not implemented by default.
+        r"""Sample a subgraph starting from the seed edges in *index*.
 
-        Override :meth:`_build_edge_sampling_query` and this method to support
-        edge-seed sampling.
+        Args:
+            index (EdgeSamplerInput): Seed edge inputs.
+            neg_sampling (NegativeSampling, optional): The negative sampling
+                configuration. (default: :obj:`None`)
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            Union[SamplerOutput, HeteroSamplerOutput]: Sampled subgraph as
+            local COO tensors.
         """
-        if self.edge_sampling_query is None:
+        if not self.edge_sampling_query:
             raise ValueError("Edge sampling query is not built.")
 
         seeds = index.edge.to(torch.int64)
         seed_time = getattr(index, "time", None)
         params = self._build_query_params(seeds, **kwargs)
-        record = self.graph_store._fetch_subgraph(self.edge_sampling_query,
-                                                  params)
-        node, row, col = self.graph_store._decode_subgraph(record, seeds)
-        return SamplerOutput(node=node, row=row, col=col, edge=None,
-                             batch=None, metadata=(seeds, seed_time))
+        node, row, col = self.graph_store.sample_subgraph(
+            self.edge_sampling_query, params, seeds)
+
+        return self._build_output(node, row, col, seeds, seed_time)
