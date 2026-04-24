@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Improved runtime of `to_dense_batch` in both eager and `torch.compile` ([#10660](https://github.com/pyg-team/pytorch_geometric/pull/10660))
 - Dropped support for TorchScript in `GATConv` and `GATv2Conv` for correctness ([#10596](https://github.com/pyg-team/pytorch_geometric/pull/10596))
 
 ### Deprecated
