@@ -109,3 +109,26 @@ def test_custom_schema(tmp_path):
         assert out.num_nodes == data.num_nodes
 
     dataset.close()
+
+
+@withPackage('sqlite3')
+def test_index_select_get(tmp_path):
+    dataset = OnDiskDataset(tmp_path)
+    data_list = [Data(x=torch.tensor([i])) for i in range(10)]
+    dataset.extend(data_list)
+
+    subset = dataset.index_select([5, 6, 7, 8, 9])
+    nested_subset = subset.index_select([1, 3])
+
+    assert torch.equal(subset[0].x, data_list[5].x)
+    assert torch.equal(subset.get(0).x, data_list[5].x)
+
+    out_list = subset.multi_get([0, 2, 4])
+    for out, data in zip(out_list, data_list[5:10:2]):
+        assert torch.equal(out.x, data.x)
+
+    out_list = nested_subset.__getitems__([0, 1])
+    assert torch.equal(out_list[0].x, data_list[6].x)
+    assert torch.equal(out_list[1].x, data_list[8].x)
+
+    dataset.close()
