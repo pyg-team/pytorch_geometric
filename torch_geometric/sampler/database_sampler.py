@@ -4,7 +4,7 @@ from typing import List, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.data.graph_store import RemoteGraphStore
+from torch_geometric.data.graph_store import DatabaseGraphStore
 from torch_geometric.sampler.base import (
     BaseSampler,
     EdgeSamplerInput,
@@ -14,18 +14,17 @@ from torch_geometric.sampler.base import (
 )
 
 
-class RemoteSampler(BaseSampler):
+class DatabaseSampler(BaseSampler):
     r"""Abstract base class for samplers that push multi-hop neighbor sampling
-    into a remote graph database via a native query language (e.g. Cypher,
-    GSQL).
+    into a database via a native query language (e.g. Cypher, GSQL).
 
     The base class handles the full :meth:`sample_from_nodes` pipeline:
 
     1. Extract seed node IDs from a
        :class:`~torch_geometric.sampler.NodeSamplerInput`.
-    2. Build backend query parameters via :meth:`_build_query_params`.
-    3. Execute the pre-compiled query against the remote store via
-       ``RemoteGraphStore.sample_subgraph``.
+    2. Build database query parameters via :meth:`_build_query_params`.
+    3. Execute the pre-compiled query against the database store via
+       ``DatabaseGraphStore.sample_subgraph``.
     4. Wrap the result in a :class:`~torch_geometric.sampler.SamplerOutput`.
 
     Subclasses must implement :meth:`_build_node_sampling_query`
@@ -34,19 +33,17 @@ class RemoteSampler(BaseSampler):
     construction time and reused for every mini-batch.
 
     Args:
-        graph_store (RemoteGraphStore): The remote graph store that executes
-            queries and returns results.
+        graph_store (DatabaseGraphStore): The database graph store that
+            executes queries and returns results.
         num_neighbors (List[int]): Number of neighbors to sample per hop.
             Negative values mean "take all".
     """
     def __init__(
         self,
-        graph_store: RemoteGraphStore,
-        num_neighbors: List[int],
+        graph_store: DatabaseGraphStore,
         track_nodes_by_hop: bool = False,
     ):
         self.graph_store = graph_store
-        self.num_neighbors = num_neighbors
         # Track nodes by hop needed for pre aggregation of weights.
         self.track_nodes_by_hop = track_nodes_by_hop
         self.last_nodes_by_hop: List[List[int]] = []
@@ -79,7 +76,7 @@ class RemoteSampler(BaseSampler):
 
         Returns:
             dict: Parameter dict passed to
-                ``RemoteGraphStore.sample_subgraph``.
+                ``DatabaseGraphStore.sample_subgraph``.
         """
 
     def _build_output(

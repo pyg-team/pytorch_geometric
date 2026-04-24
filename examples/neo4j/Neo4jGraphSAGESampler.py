@@ -1,10 +1,10 @@
 from typing import List, Optional
 
-from torch_geometric.data.graph_store import RemoteGraphStore
-from torch_geometric.sampler.remote_sampler import RemoteSampler
+from torch_geometric.data.graph_store import DatabaseGraphStore
+from torch_geometric.sampler.database_sampler import DatabaseSampler
 
 
-class Neo4jGraphSAGESampler(RemoteSampler):
+class Neo4jGraphSAGESampler(DatabaseSampler):
     """Neo4j neighbor sampler structurally equivalent to pyg-lib
     NieghborLoader which performs GraphSAGE sampling.
 
@@ -16,7 +16,7 @@ class Neo4jGraphSAGESampler(RemoteSampler):
       neighbors are taken (pyg-lib Case 1).
 
     Args:
-        graph_store (RemoteGraphStore): Neo4j-backed graph store.
+        graph_store (DatabaseGraphStore): Neo4j-backed graph store.
         num_neighbors (List[int]): Number of neighbors to sample per hop.
             Use ``-1`` to take all neighbors at a given hop.
         rel_type (str, optional): Relationship type filter (e.g. ``"KNOWS"``).
@@ -35,7 +35,7 @@ class Neo4jGraphSAGESampler(RemoteSampler):
     """
     def __init__(
         self,
-        graph_store: RemoteGraphStore,
+        graph_store: DatabaseGraphStore,
         num_neighbors: List[int],
         return_nodes_by_hop: bool = False,
         direction: str = 'incoming',  # 'incoming' or 'outgoing' or undirected
@@ -50,8 +50,7 @@ class Neo4jGraphSAGESampler(RemoteSampler):
         self.node_label = node_label
         self.profile = profile
 
-        super().__init__(graph_store, num_neighbors,
-                         track_nodes_by_hop=return_nodes_by_hop)
+        super().__init__(graph_store, track_nodes_by_hop=return_nodes_by_hop)
 
     def _build_node_fanout_query(self) -> str:
         """Build a Cypher query that performs multi-hop incoming-edge sampling.

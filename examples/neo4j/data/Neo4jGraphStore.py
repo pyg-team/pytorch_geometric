@@ -6,17 +6,17 @@ from neo4j import Driver, GraphDatabase
 from torch import Tensor
 
 from torch_geometric.data.graph_store import (
+    DatabaseGraphStore,
     EdgeAttr,
     EdgeLayout,
-    RemoteGraphStore,
 )
 from torch_geometric.typing import EdgeTensorType
 
 
-class Neo4jGraphStore(RemoteGraphStore):
+class Neo4jGraphStore(DatabaseGraphStore):
     """Neo4j-backed graph store.
 
-    Implements all abstract methods of :class:`RemoteGraphStore` against a
+    Implements all abstract methods of :class:`DatabaseGraphStore` against a
     Neo4j database.  The driver is created lazily per process, making this
     safe to use with multi-process DataLoader workers (``num_workers > 0``).
 
@@ -32,8 +32,8 @@ class Neo4jGraphStore(RemoteGraphStore):
         uri: str,
         user: str,
         pwd: str,
+        nodeid_property: str,
         database_name: Optional[str] = None,
-        nodeid_property: str = "nodeId",
     ):
         super().__init__()
         self.uri = uri

@@ -517,12 +517,12 @@ class FeatureStore(ABC):
         return f'{self.__class__.__name__}()'
 
 
-class RemoteFeatureStore(FeatureStore):
+class DatabaseFeatureStore(FeatureStore):
     r"""An abstract base class for :class:`FeatureStore` implementations
-    whose backing store is accessed remotely, e.g. a graph database,
+    whose backing store is accessed through a database, e.g. a graph database,
     key-value store, or feature service.
 
-    Subclasses must implement two hooks that together handle one remote
+    Subclasses must implement two hooks that together handle one database
     round-trip for an arbitrary set of :class:`TensorAttr` objects sharing
     the same node index:
 
@@ -532,12 +532,6 @@ class RemoteFeatureStore(FeatureStore):
     * :meth:`_decode_remote_attrs` — convert those raw records into a
       ``{attr_name: np.ndarray}`` mapping, one dense array per requested
       attr.
-
-    Subclasses must also satisfy the remaining :class:`FeatureStore`
-    contract by implementing :meth:`_multi_get_tensor`,
-    :meth:`_get_tensor_size`,
-    :meth:`_put_tensor`, :meth:`_remove_tensor`, and
-    :meth:`get_all_tensor_attrs`.
 
     Args:
         tensor_attr_cls (TensorAttr, optional): A user-defined
@@ -566,54 +560,54 @@ class RemoteFeatureStore(FeatureStore):
     @abstractmethod
     def _fetch_remote_attrs(
         self,
-        attrs: List[TensorAttr],
+        attr: TensorAttr,
     ) -> Tuple[Any, List[int]]:
-        r"""Issue a remote request for *attrs*.
+        r"""Issue a database request for a single *attr*.
 
         Args:
-            attrs (List[TensorAttr]): The tensor attributes to retrieve. The
-                ``index`` of each attr may already have been narrowed to the
-                subset of node IDs that were not found in the cache.
+            attr (TensorAttr): The tensor attribute to retrieve. The
+                ``index`` may already have been narrowed to the subset of
+                node IDs that were not found in the cache.
 
         Returns:
             A ``(records, fetched_nids)`` pair where *records* is the raw
-            backend response (e.g. a list of DB records) to be passed to
+            database response (e.g. a list of DB records) to be passed to
             :meth:`_decode_remote_attrs`, and *fetched_nids* is the list of
-            node IDs — in the order rows appear in the decoded arrays — that
-            the remote actually returned.
+            node IDs — in the order rows appear in the decoded array — that
+            the database actually returned.
         """
 
     @abstractmethod
     def _decode_remote_attrs(
         self,
         records: Any,
-        attrs: List[TensorAttr],
-    ) -> Dict[str, np.ndarray]:
-        r"""Convert raw *records* from :meth:`_fetch_remote_attrs` into dense
-        arrays, one per requested attr.
+        attr: TensorAttr,
+    ) -> np.ndarray:
+        r"""Convert raw *records* from :meth:`_fetch_remote_attrs` into a
+        dense array for a single attr.
 
         Args:
-            records: The raw backend response returned by
+            records: The raw database response returned by
                 :meth:`_fetch_remote_attrs`.
-            attrs (List[TensorAttr]): The attrs that were fetched, in the
-                same order as was passed to :meth:`_fetch_remote_attrs`.
+            attr (TensorAttr): The attr that was fetched.
 
         Returns:
-            A ``{attr_name: np.ndarray}`` dict with one entry per attr in
-            *attrs*. Row ``i`` of each array corresponds to the ``i``-th
-            ``fetched_nid`` returned by :meth:`_fetch_remote_attrs`.
+            An :class:`np.ndarray` where row ``i`` corresponds to the
+            ``i``-th ``fetched_nid`` returned by
+            :meth:`_fetch_remote_attrs`.
         """
 
     def _multi_get_tensor(
         self,
         attrs: List[TensorAttr],
     ) -> List[FeatureTensorType]:
-        r"""Fetch all *attrs* in as few remote round-trips as possible.
+        r"""Fetch all *attrs* in as few database round-trips as possible.
 
-        Supports partial cache hits: for each attr the cache may serve a
-        subset of the requested node IDs, and only the uncached node IDs are
-        included in the remote round-trip via attrs whose ``index`` has been
-        narrowed by :meth:`_cache_get`.
+        Supports partial cache hits: for each attr (group_name:str,
+        attr_name:str, node_index:Tensor) the cache may serve a subset of the
+        requested node IDs, and only the uncached node IDs are included in
+        the database round-trip via attrs whose ``index`` has been narrowed
+        by :meth:`_cache_get`.
 
         .. note::
             Override :meth:`_fetch_remote_attrs`,
@@ -624,39 +618,46 @@ class RemoteFeatureStore(FeatureStore):
         if not attrs:
             return []
 
-        cached: Dict[str, Dict[int, np.ndarray]]
+        cached: Dict[Tuple[Optional[NodeType], str], Dict[int, np.ndarray]]
         missing_attrs: List[TensorAttr]
         cached, missing_attrs = self._cache_get(attrs)
 
-        decoded: Dict[str, np.ndarray] = {}
-        fetched_nids: List[int] = []
+        # decoded_map: {(group_name, attr_name): (np.ndarray, [fetched_nids])}
+        decoded_map: Dict[Tuple[Optional[NodeType], str],
+                          Tuple[np.ndarray, List[int]]] = {}
         if missing_attrs:
-            records, fetched_nids = self._fetch_remote_attrs(missing_attrs)
-            decoded = self._decode_remote_attrs(records, missing_attrs)
+            fetched = self._multi_fetch_remote_attrs(missing_attrs)
+            decoded_map = self._multi_decode_remote_attrs(
+                fetched, missing_attrs)
             self._cache_put({
                 (a.group_name, a.attr_name): {
-                    int(nid): decoded[a.attr_name][i]
-                    for i, nid in enumerate(fetched_nids)
+                    int(nid): decoded_map[(a.group_name, a.attr_name)][0][i]
+                    for i, nid in enumerate(decoded_map[(a.group_name,
+                                                         a.attr_name)][1])
                 }
-                for a in missing_attrs if a.attr_name in decoded
+                for a in missing_attrs
+                if (a.group_name, a.attr_name) in decoded_map
             })
 
         result: List[FeatureTensorType] = []
         for attr in attrs:
-            name = attr.attr_name
+            key = (attr.group_name, attr.attr_name)
             nids = attr.index.tolist() if isinstance(
                 attr.index, Tensor) else list(attr.index)
+
             nid_to_pos = {int(nid): i for i, nid in enumerate(nids)}
 
-            cached_rows = cached.get(name, {})
+            cached_rows = cached.get(key, {})
 
+            # Determine shape from cache hit or decoded result.
             sample = next(iter(cached_rows.values()), None)
-            if sample is None and name in decoded and len(decoded[name]):
-                sample = decoded[name][0]
+            if (sample is None and key in decoded_map
+                    and len(decoded_map[key][0])):
+                sample = decoded_map[key][0][0]
             if sample is None:
                 raise RuntimeError(
-                    f"Could not determine shape for attr '{name}': no "
-                    f"cache hits and the remote store returned no records.")
+                    f"Could not determine shape for attr '{key}': no "
+                    f"cache hits and the database returned no records.")
 
             shape = ((len(nids), *sample.shape) if sample.ndim > 0 else
                      (len(nids), ))
@@ -665,32 +666,71 @@ class RemoteFeatureStore(FeatureStore):
             for nid, row in cached_rows.items():
                 out[nid_to_pos[int(nid)]] = row
 
-            if name in decoded and fetched_nids:
-                pos = np.fromiter(
-                    (nid_to_pos[int(nid)]
-                     for nid in fetched_nids if int(nid) in nid_to_pos),
-                    dtype=np.int64,
-                )
-                out[pos] = decoded[name][:len(pos)]
+            if key in decoded_map:
+                decoded_arr, attr_nids = decoded_map[key]
+                if attr_nids:
+                    pos = np.fromiter(
+                        (nid_to_pos[int(nid)]
+                         for nid in attr_nids if int(nid) in nid_to_pos),
+                        dtype=np.int64,
+                    )
+                    out[pos] = decoded_arr[:len(pos)]
 
             result.append(torch.from_numpy(out))
 
+        return result
+
+    def _multi_fetch_remote_attrs(
+        self,
+        attrs: List[TensorAttr],
+    ) -> Dict[Tuple[Optional[NodeType], str], Tuple[List[object], List[int]]]:
+        """Fetch all attrs individually. Override to batch for fewer
+        round-trips when attrs share group_name and index.
+
+        Returns mapping: (group_name, attr_name) -> (records, fetched_nids)
+        """
+        result: Dict[Tuple[Optional[NodeType], str], Tuple[List[object],
+                                                           List[int]]] = {}
+        for attr in attrs:
+            records, fetched_nids = self._fetch_remote_attrs(attr)
+            result[(attr.group_name, attr.attr_name)] = (records, fetched_nids)
+        return result
+
+    def _multi_decode_remote_attrs(
+        self,
+        fetched: Dict[Tuple[Optional[NodeType], str], Tuple[List[object],
+                                                            List[int]]],
+        attrs: List[TensorAttr],
+    ) -> Dict[Tuple[Optional[NodeType], str], Tuple[np.ndarray, List[int]]]:
+        """Decode all attrs. Override to optimize batch decoding.
+
+        Returns mapping:
+            (group_name, attr_name) -> (decoded_array, fetched_nids)
+        """
+        result: Dict[Tuple[Optional[NodeType], str], Tuple[np.ndarray,
+                                                           List[int]]] = {}
+        for attr in attrs:
+            key = (attr.group_name, attr.attr_name)
+            records, fetched_nids = fetched[key]
+            decoded = self._decode_remote_attrs(records, attr)
+            result[key] = (decoded, fetched_nids)
         return result
 
     @abstractmethod
     def _cache_get(
         self,
         attrs: List[TensorAttr],
-    ) -> Tuple[Dict[str, Dict[int, np.ndarray]], List[TensorAttr]]:
+    ) -> Tuple[Dict[Tuple[Optional[NodeType], str], Dict[int, np.ndarray]],
+               List[TensorAttr]]:
         r"""Look up *attrs* in the cache.
 
         Returns:
             A ``(cached, missing_attrs)`` pair where *cached* maps
-            ``attr_name`` to a ``{nid: row}`` dict of rows served from the
-            cache, and *missing_attrs* is the list of attrs that still need
-            to be fetched remotely — each with its ``index`` narrowed to the
-            uncached node IDs. Fully-cached attrs are omitted from
-            *missing_attrs*.
+            ``(group_name, attr_name)`` to a ``{nid: row}`` dict of rows
+            served from the cache, and *missing_attrs* is the list of attrs
+            that still need to be fetched through the database — each with
+            its ``index`` narrowed to the uncached node IDs. Fully-cached
+            attrs are omitted from *missing_attrs*.
         """
 
     @abstractmethod
@@ -701,8 +741,8 @@ class RemoteFeatureStore(FeatureStore):
         r"""Write *values* into the cache.
 
         Args:
-            values: A ``{attr_name: np.ndarray}`` mapping as returned by
-                :meth:`_decode_remote_attrs`.
+            values: A ``{(group_name, attr_name): {nid: row}}`` mapping as
+                returned by :meth:`_decode_remote_attrs`.
         """
 
     def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:

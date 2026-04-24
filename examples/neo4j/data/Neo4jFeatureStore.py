@@ -7,27 +7,30 @@ import numpy as np
 import torch
 from neo4j import Driver, GraphDatabase
 
-from torch_geometric.data.feature_store import RemoteFeatureStore, TensorAttr
+from torch_geometric.data.feature_store import DatabaseFeatureStore, TensorAttr
 from torch_geometric.typing import NodeType
 
 
-class Neo4jFeatureStore(RemoteFeatureStore):
-    r"""A generalised :class:`~torch_geometric.data.RemoteFeatureStore` backed
-    by Neo4j.
+class Neo4jFeatureStore(DatabaseFeatureStore):
+    r"""A generalised :class:`~torch_geometric.data.DatabaseFeatureStore`
+    backed by Neo4j.
 
-    Unlike :class:`Neo4jFeatureStore`, the set of tensor attributes and their
+    The set of tensor attributes and their
     Neo4j property mappings are fully configurable at construction time via
     *attr_map*.  The node label used in ``MATCH`` clauses is taken from
     ``TensorAttr.group_name`` at query time, falling back to
     *default_node_label* when ``group_name`` is ``None``.
 
-    A single Cypher round-trip is issued for all attrs that share the same
+    A single database round-trip is issued for all attrs that share the same
     node index (the normal mini-batch path), mirroring the optimisation in
-    :class:`Neo4jFeatureStore`.
+    :class:`DatabaseFeatureStore`.
 
     Args:
-        attr_map (Dict[str, dict]): Mapping from logical attr name (e.g.
-            ``"x"``, ``"y"``) to a plain dict with the keys:
+        attr_map: Either a flat ``Dict[str, spec]`` (homogeneous: attrs
+            live under ``group_name=None`` / ``default_node_label``), or a
+            nested ``Dict[Optional[NodeType], Dict[str, spec]]`` keyed by
+            node label for heterogeneous graphs. Each *spec* is a plain
+            dict with the keys:
 
             * ``"property"`` *(str)* — Neo4j node property to read.
             * ``"dtype"`` *(str)* — one of ``"float32"``, ``"int64"``,
@@ -36,47 +39,27 @@ class Neo4jFeatureStore(RemoteFeatureStore):
             * ``"encoding"`` *(str, optional)* — ``"f64[]"`` (default) or
               ``"byte[]"``; only used when *dtype* is ``"float32"``.
 
-        driver (neo4j.Driver, optional): An already-open driver.  When
-            provided *uri* / *user* / *pwd* are ignored and the driver is
-            never closed by this class. (default: :obj:`None`)
         uri (str, optional): Bolt URI used to create a driver when *driver*
             is :obj:`None`. (default: :obj:`None`)
-        user (str, optional): Neo4j username. (default: :obj:`None`)
-        pwd (str, optional): Neo4j password. (default: :obj:`None`)
+        user (str, optional): Username. (default: :obj:`None`)
+        pwd (str, optional): Password. (default: :obj:`None`)
         cache (MutableMapping, optional): Per-node-ID feature cache.  Pass
             :obj:`None` to disable. (default: :obj:`None`)
-        database_name (str, optional): Neo4j database to query.  Defaults to
-            *dataset_name*. (default: :obj:`None`)
-        dataset_name (str): Fallback database name.
-            (default: :obj:`"neo4j"`)
+        database_name (str, optional): Database to query.
+            (default: :obj:`None`)
         nodeid_property (str): Node property used as the integer node ID.
             (default: :obj:`"nodeId"`)
-        default_node_label (str, optional): Neo4j node label used in
-            ``MATCH`` when ``TensorAttr.group_name`` is ``None``.
-            (default: :obj:`None`)
-
-    Example::
-
-        store = Neo4jFeatureStore(
-            uri="bolt://localhost:7687",
-            user="neo4j",
-            pwd="password",
-            attr_map={
-                "x": {"property": "features", "dtype": "float32",
-                      "encoding": "f64[]"},
-                "y": {"property": "category", "dtype": "str"},
-            },
-        )
+        default_node_label (str, optional): Node label used in the database
+            query when ``TensorAttr.group_name`` is ``None``.
     """
     def __init__(
         self,
-        attr_map: Dict[str, Dict[str, str]],
+        attr_map: Dict[Any, Any],
         uri: Optional[str] = None,
         user: Optional[str] = None,
         pwd: Optional[str] = None,
         cache: Optional[MutableMapping] = None,
         database_name: Optional[str] = None,
-        dataset_name: str = "neo4j",
         nodeid_property: str = "nodeId",
         default_node_label: Optional[str] = None,
     ) -> None:
@@ -86,54 +69,95 @@ class Neo4jFeatureStore(RemoteFeatureStore):
         # the base class will call self._init_cache() during construction.
         self._user_cache = cache
         super().__init__()
-        self.attr_map = attr_map
         self.uri = uri
         self.user = user
         self.pwd = pwd
         self._driver: Optional[Driver] = None
-        self.database_name = database_name if database_name else dataset_name
-        self.dataset_name = dataset_name
+        self.database_name = database_name
         self.nodeid_property = nodeid_property
         self.default_node_label = default_node_label
-        self._labels: Dict[str, Dict[str, int]] = {
-            name: {}
-            for name, spec in attr_map.items() if spec.get("dtype") == "str"
+
+        # Normalise attr_map to nested {group_name: {attr_name: spec}}. Flat
+        # input {attr_name: spec} is wrapped under the single key
+        # ``default_node_label`` (or ``None`` when no default is given) so
+        # homogeneous callers continue to work unchanged.
+        sample_val = next(iter(attr_map.values()))
+        is_nested = isinstance(sample_val, dict) and all(
+            isinstance(v, dict) for v in attr_map.values()
+        ) and not {"property", "dtype", "encoding"} & set(sample_val.keys())
+        if is_nested:
+            self.attr_map: Dict[Optional[NodeType],
+                                Dict[str, Dict[str, str]]] = {
+                                    g: dict(spec)
+                                    for g, spec in attr_map.items()
+                                }
+        else:
+            self.attr_map = {default_node_label: dict(attr_map)}
+
+        self._labels: Dict[Tuple[Optional[NodeType], str], Dict[str, int]] = {
+            (group, name): {}
+            for group, group_map in self.attr_map.items()
+            for name, spec in group_map.items() if spec.get("dtype") == "str"
         }
 
     def _init_cache(self) -> Optional[MutableMapping]:
         return self._user_cache
 
+    def _resolve_group(self,
+                       group_name: Optional[NodeType]) -> Optional[NodeType]:
+        """Pick the attr_map group key for *group_name*.
+
+        Tries the literal group, then ``default_node_label``, then ``None``.
+        Returns the first key present in :attr:`attr_map`.
+        """
+        for candidate in (group_name, self.default_node_label, None):
+            if candidate in self.attr_map:
+                return candidate
+        raise KeyError(
+            f"No attr_map entry for group '{group_name}' "
+            f"(tried default '{self.default_node_label}' and None). "
+            f"Known groups: {list(self.attr_map)}")
+
+    def _get_spec(
+        self,
+        group_name: Optional[NodeType],
+        attr_name: str,
+    ) -> Dict[str, str]:
+        group = self._resolve_group(group_name)
+        group_map = self.attr_map[group]
+        if attr_name not in group_map:
+            raise ValueError(f"attr '{attr_name}' is not registered for group "
+                             f"'{group}'. Known attrs: {list(group_map)}")
+        return group_map[attr_name]
+
     def _build_query(
         self,
         attr_names: List[str],
         node_label: Optional[str],
+        group_key: Optional[NodeType],
     ) -> str:
         """Build a single Cypher query that returns all requested attrs."""
         lf = f":{node_label}" if node_label else ""
-        return_cols = ", ".join(
-            f"n.{self.attr_map[name]['property']} AS {name}"
-            for name in attr_names)
+        group_map = self.attr_map[group_key]
+        return_cols = ", ".join(f"n.{group_map[name]['property']} AS {name}"
+                                for name in attr_names)
         return (f"UNWIND $node_ids AS nid "
                 f"MATCH (n{lf} {{{self.nodeid_property}: nid}}) "
                 f"RETURN nid AS id, {return_cols}")
 
     def _fetch_remote_attrs(
         self,
-        attrs: List[TensorAttr],
+        attr: TensorAttr,
     ) -> Tuple[List[object], List[int]]:
-        if not attrs:
-            return [], []
-
-        # All attrs in one call are assumed to share a node index and group.
-        index = attrs[0].index
+        """Fetch a single attr from the database."""
+        index = attr.index
         node_ids: List[int] = (index.tolist() if isinstance(
             index, torch.Tensor) else list(index))
 
-        attr_names = [a.attr_name for a in attrs]
-        group = attrs[0].group_name
-        node_label = group if group is not None else self.default_node_label
-
-        query = self._build_query(attr_names, node_label)
+        group_key = self._resolve_group(attr.group_name)
+        node_label = (attr.group_name if attr.group_name is not None else
+                      self.default_node_label)
+        query = self._build_query([attr.attr_name], node_label, group_key)
         with self._get_driver().session(database=self.database_name,
                                         fetch_size=1000) as session:
             records = list(session.run(query, node_ids=node_ids))
@@ -143,31 +167,25 @@ class Neo4jFeatureStore(RemoteFeatureStore):
 
     def _decode_remote_attrs(
         self,
-        records: Any,
-        attrs: List[TensorAttr],
-    ) -> Dict[str, np.ndarray]:
-        result: Dict[str, np.ndarray] = {}
+        records: List[object],
+        attr: TensorAttr,
+    ) -> np.ndarray:
+        """Decode a single attr from records."""
+        name = attr.attr_name
+        spec = self._get_spec(attr.group_name, name)
 
-        for attr in attrs:
-            name = attr.attr_name
-            spec = self.attr_map[name]
-
-            if not records:
-                if spec.get("dtype", "float32") == "float32":
-                    result[name] = np.empty((0, ), dtype=np.float32)
-                else:
-                    result[name] = np.empty((0, ), dtype=np.int64)
-                continue
-
+        if not records:
             if spec.get("dtype", "float32") == "float32":
-                result[name] = self._decode_float_col(
-                    records, name, spec.get("encoding", "f64[]"))
+                return np.empty((0, ), dtype=np.float32)
             else:
-                result[name] = self._decode_label_col(
-                    records, name,
-                    spec.get("dtype") == "str")
+                return np.empty((0, ), dtype=np.int64)
 
-        return result
+        if spec.get("dtype", "float32") == "float32":
+            return self._decode_float_col(records, name,
+                                          spec.get("encoding", "f64[]"))
+        else:
+            return self._decode_label_col(records, attr.group_name, name,
+                                          spec.get("dtype") == "str")
 
     def _decode_float_col(
         self,
@@ -185,11 +203,14 @@ class Neo4jFeatureStore(RemoteFeatureStore):
     def _decode_label_col(
         self,
         records: List[object],
+        group_name: Optional[NodeType],
         field: str,
         string_labels: bool,
     ) -> np.ndarray:
         arr = np.empty(len(records), dtype=np.int64)
-        vocab = self._labels.get(field, {})
+        group_key = self._resolve_group(group_name) if string_labels else None
+        vocab = self._labels.get(
+            (group_key, field), {}) if string_labels else {}
         for i, rec in enumerate(records):
             val = rec[field]
             if val is None:
@@ -200,16 +221,20 @@ class Neo4jFeatureStore(RemoteFeatureStore):
                 arr[i] = vocab[val]
             else:
                 arr[i] = int(val)
+        if string_labels:
+            self._labels[(group_key, field)] = vocab
         return arr
 
     def _cache_get(
         self,
         attrs: List[TensorAttr],
-    ) -> Tuple[Dict[str, Dict[int, np.ndarray]], List[TensorAttr]]:
+    ) -> Tuple[Dict[Tuple[Optional[NodeType], str], Dict[int, np.ndarray]],
+               List[TensorAttr]]:
         if self._cache is None:
             return {}, list(attrs)
 
-        cached: Dict[str, Dict[int, np.ndarray]] = {}
+        cached: Dict[Tuple[Optional[NodeType], str], Dict[int,
+                                                          np.ndarray]] = {}
         missing: List[TensorAttr] = []
 
         for attr in attrs:
@@ -228,7 +253,7 @@ class Neo4jFeatureStore(RemoteFeatureStore):
                     hits[nid] = val
 
             if hits:
-                cached[attr.attr_name] = hits
+                cached[(attr.group_name, attr.attr_name)] = hits
             if miss_ids:
                 missing.append(
                     replace(attr, index=torch.tensor(miss_ids,
@@ -248,8 +273,8 @@ class Neo4jFeatureStore(RemoteFeatureStore):
 
     def get_all_tensor_attrs(self) -> List[TensorAttr]:
         return [
-            TensorAttr(group_name=None, attr_name=name)
-            for name in self.attr_map
+            TensorAttr(group_name=group, attr_name=name)
+            for group, group_map in self.attr_map.items() for name in group_map
         ]
 
     def _get_tensor_size(self, attr: TensorAttr) -> Optional[Tuple[int, ...]]:
@@ -266,11 +291,7 @@ class Neo4jFeatureStore(RemoteFeatureStore):
         ``(len(index),)``.  The attr must be registered in *attr_map*.
         """
         name = attr.attr_name
-        if name not in self.attr_map:
-            raise ValueError(f"attr '{name}' is not registered in attr_map. "
-                             f"Known attrs: {list(self.attr_map)}")
-
-        spec = self.attr_map[name]
+        spec = self._get_spec(attr.group_name, name)
         prop = spec["property"]
         encoding = spec.get("encoding", "f64[]")
         dtype = spec.get("dtype", "float32")
@@ -312,11 +333,8 @@ class Neo4jFeatureStore(RemoteFeatureStore):
         of the matching label.
         """
         name = attr.attr_name
-        if name not in self.attr_map:
-            raise ValueError(f"attr '{name}' is not registered in attr_map. "
-                             f"Known attrs: {list(self.attr_map)}")
-
-        prop = self.attr_map[name]["property"]
+        spec = self._get_spec(attr.group_name, name)
+        prop = spec["property"]
         group = attr.group_name
         node_label = group if group is not None else self.default_node_label
         lf = f":{node_label}" if node_label else ""
