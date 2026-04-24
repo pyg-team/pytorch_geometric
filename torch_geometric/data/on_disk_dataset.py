@@ -1,6 +1,8 @@
 import os
 from typing import Any, Callable, Iterable, List, Optional, Sequence, Union
 
+import numpy as np
+import torch
 from torch import Tensor
 
 from torch_geometric.data import Database, RocksDatabase, SQLiteDatabase
@@ -137,9 +139,53 @@ class OnDiskDataset(Dataset):
         self.db.multi_insert(range(start, end), data_list, batch_size)
         self._numel += (end - start)
 
+    def _resolve_index(
+        self,
+        idx: Union[int, np.integer, Tensor, np.ndarray],
+    ) -> int:
+        if isinstance(idx, Tensor):
+            idx = idx.item()
+        elif isinstance(idx, np.ndarray):
+            idx = idx.item()
+
+        return self.indices()[idx]
+
+    def _resolve_indices(
+        self,
+        indices: Union[Iterable[int], Tensor, slice, range],
+    ) -> Union[Sequence[int], range]:
+        base_indices = self.indices()
+
+        if isinstance(indices, slice):
+            return base_indices[indices]
+
+        if isinstance(indices, Tensor):
+            if indices.dtype == torch.bool:
+                indices = indices.flatten().nonzero(as_tuple=False).flatten()
+            indices = indices.flatten().tolist()
+        elif isinstance(indices, range):
+            indices = list(indices)
+        elif not isinstance(indices, Sequence):
+            indices = list(indices)
+
+        return [base_indices[idx] for idx in indices]
+
     def get(self, idx: int) -> BaseData:
         r"""Gets the data object at index :obj:`idx`."""
-        return self.deserialize(self.db.get(idx))
+        return self.deserialize(self.db.get(self._resolve_index(idx)))
+
+    def __getitem__(
+        self,
+        idx: Union[int, np.integer, Tensor, np.ndarray, slice, Sequence[int]],
+    ) -> Union['OnDiskDataset', BaseData]:
+        if (isinstance(idx, (int, np.integer))
+                or (isinstance(idx, Tensor) and idx.dim() == 0)
+                or (isinstance(idx, np.ndarray) and np.isscalar(idx))):
+            data = self.get(idx)
+            data = data if self.transform is None else self.transform(data)
+            return data
+
+        return self.index_select(idx)
 
     def multi_get(
         self,
@@ -147,6 +193,8 @@ class OnDiskDataset(Dataset):
         batch_size: Optional[int] = None,
     ) -> List[BaseData]:
         r"""Gets a list of data objects from the specified indices."""
+        indices = self._resolve_indices(indices)
+
         if len(indices) == 1:
             data_list = [self.db.get(indices[0])]
         else:
