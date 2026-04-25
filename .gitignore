@@ -32,3 +32,5 @@ uv.lock
 
 !torch_geometric/data/
 !test/data/
+!examples/neo4j/data/
+datasets/
