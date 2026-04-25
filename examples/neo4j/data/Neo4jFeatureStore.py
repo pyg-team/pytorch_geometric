@@ -1,13 +1,15 @@
 import atexit
-from collections.abc import MutableMapping
-from dataclasses import replace
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
 from neo4j import Driver, GraphDatabase
 
-from torch_geometric.data.feature_store import DatabaseFeatureStore, TensorAttr
+from torch_geometric.data.feature_store import (
+    DatabaseFeatureStore,
+    FeatureCache,
+    TensorAttr,
+)
 from torch_geometric.typing import NodeType
 
 
@@ -43,8 +45,8 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
             is :obj:`None`. (default: :obj:`None`)
         user (str, optional): Username. (default: :obj:`None`)
         pwd (str, optional): Password. (default: :obj:`None`)
-        cache (MutableMapping, optional): Per-node-ID feature cache.  Pass
-            :obj:`None` to disable. (default: :obj:`None`)
+        cache (FeatureCache, optional): Per-node-ID feature cache.
+            Pass :obj:`None` to disable. (default: :obj:`None`)
         database_name (str, optional): Database to query.
             (default: :obj:`None`)
         nodeid_property (str): Node property used as the integer node ID.
@@ -58,17 +60,14 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
         uri: Optional[str] = None,
         user: Optional[str] = None,
         pwd: Optional[str] = None,
-        cache: Optional[MutableMapping] = None,
+        cache: Optional[FeatureCache] = None,
         database_name: Optional[str] = None,
         nodeid_property: str = "nodeId",
         default_node_label: Optional[str] = None,
     ) -> None:
         if not attr_map:
             raise ValueError("attr_map must contain at least one entry.")
-        # Stash the user-provided cache before super().__init__ runs, because
-        # the base class will call self._init_cache() during construction.
-        self._user_cache = cache
-        super().__init__()
+        super().__init__(cache=cache)
         self.uri = uri
         self.user = user
         self.pwd = pwd
@@ -99,9 +98,6 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
             for group, group_map in self.attr_map.items()
             for name, spec in group_map.items() if spec.get("dtype") == "str"
         }
-
-    def _init_cache(self) -> Optional[MutableMapping]:
-        return self._user_cache
 
     def _resolve_group(self,
                        group_name: Optional[NodeType]) -> Optional[NodeType]:
@@ -225,52 +221,6 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
             self._labels[(group_key, field)] = vocab
         return arr
 
-    def _cache_get(
-        self,
-        attrs: List[TensorAttr],
-    ) -> Tuple[Dict[Tuple[Optional[NodeType], str], Dict[int, np.ndarray]],
-               List[TensorAttr]]:
-        if self._cache is None:
-            return {}, list(attrs)
-
-        cached: Dict[Tuple[Optional[NodeType], str], Dict[int,
-                                                          np.ndarray]] = {}
-        missing: List[TensorAttr] = []
-
-        for attr in attrs:
-            index = attr.index
-            nids = (index.tolist()
-                    if isinstance(index, torch.Tensor) else list(index))
-
-            hits: Dict[int, np.ndarray] = {}
-            miss_ids: List[int] = []
-            for nid in nids:
-                nid = int(nid)
-                val = self._cache.get((attr.group_name, attr.attr_name, nid))
-                if val is None:
-                    miss_ids.append(nid)
-                else:
-                    hits[nid] = val
-
-            if hits:
-                cached[(attr.group_name, attr.attr_name)] = hits
-            if miss_ids:
-                missing.append(
-                    replace(attr, index=torch.tensor(miss_ids,
-                                                     dtype=torch.int64)))
-
-        return cached, missing
-
-    def _cache_put(
-        self,
-        values: Dict[Tuple[Optional[NodeType], str], Dict[int, np.ndarray]],
-    ) -> None:
-        if self._cache is None:
-            return
-        for (group_name, attr_name), nid_map in values.items():
-            for nid, val in nid_map.items():
-                self._cache[(group_name, attr_name, int(nid))] = val
-
     def get_all_tensor_attrs(self) -> List[TensorAttr]:
         return [
             TensorAttr(group_name=group, attr_name=name)
@@ -283,7 +233,7 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
             return None
         return tuple(out.size())
 
-    def _put_tensor(self, tensor: torch.Tensor, attr: TensorAttr) -> bool:
+    def _put_tensor_db(self, tensor: torch.Tensor, attr: TensorAttr) -> bool:
         r"""Write *tensor* rows back to Neo4j.
 
         ``attr.index`` identifies which node IDs to update.  The tensor must
@@ -326,7 +276,7 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
 
         return True
 
-    def _remove_tensor(self, attr: TensorAttr) -> bool:
+    def _remove_tensor_db(self, attr: TensorAttr) -> bool:
         r"""Remove a node property from Neo4j for the nodes in ``attr.index``.
 
         If ``attr.index`` is ``None`` the property is removed from every node

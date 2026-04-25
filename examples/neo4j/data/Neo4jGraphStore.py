@@ -1,9 +1,8 @@
 import atexit
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 import torch
 from neo4j import Driver, GraphDatabase
-from torch import Tensor
 
 from torch_geometric.data.graph_store import (
     DatabaseGraphStore,
@@ -65,40 +64,6 @@ class Neo4jGraphStore(DatabaseGraphStore):
     def __setstate__(self, state):
         self.__dict__.update(state)
         self._driver = None
-
-    def _decode_subgraph(
-        self,
-        record: Optional[dict],
-        seed_nodes: Tensor,
-    ) -> Tuple[Tensor, Tensor, Tensor]:
-        """Convert a raw ``sample_from_nodes`` record into
-        ``(node, row, col)`` COO tensors.
-
-        On an empty result *seed_nodes* are returned as the node tensor with
-        zero-length edge tensors.
-        """
-        empty = torch.zeros(0, dtype=torch.long)
-
-        if record is None or not record.get("nodes", None):
-            return seed_nodes, empty, empty
-
-        global_ids = torch.tensor(record["nodes"], dtype=torch.long)
-
-        global_to_local = {
-            int(gid): i
-            for i, gid in enumerate(global_ids.tolist())
-        }
-
-        edges = record.get("edges") or []
-        if edges:
-            row = torch.tensor([global_to_local[e[0]] for e in edges],
-                               dtype=torch.long)
-            col = torch.tensor([global_to_local[e[1]] for e in edges],
-                               dtype=torch.long)
-        else:
-            row = col = empty
-
-        return global_ids, row, col
 
     def get_all_edge_attrs(self) -> List[EdgeAttr]:
         return []

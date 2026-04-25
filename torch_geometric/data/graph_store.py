@@ -21,12 +21,18 @@ from abc import ABC, abstractmethod
 from collections import defaultdict
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
+import torch
 from torch import Tensor
 
 from torch_geometric.index import index2ptr, ptr2index
-from torch_geometric.typing import EdgeTensorType, EdgeType, OptTensor
+from torch_geometric.typing import (
+    EdgeTensorType,
+    EdgeType,
+    NodeType,
+    OptTensor,
+)
 from torch_geometric.utils import index_sort
 from torch_geometric.utils.mixin import CastMixin
 
@@ -350,7 +356,80 @@ class GraphStore(ABC):
         return row_dict, col_dict, perm_dict
 
 
-class DatabaseGraphStore(GraphStore):
+@dataclass
+class ResultSchema:
+    r"""Marker base for declarative descriptions of the record shape returned
+    by :meth:`DatabaseGraphStore._fetch_subgraph`.
+
+    Subclass with plain dataclass fields to describe a new record layout.
+    Decoding is performed by
+    :meth:`DatabaseGraphStore._decode_subgraph`, which dispatches on the
+    concrete schema type.
+
+    A schema also declares whether its decoded result is heterogeneous via
+    :attr:`is_hetero`; the sampler uses this flag to build the correct
+    :class:`SamplerOutput` / :class:`HeteroSamplerOutput`.
+    """
+    @property
+    def is_hetero(self) -> bool:
+        r"""Whether decoded results are heterogeneous (per-type dicts)."""
+        return False
+
+
+@dataclass
+class HomogeneousSchema(ResultSchema):
+    r"""Default schema for homogeneous records.
+
+    Records have the form::
+
+        {
+            <node_key>: [global_id, ...],
+            <edge_key>: [(src_global_id, dst_global_id), ...],
+        }
+
+    *edge_src* and *edge_dst* index into each edge entry; they may be ints
+    (tuple/list entries) or strings (dict entries).
+    """
+    node_key: str = "nodes"
+    edge_key: str = "edges"
+    edge_src: Union[int, str] = 0
+    edge_dst: Union[int, str] = 1
+
+
+@dataclass
+class HeterogeneousSchema(ResultSchema):
+    r"""Default schema for heterogeneous records.
+
+    Records have the form::
+
+        {
+            <node_dict_key>: {node_type: [global_id, ...]},
+            <edge_dict_key>: {edge_type_key: [(src, dst), ...]},
+        }
+
+    *edge_type_key* may be either a 3-tuple ``(src_t, rel, dst_t)`` (e.g. if
+    the backend already returns PyG-native edge types), or a string encoded
+    using *edge_key_separator* (e.g. ``"paper-cites-paper"`` with the
+    default ``"-"`` separator).
+    """
+    node_dict_key: str = "node_dict"
+    edge_dict_key: str = "edge_dict"
+    edge_src: Union[int, str] = 0
+    edge_dst: Union[int, str] = 1
+    edge_key_separator: str = "-"
+
+    @property
+    def is_hetero(self) -> bool:
+        return True
+
+
+HomoDecoded = Tuple[Tensor, Tensor, Tensor]
+HeteroDecoded = Tuple[Dict[NodeType, Tensor], Dict[EdgeType, Tensor],
+                      Dict[EdgeType, Tensor]]
+DecodedResult = Union[HomoDecoded, HeteroDecoded]
+
+
+class DatabaseGraphStore(GraphStore, ABC):
     r"""An abstract base class for :class:`GraphStore` implementations whose
     backing store is accessed through a database, e.g. a graph database or a
     sampling service.
@@ -359,12 +438,17 @@ class DatabaseGraphStore(GraphStore):
     the full edge index efficiently; instead, sampling is pushed to the
     database.
 
-    Subclasses implement two hooks:
+    Subclasses implement a single hook:
 
-    * :meth:`_fetch_subgraph` — execute a backend query string for a set of
-      seed nodes and return the raw result record.
-    * :meth:`_decode_subgraph` — convert that raw record into
-      ``(node, row, col)`` COO tensors
+    * :meth:`_fetch_subgraph` — execute a backend query for a set of seed
+      nodes and return the raw result record.
+
+    Decoding from the raw record into PyG tensors is performed here based on
+    a :class:`ResultSchema` supplied by the caller (typically the sampler).
+    Built-in support is provided for :class:`HomogeneousSchema` and
+    :class:`HeterogeneousSchema`; for custom record shapes, subclass
+    :class:`ResultSchema` *and* override :meth:`_decode_subgraph` to handle
+    the new schema type.
 
     Args:
         edge_attr_cls (EdgeAttr, optional): A user-defined :class:`EdgeAttr`
@@ -377,38 +461,12 @@ class DatabaseGraphStore(GraphStore):
     def _fetch_subgraph(self, query: str, kwargs: dict) -> Any:
         r"""Execute *query* against the database and return the result.
 
-        The query string and its parameters are supplied by the caller (e.g.
-        the loader), keeping query definition out of the store.
-
         Args:
             query (str): The database query to execute (e.g. a Cypher string).
             kwargs (dict): Parameters to pass alongside *query*.
 
         Returns:
-            The raw database response (e.g. a list of DB records).
-        """
-
-    @abstractmethod
-    def _decode_subgraph(
-        self,
-        records: Any,
-        seed_nodes: Tensor,
-    ) -> Tuple[Tensor, Tensor, Tensor]:
-        r"""Convert raw *records* from :meth:`_fetch_subgraph` into edge
-        tensors.
-
-        Args:
-            records: The raw database response returned by
-                :meth:`_fetch_subgraph`.
-            seed_nodes (torch.Tensor): 1-D int64 tensor of seed node IDs.
-                Returned as the node tensor when the database result is empty.
-
-        Returns:
-            A ``(node, row, col)`` triple where *node* is a 1D tensor of
-            global node IDs in encounter order, and *row* / *col* are COO
-            edge indices into *node* (i.e. local indices).  On an empty
-            result *seed_nodes* is returned as *node* with zero-length
-            *row* and *col*.
+            The raw database response (e.g. a single record dict).
         """
 
     def sample_subgraph(
@@ -416,23 +474,137 @@ class DatabaseGraphStore(GraphStore):
         query: str,
         kwargs: Any,
         seed_nodes: Tensor,
-    ) -> Tuple[Tensor, Tensor, Tensor]:
+        schema: Optional[ResultSchema] = None,
+    ) -> DecodedResult:
         r"""Sample a subgraph by executing *query* and decoding the result.
 
-        Orchestrates :meth:`_fetch_subgraph` and :meth:`_decode_subgraph` in
-        a single round-trip.
-
         Args:
-            query (str): The backend query to execute (e.g. a Cypher string).
-            kwargs (dict): Parameters to pass alongside *query*.
+            query (str): The backend query to execute.
+            kwargs (dict): Parameters passed alongside *query*.
             seed_nodes (torch.Tensor): 1-D int64 tensor of seed node IDs.
-                Returned as the node tensor when the backend result is empty.
+                Returned as the node tensor when the backend result is empty
+                (homogeneous schemas only).
+            schema (ResultSchema, optional): Description of the record shape
+                returned by :meth:`_fetch_subgraph`.  Defaults to
+                :class:`HomogeneousSchema`.
 
         Returns:
-            A ``(node, row, col)`` COO triple.
+            For :class:`HomogeneousSchema`: ``(node, row, col)`` tensors.
+            For :class:`HeterogeneousSchema`:
+            ``(node_dict, row_dict, col_dict)``.
         """
+        if schema is None:
+            schema = HomogeneousSchema()
         records = self._fetch_subgraph(query, kwargs)
-        return self._decode_subgraph(records, seed_nodes)
+        decoded = self._decode_subgraph(records, schema)
+        if decoded is not None:
+            return decoded
+        return self._empty_result(seed_nodes, schema)
+
+    def _decode_subgraph(
+        self,
+        record: Any,
+        schema: ResultSchema,
+    ) -> Optional[DecodedResult]:
+        r"""Convert *record* into PyG tensors using *schema*.
+
+        Dispatches on the concrete schema type.  Override in a subclass to
+        support custom :class:`ResultSchema` subclasses.
+        """
+        if isinstance(schema, HomogeneousSchema):
+            return self._decode_homogeneous(record, schema)
+        if isinstance(schema, HeterogeneousSchema):
+            return self._decode_heterogeneous(record, schema)
+        raise NotImplementedError(
+            f"No built-in decoder for schema type "
+            f"'{type(schema).__name__}'. Override _decode_subgraph in your "
+            f"DatabaseGraphStore subclass to handle it.")
+
+    def _decode_homogeneous(
+        self,
+        record: Any,
+        schema: HomogeneousSchema,
+    ) -> Optional[HomoDecoded]:
+        if record is None or not record.get(schema.node_key):
+            return None
+
+        global_ids = torch.tensor(record[schema.node_key], dtype=torch.long)
+        g2l = {int(g): i for i, g in enumerate(global_ids.tolist())}
+
+        edges = record.get(schema.edge_key) or []
+        if edges:
+            row = torch.tensor([g2l[e[schema.edge_src]] for e in edges],
+                               dtype=torch.long)
+            col = torch.tensor([g2l[e[schema.edge_dst]] for e in edges],
+                               dtype=torch.long)
+        else:
+            empty = torch.zeros(0, dtype=torch.long)
+            row = col = empty
+        return global_ids, row, col
+
+    def _decode_heterogeneous(
+        self,
+        record: Any,
+        schema: HeterogeneousSchema,
+    ) -> Optional[HeteroDecoded]:
+        if record is None or not record.get(schema.node_dict_key):
+            return None
+
+        node_dict: Dict[NodeType, Tensor] = {}
+        g2l: Dict[NodeType, Dict[int, int]] = {}
+        for ntype, ids in record[schema.node_dict_key].items():
+            t = torch.tensor(ids, dtype=torch.long)
+            node_dict[ntype] = t
+            g2l[ntype] = {int(g): i for i, g in enumerate(t.tolist())}
+
+        row_dict: Dict[EdgeType, Tensor] = {}
+        col_dict: Dict[EdgeType, Tensor] = {}
+        for k, edges in (record.get(schema.edge_dict_key) or {}).items():
+            etype = self._parse_edge_type(k, schema.edge_key_separator)
+            src_t, _, dst_t = etype
+            if not edges:
+                empty = torch.zeros(0, dtype=torch.long)
+                row_dict[etype] = empty
+                col_dict[etype] = empty
+                continue
+            row_dict[etype] = torch.tensor(
+                [g2l[src_t][e[schema.edge_src]] for e in edges],
+                dtype=torch.long)
+            col_dict[etype] = torch.tensor(
+                [g2l[dst_t][e[schema.edge_dst]] for e in edges],
+                dtype=torch.long)
+        return node_dict, row_dict, col_dict
+
+    @staticmethod
+    def _parse_edge_type(key: Any, separator: str) -> EdgeType:
+        r"""Coerce an edge_dict key into a PyG ``EdgeType`` 3-tuple.
+
+        Accepts either a 3-tuple ``(src_t, rel, dst_t)`` (returned as-is)
+        or a string encoded with *separator*.
+        """
+        if isinstance(key, tuple) and len(key) == 3:
+            return key
+        if isinstance(key, str):
+            parts = key.split(separator)
+            if len(parts) != 3:
+                raise ValueError(
+                    f"Cannot parse edge type from key {key!r} using "
+                    f"separator {separator!r}: expected 3 parts, got "
+                    f"{len(parts)}.")
+            return (parts[0], parts[1], parts[2])
+        raise ValueError(
+            f"Cannot interpret edge_dict key {key!r}: expected a 3-tuple "
+            f"or a string encoded with separator {separator!r}.")
+
+    def _empty_result(
+        self,
+        seed_nodes: Tensor,
+        schema: ResultSchema,
+    ) -> DecodedResult:
+        if schema.is_hetero:
+            return {}, {}, {}
+        empty = torch.zeros(0, dtype=torch.long)
+        return seed_nodes, empty, empty
 
     # GraphStore ABC ##########################################################
     @abstractmethod
@@ -440,9 +612,9 @@ class DatabaseGraphStore(GraphStore):
         r"""Database stores do not support full edge index retrieval by
         default.
 
-        Sampling is expected to go through :meth:`_fetch_subgraph` /
-        :meth:`_decode_subgraph`.  Override this
-        method if your database can efficiently return the entire edge index.
+        Sampling is expected to go through :meth:`sample_subgraph`.  Override
+        this method if your database can efficiently return the entire edge
+        index.
         """
 
     def _put_edge_index(

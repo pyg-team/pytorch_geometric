@@ -1,10 +1,15 @@
 from abc import abstractmethod
-from typing import List, Union
+from typing import Optional, Union
 
 import torch
 from torch import Tensor
 
-from torch_geometric.data.graph_store import DatabaseGraphStore
+from torch_geometric.data.graph_store import (
+    DatabaseGraphStore,
+    HeterogeneousSchema,
+    HomogeneousSchema,
+    ResultSchema,
+)
 from torch_geometric.sampler.base import (
     BaseSampler,
     EdgeSamplerInput,
@@ -37,18 +42,44 @@ class DatabaseSampler(BaseSampler):
             executes queries and returns results.
         num_neighbors (List[int]): Number of neighbors to sample per hop.
             Negative values mean "take all".
+        schema (ResultSchema, optional): Description of the record shape
+            returned by the graph store, used by the store's decoder.
+            Defaults to :class:`HomogeneousSchema`.
     """
     def __init__(
         self,
         graph_store: DatabaseGraphStore,
-        track_nodes_by_hop: bool = False,
+        schema: Optional[ResultSchema] = None,
+        is_hetero: bool = False,
     ):
         self.graph_store = graph_store
-        # Track nodes by hop needed for pre aggregation of weights.
-        self.track_nodes_by_hop = track_nodes_by_hop
-        self.last_nodes_by_hop: List[List[int]] = []
         self.node_sampling_query = self._build_node_sampling_query()
         self.edge_sampling_query = self._build_edge_sampling_query()
+
+        if schema is None:
+            schema = self._build_schema(is_hetero)
+        if schema.is_hetero != is_hetero:
+            raise ValueError(
+                f"schema.is_hetero={schema.is_hetero} contradicts "
+                f"is_hetero={is_hetero}; pass only one or make them agree.")
+        self.schema = schema
+
+    def _build_schema(self, is_hetero: bool) -> ResultSchema:
+        r"""Default schema picked when the caller does not pass one
+        explicitly.
+
+        Override in a subclass to return a custom :class:`ResultSchema`.
+        The returned schema's :attr:`is_hetero` must match the *is_hetero*
+        constructor argument; mismatch raises :class:`ValueError`.
+        """
+        return HeterogeneousSchema() if is_hetero else HomogeneousSchema()
+
+    @property
+    def is_hetero(self) -> bool:
+        r"""Whether the active schema is heterogeneous.  Always consistent
+        with :attr:`self.schema`.
+        """
+        return self.schema.is_hetero
 
     def _build_node_sampling_query(self) -> str:
         """Compile a native query for node-seed multi-hop neighbor sampling.
@@ -86,14 +117,18 @@ class DatabaseSampler(BaseSampler):
         col,
         seeds: Tensor,
         seed_time,
+        input_type: Optional[str] = None,
     ) -> Union[SamplerOutput, HeteroSamplerOutput]:
         """Wrap ``(node, row, col)`` into the correct output type.
 
-        Returns :class:`~torch_geometric.sampler.HeteroSamplerOutput` when
-        *node* is a dict (heterogeneous result from the graph store), and
-        :class:`~torch_geometric.sampler.SamplerOutput` otherwise.
+        Dispatches on :attr:`self.schema.is_hetero`.  For heterogeneous
+        schemas, splices *seeds* into ``node[input_type]`` if missing — this
+        rescues the empty-result case where the decoder produced no nodes
+        for the seed's type.
         """
-        if isinstance(node, dict):
+        if self.schema.is_hetero:
+            if input_type is not None and input_type not in node:
+                node = {**node, input_type: seeds}
             return HeteroSamplerOutput(
                 node=node,
                 row=row,
@@ -137,9 +172,10 @@ class DatabaseSampler(BaseSampler):
 
         params = self._build_query_params(seeds, **kwargs)
         node, row, col = self.graph_store.sample_subgraph(
-            self.node_sampling_query, params, seeds)
+            self.node_sampling_query, params, seeds, self.schema)
 
-        return self._build_output(node, row, col, seeds, seed_time)
+        input_type = getattr(index, "input_type", None)
+        return self._build_output(node, row, col, seeds, seed_time, input_type)
 
     def sample_from_edges(
         self,
@@ -166,6 +202,7 @@ class DatabaseSampler(BaseSampler):
         seed_time = getattr(index, "time", None)
         params = self._build_query_params(seeds, **kwargs)
         node, row, col = self.graph_store.sample_subgraph(
-            self.edge_sampling_query, params, seeds)
+            self.edge_sampling_query, params, seeds, self.schema)
 
-        return self._build_output(node, row, col, seeds, seed_time)
+        input_type = getattr(index, "input_type", None)
+        return self._build_output(node, row, col, seeds, seed_time, input_type)

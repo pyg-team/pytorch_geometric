@@ -25,9 +25,6 @@ class Neo4jGraphSAGESampler(DatabaseSampler):
         node_label (str, optional): Node label filter (e.g. ``"User"``).
             If ``None``, all node labels are matched.
             (default: ``None``)
-        return_nodes_by_hop (bool): If ``True``, the nodes by hop will
-            be tracked.
-            (default: ``False``)
         direction (str): The direction of the edges to sample.
             (default: ``'incoming'``)
         profile (bool): Prepend ``PROFILE`` to the Cypher query for execution
@@ -37,22 +34,21 @@ class Neo4jGraphSAGESampler(DatabaseSampler):
         self,
         graph_store: DatabaseGraphStore,
         num_neighbors: List[int],
-        return_nodes_by_hop: bool = False,
         direction: str = 'incoming',  # 'incoming' or 'outgoing' or undirected
         rel_type: Optional[str] = None,
         node_label: Optional[str] = None,
         profile: bool = False,
     ):
-        self.return_nodes_by_hop = return_nodes_by_hop
+        self.num_neighbors = num_neighbors
         self.direction = direction
         self.nodeid_property = graph_store.nodeid_property
         self.rel_type = rel_type
         self.node_label = node_label
         self.profile = profile
 
-        super().__init__(graph_store, track_nodes_by_hop=return_nodes_by_hop)
+        super().__init__(graph_store)
 
-    def _build_node_fanout_query(self) -> str:
+    def _build_node_sampling_query(self) -> str:
         """Build a Cypher query that performs multi-hop incoming-edge sampling.
 
         The query returns a single row with:
@@ -148,22 +144,12 @@ class Neo4jGraphSAGESampler(DatabaseSampler):
                 next_nodes_by_hop AS nodes_by_hop
             """)
 
-        if self.return_nodes_by_hop:
-            return_clause = f"""
-            RETURN
-                edges AS edges,
-                [hop IN nodes_by_hop |
-                [n IN hop | n.{self.nodeid_property}]] AS nodes_by_hop
-            """
-        else:
-            return_clause = f"""
+        q.append(f"""
             RETURN
                 edges AS edges,
                 [n IN apoc.coll.flatten(nodes_by_hop) |
                 n.{self.nodeid_property}] AS nodes
-            """
-
-        q.append(return_clause)
+            """)
 
         return "\n".join(q)
 
