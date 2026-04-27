@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Populated `_model_args` on `HeteroExplanation` to mirror the homogeneous `Explanation`, exposing the original kwargs passed to the model ([#10672](https://github.com/pyg-team/pytorch_geometric/pull/10672))
+- Populated `_model_args` on `HeteroExplanation` to mirror the homogeneous `Explanation`, exposing the original kwargs passed to the model ([#10676](https://github.com/pyg-team/pytorch_geometric/pull/10676))
 
 ### Changed
 
