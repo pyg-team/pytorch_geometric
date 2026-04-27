@@ -10,7 +10,8 @@ from torch_geometric.explain.config import ExplanationType
 
 
 class DummyModel(torch.nn.Module):
-    def forward(self, x_dict, edge_index_dict, *args, **kwargs) -> torch.Tensor:
+    def forward(self, x_dict, edge_index_dict, *args,
+                **kwargs) -> torch.Tensor:
         return x_dict['paper'].mean().view(-1)
 
 
