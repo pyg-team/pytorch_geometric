@@ -10,7 +10,7 @@ from torch_geometric.explain.config import ExplanationType
 
 
 class DummyModel(torch.nn.Module):
-    def forward(self, x_dict, edge_index_dict, *args) -> torch.Tensor:
+    def forward(self, x_dict, edge_index_dict, *args, **kwargs) -> torch.Tensor:
         return x_dict['paper'].mean().view(-1)
 
 
@@ -67,6 +67,39 @@ def test_forward(hetero_data, target, explanation_type):
         for key in explanation.node_types:
             expected_size = hetero_data[key].x.size()
             assert explanation[key].node_mask.size() == expected_size
+
+
+def test_model_args(hetero_data):
+    explainer = Explainer(
+        DummyModel(),
+        algorithm=DummyExplainer(),
+        explanation_type='model',
+        node_mask_type='attributes',
+        edge_mask_type='object',
+        model_config=dict(
+            mode='regression',
+            task_level='graph',
+        ),
+    )
+
+    explanation = explainer(
+        hetero_data.x_dict,
+        hetero_data.edge_index_dict,
+        edge_attr_dict=hetero_data.edge_attr_dict,
+        additonal_arg=1,
+    )
+
+    assert explanation._model_args == ['edge_attr_dict', 'additonal_arg']
+
+    # Dict-valued kwargs are stored per-type and accessible via the `_dict`
+    # attribute accessor:
+    assert set(explanation.edge_attr_dict.keys()) == set(
+        hetero_data.edge_types)
+    for edge_type, edge_attr in hetero_data.edge_attr_dict.items():
+        assert torch.equal(explanation.edge_attr_dict[edge_type], edge_attr)
+
+    # Scalar kwargs are stored in the global store:
+    assert explanation.additonal_arg == 1
 
 
 @pytest.mark.parametrize('threshold_value', [0.2, 0.5, 0.8])

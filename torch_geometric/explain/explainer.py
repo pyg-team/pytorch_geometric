@@ -229,7 +229,7 @@ class Explainer:
                 explanation[key] = arg
 
         elif isinstance(explanation, HeteroExplanation):
-            # TODO Add `explanation._model_args`
+            explanation._model_args = list(kwargs.keys())
 
             assert isinstance(x, dict)
             explanation.set_value_dict('x', x)
