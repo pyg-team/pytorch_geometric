@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Adapted `fidelity` and `unfaithfulness` to support `HeteroExplanation`, propagating per-type node and edge masks (and per-node-type top-k feature selection) ([#XXXXX](https://github.com/pyg-team/pytorch_geometric/pull/XXXXX))
+- Adapted `fidelity` and `unfaithfulness` to support `HeteroExplanation`, propagating per-type node and edge masks (and per-node-type top-k feature selection) ([#10677](https://github.com/pyg-team/pytorch_geometric/pull/10677))
 
 ### Changed
 
