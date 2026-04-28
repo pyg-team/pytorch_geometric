@@ -1,15 +1,28 @@
-from typing import Tuple
+from typing import Any, Dict, Tuple, Union
 
 import torch
 from torch import Tensor
 
-from torch_geometric.explain import Explainer, Explanation
+from torch_geometric.explain import Explainer, Explanation, HeteroExplanation
 from torch_geometric.explain.config import ExplanationType, ModelMode
+
+
+def _hetero_model_kwargs(explanation: HeteroExplanation) -> Dict[str, Any]:
+    # Reconstructs the keyword arguments originally passed to the model.
+    # Falls back to an empty dict when `_model_args` was not populated
+    # (e.g. by an older `Explainer`); see PR #10672.
+    kwargs: Dict[str, Any] = {}
+    for key in getattr(explanation, '_model_args', []):
+        if key.endswith('_dict'):
+            kwargs[key] = explanation.collect(key[:-5], allow_empty=True)
+        else:
+            kwargs[key] = explanation[key]
+    return kwargs
 
 
 def fidelity(
     explainer: Explainer,
-    explanation: Explanation,
+    explanation: Union[Explanation, HeteroExplanation],
 ) -> Tuple[float, float]:
     r"""Evaluates the fidelity of an
     :class:`~torch_geometric.explain.Explainer` given an
@@ -50,6 +63,9 @@ def fidelity(
     if explainer.model_config.mode == ModelMode.regression:
         raise ValueError("Fidelity not defined for 'regression' models")
 
+    if isinstance(explanation, HeteroExplanation):
+        return _hetero_fidelity(explainer, explanation)
+
     node_mask = explanation.get('node_mask')
     edge_mask = explanation.get('edge_mask')
     kwargs = {key: explanation[key] for key in explanation._model_args}
@@ -77,6 +93,66 @@ def fidelity(
         explanation.edge_index,
         1. - node_mask if node_mask is not None else None,
         1. - edge_mask if edge_mask is not None else None,
+        **kwargs,
+    )
+    complement_y_hat = explainer.get_target(complement_y_hat)
+
+    if explanation.get('index') is not None:
+        y = y[explanation.index]
+        if explainer.explanation_type == ExplanationType.phenomenon:
+            y_hat = y_hat[explanation.index]
+        explain_y_hat = explain_y_hat[explanation.index]
+        complement_y_hat = complement_y_hat[explanation.index]
+
+    if explainer.explanation_type == ExplanationType.model:
+        pos_fidelity = 1. - (complement_y_hat == y).float().mean()
+        neg_fidelity = 1. - (explain_y_hat == y).float().mean()
+    else:
+        pos_fidelity = ((y_hat == y).float() -
+                        (complement_y_hat == y).float()).abs().mean()
+        neg_fidelity = ((y_hat == y).float() -
+                        (explain_y_hat == y).float()).abs().mean()
+
+    return float(pos_fidelity), float(neg_fidelity)
+
+
+def _hetero_fidelity(
+    explainer: Explainer,
+    explanation: HeteroExplanation,
+) -> Tuple[float, float]:
+    node_mask = explanation.collect('node_mask', allow_empty=True) or None
+    edge_mask = explanation.collect('edge_mask', allow_empty=True) or None
+    kwargs = _hetero_model_kwargs(explanation)
+
+    y = explanation.target
+    if explainer.explanation_type == ExplanationType.phenomenon:
+        y_hat = explainer.get_prediction(
+            explanation.x_dict,
+            explanation.edge_index_dict,
+            **kwargs,
+        )
+        y_hat = explainer.get_target(y_hat)
+
+    explain_y_hat = explainer.get_masked_prediction(
+        explanation.x_dict,
+        explanation.edge_index_dict,
+        node_mask,
+        edge_mask,
+        **kwargs,
+    )
+    explain_y_hat = explainer.get_target(explain_y_hat)
+
+    complement_y_hat = explainer.get_masked_prediction(
+        explanation.x_dict,
+        explanation.edge_index_dict,
+        {
+            k: 1. - v
+            for k, v in node_mask.items()
+        } if node_mask is not None else None,
+        {
+            k: 1. - v
+            for k, v in edge_mask.items()
+        } if edge_mask is not None else None,
         **kwargs,
     )
     complement_y_hat = explainer.get_target(complement_y_hat)

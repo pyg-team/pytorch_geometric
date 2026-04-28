@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Adapted `fidelity` and `unfaithfulness` to support `HeteroExplanation`, propagating per-type node and edge masks (and per-node-type top-k feature selection) ([#XXXXX](https://github.com/pyg-team/pytorch_geometric/pull/XXXXX))
+
 ### Changed
 
 - Dropped support for TorchScript in `GATConv` and `GATv2Conv` for correctness ([#10596](https://github.com/pyg-team/pytorch_geometric/pull/10596))
