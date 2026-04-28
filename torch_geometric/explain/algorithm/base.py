@@ -6,11 +6,8 @@ import torch.nn.functional as F
 from torch import Tensor
 
 from torch_geometric.explain import Explanation, HeteroExplanation
-from torch_geometric.explain.config import (
-    ExplainerConfig,
-    ModelConfig,
-    ModelReturnType,
-)
+from torch_geometric.explain.config import (ExplainerConfig, ModelConfig,
+                                            ModelReturnType)
 from torch_geometric.nn import MessagePassing
 from torch_geometric.typing import EdgeType, NodeType
 from torch_geometric.utils import k_hop_subgraph

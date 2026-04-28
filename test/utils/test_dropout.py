@@ -2,12 +2,8 @@ import pytest
 import torch
 
 from torch_geometric.testing import withPackage
-from torch_geometric.utils import (
-    dropout_adj,
-    dropout_edge,
-    dropout_node,
-    dropout_path,
-)
+from torch_geometric.utils import (dropout_adj, dropout_edge, dropout_node,
+                                   dropout_path)
 
 
 def test_dropout_adj():

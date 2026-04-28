@@ -7,12 +7,9 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.datasets import FakeHeteroDataset
-from torch_geometric.distributed import (
-    DistNeighborSampler,
-    LocalFeatureStore,
-    LocalGraphStore,
-    Partitioner,
-)
+from torch_geometric.distributed import (DistNeighborSampler,
+                                         LocalFeatureStore, LocalGraphStore,
+                                         Partitioner)
 from torch_geometric.distributed.dist_context import DistContext
 from torch_geometric.distributed.event_loop import ConcurrentEventLoop
 from torch_geometric.distributed.rpc import init_rpc, shutdown_rpc

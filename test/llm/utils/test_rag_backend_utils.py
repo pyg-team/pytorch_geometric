@@ -6,13 +6,9 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.llm.utils.backend_utils import (
-    batch_knn,
-    create_graph_from_triples,
-    create_remote_backend_from_graph_data,
-    make_pcst_filter,
-    preprocess_triplet,
-    retrieval_via_pcst,
-)
+    batch_knn, create_graph_from_triples,
+    create_remote_backend_from_graph_data, make_pcst_filter,
+    preprocess_triplet, retrieval_via_pcst)
 from torch_geometric.testing import onlyLinux
 
 

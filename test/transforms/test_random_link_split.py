@@ -2,11 +2,8 @@ import pytest
 import torch
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.testing import (
-    get_random_edge_index,
-    onlyFullTest,
-    onlyOnline,
-)
+from torch_geometric.testing import (get_random_edge_index, onlyFullTest,
+                                     onlyOnline)
 from torch_geometric.transforms import RandomLinkSplit, ToSparseTensor
 from torch_geometric.utils import is_undirected, to_undirected
 

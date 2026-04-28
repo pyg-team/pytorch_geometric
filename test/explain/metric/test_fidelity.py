@@ -1,13 +1,9 @@
 import pytest
 import torch
 
-from torch_geometric.explain import (
-    DummyExplainer,
-    Explainer,
-    characterization_score,
-    fidelity,
-    fidelity_curve_auc,
-)
+from torch_geometric.explain import (DummyExplainer, Explainer,
+                                     characterization_score, fidelity,
+                                     fidelity_curve_auc)
 
 
 class DummyModel(torch.nn.Module):

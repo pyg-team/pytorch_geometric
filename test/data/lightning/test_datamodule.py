@@ -7,24 +7,16 @@ import torch.nn.functional as F
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.data.lightning import (
-    LightningDataset,
-    LightningLinkData,
-    LightningNodeData,
-)
+from torch_geometric.data.lightning import (LightningDataset,
+                                            LightningLinkData,
+                                            LightningNodeData)
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.sampler import BaseSampler, NeighborSampler
-from torch_geometric.testing import (
-    MyFeatureStore,
-    MyGraphStore,
-    get_random_edge_index,
-    has_package,
-    onlyCUDA,
-    onlyFullTest,
-    onlyNeighborSampler,
-    onlyOnline,
-    withPackage,
-)
+from torch_geometric.testing import (MyFeatureStore, MyGraphStore,
+                                     get_random_edge_index, has_package,
+                                     onlyCUDA, onlyFullTest,
+                                     onlyNeighborSampler, onlyOnline,
+                                     withPackage)
 
 try:
     from pytorch_lightning import LightningModule

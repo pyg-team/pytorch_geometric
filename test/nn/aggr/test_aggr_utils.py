@@ -1,11 +1,9 @@
 import torch
 
-from torch_geometric.nn.aggr.utils import (
-    InducedSetAttentionBlock,
-    MultiheadAttentionBlock,
-    PoolingByMultiheadAttention,
-    SetAttentionBlock,
-)
+from torch_geometric.nn.aggr.utils import (InducedSetAttentionBlock,
+                                           MultiheadAttentionBlock,
+                                           PoolingByMultiheadAttention,
+                                           SetAttentionBlock)
 from torch_geometric.testing import withCUDA
 
 

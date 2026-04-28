@@ -1,6 +1,6 @@
 from .basic import groundtruth_metrics
-from .fidelity import fidelity, characterization_score, fidelity_curve_auc
 from .faithfulness import unfaithfulness
+from .fidelity import characterization_score, fidelity, fidelity_curve_auc
 
 __all__ = classes = [
     'groundtruth_metrics',

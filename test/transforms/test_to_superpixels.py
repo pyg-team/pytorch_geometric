@@ -18,11 +18,8 @@ resources = [
 @withPackage('torchvision', 'skimage')
 def test_to_superpixels(tmp_path):
     import torchvision.transforms as T
-    from torchvision.datasets.mnist import (
-        MNIST,
-        read_image_file,
-        read_label_file,
-    )
+    from torchvision.datasets.mnist import (MNIST, read_image_file,
+                                            read_label_file)
 
     raw_folder = osp.join(tmp_path, 'MNIST', 'raw')
     processed_folder = osp.join(tmp_path, 'MNIST', 'processed')
