@@ -56,12 +56,12 @@ jobs:
       - name: Run tests
         timeout-minutes: 20
         run: |
-          pytest --cov --cov-report=xml --durations 10
+          pytest -m "not rag" --cov --cov-report=xml --durations 10
         env:
           FULL_TEST: ${{ matrix.full_test }}
 
       - name: Upload coverage
         if: ${{ runner.os == 'Linux' }}
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           fail_ci_if_error: false

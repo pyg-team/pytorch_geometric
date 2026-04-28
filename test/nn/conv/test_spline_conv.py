@@ -8,7 +8,7 @@ from torch_geometric.testing import is_full_test, withPackage
 from torch_geometric.typing import SparseTensor
 
 
-@withPackage('torch_spline_conv')
+@withPackage('pyg_lib')
 def test_spline_conv():
     warnings.filterwarnings('ignore', '.*non-optimized CPU version.*')
 
@@ -64,7 +64,7 @@ def test_spline_conv():
             assert torch.allclose(jit((x1, None), adj.t()), out2, atol=1e-6)
 
 
-@withPackage('torch_spline_conv')
+@withPackage('pyg_lib')
 def test_lazy_spline_conv():
     warnings.filterwarnings('ignore', '.*non-optimized CPU version.*')
 

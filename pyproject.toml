@@ -69,6 +69,7 @@ rag=[
     "accelerate",
     "torchmetrics",
     "langgraph"
+    "peft",
 ]
 test=[
     "onnx",

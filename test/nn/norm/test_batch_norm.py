@@ -9,12 +9,18 @@ from torch_geometric.testing import is_full_test, withDevice
 @pytest.mark.parametrize('conf', [True, False])
 def test_batch_norm(device, conf):
     x = torch.randn(100, 16, device=device)
-
     norm = BatchNorm(16, affine=conf, track_running_stats=conf, device=device)
     norm.reset_running_stats()
     norm.reset_parameters()
-    assert str(norm) == (f'BatchNorm(16, eps=1e-05, momentum=0.1, '
-                         f'affine={conf}, track_running_stats={conf})')
+
+    bn = getattr(norm, "module", norm)
+    assert bn.num_features == 16
+    assert bn.eps == 1e-5
+    assert bn.momentum == 0.1
+    assert bn.affine == conf
+    assert bn.track_running_stats == conf
+    assert (bn.weight is not None) == conf
+    assert (bn.bias is not None) == conf
 
     if is_full_test():
         torch.jit.script(norm)
