@@ -120,6 +120,10 @@ changelog="https://github.com/pyg-team/pytorch_geometric/blob/master/CHANGELOG.m
 [tool.flit.module]
 name="torch_geometric"
 
+[tool.uv]
+exclude-newer = "7 days"
+exclude-newer-package = { torch = "2099-01-01", torchvision = "2099-01-01" }
+
 [tool.yapf]
 based_on_style = "pep8"
 split_before_named_assigns = false
