@@ -36,16 +36,12 @@ runs:
 
     - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
       if: ${{ inputs.torch-version != 'nightly' }}
-      env:
-        UV_INDEX_STRATEGY: unsafe-best-match
       run: |
         uv pip install torch==${{ inputs.torch-version }} --extra-index-url https://download.pytorch.org/whl/${{ inputs.cuda-version }}
       shell: bash
 
     - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
       if: ${{ inputs.torch-version == 'nightly' }}
-      env:
-        UV_INDEX_STRATEGY: unsafe-best-match
       run: |
         uv pip install --pre torch --extra-index-url https://download.pytorch.org/whl/nightly/${{ inputs.cuda-version }}
       shell: bash
@@ -59,8 +55,6 @@ runs:
 
     - name: Install pyg-lib
       if: ${{ inputs.torch-version != 'nightly' }}
-      env:
-        UV_INDEX_STRATEGY: unsafe-best-match
       run: |
         uv pip install --no-index --upgrade pyg-lib -f https://data.pyg.org/whl/nightly/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
       shell: bash
@@ -79,8 +73,6 @@ runs:
 
     - name: Install torchvision
       if: ${{ inputs.full_install == 'true' && inputs.torch-version != 'nightly' }}
-      env:
-        UV_INDEX_STRATEGY: unsafe-best-match
       run: |
         if [ ${{ inputs.torch-version }} == '2.10.0' ]; then
           TORCHVISION_VERSION=0.25.0

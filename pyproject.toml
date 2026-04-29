@@ -119,6 +119,7 @@ name="torch_geometric"
 
 [tool.uv]
 exclude-newer = "7 days"
+exclude-newer-package = { torch = "2099-01-01", torchvision = "2099-01-01" }
 
 [tool.yapf]
 based_on_style = "pep8"
