@@ -214,8 +214,38 @@ def torch_save(data: Any, path: str) -> None:
         f.write(buffer.getvalue())
 
 
-def torch_load(path: str, map_location: Any = None) -> Any:
+def torch_load(
+    path: str,
+    map_location: Any = None,
+    weights_only: Optional[bool] = None,
+) -> Any:
+    r"""Load a PyTorch file from a given path using :func:`fsspec`.
+
+    Args:
+        path (str): The path to the file to load.
+        map_location: A simplified version of :attr:`torch.load`'s
+            :attr:`map_location`.
+        weights_only (bool, optional): If :obj:`True`, only weights will be
+            loaded and an error will be raised on failure (*i.e.*, no
+            fallback to :obj:`weights_only=False`).
+            If :obj:`False`, :obj:`weights_only=False` will be used
+            directly.
+            If :obj:`None` (default), the current fallback behavior is
+            preserved: first tries :obj:`weights_only=True`, then falls
+            back to :obj:`weights_only=False` on
+            :class:`~pickle.UnpicklingError`. (default: :obj:`None`)
+    """
     if torch_geometric.typing.WITH_PT24:
+        if weights_only is True:
+            with fsspec.open(path, 'rb') as f:
+                return torch.load(f, map_location, weights_only=True)
+
+        if weights_only is False:
+            with fsspec.open(path, 'rb') as f:
+                return torch.load(f, map_location, weights_only=False)
+
+        # Default behavior (weights_only=None): try weights_only=True
+        # first, then fall back to weights_only=False on failure.
         try:
             with fsspec.open(path, 'rb') as f:
                 return torch.load(f, map_location, weights_only=True)
@@ -230,10 +260,21 @@ def torch_load(path: str, map_location: Any = None) -> Any:
                     warnings.warn(
                         f"{warn_msg} Please use "
                         f"`torch.serialization.{match.group()}` to "
-                        f"allowlist this global.", stacklevel=2)
+                        f"allowlist this global if you trust it.",
+                        stacklevel=2)
                 else:
                     warnings.warn(warn_msg, stacklevel=2)
 
+                warnings.warn(
+                    "Falling back to `weights_only=False` because the file at"
+                    f"'{path}' could not be loaded with `weights_only=True`."
+                    "In a future release, this fallback will be removed. Pass "
+                    "`weights_only=False` explicitly if you need to load "
+                    "custom Python objects, allowlist doesn't work, and you"
+                    "trust the source.",
+                    FutureWarning,
+                    stacklevel=2,
+                )
                 with fsspec.open(path, 'rb') as f:
                     return torch.load(f, map_location, weights_only=False)
             else:

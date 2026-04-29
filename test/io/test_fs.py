@@ -128,5 +128,29 @@ def test_torch_save_load(tmp_fs_path):
     path = osp.join(tmp_fs_path, 'x.pt')
 
     fs.torch_save(x, path)
-    out = fs.torch_load(path)
+    out = fs.torch_load(path, weights_only=True)
     assert torch.equal(x, out)
+
+
+@pytest.mark.skipif(
+    not torch_geometric.typing.WITH_PT24,
+    reason='weights_only requires PyTorch >= 2.4',
+)
+def test_torch_load_fallback_warning(tmp_fs_path):
+    # Save an object that cannot be loaded with weights_only=True:
+    path = osp.join(tmp_fs_path, 'data.pt')
+    fs.torch_save(object(), path)
+
+    with pytest.warns(FutureWarning, match='weights_only'):
+        fs.torch_load(path)
+
+
+@pytest.mark.skipif(
+    not torch_geometric.typing.WITH_PT24,
+    reason='weights_only requires PyTorch >= 2.4',
+)
+def test_torch_load_weights_only_false(tmp_fs_path):
+    path = osp.join(tmp_fs_path, 'data.pt')
+    fs.torch_save(object(), path)
+    out = fs.torch_load(path, weights_only=False)
+    assert isinstance(out, object)
