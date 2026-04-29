@@ -1,22 +1,11 @@
-"""Example demonstrating how to bridge ``from_relbench`` heterogeneous
-graphs to GRetriever for graph-augmented question answering.
+"""Minimal example showing how to use ``from_relbench`` output with GRetriever.
 
-This example loads the Formula 1 RelBench dataset, sanitizes the data,
-projects all node types into a shared latent space (handling featureless
-structural tables via learned embeddings), converts to homogeneous format,
-and feeds the result into GRetriever.
+This script loads Formula 1 data from RelBench, sanitizes numeric node
+features, projects heterogeneous node types into a shared latent space,
+converts the graph to homogeneous format, and passes it to GRetriever.
 
-.. note::
-    Calling ``to_homogeneous()`` directly on RelBench data silently
-    drops ALL node features (``x=None``) when any table lacks numeric
-    columns. This example shows the correct pattern: sanitize, project
-    all types to a common dimension, then convert.
-
-.. note::
-    Due to a known upstream issue in PyG ``llm.py`` with
-    ``transformers >= 5.0``, this example currently requires
-    ``transformers 4.x``.
-    (``pip install "transformers>=4.51,<5.0"``)
+The goal is to demonstrate the projection-first pattern required before
+calling ``to_homogeneous()`` on RelBench-derived graphs.
 
 Requirements:
     ``pip install relbench "transformers>=4.51,<5.0" sentencepiece
@@ -36,7 +25,23 @@ from torch_geometric.llm.models import GRetriever, LLM
 from torch_geometric.nn import GAT, HeteroDictLinear
 from torch_geometric.utils import from_relbench
 
-# ── CLI ──────────────────────────────────────────────────────────────
+try:
+    import transformers
+except ImportError as exc:
+    raise RuntimeError(
+        'The `transformers` package is required. Install it with: '
+        '`pip install "transformers>=4.51,<5.0"`.'
+    ) from exc
+
+transformers_version = tuple(int(x) for x in transformers.__version__.split('.')[:2])
+if transformers_version[0] >= 5:
+    raise RuntimeError(
+        f'Unsupported transformers version {transformers.__version__}. '
+        'This example requires transformers 4.x. Install with: '
+        '`pip install "transformers>=4.51,<5.0"`.'
+    )
+
+# CLI options
 parser = argparse.ArgumentParser(
     description='RelBench -> GRetriever example.')
 parser.add_argument('--dataset', type=str, default='rel-f1',
@@ -66,7 +71,7 @@ _dtype_map = {
 }
 args.torch_dtype = _dtype_map[args.dtype]
 
-# ── 1. Load & Sanitize RelBench data ─────────────────────────────────
+# Load and sanitize RelBench data
 print(f'Loading RelBench {args.dataset} dataset...')
 dataset = get_dataset(args.dataset)
 db = dataset.get_db()
@@ -85,7 +90,7 @@ print(f'Graph: {len(data.node_types)} node types, '
       f'{len(data.edge_types)} edge types')
 
 
-# ── 2. Define Trainable Feature Projector ────────────────────────────
+# Define the projector for heterogeneous node features
 class HeteroFeatureProjector(nn.Module):
     """Projects heterogeneous node features to a common dimension.
 
@@ -118,47 +123,47 @@ class HeteroFeatureProjector(nn.Module):
             if nt in out:
                 res[nt] = out[nt]
             else:
+                # These learned embeddings are only valid for the current graph.
+                # They do not generalize to unseen nodes in another graph.
                 res[nt] = self.embs[nt].weight
         return res
 
 
 projector = HeteroFeatureProjector(data, args.hidden)
 
-# ── 3. Extract Homogeneous Topology ──────────────────────────────────
-# Topology (edge_index) is static, computed once. Node features (homo_x)
-# are computed dynamically inside the training loop so that gradients
-# flow back through the projector.
+# Extract the homogeneous graph topology
+# The edge structure is static, while node features are recomputed inside
+# the training loop so gradients can propagate through the projector.
 homo_topology = data.to_homogeneous()
 homo_edge_index = homo_topology.edge_index
 print(f'Homogeneous: edge_index={list(homo_edge_index.shape)}')
 
-# ── 4. Create synthetic Q&A pairs ───────────────────────────────────
-# These synthetic Q&A pairs are illustrative.
-num_drivers = (data['drivers'].num_nodes
-               if 'drivers' in data.node_types else '?')
-num_constructors = (data['constructors'].num_nodes
-                    if 'constructors' in data.node_types else '?')
-num_node_types = len(data.node_types)
-num_edge_types = len(data.edge_types)
-
+# Build a small set of example questions for the GRetriever demo.
+# These are meant to show the relationship between node types and edge data,
+# not to model a full retrieval task.
 qa_pairs = [
-    ('How many drivers are in the dataset?',
-     f'There are {num_drivers} drivers in the Formula 1 dataset.'),
-    ('How many constructors are in the dataset?',
-     f'There are {num_constructors} constructors.'),
-    ('How many types of entities are in the graph?',
-     f'The graph has {num_node_types} node types and '
-     f'{num_edge_types} edge types.'),
-    ('What entity types exist in the Formula 1 knowledge graph?',
-     f'The entity types include: {", ".join(data.node_types)}.'),
-    ('How are drivers connected to races?',
-     'Drivers connect to races through results and qualifying entries.'),
-    ('What does this knowledge graph represent?',
-     'This graph represents Formula 1 racing data including drivers, '
-     'teams, circuits, races, and their relationships.'),
+    (
+        'Which entity types appear in this Formula 1 graph?',
+        'The graph contains node types such as drivers, constructors, circuits, '
+        'races, and teams.',
+    ),
+    (
+        'How is the driver-to-race connection represented?',
+        'Drivers are linked to races through result and qualifying edges.',
+    ),
+    (
+        'What role do constructors have in the dataset?',
+        'Constructors are part of the race entry structure and connect '
+        'teams with drivers.',
+    ),
+    (
+        'Why do we project all node types before calling to_homogeneous?',
+        'The projection creates a shared embedding space so GRetriever can '
+        'process the graph as a single homogeneous tensor.',
+    ),
 ]
 
-# ── 5. Build GRetriever model ────────────────────────────────────────
+# Build the GRetriever model
 print(f'\nInitializing GRetriever with LLM={args.llm}...')
 
 gnn = GAT(
@@ -190,15 +195,16 @@ homo_edge_index = homo_edge_index.to(device)
 data = data.to(device)
 print(f'Using device: {device}')
 
-# ── 6. Training loop ────────────────────────────────────────────────
+# Training loop
 # Include projector parameters so the feature embeddings actually learn.
 params = [p for p in model.parameters() if p.requires_grad]
 params += list(projector.parameters())
 optimizer = torch.optim.AdamW(params, lr=args.lr, weight_decay=0.05)
 
 context_str = (
-    f'This is a Formula 1 knowledge graph with {num_node_types} entity '
-    f'types ({", ".join(data.node_types)}).'
+    'This Formula 1 knowledge graph includes drivers, constructors, circuits, '
+    'races, and teams, with edges representing race results, qualifying, and '
+    'entity relationships.'
 )
 
 print(f'\nTraining {args.epochs} epochs on {len(qa_pairs)} samples...')
@@ -214,11 +220,18 @@ for epoch in range(1, args.epochs + 1):
         # Dynamic projection: compute inside the loop so gradients
         # flow back through the projector.
         projected_dict = projector(data)
-        # Stack in data.node_types order (same order as to_homogeneous)
+        # Stack in data.node_types order, then verify the total node count.
         homo_x = torch.cat(
             [projected_dict[nt] for nt in data.node_types], dim=0)
+        assert homo_x.size(0) == homo_topology.num_nodes, (
+            'Expected projected homo_x to have the same number of nodes as '
+            'the homogeneous topology. If this fails, the node ordering '
+            'assumption is incorrect.'
+        )
 
-        # Single-graph paradigm: all nodes belong to batch index 0
+        # Single-graph paradigm: all nodes belong to batch index 0.
+        # For mini-batched graph training, a Batch object with graph indices
+        # would be required instead.
         batch_idx = torch.zeros(
             homo_x.size(0), dtype=torch.long, device=device)
 
@@ -244,7 +257,7 @@ for epoch in range(1, args.epochs + 1):
     avg_loss = total_loss / len(qa_pairs)
     print(f'Epoch {epoch:02d}: Loss={avg_loss:.4f}')
 
-# ── 7. Inference demo ────────────────────────────────────────────────
+# Inference demo
 print('\nInference:')
 model.eval()
 projector.eval()
