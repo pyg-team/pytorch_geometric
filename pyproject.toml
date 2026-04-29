@@ -68,7 +68,6 @@ rag=[
     "datasets",
     "transformers",
     "pandas",
-    "scikit-learn",
     "sentencepiece",
     "accelerate",
     "torchmetrics",

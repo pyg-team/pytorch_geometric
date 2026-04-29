@@ -6,7 +6,7 @@ import pytest
 from torch_geometric.testing import onlyFullTest, withPackage
 
 
-@withPackage('faiss', 'json_repair', 'openai', 'pandas', 'sklearn')
+@withPackage('faiss', 'json_repair', 'openai', 'pandas')
 class TestTxt2QAPureFunctions:
     """Tests for pure-logic / file-I/O functions that need no API key."""
     def test_load_input(self, tmp_path):
@@ -87,7 +87,7 @@ class TestTxt2QAPureFunctions:
 
 
 @onlyFullTest
-@withPackage('faiss', 'json_repair', 'openai', 'pandas', 'sklearn')
+@withPackage('faiss', 'json_repair', 'openai', 'pandas')
 @pytest.mark.skipif(
     not os.getenv('NVIDIA_API_KEY'),
     reason='NVIDIA_API_KEY not set',

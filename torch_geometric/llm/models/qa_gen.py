@@ -19,7 +19,6 @@ import torch
 from jinja2 import Template
 from json_repair import repair_json
 from openai import OpenAI
-from sklearn.metrics.pairwise import cosine_similarity
 
 # Configure logging - default to WARNING, --verbose enables INFO/DEBUG
 logger = logging.getLogger(__name__)
@@ -3229,7 +3228,7 @@ def deduplicate_qa(
     embs = embs / (norms + 1e-8)
 
     # 4) Compute pairwise cosine similarities
-    sims = cosine_similarity(embs)
+    sims = embs @ embs.T
 
     # 5) Greedily keep first of each duplicate cluster
     keep = []
