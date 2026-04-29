@@ -4,8 +4,20 @@ import weakref
 from collections import defaultdict, namedtuple
 from collections.abc import Mapping, MutableMapping, Sequence
 from enum import Enum
-from typing import (Any, Callable, Dict, Iterable, Iterator, List, NamedTuple,
-                    Optional, Set, Tuple, Union, overload)
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    NamedTuple,
+    Optional,
+    Set,
+    Tuple,
+    Union,
+    overload,
+)
 
 import numpy as np
 import torch
@@ -14,11 +26,20 @@ from typing_extensions import Self
 
 from torch_geometric import EdgeIndex
 from torch_geometric.data.view import ItemsView, KeysView, ValuesView
-from torch_geometric.typing import (EdgeType, NodeType, SparseTensor,
-                                    TensorFrame)
-from torch_geometric.utils import (coalesce, contains_isolated_nodes,
-                                   is_torch_sparse_tensor, is_undirected,
-                                   select, sort_edge_index)
+from torch_geometric.typing import (
+    EdgeType,
+    NodeType,
+    SparseTensor,
+    TensorFrame,
+)
+from torch_geometric.utils import (
+    coalesce,
+    contains_isolated_nodes,
+    is_torch_sparse_tensor,
+    is_undirected,
+    select,
+    sort_edge_index,
+)
 
 N_KEYS = {'x', 'feat', 'pos', 'batch', 'node_type', 'n_id', 'tf'}
 E_KEYS = {'edge_index', 'edge_weight', 'edge_attr', 'edge_type', 'e_id'}

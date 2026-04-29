@@ -1,8 +1,10 @@
 import pytest
 import torch
 
-from torch_geometric.utils.noise_scheduler import (get_diffusion_beta_schedule,
-                                                   get_smld_sigma_schedule)
+from torch_geometric.utils.noise_scheduler import (
+    get_diffusion_beta_schedule,
+    get_smld_sigma_schedule,
+)
 
 
 def test_get_smld_sigma_schedule():

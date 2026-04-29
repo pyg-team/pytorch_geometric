@@ -2,8 +2,12 @@ import pytest
 import torch
 
 from torch_geometric import seed_everything
-from torch_geometric.utils import (add_random_edge, is_undirected,
-                                   mask_feature, shuffle_node)
+from torch_geometric.utils import (
+    add_random_edge,
+    is_undirected,
+    mask_feature,
+    shuffle_node,
+)
 
 
 def test_shuffle_node():

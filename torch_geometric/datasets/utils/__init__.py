@@ -1,4 +1,4 @@
-from .cheatsheet import get_children, get_stat, get_type, has_stats, paper_link
+from .cheatsheet import paper_link, has_stats, get_stat, get_children, get_type
 
 __all__ = [
     'paper_link',

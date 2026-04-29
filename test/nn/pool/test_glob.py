@@ -1,7 +1,10 @@
 import torch
 
-from torch_geometric.nn import (global_add_pool, global_max_pool,
-                                global_mean_pool)
+from torch_geometric.nn import (
+    global_add_pool,
+    global_max_pool,
+    global_mean_pool,
+)
 
 
 def test_global_pool():

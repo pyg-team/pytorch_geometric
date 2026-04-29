@@ -1,8 +1,12 @@
 import pytest
 import torch
 
-from torch_geometric.nn import (ApproxL2KNNIndex, ApproxMIPSKNNIndex,
-                                L2KNNIndex, MIPSKNNIndex)
+from torch_geometric.nn import (
+    ApproxL2KNNIndex,
+    ApproxMIPSKNNIndex,
+    L2KNNIndex,
+    MIPSKNNIndex,
+)
 from torch_geometric.testing import withCUDA, withPackage
 
 

@@ -6,8 +6,11 @@ import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 
-from benchmark.multi_gpu.training.common import (get_predefined_args, run,
-                                                 supported_sets)
+from benchmark.multi_gpu.training.common import (
+    get_predefined_args,
+    run,
+    supported_sets,
+)
 from benchmark.utils import get_dataset
 from torch_geometric.data import Data, HeteroData
 

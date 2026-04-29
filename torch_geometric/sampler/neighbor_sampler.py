@@ -8,16 +8,30 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric.data import (Data, FeatureStore, GraphStore, HeteroData,
-                                  remote_backend_utils)
+from torch_geometric.data import (
+    Data,
+    FeatureStore,
+    GraphStore,
+    HeteroData,
+    remote_backend_utils,
+)
 from torch_geometric.data.graph_store import EdgeLayout
-from torch_geometric.sampler import (BaseSampler, EdgeSamplerInput,
-                                     HeteroSamplerOutput, NegativeSampling,
-                                     NodeSamplerInput, SamplerOutput)
+from torch_geometric.sampler import (
+    BaseSampler,
+    EdgeSamplerInput,
+    HeteroSamplerOutput,
+    NegativeSampling,
+    NodeSamplerInput,
+    SamplerOutput,
+)
 from torch_geometric.sampler.base import DataType, NumNeighbors, SubgraphType
-from torch_geometric.sampler.utils import (global_to_local_node_idx,
-                                           remap_keys, reverse_edge_type,
-                                           to_csc, to_hetero_csc)
+from torch_geometric.sampler.utils import (
+    global_to_local_node_idx,
+    remap_keys,
+    reverse_edge_type,
+    to_csc,
+    to_hetero_csc,
+)
 from torch_geometric.typing import EdgeType, NodeType, OptTensor
 
 NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]

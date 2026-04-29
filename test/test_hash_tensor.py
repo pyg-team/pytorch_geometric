@@ -9,8 +9,13 @@ from torch import Tensor
 import torch_geometric.typing
 from torch_geometric import HashTensor
 from torch_geometric.io import fs
-from torch_geometric.testing import (onlyCUDA, onlyLinux, withCUDA,
-                                     withHashTensor, withPackage)
+from torch_geometric.testing import (
+    onlyCUDA,
+    onlyLinux,
+    withCUDA,
+    withHashTensor,
+    withPackage,
+)
 
 KEY_DTYPES = [
     pytest.param(torch.bool, id='bool'),

@@ -2,8 +2,12 @@ import torch
 import torch.nn.functional as F
 from torch.nn import Linear
 
-from torch_geometric.nn import (ASAPooling, GraphConv, JumpingKnowledge,
-                                global_mean_pool)
+from torch_geometric.nn import (
+    ASAPooling,
+    GraphConv,
+    JumpingKnowledge,
+    global_mean_pool,
+)
 
 
 class ASAP(torch.nn.Module):

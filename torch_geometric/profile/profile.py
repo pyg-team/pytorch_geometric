@@ -9,9 +9,11 @@ import torch
 from torch.autograd.profiler import EventList
 from torch.profiler import ProfilerActivity, profile
 
-from torch_geometric.profile.utils import (byte_to_megabyte,
-                                           get_gpu_memory_from_ipex,
-                                           get_gpu_memory_from_nvidia_smi)
+from torch_geometric.profile.utils import (
+    byte_to_megabyte,
+    get_gpu_memory_from_ipex,
+    get_gpu_memory_from_nvidia_smi,
+)
 
 
 @dataclass

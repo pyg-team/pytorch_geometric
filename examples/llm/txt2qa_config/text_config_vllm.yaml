@@ -2,11 +2,11 @@
 # This file contains all the settings for the QA generation workflow
 
 # Input and Output Directories
-input_dir: "/home/scratch.askliar_ent/pytorch_geometric/techqa/corpus"
-output_dir: "/home/scratch.askliar_ent/pytorch_geometric/techqa_output"
+input_dir: "examples/llm/txt2qa_data/techqa/corpus"
+output_dir: "examples/llm/txt2qa_output/vllm"
 
 # Optional: HuggingFace Dataset Download Configuration
-# Uncomment to enable automatic dataset download if input_dir doesn't exist
+# Used to download sample data if input_dir doesn't exist
 huggingface_repo_id: "nvidia/TechQA-RAG-Eval"
 huggingface_repo_type: "dataset"
 huggingface_files:

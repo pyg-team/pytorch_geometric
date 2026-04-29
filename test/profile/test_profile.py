@@ -7,11 +7,21 @@ import torch
 import torch.nn.functional as F
 
 from torch_geometric.nn import GraphSAGE
-from torch_geometric.profile import (get_stats_summary, profileit,
-                                     rename_profile_file, timeit)
+from torch_geometric.profile import (
+    get_stats_summary,
+    profileit,
+    rename_profile_file,
+    timeit,
+)
 from torch_geometric.profile.profile import torch_profile, xpu_profile
-from torch_geometric.testing import (onlyCUDA, onlyLinux, onlyOnline, onlyXPU,
-                                     withDevice, withPackage)
+from torch_geometric.testing import (
+    onlyCUDA,
+    onlyLinux,
+    onlyOnline,
+    onlyXPU,
+    withDevice,
+    withPackage,
+)
 
 
 @withDevice

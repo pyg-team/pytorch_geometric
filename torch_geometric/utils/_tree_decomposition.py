@@ -4,8 +4,11 @@ from typing import Any, List, Literal, Tuple, Union, overload
 import torch
 from torch import Tensor
 
-from torch_geometric.utils import (from_scipy_sparse_matrix,
-                                   to_scipy_sparse_matrix, to_undirected)
+from torch_geometric.utils import (
+    from_scipy_sparse_matrix,
+    to_scipy_sparse_matrix,
+    to_undirected,
+)
 
 
 @overload

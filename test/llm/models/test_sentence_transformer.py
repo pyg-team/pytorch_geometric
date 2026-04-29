@@ -2,8 +2,10 @@ import pytest
 import torch
 
 from torch_geometric.llm.models import SentenceTransformer
-from torch_geometric.llm.models.sentence_transformer import (last_pooling,
-                                                             mean_pooling)
+from torch_geometric.llm.models.sentence_transformer import (
+    last_pooling,
+    mean_pooling,
+)
 from torch_geometric.testing import withCUDA, withPackage
 
 

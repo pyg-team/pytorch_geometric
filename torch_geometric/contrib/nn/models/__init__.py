@@ -1,4 +1,4 @@
-from .rbcd_attack import GRBCDAttack, PRBCDAttack
+from .rbcd_attack import PRBCDAttack, GRBCDAttack
 
 __all__ = classes = [
     'PRBCDAttack',

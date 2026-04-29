@@ -1,4 +1,4 @@
-from .datamodule import LightningDataset, LightningLinkData, LightningNodeData
+from .datamodule import LightningDataset, LightningNodeData, LightningLinkData
 
 __all__ = classes = [
     'LightningDataset',

@@ -5,8 +5,11 @@ from torch import Tensor
 
 from torch_geometric.data import FeatureStore
 from torch_geometric.distributed.local_graph_store import LocalGraphStore
-from torch_geometric.sampler import (BidirectionalNeighborSampler,
-                                     NodeSamplerInput, SamplerOutput)
+from torch_geometric.sampler import (
+    BidirectionalNeighborSampler,
+    NodeSamplerInput,
+    SamplerOutput,
+)
 from torch_geometric.utils import index_sort
 
 # A representation of an edge index, following the possible formats:

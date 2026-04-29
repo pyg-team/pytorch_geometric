@@ -12,9 +12,14 @@ from torch_geometric.loader import NeighborLoader
 from torch_geometric.nn import SAGEConv
 from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import (onlyFullTest, onlyLinux,
-                                     onlyNeighborSampler, onlyOnline,
-                                     withDevice, withPackage)
+from torch_geometric.testing import (
+    onlyFullTest,
+    onlyLinux,
+    onlyNeighborSampler,
+    onlyOnline,
+    withDevice,
+    withPackage,
+)
 
 out_dims = [None, 8]
 dropouts = [0.0, 0.5]

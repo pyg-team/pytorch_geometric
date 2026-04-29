@@ -5,8 +5,11 @@ import torch.nn.functional as F
 from torch import Tensor
 
 from torch_geometric.nn import SignedConv
-from torch_geometric.utils import (coalesce, negative_sampling,
-                                   structured_negative_sampling)
+from torch_geometric.utils import (
+    coalesce,
+    negative_sampling,
+    structured_negative_sampling,
+)
 
 
 class SignedGCN(torch.nn.Module):

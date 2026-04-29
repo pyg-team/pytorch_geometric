@@ -5,8 +5,10 @@ from typing import Any, Dict
 
 from torch.nn import ModuleDict, ModuleList
 
-from torch_geometric.config_store import (class_from_dataclass,
-                                          dataclass_from_class)
+from torch_geometric.config_store import (
+    class_from_dataclass,
+    dataclass_from_class,
+)
 from torch_geometric.isinstance import is_torch_instance
 
 

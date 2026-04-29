@@ -3,8 +3,10 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 
-from torch_geometric.experimental import (disable_dynamic_shapes,
-                                          is_experimental_mode_enabled)
+from torch_geometric.experimental import (
+    disable_dynamic_shapes,
+    is_experimental_mode_enabled,
+)
 from torch_geometric.utils import cumsum, scatter
 
 

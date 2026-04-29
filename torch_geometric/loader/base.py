@@ -1,7 +1,9 @@
 from typing import Any, Callable
 
-from torch.utils.data.dataloader import (_BaseDataLoaderIter,
-                                         _MultiProcessingDataLoaderIter)
+from torch.utils.data.dataloader import (
+    _BaseDataLoaderIter,
+    _MultiProcessingDataLoaderIter,
+)
 
 
 class DataLoaderIterator:

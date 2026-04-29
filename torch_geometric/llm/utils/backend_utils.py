@@ -1,9 +1,21 @@
 import os
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import (Any, Callable, Dict, Iterable, Iterator, List, Optional,
-                    Protocol, Tuple, Type, Union, no_type_check,
-                    runtime_checkable)
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Protocol,
+    Tuple,
+    Type,
+    Union,
+    no_type_check,
+    runtime_checkable,
+)
 
 import numpy as np
 import torch
@@ -11,11 +23,16 @@ from torch import Tensor
 from torch.nn import Module
 
 from torch_geometric.data import Data, FeatureStore, GraphStore
-from torch_geometric.distributed import (LocalFeatureStore, LocalGraphStore,
-                                         Partitioner)
-from torch_geometric.llm.large_graph_indexer import (EDGE_RELATION,
-                                                     LargeGraphIndexer,
-                                                     TripletLike)
+from torch_geometric.distributed import (
+    LocalFeatureStore,
+    LocalGraphStore,
+    Partitioner,
+)
+from torch_geometric.llm.large_graph_indexer import (
+    EDGE_RELATION,
+    LargeGraphIndexer,
+    TripletLike,
+)
 from torch_geometric.llm.models import SentenceTransformer
 from torch_geometric.typing import EdgeType, NodeType
 

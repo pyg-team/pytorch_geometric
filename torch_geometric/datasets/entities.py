@@ -6,8 +6,13 @@ from typing import Any, Callable, List, Optional
 
 import torch
 
-from torch_geometric.data import (Data, HeteroData, InMemoryDataset,
-                                  download_url, extract_tar)
+from torch_geometric.data import (
+    Data,
+    HeteroData,
+    InMemoryDataset,
+    download_url,
+    extract_tar,
+)
 from torch_geometric.utils import index_sort
 
 

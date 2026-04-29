@@ -9,10 +9,21 @@ from torch.nn import Parameter
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot, zeros
-from torch_geometric.typing import (Adj, NoneType, OptPairTensor, OptTensor,
-                                    Size, SparseTensor, torch_sparse)
-from torch_geometric.utils import (add_self_loops, is_torch_sparse_tensor,
-                                   remove_self_loops, softmax)
+from torch_geometric.typing import (
+    Adj,
+    NoneType,
+    OptPairTensor,
+    OptTensor,
+    Size,
+    SparseTensor,
+    torch_sparse,
+)
+from torch_geometric.utils import (
+    add_self_loops,
+    is_torch_sparse_tensor,
+    remove_self_loops,
+    softmax,
+)
 from torch_geometric.utils.sparse import set_sparse_value
 
 if typing.TYPE_CHECKING:

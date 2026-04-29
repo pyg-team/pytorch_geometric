@@ -4,8 +4,11 @@ import torch
 from torch_geometric.data import TemporalData
 from torch_geometric.loader import TemporalDataLoader
 from torch_geometric.nn import TGNMemory
-from torch_geometric.nn.models.tgn import (IdentityMessage, LastAggregator,
-                                           LastNeighborLoader)
+from torch_geometric.nn.models.tgn import (
+    IdentityMessage,
+    LastAggregator,
+    LastNeighborLoader,
+)
 
 
 @pytest.mark.parametrize('neg_sampling_ratio', [0.0, 1.0])

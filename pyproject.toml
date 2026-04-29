@@ -60,15 +60,17 @@ benchmark=[
 ]
 rag=[
     "faiss-cpu",
-    "json_repair",
+    "json-repair",
+    "langgraph",
+    "openai",
     "pcst_fast",
+    "PyYAML",
     "datasets",
     "transformers",
     "pandas",
     "sentencepiece",
     "accelerate",
     "torchmetrics",
-    "langgraph"
     "peft",
 ]
 test=[
