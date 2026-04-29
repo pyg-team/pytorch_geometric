@@ -236,3 +236,55 @@ Specifically, a list of attributes of shape :obj:`[num_features]` should be retu
     >>> MyDataBatch(num_nodes=6, edge_index=[2, 8], foo=[2, 16])
 
 As desired, :obj:`batch.foo` is now described by two dimensions: The batch dimension and the feature dimension.
+
+Custom Collate and Separate Functions
+-------------------------------------
+
+For advanced use-cases, :func:`torch_geometric.data.collate.collate` and
+:func:`torch_geometric.data.separate.separate` accept function maps that let
+you override batching/separation for user-defined types.
+Dispatch first checks exact type matches, and then falls back to
+:func:`isinstance` checks.
+
+.. code-block:: python
+
+    import torch
+    from torch import Tensor
+    from torch_geometric.data import Data
+    from torch_geometric.data.collate import collate
+    from torch_geometric.data.separate import separate
+
+
+    class Foo:
+        def __init__(self, x: Tensor):
+            self.x = x
+
+
+    def foo_collate(*, values, **kwargs):
+        xs = [v.x for v in values]
+        sizes = torch.tensor([x.size(0) for x in xs], dtype=torch.long)
+        slices = torch.cat([torch.zeros(1, dtype=torch.long), sizes.cumsum(0)])
+        return Foo(torch.cat(xs, dim=0)), slices, None
+
+
+    def foo_separate(*, values, idx, slices, **kwargs):
+        start, end = int(slices[idx]), int(slices[idx + 1])
+        return Foo(values.x[start:end])
+
+
+    data_list = [Data(foo=Foo(torch.tensor([1, 2]))), Data(foo=Foo(torch.tensor([3])))]
+
+    batch, slice_dict, inc_dict = collate(
+        Data,
+        data_list=data_list,
+        collate_fn_map={Foo: foo_collate},
+        add_batch=False,
+    )
+    data = separate(
+        Data,
+        batch=batch,
+        idx=0,
+        slice_dict=slice_dict,
+        inc_dict=inc_dict,
+        separate_fn_map={Foo: foo_separate},
+    )

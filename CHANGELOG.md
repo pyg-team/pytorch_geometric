@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Added support for custom `collate_fn_map` and `separate_fn_map` hooks in
+  `torch_geometric.data.collate.collate` and
+  `torch_geometric.data.separate.separate`
+
 ### Changed
 
 - Dropped support for TorchScript in `GATConv` and `GATv2Conv` for correctness ([#10596](https://github.com/pyg-team/pytorch_geometric/pull/10596))

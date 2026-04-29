@@ -1,5 +1,5 @@
 from collections.abc import Mapping, Sequence
-from typing import Any, Type, TypeVar
+from typing import Any, Callable, Dict, Optional, Type, TypeVar
 
 from torch import Tensor
 
@@ -9,7 +9,9 @@ from torch_geometric.data.storage import BaseStorage
 from torch_geometric.typing import SparseTensor, TensorFrame
 from torch_geometric.utils import narrow
 
-T = TypeVar('T')
+T = TypeVar("T")
+SeparateFn = Callable[..., Any]
+SeparateFnMap = Dict[Type[Any], SeparateFn]
 
 
 def separate(
@@ -19,6 +21,7 @@ def separate(
     slice_dict: Any,
     inc_dict: Any = None,
     decrement: bool = True,
+    separate_fn_map: Optional[SeparateFnMap] = None,
 ) -> T:
     # Separates the individual element from a `batch` at index `idx`.
     # `separate` can handle both homogeneous and heterogeneous data objects by
@@ -45,12 +48,21 @@ def separate(
                 slices = slice_dict[attr]
                 incs = inc_dict[attr] if decrement else None
 
-            data_store[attr] = _separate(attr, batch_store[attr], idx, slices,
-                                         incs, batch, batch_store, decrement)
+            data_store[attr] = _separate(
+                attr,
+                batch_store[attr],
+                idx,
+                slices,
+                incs,
+                batch,
+                batch_store,
+                decrement,
+                separate_fn_map,
+            )
 
         # The `num_nodes` attribute needs special treatment, as we cannot infer
         # the real number of nodes from the total number of nodes alone:
-        if hasattr(batch_store, '_num_nodes'):
+        if hasattr(batch_store, "_num_nodes"):
             data_store.num_nodes = batch_store._num_nodes[idx]
 
     return data
@@ -65,7 +77,37 @@ def _separate(
     batch: BaseData,
     store: BaseStorage,
     decrement: bool,
+    separate_fn_map: Optional[SeparateFnMap] = None,
 ) -> Any:
+    elem_type = type(values)
+
+    if separate_fn_map is not None:
+        if elem_type in separate_fn_map:
+            return separate_fn_map[elem_type](
+                key=key,
+                values=values,
+                idx=idx,
+                slices=slices,
+                incs=incs,
+                batch=batch,
+                store=store,
+                decrement=decrement,
+                separate_fn_map=separate_fn_map,
+            )
+
+        for separate_type in separate_fn_map:
+            if isinstance(values, separate_type):
+                return separate_fn_map[separate_type](
+                    key=key,
+                    values=values,
+                    idx=idx,
+                    slices=slices,
+                    incs=incs,
+                    batch=batch,
+                    store=store,
+                    decrement=decrement,
+                    separate_fn_map=separate_fn_map,
+                )
 
     if isinstance(values, Tensor):
         # Narrow a `torch.Tensor` based on `slices`.
@@ -87,8 +129,8 @@ def _separate(
             value._sort_order = values._cat_metadata.sort_order[idx]
             value._is_undirected = values._cat_metadata.is_undirected[idx]
 
-        if (decrement and incs is not None
-                and (incs.dim() > 1 or int(incs[idx]) != 0)):
+        if decrement and incs is not None and (incs.dim() > 1
+                                               or int(incs[idx]) != 0):
             value = value - incs[idx].to(value.device)
 
         return value
@@ -113,18 +155,19 @@ def _separate(
     elif isinstance(values, Mapping):
         # Recursively separate elements of dictionaries.
         return {
-            key:
+            sub_key:
             _separate(
-                key,
+                sub_key,
                 value,
                 idx,
-                slices=slices[key],
-                incs=incs[key] if decrement else None,
+                slices=slices[sub_key],
+                incs=incs[sub_key] if decrement and incs is not None else None,
                 batch=batch,
                 store=store,
                 decrement=decrement,
+                separate_fn_map=separate_fn_map,
             )
-            for key, value in values.items()
+            for sub_key, value in values.items()
         }
 
     elif (isinstance(values, Sequence) and isinstance(values[0], Sequence)
@@ -144,10 +187,11 @@ def _separate(
                 value,
                 idx,
                 slices=slices[i],
-                incs=incs[i] if decrement else None,
+                incs=incs[i] if decrement and incs is not None else None,
                 batch=batch,
                 store=store,
                 decrement=decrement,
+                separate_fn_map=separate_fn_map,
             ) for i, value in enumerate(values)
         ]
 
