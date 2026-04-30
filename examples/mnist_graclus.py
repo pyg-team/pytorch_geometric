@@ -13,12 +13,10 @@ from torch_geometric.nn import (
     max_pool,
     max_pool_x,
 )
-from torch_geometric.typing import WITH_SPLINE, WITH_TORCH_CLUSTER
+from torch_geometric.typing import WITH_PYG_LIB, WITH_SPLINE
 from torch_geometric.utils import normalized_cut
 
-if not WITH_TORCH_CLUSTER:
-    quit("This example requires 'torch-cluster'")
-if not WITH_SPLINE:
+if not WITH_PYG_LIB or not WITH_SPLINE:
     quit("This example requires 'pyg-lib>=0.6.0'")
 
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'MNIST')

@@ -4,7 +4,7 @@ from torch_geometric.llm.models import ProteinMPNN
 from torch_geometric.testing import withPackage
 
 
-@withPackage('torch_cluster')
+@withPackage('pyg_lib')
 def test_protein_mpnn():
     num_nodes = 10
     vocab_size = 21
