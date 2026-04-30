@@ -72,8 +72,18 @@ def to_dense_adj(
     cum_nodes = cumsum(num_nodes)
 
     idx0 = batch[edge_index[0]]
-    idx1 = edge_index[0] - cum_nodes[batch][edge_index[0]]
-    idx2 = edge_index[1] - cum_nodes[batch][edge_index[1]]
+    if batch.numel() > 0 and bool((batch[1:] < batch[:-1]).any()):
+        # Compute per-graph local node indices for unsorted `batch` vectors.
+        node_idx = torch.arange(batch.size(0), device=batch.device)
+        perm = torch.argsort(batch * batch.size(0) + node_idx)
+        local_idx = torch.empty_like(batch)
+        local_idx[perm] = node_idx - cum_nodes[batch[perm]]
+
+        idx1 = local_idx[edge_index[0]]
+        idx2 = local_idx[edge_index[1]]
+    else:
+        idx1 = edge_index[0] - cum_nodes[batch][edge_index[0]]
+        idx2 = edge_index[1] - cum_nodes[batch][edge_index[1]]
 
     if max_num_nodes is None:
         max_num_nodes = int(num_nodes.max())
