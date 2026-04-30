@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - Added `from_relbench` utility to convert RelBench databases into `HeteroData` ([#10628](https://github.com/pyg-team/pytorch_geometric/pull/10628))
+- Added `txt2qa.py` example for synthetic multi-hop QA generation from text documents, supporting vLLM (local) and NVIDIA NIM (API) backends ([#10559](https://github.com/pyg-team/pytorch_geometric/pull/10559))
 
 ### Changed
 
@@ -21,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fix MovieLens dataset incompatibility with `sentence-transformers>=5.0.0` ([#10668](https://github.com/pyg-team/pytorch_geometric/pull/10668))
 - Removed an unnecessary device synchronization in `torch_geometric.utils.softmax` ([#10499](https://github.com/pyg-team/pytorch_geometric/pull/10499))
 - Fixed loading of legacy HuggingFace BERT checkpoints ([#10631](https://github.com/pyg-team/pytorch_geometric/pull/10631))
 - Fixed `return_attention_weights: bool` being not respected in `GATConv` and `GATv2Conv` ([#10596](https://github.com/pyg-team/pytorch_geometric/pull/10596))
@@ -32,6 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Added GraphLand benchmark via `GraphLandDataset` ([#10458](https://github.com/pyg-team/pytorch_geometric/pull/10458))
 - Added llm generated explanations to `TAGDataset` ([#9918](https://github.com/pyg-team/pytorch_geometric/pull/9918))
 - Added `torch_geometric.llm` and its examples ([#10436](https://github.com/pyg-team/pytorch_geometric/pull/10436))
 - Added support for negative weights in `sparse_cross_entropy` ([#10432](https://github.com/pyg-team/pytorch_geometric/pull/10432))

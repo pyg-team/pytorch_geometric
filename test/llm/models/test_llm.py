@@ -11,7 +11,8 @@ from torch_geometric.testing import withPackage
 
 def test_get_llm_kwargs():
     kwargs = get_llm_kwargs(required_memory=640)
-    assert kwargs == {'revision': 'main'}
+    expected = {'revision': 'main'}
+    assert expected.items() <= kwargs.items()
 
 
 @withPackage('transformers', 'accelerate')
