@@ -26,8 +26,7 @@ from torch_geometric.nn import Linear, SAGEConv, to_hetero
 from torch_geometric.utils import from_relbench
 
 parser = argparse.ArgumentParser(
-    description='Train a heterogeneous GNN on a RelBench dataset.'
-)
+    description='Train a heterogeneous GNN on a RelBench dataset.')
 parser.add_argument('--hidden_channels', type=int, default=64)
 parser.add_argument('--lr', type=float, default=0.005)
 parser.add_argument('--epochs', type=int, default=30)
@@ -41,10 +40,8 @@ print('Loading RelBench rel-f1 dataset...')
 dataset = get_dataset('rel-f1', download=True)
 db = dataset.get_db()
 data = from_relbench(db)
-print(
-    f'Graph: {len(data.node_types)} node types, '
-    f'{len(data.edge_types)} edge types'
-)
+print(f'Graph: {len(data.node_types)} node types, '
+      f'{len(data.edge_types)} edge types')
 
 # 2. Prepare a node regression target.
 # `from_relbench` preserves the original DataFrame column order from RelBench.
@@ -70,9 +67,9 @@ perm = torch.randperm(num_nodes)
 train_mask = torch.zeros(num_nodes, dtype=torch.bool)
 val_mask = torch.zeros(num_nodes, dtype=torch.bool)
 test_mask = torch.zeros(num_nodes, dtype=torch.bool)
-train_mask[perm[: int(0.6 * num_nodes)]] = True
-val_mask[perm[int(0.6 * num_nodes) : int(0.8 * num_nodes)]] = True
-test_mask[perm[int(0.8 * num_nodes) :]] = True
+train_mask[perm[:int(0.6 * num_nodes)]] = True
+val_mask[perm[int(0.6 * num_nodes):int(0.8 * num_nodes)]] = True
+test_mask[perm[int(0.8 * num_nodes):]] = True
 
 # Normalize target using training set statistics only (prevents data leakage):
 y_mean = y[train_mask].mean()
@@ -141,21 +138,18 @@ def test() -> Tuple[float, float, float]:
     return train_mae, val_mae, test_mae
 
 
-print(f'\nTraining {args.epochs} epochs on "{target_type}" point prediction...')
+print(
+    f'\nTraining {args.epochs} epochs on "{target_type}" point prediction...')
 print(f'Target stats (train): mean={y_mean:.2f}, std={y_std:.2f}\n')
 
 for epoch in range(1, args.epochs + 1):
     loss = train()
     if epoch % 5 == 0 or epoch == 1:
         train_mae, val_mae, test_mae = test()
-        print(
-            f'Epoch: {epoch:03d}, Loss: {loss:.4f}, '
-            f'Train MAE: {train_mae:.2f}, Val MAE: {val_mae:.2f}, '
-            f'Test MAE: {test_mae:.2f} points'
-        )
+        print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, '
+              f'Train MAE: {train_mae:.2f}, Val MAE: {val_mae:.2f}, '
+              f'Test MAE: {test_mae:.2f} points')
 
 train_mae, val_mae, test_mae = test()
-print(
-    f'\nFinal — Train MAE: {train_mae:.2f}, Val MAE: {val_mae:.2f}, '
-    f'Test MAE: {test_mae:.2f} points'
-)
+print(f'\nFinal — Train MAE: {train_mae:.2f}, Val MAE: {val_mae:.2f}, '
+      f'Test MAE: {test_mae:.2f} points')
