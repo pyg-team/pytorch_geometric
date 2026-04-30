@@ -21,7 +21,7 @@ import torch
 import torch.nn as nn
 from relbench.datasets import get_dataset
 
-from torch_geometric.llm.models import GRetriever, LLM
+from torch_geometric.llm.models import LLM, GRetriever
 from torch_geometric.nn import GAT, HeteroDictLinear
 from torch_geometric.utils import from_relbench
 
@@ -30,33 +30,28 @@ try:
 except ImportError as exc:
     raise RuntimeError(
         'The `transformers` package is required. Install it with: '
-        '`pip install "transformers>=4.51,<5.0"`.'
-    ) from exc
+        '`pip install "transformers>=4.51,<5.0"`.') from exc
 
-transformers_version = tuple(int(x) for x in transformers.__version__.split('.')[:2])
+transformers_version = tuple(
+    int(x) for x in transformers.__version__.split('.')[:2])
 if transformers_version[0] >= 5:
     raise RuntimeError(
         f'Unsupported transformers version {transformers.__version__}. '
         'This example requires transformers 4.x. Install with: '
-        '`pip install "transformers>=4.51,<5.0"`.'
-    )
+        '`pip install "transformers>=4.51,<5.0"`.')
 
 # CLI options
-parser = argparse.ArgumentParser(
-    description='RelBench -> GRetriever example.')
+parser = argparse.ArgumentParser(description='RelBench -> GRetriever example.')
 parser.add_argument('--dataset', type=str, default='rel-f1',
                     help='RelBench dataset name (default: rel-f1)')
-parser.add_argument('--llm', type=str,
-                    default='Qwen/Qwen2-0.5B',
+parser.add_argument('--llm', type=str, default='Qwen/Qwen2-0.5B',
                     help='HuggingFace LLM model name')
 parser.add_argument('--hidden', type=int, default=64,
                     help='Common projection + GNN hidden dim')
 parser.add_argument('--gnn_layers', type=int, default=2,
                     help='Number of GAT layers')
-parser.add_argument('--epochs', type=int, default=5,
-                    help='Training epochs')
-parser.add_argument('--lr', type=float, default=1e-4,
-                    help='Learning rate')
+parser.add_argument('--epochs', type=int, default=5, help='Training epochs')
+parser.add_argument('--lr', type=float, default=1e-4, help='Learning rate')
 parser.add_argument('--dtype', type=str, default='bfloat16',
                     choices=['float32', 'bfloat16', 'float16'],
                     help='LLM dtype (use float32 for CPU-only)')
@@ -110,7 +105,8 @@ class HeteroFeatureProjector(nn.Module):
 
         self.lin = HeteroDictLinear(featured, common_dim)
         self.embs = nn.ModuleDict({
-            nt: nn.Embedding(data[nt].num_nodes, common_dim)
+            nt:
+            nn.Embedding(data[nt].num_nodes, common_dim)
             for nt in self.featureless
         })
 
@@ -123,8 +119,8 @@ class HeteroFeatureProjector(nn.Module):
             if nt in out:
                 res[nt] = out[nt]
             else:
-                # These learned embeddings are only valid for the current graph.
-                # They do not generalize to unseen nodes in another graph.
+                # These learned embeddings are only valid for this graph.
+                # They do not generalize to unseen nodes from another graph.
                 res[nt] = self.embs[nt].weight
         return res
 
@@ -144,8 +140,8 @@ print(f'Homogeneous: edge_index={list(homo_edge_index.shape)}')
 qa_pairs = [
     (
         'Which entity types appear in this Formula 1 graph?',
-        'The graph contains node types such as drivers, constructors, circuits, '
-        'races, and teams.',
+        'The graph contains node types such as drivers, constructors, '
+        'circuits, races, and teams.',
     ),
     (
         'How is the driver-to-race connection represented?',
@@ -177,15 +173,12 @@ llm = LLM(
     model_name=args.llm,
     n_gpus=args.n_gpus if args.n_gpus > 0 else None,
     dtype=args.torch_dtype,
-    sys_prompt=(
-        'You are an expert assistant that answers questions about '
-        'Formula 1 data using knowledge graph context. '
-        'Give concise, direct answers.'
-    ),
+    sys_prompt=('You are an expert assistant that answers questions about '
+                'Formula 1 data using knowledge graph context. '
+                'Give concise, direct answers.'),
 )
 
 model = GRetriever(llm=llm, gnn=gnn)
-print('Model initialized.')
 
 # Move model components to the LLM device
 device = model.llm.device
@@ -204,8 +197,7 @@ optimizer = torch.optim.AdamW(params, lr=args.lr, weight_decay=0.05)
 context_str = (
     'This Formula 1 knowledge graph includes drivers, constructors, circuits, '
     'races, and teams, with edges representing race results, qualifying, and '
-    'entity relationships.'
-)
+    'entity relationships.')
 
 print(f'\nTraining {args.epochs} epochs on {len(qa_pairs)} samples...')
 model.train()
@@ -221,19 +213,18 @@ for epoch in range(1, args.epochs + 1):
         # flow back through the projector.
         projected_dict = projector(data)
         # Stack in data.node_types order, then verify the total node count.
-        homo_x = torch.cat(
-            [projected_dict[nt] for nt in data.node_types], dim=0)
+        homo_x = torch.cat([projected_dict[nt] for nt in data.node_types],
+                           dim=0)
         assert homo_x.size(0) == homo_topology.num_nodes, (
             'Expected projected homo_x to have the same number of nodes as '
             'the homogeneous topology. If this fails, the node ordering '
-            'assumption is incorrect.'
-        )
+            'assumption is incorrect.')
 
         # Single-graph paradigm: all nodes belong to batch index 0.
         # For mini-batched graph training, a Batch object with graph indices
         # would be required instead.
-        batch_idx = torch.zeros(
-            homo_x.size(0), dtype=torch.long, device=device)
+        batch_idx = torch.zeros(homo_x.size(0), dtype=torch.long,
+                                device=device)
 
         loss = model(
             question=[q],
@@ -265,12 +256,11 @@ projector.eval()
 # Compute static features for inference
 with torch.no_grad():
     projected_dict = projector(data)
-    homo_x = torch.cat(
-        [projected_dict[nt] for nt in data.node_types], dim=0)
+    homo_x = torch.cat([projected_dict[nt] for nt in data.node_types], dim=0)
 
 test_questions = [
-    'How many drivers are in this Formula 1 dataset?',
-    'What entity types exist in the graph?',
+    'Which entity types appear in this Formula 1 graph?',
+    'Why do we project all node types before calling to_homogeneous?',
 ]
 
 for test_q in test_questions:
@@ -279,8 +269,7 @@ for test_q in test_questions:
             question=[test_q],
             x=homo_x,
             edge_index=homo_edge_index,
-            batch=torch.zeros(homo_x.size(0), dtype=torch.long,
-                              device=device),
+            batch=torch.zeros(homo_x.size(0), dtype=torch.long, device=device),
             additional_text_context=[context_str],
             max_out_tokens=64,
         )
