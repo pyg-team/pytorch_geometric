@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Added automatic MPS graph cache freeze to `DataLoader` to prevent unbounded memory growth during GNN training on Apple Silicon. The warmup length is derived from the dataset node/edge count distributions; requires PyTorch >= 2.13 ([#10689](https://github.com/pyg-team/pytorch_geometric/pull/10689))
+
 - Added `txt2qa.py` example for synthetic multi-hop QA generation from text documents, supporting vLLM (local) and NVIDIA NIM (API) backends ([#10559](https://github.com/pyg-team/pytorch_geometric/pull/10559))
 
 ### Changed
