@@ -36,7 +36,7 @@ assert hasattr(torch.mps, 'freeze_graph_cache'), (
     "freeze_graph_cache requires PyTorch >= 2.13 (pytorch/pytorch#182648)")
 
 DEVICE = torch.device("mps")
-ITERS  = 200
+ITERS = 200
 WARMUP = 5
 
 
@@ -72,14 +72,14 @@ def _make_workload(quiet=False):
             super().__init__()
             self.conv1 = GCNConv(in_dim, 64)
             self.conv2 = GCNConv(64, 64)
-            self.lin   = nn.Linear(64, 1)
+            self.lin = nn.Linear(64, 1)
 
         def forward(self, x, edge_index, batch):
             x = F.relu(self.conv1(x, edge_index))
             x = F.relu(self.conv2(x, edge_index))
             return self.lin(global_mean_pool(x, batch))
 
-    model     = MolGNN().to(DEVICE).train()
+    model = MolGNN().to(DEVICE).train()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
     criterion = nn.MSELoss()
 
@@ -87,12 +87,11 @@ def _make_workload(quiet=False):
         rng = random.Random(i)
         idx = list(range(len(dataset)))
         rng.shuffle(idx)
-        batch = Batch.from_data_list(
-            [dataset[idx[j]] for j in range(bs)]
-        ).to(DEVICE)
+        batch = Batch.from_data_list([dataset[idx[j]]
+                                      for j in range(bs)]).to(DEVICE)
         target = torch.randn(bs, 1, device=DEVICE)
         optimizer.zero_grad()
-        out  = model(batch.x.float(), batch.edge_index, batch.batch)
+        out = model(batch.x.float(), batch.edge_index, batch.batch)
         loss = criterion(out, target)
         loss.backward()
         optimizer.step()
@@ -101,6 +100,7 @@ def _make_workload(quiet=False):
 
 
 # -- subprocess runner --------------------------------------------------------
+
 
 def run_strategy(strat_name, freeze_at):
     if strat_name == "never":
@@ -122,7 +122,7 @@ def run_strategy(strat_name, freeze_at):
     rss_post_warmup = _cur_rss_mb()
 
     times = []
-    drvs  = []
+    drvs = []
     iter_peak_rss = rss_pre
     rss_at_freeze = None
 
@@ -146,25 +146,34 @@ def run_strategy(strat_name, freeze_at):
 
     n = len(drvs)
     xm = (n - 1) / 2.0
-    denom = max(1, sum((j - xm) ** 2 for j in range(n)))
+    denom = max(1, sum((j - xm)**2 for j in range(n)))
     slope_kbpi = sum(
-        (j - xm) * (drvs[j] - drvs[0]) for j in range(n)
-    ) / denom / 1024
+        (j - xm) * (drvs[j] - drvs[0]) for j in range(n)) / denom / 1024
 
     return {
-        "strat":        strat_name,
-        "rss_delta":    rss_final - rss_pre,
-        "warmup_swell": rss_post_warmup - rss_pre,
-        "freeze_swell": (rss_at_freeze - rss_pre) if rss_at_freeze is not None else None,
-        "iter_peak":    (iter_peak_rss - rss_pre) if strat_name == "clear_per_iter" else None,
-        "mean_ms":      statistics.mean(times),
-        "std_ms":       statistics.stdev(times) if len(times) > 1 else 0.0,
-        "slope_kbpi":   slope_kbpi,
-        "eff_2d":       eff_2d,
+        "strat":
+        strat_name,
+        "rss_delta":
+        rss_final - rss_pre,
+        "warmup_swell":
+        rss_post_warmup - rss_pre,
+        "freeze_swell":
+        (rss_at_freeze - rss_pre) if rss_at_freeze is not None else None,
+        "iter_peak":
+        (iter_peak_rss - rss_pre) if strat_name == "clear_per_iter" else None,
+        "mean_ms":
+        statistics.mean(times),
+        "std_ms":
+        statistics.stdev(times) if len(times) > 1 else 0.0,
+        "slope_kbpi":
+        slope_kbpi,
+        "eff_2d":
+        eff_2d,
     }
 
 
 # -- orchestrator -------------------------------------------------------------
+
 
 def main_benchmark():
     _, eff_2d, freeze_at, iters_per_epoch = _make_workload()
@@ -172,9 +181,12 @@ def main_benchmark():
 
     print()
     print(f"PyTorch {torch.__version__}  |  ZINC MPS graph cache benchmark")
-    print(f"  warmup={WARMUP}  freeze_at={freeze_at}  iters={ITERS}  (subprocess-isolated)")
+    print(
+        f"  warmup={WARMUP}  freeze_at={freeze_at}  iters={ITERS}  (subprocess-isolated)"
+    )
     print()
-    print(f"  {'Strategy':<22} {'ΔRSS MB':>9}  {'ms/iter':>9}  {'+-':>6}  note")
+    print(
+        f"  {'Strategy':<22} {'ΔRSS MB':>9}  {'ms/iter':>9}  {'+-':>6}  note")
     print(f"  {'-'*22} {'-'*9}  {'-'*9}  {'-'*6}  ------")
 
     always_ms = None
@@ -185,9 +197,13 @@ def main_benchmark():
         sys.stdout.flush()
 
         result = subprocess.run(
-            [sys.executable, __file__, "--strategy", strat_name,
-             "--freeze-at", str(freeze_at)],
-            capture_output=True, text=True,
+            [
+                sys.executable, __file__, "--strategy", strat_name,
+                "--freeze-at",
+                str(freeze_at)
+            ],
+            capture_output=True,
+            text=True,
             env=os.environ.copy(),
         )
 
@@ -215,27 +231,31 @@ def main_benchmark():
         print(f"  {strat_name:<22} {metrics['rss_delta']:>+9.1f}  "
               f"{metrics['mean_ms']:>9.1f}  {metrics['std_ms']:>6.1f}  {note}")
 
-        if strat_name == "freeze_after_warmup" and metrics["freeze_swell"] is not None:
+        if strat_name == "freeze_after_warmup" and metrics[
+                "freeze_swell"] is not None:
             print(f"    warmup loop: +{metrics['warmup_swell']:.1f} MB  |  "
                   f"at freeze point: +{metrics['freeze_swell']:.1f} MB")
 
         if strat_name == "clear_per_iter" and metrics["iter_peak"] is not None:
-            print(f"    peak/iter before clear: +{metrics['iter_peak']:.1f} MB  "
-                  f"(net: {metrics['rss_delta']:+.1f} MB)")
+            print(
+                f"    peak/iter before clear: +{metrics['iter_peak']:.1f} MB  "
+                f"(net: {metrics['rss_delta']:+.1f} MB)")
 
     if always_slope and always_slope > 0:
         epochs = 100
         extrap_gb = always_slope * iters_per_epoch * epochs / 1024 / 1024
         print()
-        print(f"  always: {always_slope:.1f} KB/iter x {iters_per_epoch} iters/epoch "
-              f"x {epochs} epochs = {extrap_gb:.1f} GB extrapolated cache growth")
+        print(
+            f"  always: {always_slope:.1f} KB/iter x {iters_per_epoch} iters/epoch "
+            f"x {epochs} epochs = {extrap_gb:.1f} GB extrapolated cache growth"
+        )
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--strategy", default=None,
-                        choices=["always", "freeze_after_warmup",
-                                 "clear_per_iter", "never"])
+    parser.add_argument(
+        "--strategy", default=None,
+        choices=["always", "freeze_after_warmup", "clear_per_iter", "never"])
     parser.add_argument("--freeze-at", type=int, default=50)
     args = parser.parse_args()
 
