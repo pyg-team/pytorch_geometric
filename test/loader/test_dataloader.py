@@ -317,7 +317,6 @@ if __name__ == '__main__':
     on_disk_dataset.close()
 
 
-
 def _make_dataset(n=20, node_range=(5, 15), edge_range=(10, 30)):
     """Small synthetic dataset with variable graph sizes."""
     import random
@@ -325,9 +324,9 @@ def _make_dataset(n=20, node_range=(5, 15), edge_range=(10, 30)):
     return [
         Data(
             x=torch.randn(random.randint(*node_range), 4),
-            edge_index=torch.zeros(2, random.randint(*edge_range), dtype=torch.long),
-        )
-        for _ in range(n)
+            edge_index=torch.zeros(2, random.randint(*edge_range),
+                                   dtype=torch.long),
+        ) for _ in range(n)
     ]
 
 
@@ -353,8 +352,8 @@ def test_mps_freeze_at_formula():
     edge_counts = [int(d.num_edges) for d in dataset]
     std_n = statistics.stdev(node_counts)
     std_e = statistics.stdev(edge_counts)
-    eff_2d = (math.sqrt(batch_size) * std_n *
-              math.sqrt(batch_size) * std_e * 2 * math.pi)
+    eff_2d = (math.sqrt(batch_size) * std_n * math.sqrt(batch_size) * std_e *
+              2 * math.pi)
     expected = max(5, int(math.sqrt(eff_2d)))
 
     with patch('torch.backends.mps.is_available', return_value=True), \
