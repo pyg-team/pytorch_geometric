@@ -68,7 +68,9 @@ def _mps_freeze_at(
 
     .. code-block:: text
 
-        eff_2d   = sqrt(BS) * std(node_counts) * sqrt(BS) * std(edge_counts) * 2π
+        eff_2d = (
+            sqrt(BS) * std(node_counts) * sqrt(BS) * std(edge_counts) * 2π
+        )
         freeze_at = max(5, int(sqrt(eff_2d)))
 
     Returns ``None`` when MPS is unavailable, ``freeze_graph_cache`` is not
