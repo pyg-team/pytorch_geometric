@@ -182,7 +182,8 @@ def main_benchmark():
     print()
     print(f"PyTorch {torch.__version__}  |  ZINC MPS graph cache benchmark")
     print(
-        f"  warmup={WARMUP}  freeze_at={freeze_at}  iters={ITERS}  (subprocess-isolated)"
+        f"  warmup={WARMUP}  freeze_at={freeze_at}"
+        f"  iters={ITERS}  (subprocess-isolated)"
     )
     print()
     print(
@@ -246,8 +247,8 @@ def main_benchmark():
         extrap_gb = always_slope * iters_per_epoch * epochs / 1024 / 1024
         print()
         print(
-            f"  always: {always_slope:.1f} KB/iter x {iters_per_epoch} iters/epoch "
-            f"x {epochs} epochs = {extrap_gb:.1f} GB extrapolated cache growth"
+            f"  always: {always_slope:.1f} KB/iter"
+            f" x {iters_per_epoch} iters/epoch "
         )
 
 
