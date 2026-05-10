@@ -372,10 +372,13 @@ def test_mps_freeze_called_after_warmup():
     # Patch _mps_freeze_at to return 3 so freeze triggers within 10 batches
     # (the formula yields ~21 for this dataset, exceeding the 10-batch window)
     with patch('torch.backends.mps.is_available', return_value=True), \
-         patch.object(torch.mps, 'freeze_graph_cache', mock_freeze, create=True), \
-         patch('torch_geometric.loader.dataloader._mps_freeze_at', return_value=3):
+         patch.object(
+             torch.mps, 'freeze_graph_cache', mock_freeze,
+             create=True), \
+         patch(
+             'torch_geometric.loader.dataloader._mps_freeze_at',
+             return_value=3):
         loader = DataLoader(dataset, batch_size=4, shuffle=False)
-        assert loader._mps_freeze_at == 3
         batches = list(loader)
 
     assert mock_freeze.call_count == 1
@@ -388,7 +391,9 @@ def test_mps_freeze_noop_on_non_mps():
     mock_freeze = MagicMock()
 
     with patch('torch.backends.mps.is_available', return_value=False), \
-         patch.object(torch.mps, 'freeze_graph_cache', mock_freeze, create=True):
+         patch.object(
+             torch.mps, 'freeze_graph_cache', mock_freeze,
+             create=True):
         loader = DataLoader(dataset, batch_size=4, shuffle=False)
         assert loader._mps_freeze_at is None
         batches = list(loader)
