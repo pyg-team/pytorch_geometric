@@ -42,8 +42,7 @@ Key Advantages
    is an ABC; an in-memory :class:`LRUFeatureCache` is provided as a
    default, and Redis / on-disk / distributed caches drop in via subclass.
 #. **Unchanged training loop** — the stack composes with the standard
-   :class:`~torch_geometric.loader.NeighborLoader` and
-   :class:`~torch_geometric.loader.LinkNeighborLoader`; nothing about model
+   :class:`~torch_geometric.loader.NeighborLoader`; nothing about model
    code changes.
 #. **Avoid upfront graph exports** — when the graph already lives in a
    database, PyG can query it directly instead of requiring a separate export
