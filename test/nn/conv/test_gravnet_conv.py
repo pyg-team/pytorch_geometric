@@ -4,7 +4,7 @@ from torch_geometric.nn import GravNetConv
 from torch_geometric.testing import is_full_test, withPackage
 
 
-@withPackage('torch_cluster')
+@withPackage('pyg_lib')
 def test_gravnet_conv():
     x1 = torch.randn(8, 16)
     x2 = torch.randn(4, 16)

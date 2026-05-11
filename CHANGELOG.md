@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - Added `DatabaseGraphStore`, `DatabaseFeatureStore`, and `DatabaseSampler` abstractions for database-backed graph training, with a reference Neo4j implementation and Cora notebook under `examples/neo4j` ([#10673](https://github.com/pyg-team/pytorch_geometric/pull/10673))
+- Added `txt2qa.py` example for synthetic multi-hop QA generation from text documents, supporting vLLM (local) and NVIDIA NIM (API) backends ([#10559](https://github.com/pyg-team/pytorch_geometric/pull/10559))
 
 ### Changed
 
@@ -15,6 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Deprecated
 
+- Deprecated support for `torch-cluster` in favor of `pyg-lib>=0.6.0` ([#10682](https://github.com/pyg-team/pytorch_geometric/pull/10682))
 - Deprecated support for `torch-spline-conv` in favor of `pyg-lib>=0.6.0` ([#10622](https://github.com/pyg-team/pytorch_geometric/pull/10622))
 
 ### Removed
