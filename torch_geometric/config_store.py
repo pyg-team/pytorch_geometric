@@ -167,14 +167,7 @@ def map_annotation(
     if origin in {Union, list, dict, tuple}:
         assert origin is not None
         args = tuple(map_annotation(a, mapping) for a in args)
-        if type(annotation).__name__ == 'GenericAlias':
-            # If annotated with `list[...]` or `dict[...]`:
-            annotation = origin[args]  # type: ignore[index]
-        else:
-            # If annotated with `typing.List[...]` or `typing.Dict[...]`:
-            annotation = copy.copy(annotation)
-            annotation.__args__ = args
-
+        annotation = origin[args]  # type: ignore[index]
         return annotation
 
     if mapping is not None and annotation in mapping:

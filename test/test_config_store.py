@@ -48,10 +48,10 @@ def test_to_dataclass():
 def test_map_annotation():
     mapping = {int: Any}
     assert map_annotation(dict[str, int], mapping) == dict[str, Any]
-    assert map_annotation(Dict[str, float], mapping) == Dict[str, float]
-    assert map_annotation(List[str], mapping) == List[str]
-    assert map_annotation(List[int], mapping) == List[Any]
-    assert map_annotation(Tuple[int], mapping) == Tuple[Any]
+    assert map_annotation(Dict[str, float], mapping) == dict[str, float]
+    assert map_annotation(List[str], mapping) == list[str]
+    assert map_annotation(List[int], mapping) == list[Any]
+    assert map_annotation(Tuple[int], mapping) == tuple[Any]
     assert map_annotation(dict[str, int], mapping) == dict[str, Any]
     assert map_annotation(dict[str, float], mapping) == dict[str, float]
     assert map_annotation(list[str], mapping) == list[str]
