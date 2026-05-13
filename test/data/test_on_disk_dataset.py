@@ -126,12 +126,10 @@ def test_index_select_multi_get(tmp_path):
     assert torch.equal(subset.get(0).x, data_list[0].x)
 
     out_list = subset.multi_get([0, 2, 4])
-    for out, data in zip(out_list, data_list[5:10:2]):
-        assert torch.equal(out.x, data.x)
+    assert [int(data.x.item()) for data in out_list] == [5, 7, 9]
 
     out_list = subset.multi_get(np.array([True, False, True, False, True]))
-    for out, data in zip(out_list, data_list[5:10:2]):
-        assert torch.equal(out.x, data.x)
+    assert [int(data.x.item()) for data in out_list] == [5, 7, 9]
 
     assert subset.multi_get([]) == []
     assert subset.multi_get(torch.tensor([], dtype=torch.long)) == []
