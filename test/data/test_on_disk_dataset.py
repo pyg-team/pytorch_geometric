@@ -1,6 +1,7 @@
 import os.path as osp
 from typing import Any, Dict
 
+import numpy as np
 import torch
 
 from torch_geometric.data import Data, OnDiskDataset
@@ -125,6 +126,10 @@ def test_index_select_multi_get(tmp_path):
     assert torch.equal(subset.get(0).x, data_list[0].x)
 
     out_list = subset.multi_get([0, 2, 4])
+    for out, data in zip(out_list, data_list[5:10:2]):
+        assert torch.equal(out.x, data.x)
+
+    out_list = subset.multi_get(np.array([True, False, True, False, True]))
     for out, data in zip(out_list, data_list[5:10:2]):
         assert torch.equal(out.x, data.x)
 

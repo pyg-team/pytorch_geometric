@@ -1,6 +1,7 @@
 import os
 from typing import Any, Callable, Iterable, List, Optional, Sequence, Union
 
+import numpy as np
 import torch
 from torch import Tensor
 
@@ -140,7 +141,7 @@ class OnDiskDataset(Dataset):
 
     def _resolve_indices(
         self,
-        indices: Union[Iterable[int], Tensor, slice, range],
+        indices: Union[Iterable[int], Tensor, np.ndarray, slice, range],
     ) -> Union[Sequence[int], range]:
         base_indices = self.indices()
 
@@ -150,6 +151,10 @@ class OnDiskDataset(Dataset):
         if isinstance(indices, Tensor):
             if indices.dtype == torch.bool:
                 indices = indices.flatten().nonzero(as_tuple=False).flatten()
+            indices = indices.flatten().tolist()
+        elif isinstance(indices, np.ndarray):
+            if indices.dtype == bool:
+                indices = indices.flatten().nonzero()[0]
             indices = indices.flatten().tolist()
         elif isinstance(indices, range):
             indices = list(indices)
