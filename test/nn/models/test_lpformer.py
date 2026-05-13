@@ -37,12 +37,14 @@ def test_lpformer():
 
 
 @pytest.mark.parametrize('num_heads', [1, 2])
-@pytest.mark.parametrize('num_transformer_layers', [1, 2])
+@pytest.mark.parametrize('num_transformer_layers', [1, 2, 3])
 @withPackage('numba')  # For ppr calculation
 def test_lpformer_attention_dimensions(num_transformer_layers, num_heads):
+    torch.manual_seed(12345)
     model = LPFormer(16, 32, num_gnn_layers=2,
                      num_transformer_layers=num_transformer_layers,
-                     num_heads=num_heads)
+                     num_heads=num_heads, gnn_dropout=0.0,
+                     transformer_dropout=0.0).eval()
 
     num_nodes = 20
     x = torch.randn(num_nodes, 16)
@@ -52,5 +54,6 @@ def test_lpformer_attention_dimensions(num_transformer_layers, num_heads):
 
     ppr_matrix = model.calc_sparse_ppr(edge_index, num_nodes, eps=1e-4)
 
-    out = model(test_edges, x, edge_index, ppr_matrix)
+    with torch.no_grad():
+        out = model(test_edges, x, edge_index, ppr_matrix)
     assert out.size() == (10, )
