@@ -175,7 +175,9 @@ class OnDiskDataset(Dataset):
         r"""Gets a list of data objects from the specified indices."""
         indices = self._resolve_indices(indices)
 
-        if len(indices) == 1:
+        if len(indices) == 0:
+            data_list = []
+        elif len(indices) == 1:
             data_list = [self.db.get(indices[0])]
         else:
             data_list = self.db.multi_get(indices, batch_size)

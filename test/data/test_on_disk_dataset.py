@@ -133,11 +133,39 @@ def test_index_select_multi_get(tmp_path):
     for out, data in zip(out_list, data_list[5:10:2]):
         assert torch.equal(out.x, data.x)
 
+    assert subset.multi_get([]) == []
+    assert subset.multi_get(torch.tensor([], dtype=torch.long)) == []
+    assert subset.multi_get(torch.tensor([], dtype=torch.bool)) == []
+    assert subset.multi_get(
+        np.array([False, False, False, False, False]),
+    ) == []
+
     out_list = nested_subset.__getitems__([0, 1])
     assert torch.equal(out_list[0].x, data_list[6].x)
     assert torch.equal(out_list[1].x, data_list[8].x)
 
     loader = DataLoader(subset, batch_size=3, shuffle=False)
+    batch = next(iter(loader))
+    assert batch.x.view(-1).tolist() == [5, 6, 7]
+
+    dataset.close()
+
+
+@withPackage('sqlite3')
+def test_direct_indices_multi_get(tmp_path):
+    dataset = OnDiskDataset(tmp_path)
+    data_list = [Data(x=torch.tensor([i])) for i in range(10)]
+    dataset.extend(data_list)
+
+    dataset._indices = [5, 6, 7, 8, 9]
+
+    assert torch.equal(dataset[0].x, data_list[5].x)
+    assert torch.equal(dataset.get(0).x, data_list[0].x)
+
+    out_list = dataset.multi_get([0, 1, 2])
+    assert [int(data.x.item()) for data in out_list] == [5, 6, 7]
+
+    loader = DataLoader(dataset, batch_size=3, shuffle=False)
     batch = next(iter(loader))
     assert batch.x.view(-1).tolist() == [5, 6, 7]
 
