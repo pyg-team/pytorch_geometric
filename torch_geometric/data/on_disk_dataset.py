@@ -10,6 +10,8 @@ from torch_geometric.data.data import BaseData
 from torch_geometric.data.database import Schema
 from torch_geometric.data.dataset import Dataset
 
+IndexType = Union[Iterable[int], Tensor, np.ndarray, slice, range]
+
 
 class OnDiskDataset(Dataset):
     r"""Dataset base class for creating large graph datasets which do not
@@ -141,8 +143,8 @@ class OnDiskDataset(Dataset):
 
     def _resolve_indices(
         self,
-        indices: Union[Iterable[int], Tensor, np.ndarray, slice, range],
-    ) -> Union[Sequence[int], range]:
+        indices: IndexType,
+    ) -> Sequence[int]:
         base_indices = self.indices()
 
         if isinstance(indices, slice):
@@ -169,7 +171,7 @@ class OnDiskDataset(Dataset):
 
     def multi_get(
         self,
-        indices: Union[Iterable[int], Tensor, slice, range],
+        indices: IndexType,
         batch_size: Optional[int] = None,
     ) -> List[BaseData]:
         r"""Gets a list of data objects from the specified indices."""

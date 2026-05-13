@@ -164,6 +164,9 @@ def test_direct_indices_multi_get(tmp_path):
     out_list = dataset.multi_get([0, 1, 2])
     assert [int(data.x.item()) for data in out_list] == [5, 6, 7]
 
+    out_list = dataset.__getitems__([0, 1, 2])
+    assert [int(data.x.item()) for data in out_list] == [5, 6, 7]
+
     loader = DataLoader(dataset, batch_size=3, shuffle=False)
     batch = next(iter(loader))
     assert batch.x.view(-1).tolist() == [5, 6, 7]
