@@ -21,7 +21,9 @@ def to_dense_adj(
         edge_index (LongTensor): The edge indices.
         batch (LongTensor, optional): Batch vector
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
-            node to a specific example. (default: :obj:`None`)
+            node to a specific example. It does not need to be sorted. Nodes
+            are ordered in each dense adjacency matrix by their relative node
+            order in the input :obj:`batch` vector. (default: :obj:`None`)
         edge_attr (Tensor, optional): Edge weights or multi-dimensional edge
             features.
             If :obj:`edge_index` contains duplicated edges, the dense adjacency
