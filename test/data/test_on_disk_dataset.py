@@ -136,8 +136,7 @@ def test_index_select_multi_get(tmp_path):
     assert subset.multi_get([]) == []
     assert subset.multi_get(torch.tensor([], dtype=torch.long)) == []
     assert subset.multi_get(torch.tensor([], dtype=torch.bool)) == []
-    assert subset.multi_get(np.array([False, False, False, False,
-                                      False]), ) == []
+    assert subset.multi_get(np.zeros(5, dtype=bool)) == []
 
     out_list = nested_subset.__getitems__([0, 1])
     assert torch.equal(out_list[0].x, data_list[6].x)

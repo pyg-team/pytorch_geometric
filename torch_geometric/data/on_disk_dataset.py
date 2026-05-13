@@ -144,11 +144,18 @@ class OnDiskDataset(Dataset):
     def _resolve_indices(
         self,
         indices: IndexType,
-    ) -> Sequence[int]:
+    ) -> List[int]:
         base_indices = self.indices()
 
         if isinstance(indices, slice):
-            return base_indices[indices]
+            indices = base_indices[indices]
+
+            if isinstance(indices, Tensor):
+                indices = indices.flatten().tolist()
+            elif isinstance(indices, np.ndarray):
+                indices = indices.flatten().tolist()
+
+            return [int(idx) for idx in indices]
 
         if isinstance(indices, Tensor):
             if indices.dtype == torch.bool:
@@ -163,7 +170,7 @@ class OnDiskDataset(Dataset):
         elif not isinstance(indices, Sequence):
             indices = list(indices)
 
-        return [base_indices[idx] for idx in indices]
+        return [int(base_indices[idx]) for idx in indices]
 
     def get(self, idx: int) -> BaseData:
         r"""Gets the data object at index :obj:`idx`."""
