@@ -1,7 +1,6 @@
 import os
 from typing import Any, Callable, Iterable, List, Optional, Sequence, Union
 
-import numpy as np
 import torch
 from torch import Tensor
 
@@ -139,17 +138,6 @@ class OnDiskDataset(Dataset):
         self.db.multi_insert(range(start, end), data_list, batch_size)
         self._numel += (end - start)
 
-    def _resolve_index(
-        self,
-        idx: Union[int, np.integer, Tensor, np.ndarray],
-    ) -> int:
-        if isinstance(idx, Tensor):
-            idx = idx.item()
-        elif isinstance(idx, np.ndarray):
-            idx = idx.item()
-
-        return self.indices()[idx]
-
     def _resolve_indices(
         self,
         indices: Union[Iterable[int], Tensor, slice, range],
@@ -172,20 +160,7 @@ class OnDiskDataset(Dataset):
 
     def get(self, idx: int) -> BaseData:
         r"""Gets the data object at index :obj:`idx`."""
-        return self.deserialize(self.db.get(self._resolve_index(idx)))
-
-    def __getitem__(
-        self,
-        idx: Union[int, np.integer, Tensor, np.ndarray, slice, Sequence[int]],
-    ) -> Union['OnDiskDataset', BaseData]:
-        if (isinstance(idx, (int, np.integer))
-                or (isinstance(idx, Tensor) and idx.dim() == 0)
-                or (isinstance(idx, np.ndarray) and np.isscalar(idx))):
-            data = self.get(idx)
-            data = data if self.transform is None else self.transform(data)
-            return data
-
-        return self.index_select(idx)
+        return self.deserialize(self.db.get(idx))
 
     def multi_get(
         self,

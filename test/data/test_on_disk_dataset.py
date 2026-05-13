@@ -4,6 +4,7 @@ from typing import Any, Dict
 import torch
 
 from torch_geometric.data import Data, OnDiskDataset
+from torch_geometric.loader import DataLoader
 from torch_geometric.testing import withPackage
 
 
@@ -112,7 +113,7 @@ def test_custom_schema(tmp_path):
 
 
 @withPackage('sqlite3')
-def test_index_select_get(tmp_path):
+def test_index_select_multi_get(tmp_path):
     dataset = OnDiskDataset(tmp_path)
     data_list = [Data(x=torch.tensor([i])) for i in range(10)]
     dataset.extend(data_list)
@@ -121,7 +122,7 @@ def test_index_select_get(tmp_path):
     nested_subset = subset.index_select([1, 3])
 
     assert torch.equal(subset[0].x, data_list[5].x)
-    assert torch.equal(subset.get(0).x, data_list[5].x)
+    assert torch.equal(subset.get(0).x, data_list[0].x)
 
     out_list = subset.multi_get([0, 2, 4])
     for out, data in zip(out_list, data_list[5:10:2]):
@@ -130,5 +131,9 @@ def test_index_select_get(tmp_path):
     out_list = nested_subset.__getitems__([0, 1])
     assert torch.equal(out_list[0].x, data_list[6].x)
     assert torch.equal(out_list[1].x, data_list[8].x)
+
+    loader = DataLoader(subset, batch_size=3, shuffle=False)
+    batch = next(iter(loader))
+    assert batch.x.view(-1).tolist() == [5, 6, 7]
 
     dataset.close()
