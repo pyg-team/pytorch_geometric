@@ -173,7 +173,12 @@ class OnDiskDataset(Dataset):
         return [int(base_indices[idx]) for idx in indices]
 
     def get(self, idx: int) -> BaseData:
-        r"""Gets the data object at index :obj:`idx`."""
+        r"""Gets the data object at the raw database index :obj:`idx`.
+
+        Note that subset-aware integer access is handled by
+        :meth:`Dataset.__getitem__`, which resolves :obj:`self.indices()[idx]`
+        before calling :meth:`get`.
+        """
         return self.deserialize(self.db.get(idx))
 
     def multi_get(
@@ -181,7 +186,13 @@ class OnDiskDataset(Dataset):
         indices: IndexType,
         batch_size: Optional[int] = None,
     ) -> List[BaseData]:
-        r"""Gets a list of data objects from the specified indices."""
+        r"""Gets a list of data objects from the specified subset-local
+        indices.
+
+        In contrast to :meth:`get`, batched access is expected to follow the
+        same subset semantics as ``[self[idx] for idx in indices]``. As such,
+        indices are first resolved through :obj:`self.indices()`.
+        """
         indices = self._resolve_indices(indices)
 
         if len(indices) == 0:
@@ -197,6 +208,7 @@ class OnDiskDataset(Dataset):
         return data_list
 
     def __getitems__(self, indices: List[int]) -> List[BaseData]:
+        r"""Gets a list of data objects for batched subset-aware access."""
         return self.multi_get(indices)
 
     def len(self) -> int:
