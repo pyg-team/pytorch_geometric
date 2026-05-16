@@ -4,14 +4,10 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
+from torch_geometric.index import index2ptr
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import reset
 from torch_geometric.typing import Adj, OptTensor, PairOptTensor, PairTensor
-
-if torch_geometric.typing.WITH_TORCH_CLUSTER:
-    from torch_cluster import knn
-else:
-    knn = None
 
 
 class EdgeConv(MessagePassing):
@@ -104,8 +100,8 @@ class DynamicEdgeConv(MessagePassing):
                  num_workers: int = 1, **kwargs):
         super().__init__(aggr=aggr, flow='source_to_target', **kwargs)
 
-        if knn is None:
-            raise ImportError('`DynamicEdgeConv` requires `torch-cluster`.')
+        if not torch_geometric.typing.WITH_KNN:
+            raise ImportError("'DynamicEdgeConv' requires 'pyg-lib>=0.6.0'")
 
         self.nn = nn
         self.k = k
@@ -134,7 +130,10 @@ class DynamicEdgeConv(MessagePassing):
             assert batch is not None
             b = (batch[0], batch[1])
 
-        edge_index = knn(x[0], x[1], self.k, b[0], b[1]).flip([0])
+        ptr_l = None if b[0] is None else index2ptr(b[0])
+        ptr_r = None if b[1] is None else index2ptr(b[1])
+        edge_index = torch.ops.pyg.knn(x[0], x[1], ptr_l, ptr_r, self.k, False,
+                                       1).flip([0])
 
         # propagate_type: (x: PairTensor)
         return self.propagate(edge_index, x=x)

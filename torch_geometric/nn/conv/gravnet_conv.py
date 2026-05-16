@@ -5,15 +5,11 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
+from torch_geometric.index import index2ptr
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.typing import OptPairTensor  # noqa
 from torch_geometric.typing import OptTensor, PairOptTensor, PairTensor
-
-if torch_geometric.typing.WITH_TORCH_CLUSTER:
-    from torch_cluster import knn
-else:
-    knn = None
 
 
 class GravNetConv(MessagePassing):
@@ -57,8 +53,8 @@ class GravNetConv(MessagePassing):
         super().__init__(aggr=['mean', 'max'], flow='source_to_target',
                          **kwargs)
 
-        if knn is None:
-            raise ImportError('`GravNetConv` requires `torch-cluster`.')
+        if not torch_geometric.typing.WITH_KNN:
+            raise ImportError("'GravNetConv' requires 'pyg-lib>=0.6.0'")
 
         if num_workers is not None:
             warnings.warn(
@@ -111,7 +107,10 @@ class GravNetConv(MessagePassing):
         s_l: Tensor = self.lin_s(x[0])
         s_r: Tensor = self.lin_s(x[1]) if is_bipartite else s_l
 
-        edge_index = knn(s_l, s_r, self.k, b[0], b[1]).flip([0])
+        ptr_l = None if b[0] is None else index2ptr(b[0])
+        ptr_r = None if b[1] is None else index2ptr(b[1])
+        edge_index = torch.ops.pyg.knn(s_l, s_r, ptr_l, ptr_r, self.k, False,
+                                       1).flip([0])
 
         edge_weight = (s_l[edge_index[0]] - s_r[edge_index[1]]).pow(2).sum(-1)
         edge_weight = torch.exp(-10. * edge_weight)  # 10 gives a better spread
