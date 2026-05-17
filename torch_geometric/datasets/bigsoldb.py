@@ -74,7 +74,10 @@ class BigSolDB(InMemoryDataset):
           - 1
     """
 
-    url = 'https://zenodo.org/records/18552681/files/BigSolDBv2.1.csv?download=1'
+    url = (
+            'https://zenodo.org/records/18552681/files/'
+            'BigSolDBv2.1.csv?download=1'
+        )
 
     def __init__(
         self,
