@@ -1,4 +1,3 @@
-import os.path as osp
 from typing import Callable, List, Optional
 
 import torch
@@ -137,8 +136,8 @@ class BigSolDB(InMemoryDataset):
                 edge_index_solvent=solv_data.edge_index,
                 edge_attr_solvent=solv_data.edge_attr,
                 # measurement conditions
-                temperature=torch.tensor(
-                    [row['Temperature_K']], dtype=torch.float),
+                temperature=torch.tensor([row['Temperature_K']],
+                                         dtype=torch.float),
                 solvent_name=str(row['Solvent']),
                 solute_smiles=str(row['SMILES_Solute']),
                 compound_name=str(row['Compound_Name']),

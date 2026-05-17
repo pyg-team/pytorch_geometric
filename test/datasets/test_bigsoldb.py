@@ -6,7 +6,6 @@ import torch
 
 from torch_geometric.datasets import BigSolDB
 
-
 # Minimal fake CSV matching BigSolDB column schema
 FAKE_CSV = (
     "SMILES_Solute,Temperature_K,Solvent,SMILES_Solvent,"
@@ -18,8 +17,7 @@ FAKE_CSV = (
     "CC(=O)O,310.0,ethanol,CCO,0.2,2.0,0.301,AceticAcid,"
     "64-19-7,176,No,DOI3\n"
     "CCN,298.15,water,O,0.3,3.0,0.477,Ethylamine,"
-    "75-04-7,6329,No,DOI4\n"
-)
+    "75-04-7,6329,No,DOI4\n")
 
 
 @pytest.fixture()
@@ -43,7 +41,7 @@ def test_bigsoldb_data_object(dataset):
 
     # solute graph
     assert d.x.dim() == 2
-    assert d.x.size(1) == 9          # 9 atom features (from_smiles default)
+    assert d.x.size(1) == 9  # 9 atom features (from_smiles default)
     assert d.edge_index.size(0) == 2
 
     # solvent graph
@@ -101,8 +99,8 @@ def test_bigsoldb_separate_cache_per_solvent(tmp_path):
     for subdir in ['raw']:
         d = tmp_path / 'BigSolDB_cache' / subdir
         d.mkdir(parents=True)
-    (tmp_path / 'BigSolDB_cache' / 'raw' / 'BigSolDBv2.1.csv').write_text(
-        FAKE_CSV)
+    (tmp_path / 'BigSolDB_cache' / 'raw' /
+     'BigSolDBv2.1.csv').write_text(FAKE_CSV)
 
     root = str(tmp_path / 'BigSolDB_cache')
     all_ds = BigSolDB(root=root)
