@@ -19,6 +19,7 @@ from .qm9 import QM9
 from .md17 import MD17
 from .zinc import ZINC
 from .aqsol import AQSOL
+from .bigsoldb import BigSolDB
 from .molecule_net import MoleculeNet
 from .pcqm4m import PCQM4Mv2
 from .entities import Entities
@@ -140,6 +141,7 @@ homo_datasets = [
     'MD17',
     'ZINC',
     'AQSOL',
+    'BigSolDB',
     'MoleculeNet',
     'PCQM4Mv2',
     'Entities',
