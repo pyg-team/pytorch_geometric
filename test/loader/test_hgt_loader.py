@@ -146,7 +146,7 @@ def test_hgt_loader_on_cora(get_dataset):
     hetero_data = HeteroData()
     hetero_data['paper'].x = data.x
     hetero_data['paper'].n_id = torch.arange(data.num_nodes)
-    hetero_data['paper', 'paper'].edge_index = data.edge_index
+    hetero_data['paper', 'paper'].edge_index = data.edge_index._data
     hetero_data['paper', 'paper'].edge_weight = data.edge_weight
 
     split_idx = torch.arange(5, 8)
