@@ -5,7 +5,7 @@ from torch_geometric.nn import ViSNet
 from torch_geometric.testing import withPackage
 
 
-@withPackage('torch_cluster')
+@withPackage('pyg_lib')
 @pytest.mark.parametrize('kwargs', [
     dict(lmax=2, derivative=True, vecnorm_type=None, vertex=False),
     dict(lmax=1, derivative=False, vecnorm_type='max_min', vertex=True),

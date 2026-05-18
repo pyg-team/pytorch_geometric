@@ -63,6 +63,12 @@ try:
             WITH_SEGMM = False
     WITH_SAMPLED_OP = hasattr(pyg_lib.ops, 'sampled_add')
     WITH_SPLINE = hasattr(pyg_lib.ops, 'spline_basis')
+    WITH_GRID_CLUSTER = hasattr(pyg_lib.ops, 'grid_cluster')
+    WITH_GRACLUS = hasattr(pyg_lib.ops, 'graclus_cluster')
+    WITH_FPS = hasattr(pyg_lib.ops, 'fps')
+    WITH_KNN = hasattr(pyg_lib.ops, 'knn')
+    WITH_RADIUS = hasattr(pyg_lib.ops, 'radius')
+    WITH_NEAREST = hasattr(pyg_lib.ops, 'nearest')
     WITH_SOFTMAX = hasattr(pyg_lib.ops, 'softmax_csr')
     WITH_INDEX_SORT = hasattr(pyg_lib.ops, 'index_sort')
     WITH_METIS = hasattr(pyg_lib, 'partition')
@@ -91,6 +97,12 @@ except Exception as e:
     WITH_SEGMM = False
     WITH_SAMPLED_OP = False
     WITH_SPLINE = False
+    WITH_GRID_CLUSTER = False
+    WITH_GRACLUS = False
+    WITH_FPS = False
+    WITH_KNN = False
+    WITH_RADIUS = False
+    WITH_NEAREST = False
     WITH_SOFTMAX = False
     WITH_INDEX_SORT = False
     WITH_METIS = False
@@ -134,23 +146,13 @@ except Exception as e:
     torch_scatter = object
     WITH_TORCH_SCATTER = False
 
-try:
-    import torch_cluster  # noqa
-    WITH_TORCH_CLUSTER = True
-    WITH_TORCH_CLUSTER_BATCH_SIZE = 'batch_size' in torch_cluster.knn.__doc__
-except Exception as e:
-    if not isinstance(e, ImportError):  # pragma: no cover
-        warnings.warn(
-            f"An issue occurred while importing 'torch-cluster'. "
-            f"Disabling its usage. Stacktrace: {e}", stacklevel=2)
-    WITH_TORCH_CLUSTER = False
-    WITH_TORCH_CLUSTER_BATCH_SIZE = False
-
-    class TorchCluster:
-        def __getattr__(self, key: str) -> Any:
-            raise ImportError(f"'{key}' requires 'torch-cluster'")
-
-    torch_cluster = TorchCluster()
+if importlib.util.find_spec('torch_cluster') is not None:
+    warnings.warn(
+        "'torch-cluster' is no longer necessary and is being ignored. "
+        "Its functionality has been migrated to 'pyg-lib>=0.6.0'.",
+        DeprecationWarning,
+        stacklevel=2,
+    )
 
 if importlib.util.find_spec('torch_spline_conv') is not None:
     warnings.warn(

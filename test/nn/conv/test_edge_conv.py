@@ -62,7 +62,7 @@ def test_edge_conv_conv():
             assert torch.allclose(jit((x1, x2), adj2.t()), out, atol=1e-6)
 
 
-@withPackage('torch_cluster')
+@withPackage('pyg_lib')
 def test_dynamic_edge_conv():
     x1 = torch.randn(8, 16)
     x2 = torch.randn(4, 16)
