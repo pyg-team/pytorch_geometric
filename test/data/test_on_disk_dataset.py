@@ -1,9 +1,11 @@
 import os.path as osp
 from typing import Any, Dict
 
+import numpy as np
 import torch
 
 from torch_geometric.data import Data, OnDiskDataset
+from torch_geometric.loader import DataLoader
 from torch_geometric.testing import withPackage
 
 
@@ -107,5 +109,63 @@ def test_custom_schema(tmp_path):
         assert torch.equal(out.x, data.x)
         assert torch.equal(out.edge_index, data.edge_index)
         assert out.num_nodes == data.num_nodes
+
+    dataset.close()
+
+
+@withPackage('sqlite3')
+def test_index_select_multi_get(tmp_path):
+    dataset = OnDiskDataset(tmp_path)
+    data_list = [Data(x=torch.tensor([i])) for i in range(10)]
+    dataset.extend(data_list)
+
+    subset = dataset.index_select([5, 6, 7, 8, 9])
+    nested_subset = subset.index_select([1, 3])
+
+    assert torch.equal(subset[0].x, data_list[5].x)
+    assert torch.equal(subset.get(0).x, data_list[0].x)
+
+    out_list = subset.multi_get([0, 2, 4])
+    assert [int(data.x.item()) for data in out_list] == [5, 7, 9]
+
+    out_list = subset.multi_get(np.array([True, False, True, False, True]))
+    assert [int(data.x.item()) for data in out_list] == [5, 7, 9]
+
+    assert subset.multi_get([]) == []
+    assert subset.multi_get(torch.tensor([], dtype=torch.long)) == []
+    assert subset.multi_get(torch.tensor([], dtype=torch.bool)) == []
+    assert subset.multi_get(np.zeros(5, dtype=bool)) == []
+
+    out_list = nested_subset.__getitems__([0, 1])
+    assert torch.equal(out_list[0].x, data_list[6].x)
+    assert torch.equal(out_list[1].x, data_list[8].x)
+
+    loader = DataLoader(subset, batch_size=3, shuffle=False)
+    batch = next(iter(loader))
+    assert batch.x.view(-1).tolist() == [5, 6, 7]
+
+    dataset.close()
+
+
+@withPackage('sqlite3')
+def test_direct_indices_multi_get(tmp_path):
+    dataset = OnDiskDataset(tmp_path)
+    data_list = [Data(x=torch.tensor([i])) for i in range(10)]
+    dataset.extend(data_list)
+
+    dataset._indices = [5, 6, 7, 8, 9]
+
+    assert torch.equal(dataset[0].x, data_list[5].x)
+    assert torch.equal(dataset.get(0).x, data_list[0].x)
+
+    out_list = dataset.multi_get([0, 1, 2])
+    assert [int(data.x.item()) for data in out_list] == [5, 6, 7]
+
+    out_list = dataset.__getitems__([0, 1, 2])
+    assert [int(data.x.item()) for data in out_list] == [5, 6, 7]
+
+    loader = DataLoader(dataset, batch_size=3, shuffle=False)
+    batch = next(iter(loader))
+    assert batch.x.view(-1).tolist() == [5, 6, 7]
 
     dataset.close()

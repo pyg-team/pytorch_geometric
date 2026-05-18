@@ -1,12 +1,16 @@
 import os
 from typing import Any, Callable, Iterable, List, Optional, Sequence, Union
 
+import numpy as np
+import torch
 from torch import Tensor
 
 from torch_geometric.data import Database, RocksDatabase, SQLiteDatabase
 from torch_geometric.data.data import BaseData
 from torch_geometric.data.database import Schema
 from torch_geometric.data.dataset import Dataset
+
+IndexType = Union[Iterable[int], Tensor, np.ndarray, slice, range]
 
 
 class OnDiskDataset(Dataset):
@@ -137,17 +141,63 @@ class OnDiskDataset(Dataset):
         self.db.multi_insert(range(start, end), data_list, batch_size)
         self._numel += (end - start)
 
+    def _resolve_indices(
+        self,
+        indices: IndexType,
+    ) -> List[int]:
+        base_indices = self.indices()
+
+        if isinstance(indices, slice):
+            indices = base_indices[indices]
+
+            if isinstance(indices, Tensor):
+                indices = indices.flatten().tolist()
+            elif isinstance(indices, np.ndarray):
+                indices = indices.flatten().tolist()
+
+            return [int(idx) for idx in indices]
+
+        if isinstance(indices, Tensor):
+            if indices.dtype == torch.bool:
+                indices = indices.flatten().nonzero(as_tuple=False).flatten()
+            indices = indices.flatten().tolist()
+        elif isinstance(indices, np.ndarray):
+            if indices.dtype == bool:
+                indices = indices.flatten().nonzero()[0]
+            indices = indices.flatten().tolist()
+        elif isinstance(indices, range):
+            indices = list(indices)
+        elif not isinstance(indices, Sequence):
+            indices = list(indices)
+
+        return [int(base_indices[idx]) for idx in indices]
+
     def get(self, idx: int) -> BaseData:
-        r"""Gets the data object at index :obj:`idx`."""
+        r"""Gets the data object at the raw database index :obj:`idx`.
+
+        Note that subset-aware integer access is handled by
+        :meth:`Dataset.__getitem__`, which resolves :obj:`self.indices()[idx]`
+        before calling :meth:`get`.
+        """
         return self.deserialize(self.db.get(idx))
 
     def multi_get(
         self,
-        indices: Union[Iterable[int], Tensor, slice, range],
+        indices: IndexType,
         batch_size: Optional[int] = None,
     ) -> List[BaseData]:
-        r"""Gets a list of data objects from the specified indices."""
-        if len(indices) == 1:
+        r"""Gets a list of data objects from the specified subset-local
+        indices.
+
+        In contrast to :meth:`get`, batched access is expected to follow the
+        same subset semantics as ``[self[idx] for idx in indices]``. As such,
+        indices are first resolved through :obj:`self.indices()`.
+        """
+        indices = self._resolve_indices(indices)
+
+        if len(indices) == 0:
+            data_list = []
+        elif len(indices) == 1:
             data_list = [self.db.get(indices[0])]
         else:
             data_list = self.db.multi_get(indices, batch_size)
@@ -158,6 +208,7 @@ class OnDiskDataset(Dataset):
         return data_list
 
     def __getitems__(self, indices: List[int]) -> List[BaseData]:
+        r"""Gets a list of data objects for batched subset-aware access."""
         return self.multi_get(indices)
 
     def len(self) -> int:
