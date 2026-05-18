@@ -1,6 +1,9 @@
+import math
 import multiprocessing
+import statistics
 import sys
 from collections import namedtuple
+from unittest.mock import MagicMock, patch
 
 import pytest
 import torch
@@ -8,6 +11,7 @@ import torch
 from torch_geometric import EdgeIndex, Index
 from torch_geometric.data import Data, HeteroData, OnDiskDataset
 from torch_geometric.loader import DataLoader
+from torch_geometric.loader.dataloader import _mps_freeze_at
 from torch_geometric.testing import (
     get_random_edge_index,
     get_random_tensor_frame,
@@ -311,3 +315,88 @@ if __name__ == '__main__':
         print(f'Done! [{time.perf_counter() - t:.4f}s]')
 
     on_disk_dataset.close()
+
+
+def _make_dataset(n=20, node_range=(5, 15), edge_range=(10, 30)):
+    """Small synthetic dataset with variable graph sizes."""
+    import random
+    random.seed(42)
+    return [
+        Data(
+            x=torch.randn(random.randint(*node_range), 4),
+            edge_index=torch.zeros(2, random.randint(*edge_range),
+                                   dtype=torch.long),
+        ) for _ in range(n)
+    ]
+
+
+def test_mps_freeze_at_returns_none_when_unavailable():
+    """_mps_freeze_at returns None when MPS is not available."""
+    with patch('torch.backends.mps.is_available', return_value=False):
+        assert _mps_freeze_at(_make_dataset(), batch_size=4) is None
+
+
+def test_mps_freeze_at_returns_none_without_api():
+    """_mps_freeze_at returns None when freeze_graph_cache API is absent."""
+    with patch('torch.backends.mps.is_available', return_value=True), \
+         patch('torch.mps', spec=[]):  # spec=[] means no attributes
+        assert _mps_freeze_at(_make_dataset(), batch_size=4) is None
+
+
+def test_mps_freeze_at_formula():
+    """freeze_at >= 5 and matches the sqrt(eff_2d) formula."""
+    dataset = _make_dataset(n=100)
+    batch_size = 4
+
+    node_counts = [int(d.num_nodes) for d in dataset]
+    edge_counts = [int(d.num_edges) for d in dataset]
+    std_n = statistics.stdev(node_counts)
+    std_e = statistics.stdev(edge_counts)
+    eff_2d = (math.sqrt(batch_size) * std_n * math.sqrt(batch_size) * std_e *
+              2 * math.pi)
+    expected = max(5, int(math.sqrt(eff_2d)))
+
+    with patch('torch.backends.mps.is_available', return_value=True), \
+         patch.object(torch.mps, 'freeze_graph_cache', create=True):
+        result = _mps_freeze_at(dataset, batch_size)
+
+    assert result == expected
+    assert result >= 5
+
+
+def test_mps_freeze_called_after_warmup():
+    """DataLoader calls freeze_graph_cache() exactly once after warmup."""
+    dataset = _make_dataset(n=40)
+
+    mock_freeze = MagicMock()
+    # Patch _mps_freeze_at to return 3 so freeze triggers within 10 batches
+    # (the formula yields ~21 for this dataset, exceeding the 10-batch window)
+    with patch('torch.backends.mps.is_available', return_value=True), \
+         patch.object(
+             torch.mps, 'freeze_graph_cache', mock_freeze,
+             create=True), \
+         patch(
+             'torch_geometric.loader.dataloader._mps_freeze_at',
+             return_value=3):
+        loader = DataLoader(dataset, batch_size=4, shuffle=False)
+        batches = list(loader)
+
+    assert mock_freeze.call_count == 1
+    assert len(batches) == 10  # 40 graphs / batch_size=4
+
+
+def test_mps_freeze_noop_on_non_mps():
+    """DataLoader iterates normally and never calls freeze on non-MPS."""
+    dataset = _make_dataset(n=20)
+    mock_freeze = MagicMock()
+
+    with patch('torch.backends.mps.is_available', return_value=False), \
+         patch.object(
+             torch.mps, 'freeze_graph_cache', mock_freeze,
+             create=True):
+        loader = DataLoader(dataset, batch_size=4, shuffle=False)
+        assert loader._mps_freeze_at is None
+        batches = list(loader)
+
+    assert mock_freeze.call_count == 0
+    assert len(batches) == 5  # 20 graphs / batch_size=4
