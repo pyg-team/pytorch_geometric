@@ -6,11 +6,6 @@ from torch import Tensor
 import torch_geometric.typing
 from torch_geometric.utils.repeat import repeat
 
-if torch_geometric.typing.WITH_TORCH_CLUSTER:
-    from torch_cluster import grid_cluster
-else:
-    grid_cluster = None
-
 
 def voxel_grid(
     pos: Tensor,
@@ -40,8 +35,8 @@ def voxel_grid(
 
     :rtype: :class:`torch.Tensor`
     """
-    if grid_cluster is None:
-        raise ImportError('`voxel_grid` requires `torch-cluster`.')
+    if not torch_geometric.typing.WITH_GRID_CLUSTER:
+        raise ImportError('`voxel_grid` requires `pyg-lib>=0.6.0`.')
 
     pos = pos.unsqueeze(-1) if pos.dim() == 1 else pos
     dim = pos.size(1)
@@ -68,4 +63,4 @@ def voxel_grid(
         end = repeat(end, dim)
         end = torch.cat([end, batch.max().unsqueeze(0)])
 
-    return grid_cluster(pos, size, start, end)
+    return torch.ops.pyg.grid_cluster(pos, size, start, end)

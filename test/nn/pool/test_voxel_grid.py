@@ -5,7 +5,7 @@ from torch_geometric.nn import avg_pool, voxel_grid
 from torch_geometric.testing import withPackage
 
 
-@withPackage('torch_cluster')
+@withPackage('pyg_lib')
 def test_voxel_grid():
     pos = torch.tensor([
         [0.0, 0.0],
@@ -26,7 +26,7 @@ def test_voxel_grid():
     assert cluster_no_batch.tolist() == [0, 10, 4, 0, 1]
 
 
-@withPackage('torch_cluster')
+@withPackage('pyg_lib')
 def test_single_voxel_grid():
     pos = torch.tensor([
         [0.0, 0.0],

@@ -3,10 +3,7 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 
-from torch_geometric.experimental import (
-    disable_dynamic_shapes,
-    is_experimental_mode_enabled,
-)
+from torch_geometric.experimental import disable_dynamic_shapes
 from torch_geometric.utils import cumsum, scatter
 
 
@@ -27,6 +24,11 @@ def to_dense_batch(
     In addition, a mask of shape :math:`\mathbf{M} \in \{ 0, 1 \}^{B \times
     N_{\max}}` is returned, holding information about the existence of
     fake-nodes in the dense representation.
+
+    .. note::
+        When ``batch_size`` or ``max_num_nodes`` is not provided, this
+        function triggers a host-device synchronization to compute the value
+        from the input tensor ``batch``.
 
     Args:
         x (Tensor): Node feature matrix
@@ -107,30 +109,29 @@ def to_dense_batch(
                         dim_size=batch_size, reduce='sum')
     cum_nodes = cumsum(num_nodes)
 
-    filter_nodes = False
-    dynamic_shapes_disabled = is_experimental_mode_enabled(
-        'disable_dynamic_shapes')
-
     if max_num_nodes is None:
         max_num_nodes = int(num_nodes.max())
-    elif not dynamic_shapes_disabled and num_nodes.max() > max_num_nodes:
-        filter_nodes = True
 
     tmp = torch.arange(batch.size(0), device=x.device) - cum_nodes[batch]
     idx = tmp + (batch * max_num_nodes)
-    if filter_nodes:
-        mask = tmp < max_num_nodes
-        x, idx = x[mask], idx[mask]
 
-    size = [batch_size * max_num_nodes] + list(x.size())[1:]
+    # Redirect overflow rows (tmp >= max_num_nodes) to a "trash" slot at the
+    # end of the flat buffer. This avoids data-dependent boolean indexing.
+    valid = tmp < max_num_nodes
+    trash_idx = batch_size * max_num_nodes  # index of the extra slot
+    idx = torch.where(valid, idx, trash_idx)
+
+    flat_size = batch_size * max_num_nodes + 1
+    size = [flat_size] + list(x.size())[1:]
     out = torch.as_tensor(fill_value, device=x.device, dtype=x.dtype)
     out = out.repeat(size)
     out[idx] = x
+    out = out[:batch_size * max_num_nodes]  # drop the trash slot
     out = out.view([batch_size, max_num_nodes] + list(x.size())[1:])
 
-    mask = torch.zeros(batch_size * max_num_nodes, dtype=torch.bool,
-                       device=x.device)
+    mask = torch.zeros(flat_size, dtype=torch.bool, device=x.device)
     mask[idx] = 1
+    mask = mask[:batch_size * max_num_nodes]
     mask = mask.view(batch_size, max_num_nodes)
 
     return out, mask
