@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 from typing import Optional
 
 import torch
@@ -7,7 +6,7 @@ from torch import Tensor
 from torch_geometric.nn.pool.select import SelectOutput
 
 
-@dataclass(init=False)
+@torch.jit.script
 class ConnectOutput:
     r"""The output of the :class:`Connect` method, which holds the coarsened
     graph structure, and optional pooled edge features and batch vectors.
@@ -20,8 +19,8 @@ class ConnectOutput:
             coarsened graph. (default: :obj:`None`)
     """
     edge_index: Tensor
-    edge_attr: Optional[Tensor] = None
-    batch: Optional[Tensor] = None
+    edge_attr: Optional[Tensor]
+    batch: Optional[Tensor]
 
     def __init__(
         self,
@@ -46,9 +45,6 @@ class ConnectOutput:
         self.edge_index = edge_index
         self.edge_attr = edge_attr
         self.batch = batch
-
-
-ConnectOutput = torch.jit.script(ConnectOutput)
 
 
 class Connect(torch.nn.Module):
