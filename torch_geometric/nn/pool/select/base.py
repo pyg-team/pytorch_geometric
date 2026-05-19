@@ -1,11 +1,9 @@
-from dataclasses import dataclass
 from typing import Optional
 
 import torch
 from torch import Tensor
 
 
-@dataclass(init=False)
 class SelectOutput:
     r"""The output of the :class:`Select` method, which holds an assignment
     from selected nodes to their respective cluster(s).
@@ -23,7 +21,7 @@ class SelectOutput:
     num_nodes: int
     cluster_index: Tensor
     num_clusters: int
-    weight: Optional[Tensor] = None
+    weight: Optional[Tensor]
 
     def __init__(
         self,
@@ -60,9 +58,6 @@ class SelectOutput:
         self.cluster_index = cluster_index
         self.num_clusters = num_clusters
         self.weight = weight
-
-
-SelectOutput = torch.jit.script(SelectOutput)
 
 
 class Select(torch.nn.Module):
