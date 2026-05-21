@@ -21,8 +21,8 @@ def _dummy_data(num_nodes: int = 5, num_feats: int = 4):
 
 def test_mgnan_graph_level():
     data = _dummy_data()
-    model = MGNAN(in_channels=data.num_features, out_channels=2,
-                       n_layers=2, hidden_channels=8)
+    model = MGNAN(in_channels=data.num_features, out_channels=2, n_layers=2,
+                  hidden_channels=8)
     out = model(data)  # [1, 2]
     assert out.shape == (1, 2)
 
