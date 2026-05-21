@@ -32,7 +32,7 @@ def _create_block_diagonal_matrix(
     return result
 
 
-class GNANCollater:
+class MGNANCollater:
     def __init__(
         self,
         follow_batch: Optional[List[str]] = None,
@@ -81,10 +81,10 @@ class GNANCollater:
         return batch
 
 
-class GNANDataLoader(PyTorchDataLoader):
+class MGNANDataLoader(PyTorchDataLoader):
     r"""A data loader which merges data objects from a
     :class:`torch_geometric.data.Dataset` to a mini-batch, specifically for
-    use with the :class:`torch_geometric.nn.models.TensorGNAN` model.
+    use with the :class:`torch_geometric.nn.models.MGNAN` model.
 
     This loader will batch the :obj:`node_distances` and
     :obj:`normalization_matrix` attributes of
@@ -123,6 +123,6 @@ class GNANDataLoader(PyTorchDataLoader):
             dataset,
             batch_size,
             shuffle,
-            collate_fn=GNANCollater(follow_batch, exclude_keys),
+            collate_fn=MGNANCollater(follow_batch, exclude_keys),
             **kwargs,
         )

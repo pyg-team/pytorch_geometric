@@ -7,7 +7,7 @@ from torch_geometric.data import Batch, Data
 from torch_geometric.utils import scatter
 
 __all__ = [
-    'TensorGNAN',
+    'MGNAN',
 ]
 
 
@@ -151,8 +151,16 @@ class _RhoMLP(nn.Module):
         return self.net(d.view(-1, 1))
 
 
-class TensorGNAN(nn.Module):
-    r"""Dense, tensorised GNAN variant.
+class MGNAN(nn.Module):
+    r"""M-GNAN: an extension of the
+    `Graph Neural Additive Network (GNAN)
+    <https://arxiv.org/abs/2406.01317>`_ to *multivariate* shape functions.
+
+    Whereas the original GNAN learns a univariate shape function per input
+    feature, M-GNAN allows arbitrary groups of features to be modelled jointly
+    by a single multivariate shape function (an MLP that takes all features in
+    the group as input). The univariate per-feature case is recovered when
+    every feature lives in its own group, which is the default behaviour.
 
     By default it aggregates node scores to produce *graph‐level* predictions
     (shape ``[batch_size, out_channels]``).  Set ``graph_level=False`` to

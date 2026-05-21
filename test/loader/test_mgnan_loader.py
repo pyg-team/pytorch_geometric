@@ -1,8 +1,11 @@
 import torch
 
 from torch_geometric.data import Batch, Data
-from torch_geometric.loader.gnan_dataloader import GNANCollater, GNANDataLoader
-from torch_geometric.nn.models import TensorGNAN
+from torch_geometric.loader.mgnan_dataloader import (
+    MGNANCollater,
+    MGNANDataLoader,
+)
+from torch_geometric.nn.models import MGNAN
 
 
 def _dummy_data(num_nodes: int = 5, num_feats: int = 4):
@@ -19,7 +22,7 @@ def _dummy_data(num_nodes: int = 5, num_feats: int = 4):
     return data
 
 
-def test_gnan_collater_block_diag_and_restore():
+def test_mgnan_collater_block_diag_and_restore():
     g1 = _dummy_data(num_nodes=3, num_feats=4)
     g2 = _dummy_data(num_nodes=4, num_feats=4)
     g3 = _dummy_data(num_nodes=2, num_feats=4)
@@ -32,7 +35,7 @@ def test_gnan_collater_block_diag_and_restore():
     d3 = g3.node_distances.clone()
     n3 = g3.normalization_matrix.clone()
 
-    collate = GNANCollater()
+    collate = MGNANCollater()
     batch = collate([g1, g2, g3])
 
     assert isinstance(batch, Batch)
@@ -54,10 +57,10 @@ def test_gnan_collater_block_diag_and_restore():
     assert torch.allclose(g3.normalization_matrix, n3)
 
 
-def test_gnan_dataloader_batch_content():
+def test_mgnan_dataloader_batch_content():
     g1 = _dummy_data(num_nodes=3, num_feats=3)
     g2 = _dummy_data(num_nodes=5, num_feats=3)
-    loader = GNANDataLoader([g1, g2], batch_size=2, shuffle=False)
+    loader = MGNANDataLoader([g1, g2], batch_size=2, shuffle=False)
     batch = next(iter(loader))
 
     assert isinstance(batch, Batch)
@@ -72,13 +75,13 @@ def test_gnan_dataloader_batch_content():
     assert torch.allclose(batch.normalization_matrix, expected_norm)
 
 
-def test_gnan_dataloader_with_tensor_gnan():
+def test_mgnan_dataloader_with_mgnan_model():
     g1 = _dummy_data(num_nodes=3, num_feats=4)
     g2 = _dummy_data(num_nodes=4, num_feats=4)
-    loader = GNANDataLoader([g1, g2], batch_size=2, shuffle=False)
+    loader = MGNANDataLoader([g1, g2], batch_size=2, shuffle=False)
     batch = next(iter(loader))
 
-    model = TensorGNAN(
+    model = MGNAN(
         in_channels=4,
         out_channels=3,
         n_layers=2,

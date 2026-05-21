@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.data import Data
-from torch_geometric.nn.models import TensorGNAN
+from torch_geometric.nn.models import MGNAN
 
 
 def _dummy_data(num_nodes: int = 5, num_feats: int = 4):
@@ -19,22 +19,22 @@ def _dummy_data(num_nodes: int = 5, num_feats: int = 4):
     return data
 
 
-def test_tensor_gnan_graph_level():
+def test_mgnan_graph_level():
     data = _dummy_data()
-    model = TensorGNAN(in_channels=data.num_features, out_channels=2,
+    model = MGNAN(in_channels=data.num_features, out_channels=2,
                        n_layers=2, hidden_channels=8)
     out = model(data)  # [1, 2]
     assert out.shape == (1, 2)
 
 
-def test_tensor_gnan_feature_groups():
+def test_mgnan_feature_groups():
     """Ensure model works correctly with custom feature grouping."""
     data = _dummy_data(num_nodes=6, num_feats=4)
 
     # Group features [0,1] together; keep [2] and [3] separate.
     feature_groups = [[0, 1], [2], [3]]
 
-    model = TensorGNAN(
+    model = MGNAN(
         in_channels=data.num_features,
         out_channels=3,
         n_layers=1,  # single Linear layer per MLP for easier inspection
@@ -56,11 +56,11 @@ def test_tensor_gnan_feature_groups():
     assert first_mlp.net.in_features == 2
 
 
-def test_tensor_gnan_node_importance():
+def test_mgnan_node_importance():
     """Node contributions should sum to graph‐level prediction."""
     data = _dummy_data(num_nodes=5, num_feats=3)
 
-    model = TensorGNAN(
+    model = MGNAN(
         in_channels=data.num_features,
         out_channels=4,
         n_layers=1,
@@ -78,11 +78,11 @@ def test_tensor_gnan_node_importance():
     assert torch.allclose(contrib_sum, graph_out, atol=1e-5)
 
 
-def test_tensor_gnan_multiple_layers():
+def test_mgnan_multiple_layers():
     """Model runs with multiple layers in the MLPs."""
     data = _dummy_data(num_nodes=7, num_feats=3)
 
-    model = TensorGNAN(
+    model = MGNAN(
         in_channels=data.num_features,
         out_channels=5,
         n_layers=3,
@@ -94,7 +94,7 @@ def test_tensor_gnan_multiple_layers():
     assert out.shape == (1, 5)
 
 
-def test_tensor_gnan_batched_data():
+def test_mgnan_batched_data():
     """Batched graphs should be processed independently and aggregated
     per-graph.
     """
@@ -113,7 +113,7 @@ def test_tensor_gnan_batched_data():
     batched.normalization_matrix = norm
     batched.batch = batch
 
-    model = TensorGNAN(
+    model = MGNAN(
         in_channels=4,
         out_channels=3,
         n_layers=2,
@@ -134,10 +134,10 @@ def test_tensor_gnan_batched_data():
     assert torch.allclose(out_batched, stacked, atol=1e-5)
 
 
-def test_tensor_gnan_invalid_feature_groups_empty():
+def test_mgnan_invalid_feature_groups_empty():
     data = _dummy_data(num_nodes=5, num_feats=3)
     with pytest.raises(ValueError, match="cannot be empty"):
-        TensorGNAN(
+        MGNAN(
             in_channels=data.num_features,
             out_channels=2,
             n_layers=1,
@@ -145,10 +145,10 @@ def test_tensor_gnan_invalid_feature_groups_empty():
         )
 
 
-def test_tensor_gnan_invalid_feature_groups_duplicate():
+def test_mgnan_invalid_feature_groups_duplicate():
     data = _dummy_data(num_nodes=5, num_feats=3)
     with pytest.raises(ValueError, match="appears in multiple groups"):
-        TensorGNAN(
+        MGNAN(
             in_channels=data.num_features,
             out_channels=2,
             n_layers=1,

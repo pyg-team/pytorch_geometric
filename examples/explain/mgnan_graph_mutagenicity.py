@@ -1,17 +1,18 @@
-"""Training GNAN (graph‐level) on the Mutagenicity dataset.
+"""Training M-GNAN (graph‐level) on the Mutagenicity dataset.
 
 This reproduces, in simplified form, the experiment from the GNAN paper
-(Bechler-Speicher *et al.*, 2024) on the Mutagenicity molecule dataset.
+(Bechler-Speicher *et al.*, 2024) on the Mutagenicity molecule dataset,
+using M-GNAN -- the extension of GNAN to multivariate shape functions.
 
 The script demonstrates how to:
 1. Load the Mutagenicity dataset from TUDataset.
 2. Pre-compute all-pairs shortest-path distances **per graph** and the
-   corresponding normalisation matrices required by GNAN.
-3. Train the *TensorGNAN* model for graph classification.
+   corresponding normalisation matrices required by M-GNAN.
+3. Train the *MGNAN* model for graph classification.
 
 Run with:
 
-    python examples/explain/gnan_graph_mutagenicity.py
+    python examples/explain/mgnan_graph_mutagenicity.py
 
 Graphs in Mutagenicity are small (≈30 nodes), therefore the dense distance
 matrix fits comfortably in memory and can be coqmputed on the fly.
@@ -28,8 +29,8 @@ from torch import nn
 from tqdm import tqdm
 
 from torch_geometric.datasets import TUDataset
-from torch_geometric.loader.gnan_dataloader import GNANDataLoader
-from torch_geometric.nn.models import TensorGNAN
+from torch_geometric.loader.mgnan_dataloader import MGNANDataLoader
+from torch_geometric.nn.models import MGNAN
 from torch_geometric.utils import to_networkx
 
 
@@ -77,7 +78,7 @@ def compute_dist_and_norm(data) -> tuple[torch.Tensor, torch.Tensor]:
 
 
 class PreprocessDistances:
-    """PyG Transform that adds GNAN distance attributes to each graph."""
+    """PyG Transform that adds M-GNAN distance attributes to each graph."""
     def __call__(self, data):  # noqa: D401
         dist, norm = compute_dist_and_norm(data)
         data.node_distances = dist
@@ -126,15 +127,15 @@ def main():
     test_dataset = dataset[indices[n_train + n_val:]]
 
     # standard PyTorch DataLoader with custom collate function
-    train_loader = GNANDataLoader(train_dataset, batch_size=1, shuffle=True)
-    val_loader = GNANDataLoader(val_dataset, batch_size=32, shuffle=False)
-    test_loader = GNANDataLoader(test_dataset, batch_size=32, shuffle=False)
+    train_loader = MGNANDataLoader(train_dataset, batch_size=1, shuffle=True)
+    val_loader = MGNANDataLoader(val_dataset, batch_size=32, shuffle=False)
+    test_loader = MGNANDataLoader(test_dataset, batch_size=32, shuffle=False)
 
     # Pick a sample graph from the *test* split to track during training.
     sample_graph = test_dataset[0]
     sample_graph = sample_graph.to(device)
 
-    model = TensorGNAN(
+    model = MGNAN(
         in_channels=in_channels,
         out_channels=1 if num_classes == 2 else num_classes,
         n_layers=3,
