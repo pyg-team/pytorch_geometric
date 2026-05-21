@@ -10,13 +10,9 @@ from torch.nn import Linear as L
 from torch.nn import Sequential as S
 
 import torch_geometric.typing
+from torch_geometric.index import index2ptr
 from torch_geometric.nn import Reshape
 from torch_geometric.nn.inits import reset
-
-if torch_geometric.typing.WITH_TORCH_CLUSTER:
-    from torch_cluster import knn_graph
-else:
-    knn_graph = None
 
 
 class XConv(torch.nn.Module):
@@ -72,8 +68,8 @@ class XConv(torch.nn.Module):
                  dilation: int = 1, bias: bool = True, num_workers: int = 1):
         super().__init__()
 
-        if knn_graph is None:
-            raise ImportError('`XConv` requires `torch-cluster`.')
+        if not torch_geometric.typing.WITH_KNN:
+            raise ImportError("'XConv' requires 'pyg-lib>=0.6.0'")
 
         self.in_channels = in_channels
         if hidden_channels is None:
@@ -134,9 +130,9 @@ class XConv(torch.nn.Module):
         pos = pos.unsqueeze(-1) if pos.dim() == 1 else pos
         (N, D), K = pos.size(), self.kernel_size
 
-        edge_index = knn_graph(pos, K * self.dilation, batch, loop=True,
-                               flow='target_to_source',
-                               num_workers=self.num_workers)
+        ptr = None if batch is None else index2ptr(batch)
+        edge_index = torch.ops.pyg.knn(pos, pos, ptr, ptr, K * self.dilation,
+                                       False, self.num_workers)
 
         if self.dilation > 1:
             edge_index = edge_index[:, ::self.dilation]

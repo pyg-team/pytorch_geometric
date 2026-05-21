@@ -21,6 +21,19 @@ class LinkPredMetricData:
     edge_label_index: Union[Tensor, Tuple[Tensor, Tensor]]
     edge_label_weight: Optional[Tensor] = None
 
+    def __post_init__(self) -> None:
+        # Filter all negative weights - they should not be used as ground-truth
+        if self.edge_label_weight is not None:
+            pos_mask = self.edge_label_weight > 0
+            self.edge_label_weight = self.edge_label_weight[pos_mask]
+            if isinstance(self.edge_label_index, Tensor):
+                self.edge_label_index = self.edge_label_index[:, pos_mask]
+            else:
+                self.edge_label_index = (
+                    self.edge_label_index[0][pos_mask],
+                    self.edge_label_index[1][pos_mask],
+                )
+
     @property
     def pred_rel_mat(self) -> Tensor:
         r"""Returns a matrix indicating the relevance of the `k`-th prediction.
@@ -40,7 +53,7 @@ class LinkPredMetricData:
 
         # Flatten both prediction and ground-truth indices, and determine
         # overlaps afterwards via `torch.searchsorted`.
-        max_index = max(  # type: ignore
+        max_index = max(
             self.pred_index_mat.max()
             if self.pred_index_mat.numel() > 0 else 0,
             self.edge_label_index[1].max()
@@ -374,8 +387,6 @@ class LinkPredMetricCollection(torch.nn.ModuleDict):
         if self.weighted and edge_label_weight is None:
             raise ValueError(f"'edge_label_weight' is a required argument for "
                              f"weighted '{self.__class__.__name__}' metrics")
-        if not self.weighted:
-            edge_label_weight = None
 
         data = LinkPredMetricData(  # Share metric data across metrics.
             pred_index_mat=pred_index_mat,
@@ -809,9 +820,10 @@ class LinkPredPersonalization(_LinkPredMetric):
             right = pred[col.cpu()].to(device)
 
             # Use offset to work around applying `isin` along a specific dim:
-            i = max(left.max(), right.max()) + 1  # type: ignore
-            i = torch.arange(0, i * row.size(0), i, device=device).view(-1, 1)
-            isin = torch.isin(left + i, right + i)
+            i = max(int(left.max()), int(right.max())) + 1
+            idx = torch.arange(0, i * row.size(0), i, device=device)
+            idx = idx.view(-1, 1)
+            isin = torch.isin(left + idx, right + idx)
 
             # Compute personalization via average inverse cosine similarity:
             cos = isin.sum(dim=-1) / pred.size(1)

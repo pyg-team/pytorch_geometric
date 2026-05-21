@@ -12,8 +12,8 @@ from tqdm import tqdm
 
 from torch_geometric import seed_everything
 from torch_geometric.datasets import GitMolDataset
+from torch_geometric.llm.models import GITMol
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn.models import GITMol
 
 
 @torch.no_grad()

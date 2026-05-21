@@ -4,7 +4,19 @@ on:  # yamllint disable-line rule:truthy
   push:
     branches:
       - master
+    paths:
+      - 'torch_geometric/**'
+      - 'docs/**'
+      - 'pyproject.toml'
+      - '.github/actions/setup/action.yml'
+      - '.github/workflows/documentation.yml'
   pull_request:
+    paths:
+      - 'torch_geometric/**'
+      - 'docs/**'
+      - 'pyproject.toml'
+      - '.github/actions/setup/action.yml'
+      - '.github/workflows/documentation.yml'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ startsWith(github.ref, 'refs/pull/') || github.run_number }}  # yamllint disable-line
@@ -18,39 +30,18 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
-        with:
-          fetch-depth: 40
-
-      # Skip workflow if only certain files have been changed.
-      - name: Get changed files
-        id: changed-files-specific
-        uses: tj-actions/changed-files@v46
-        with:
-          files: |
-            benchmark/**
-            conda/**
-            docker/**
-            examples/**
-            graphgym/**
-            README.md
-            CHANGELOG.md
+        uses: actions/checkout@v6
 
       - name: Setup packages
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
         uses: ./.github/actions/setup
         with:
           full_install: false
 
       - name: Install main package
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
         run: |
-          uv pip install nbsphinx
-          uv pip install git+https://github.com/pyg-team/pyg_sphinx_theme.git
-          uv pip install -e .
+          uv pip install -e . nbsphinx git+https://github.com/pyg-team/pyg_sphinx_theme.git
 
       - name: Build documentation
-        if: steps.changed-files-specific.outputs.only_changed != 'true'
         working-directory: ./docs
         run: |
-          uv run --no-project sphinx-build -M html "source" "build" -W  # Fail on warning.
+          sphinx-build -M html "source" "build" -W  # Fail on warning.

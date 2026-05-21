@@ -105,8 +105,6 @@ def test_from_pretrained_internal(model, monkeypatch):
         revision=None,
         cache_dir=None,
         force_download=False,
-        proxies=None,
-        resume_download=True,
         local_files_only=False,
         token=False,
         dataset_name=DATASET_NAME,

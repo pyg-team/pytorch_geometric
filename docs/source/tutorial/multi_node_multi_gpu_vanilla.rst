@@ -1,6 +1,10 @@
 Multi-Node Training using SLURM
 ===============================
 
+.. note::
+    For multi-GPU training with cuGraph, refer to `cuGraph examples <https://github.com/rapidsai/cugraph-gnn/tree/main/python/cugraph-pyg/cugraph_pyg/examples>`_.
+
+
 This tutorial introduces a skeleton on how to perform distributed training on multiple GPUs over multiple nodes using the `SLURM workload manager <https://slurm.schedmd.com/>`_ available at many supercomputing centers.
 The code is based on `our tutorial on single-node multi-GPU training <multi_gpu_vanilla.html>`_.
 Please go there first to understand the basics if you are unfamiliar with the concepts of distributed training in :pytorch:`PyTorch`.

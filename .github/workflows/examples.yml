@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup packages
         uses: ./.github/actions/setup
@@ -24,22 +24,22 @@ jobs:
 
       - name: Run GCN on Cora
         run: |
-          uv run --no-project python examples/gcn.py --wandb
+          python examples/gcn.py --wandb
         env:
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
 
       - name: Run GAT on Cora
         run: |
-          uv run --no-project python examples/gat.py --wandb
+          python examples/gat.py --wandb
         env:
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
 
       - name: Run GIN on MUTAG
         run: |
-          uv run --no-project python examples/mutag_gin.py --wandb
+          python examples/mutag_gin.py --wandb
         env:
           WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
 
       - name: Run GNNExplainer
         run: |
-          uv run --no-project python examples/explain/gnn_explainer.py
+          python examples/explain/gnn_explainer.py

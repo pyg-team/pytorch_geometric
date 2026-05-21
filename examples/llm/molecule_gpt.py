@@ -12,10 +12,9 @@ from tqdm import tqdm
 
 from torch_geometric import seed_everything
 from torch_geometric.datasets import InstructMolDataset, MoleculeGPTDataset
+from torch_geometric.llm.models import LLM, MoleculeGPT, SentenceTransformer
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GINEConv
-from torch_geometric.nn.models import MoleculeGPT
-from torch_geometric.nn.nlp import LLM, SentenceTransformer
 
 
 def save_params_dict(model, save_path):
@@ -94,9 +93,10 @@ def train(
     # Create model ===============================================
     llm = LLM(
         # model_name='lmsys/vicuna-7b-v1.5',
-        model_name='TinyLlama/TinyLlama-1.1B-Chat-v0.1',
+        model_name='Qwen/Qwen3-0.6B',
         num_params=1,
         dtype=torch.bfloat16,
+        sys_prompt='You are an agent, answer my questions.',
     )
 
     graph_encoder = GINEConv(

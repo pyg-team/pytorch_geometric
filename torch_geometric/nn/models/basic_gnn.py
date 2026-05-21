@@ -415,7 +415,8 @@ class GCN(BasicGNN):
             (default: :obj:`None`)
         jk (str, optional): The Jumping Knowledge mode. If specified, the model
             will additionally apply a final linear transformation to transform
-            node embeddings to the expected output feature dimensionality.
+            node embeddings to the expected output feature dimensionality,
+            while default will not.
             (:obj:`None`, :obj:`"last"`, :obj:`"cat"`, :obj:`"max"`,
             :obj:`"lstm"`). (default: :obj:`None`)
         **kwargs (optional): Additional arguments of

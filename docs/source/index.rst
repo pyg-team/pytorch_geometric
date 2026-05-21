@@ -55,6 +55,7 @@ In addition, it consists of easy-to-use mini-batch loaders for operating on many
    modules/loader
    modules/sampler
    modules/datasets
+   modules/llm
    modules/transforms
    modules/utils
    modules/explain

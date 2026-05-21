@@ -96,7 +96,8 @@ class MedShapeNet(InMemoryDataset):
 
         subset = []
         for dataset in list_of_datasets:
-            self.newpath = self.root + '/' + dataset.split("/")[1]
+            parts = dataset.split("/")
+            self.newpath = self.root + '/' + parts[1 if len(parts) > 1 else 0]
             if not os.path.exists(self.newpath):
                 os.makedirs(self.newpath)
             stl_files = msn_instance.dataset_files(dataset, '.stl')

@@ -17,6 +17,7 @@ We have prepared a list of :colab:`Colab` notebooks that practically introduces 
 9. `Graph Classification Instrumented with <https://colab.research.google.com/github/wandb/examples/blob/pyg/graph-classification/colabs/pyg/Graph_Classification_with_PyG_and_W%26B.ipynb>`__ :wandb:`null` `Weights&Biases <https://colab.research.google.com/github/wandb/examples/blob/pyg/graph-classification/colabs/pyg/Graph_Classification_with_PyG_and_W%26B.ipynb>`__
 10. `Link Prediction on MovieLens <https://colab.research.google.com/drive/1xpzn1Nvai1ygd_P5Yambc_oe4VBPK_ZT?usp=sharing>`__
 11. `Link Regression on MovieLens <https://colab.research.google.com/drive/1N3LvAO0AXV4kBPbTMX866OwJM9YS6Ji2?usp=sharing>`__
+12. `Pooling in Graph Neural Networks with <https://colab.research.google.com/github/tgp-team/torch-geometric-pool/blob/main/docs/source/tutorials/hierarchical_gnns.ipynb>`__ :tgp:`null` `tgp <https://colab.research.google.com/github/tgp-team/torch-geometric-pool/blob/main/docs/source/tutorials/hierarchical_gnns.ipynb>`__
 
 All :colab:`Colab` notebooks are released under the MIT license.
 

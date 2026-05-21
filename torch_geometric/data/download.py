@@ -34,11 +34,11 @@ def download_url(
     path = osp.join(folder, filename)
 
     if fs.exists(path):  # pragma: no cover
-        if log and 'pytest' not in sys.modules:
+        if log and 'PYTEST_CURRENT_TEST' not in os.environ:
             print(f'Using existing file {filename}', file=sys.stderr)
         return path
 
-    if log and 'pytest' not in sys.modules:
+    if log and 'PYTEST_CURRENT_TEST' not in os.environ:
         print(f'Downloading {url}', file=sys.stderr)
 
     os.makedirs(folder, exist_ok=True)

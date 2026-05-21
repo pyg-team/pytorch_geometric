@@ -10,8 +10,8 @@ import torch
 
 from torch_geometric import seed_everything
 from torch_geometric.datasets import ProteinMPNNDataset
+from torch_geometric.llm.models import ProteinMPNN
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn.models import ProteinMPNN
 
 
 def loss_smoothed(y, logits, mask, weight=0.1):

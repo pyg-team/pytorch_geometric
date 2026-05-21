@@ -168,8 +168,8 @@ def map_annotation(
         assert origin is not None
         args = tuple(map_annotation(a, mapping) for a in args)
         if type(annotation).__name__ == 'GenericAlias':
-            # If annotated with `list[...]` or `dict[...]` (>= Python 3.10):
-            annotation = origin[args]
+            # If annotated with `list[...]` or `dict[...]`:
+            annotation = origin[args]  # type: ignore[index]
         else:
             # If annotated with `typing.List[...]` or `typing.Dict[...]`:
             annotation = copy.copy(annotation)

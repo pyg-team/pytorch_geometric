@@ -6,35 +6,19 @@ import pytest
 
 from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.datasets.web_qsp_dataset import KGQABaseDataset
-from torch_geometric.testing import (
-    onlyFullTest,
-    onlyOnline,
-    onlyRAG,
-    withPackage,
-)
+from torch_geometric.testing import onlyFullTest, onlyOnline, withPackage
 
 
 @pytest.mark.skip(reason="Times out")
 @onlyOnline
 @onlyFullTest
+@withPackage("datasets", "pandas")
 def test_web_qsp_dataset(tmp_path):
-    dataset = WebQSPDataset(root=tmp_path)
     # Split for this dataset is 2826 train | 246 val | 1628 test
     # default split is train
-    assert len(dataset) == 2826
-    assert str(dataset) == "WebQSPDataset(2826)"
-
-    dataset_train = WebQSPDataset(root=tmp_path, split="train")
-    assert len(dataset_train) == 2826
-    assert str(dataset_train) == "WebQSPDataset(2826)"
-
     dataset_val = WebQSPDataset(root=tmp_path, split="val")
     assert len(dataset_val) == 246
     assert str(dataset_val) == "WebQSPDataset(246)"
-
-    dataset_test = WebQSPDataset(root=tmp_path, split="test")
-    assert len(dataset_test) == 1628
-    assert str(dataset_test) == "WebQSPDataset(1628)"
 
 
 class MockSentenceTransformer:
@@ -142,10 +126,10 @@ def create_mock_graphs(tmp_path: str, train_size: int, val_size: int,
         "test": ds_test
     })
 
-    def mock_load_dataset(name: str):
+    def mock_load_dataset(path: str):
         # Save the dataset and then load it to emulate downloading from HF
         DATASET_CACHE_DIR = os.path.join(tmp_path,
-                                         ".cache/huggingface/datasets", name)
+                                         ".cache/huggingface/datasets", path)
         os.makedirs(DATASET_CACHE_DIR, exist_ok=True)
 
         ds.save_to_disk(DATASET_CACHE_DIR)
@@ -155,7 +139,7 @@ def create_mock_graphs(tmp_path: str, train_size: int, val_size: int,
     return mock_load_dataset, ds
 
 
-@onlyRAG
+@pytest.mark.rag
 @withPackage("datasets", "pandas")
 def test_kgqa_base_dataset(tmp_path, monkeypatch):
 

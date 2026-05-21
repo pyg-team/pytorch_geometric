@@ -144,10 +144,10 @@ class PyGModelHubMixin(ModelHubMixin):
         revision,
         cache_dir,
         force_download,
-        proxies,
-        resume_download,
         local_files_only,
         token,
+        proxies=None,
+        resume_download=False,
         dataset_name='',
         model_name='',
         map_location='cpu',
@@ -165,8 +165,6 @@ class PyGModelHubMixin(ModelHubMixin):
                 revision=revision,
                 cache_dir=cache_dir,
                 force_download=force_download,
-                proxies=proxies,
-                resume_download=resume_download,
                 token=token,
                 local_files_only=local_files_only,
             )
@@ -188,8 +186,6 @@ class PyGModelHubMixin(ModelHubMixin):
         cls,
         pretrained_model_name_or_path: str,
         force_download: bool = False,
-        resume_download: bool = False,
-        proxies: Optional[Dict] = None,
         token: Optional[Union[str, bool]] = None,
         cache_dir: Optional[str] = None,
         local_files_only: bool = False,
@@ -215,13 +211,6 @@ class PyGModelHubMixin(ModelHubMixin):
                 (re-)download of the model weights and configuration files,
                 overriding the cached versions if they exist.
                 (default: :obj:`False`)
-            resume_download (bool, optional): Whether to delete incompletely
-                received files. Will attempt to resume the download if such a
-                file exists. (default: :obj:`False`)
-            proxies (Dict[str, str], optional): A dictionary of proxy servers
-                to use by protocol or endpoint, *e.g.*,
-                :obj:`{'http': 'foo.bar:3128', 'http://host': 'foo.bar:4012'}`.
-                The proxies are used on each request. (default: :obj:`None`)
             token (str or bool, optional): The token to use as HTTP bearer
                 authorization for remote files. If set to :obj:`True`, will use
                 the token generated when running :obj:`transformers-cli login`
@@ -239,8 +228,6 @@ class PyGModelHubMixin(ModelHubMixin):
         return super().from_pretrained(
             pretrained_model_name_or_path,
             force_download=force_download,
-            resume_download=resume_download,
-            proxies=proxies,
             use_auth_token=token,
             cache_dir=cache_dir,
             local_files_only=local_files_only,
