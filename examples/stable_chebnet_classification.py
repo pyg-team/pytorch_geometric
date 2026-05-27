@@ -1,10 +1,9 @@
 import torch
 import torch.nn.functional as F
+
 from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
-from torch_geometric.nn import global_mean_pool
-
-from torch_geometric.nn import StableChebConv
+from torch_geometric.nn import StableChebConv, global_mean_pool
 
 
 class StableChebGraphClassifier(torch.nn.Module):

@@ -1,8 +1,9 @@
-import torch
 import pytest
+import torch
+
 from torch_geometric.data import Batch, Data
-from torch_geometric.testing import is_full_test
 from torch_geometric.nn import StableChebConv
+from torch_geometric.testing import is_full_test
 
 
 def test_stable_cheb_conv():
