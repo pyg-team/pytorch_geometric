@@ -1,14 +1,14 @@
 import pytest
 
-from torch_geometric.datasets import PEMS
+from torch_geometric.datasets import PemsSJ
 from torch_geometric.testing import onlyOnline
 
 
 @onlyOnline
 def test_pems():
-    dataset = PEMS(root="./datasets/PEMS")
+    dataset = PemsSJ(root="./datasets/PemsSJ")
 
-    assert str(dataset) == "PEMS(1)"
+    assert str(dataset) == "PemsSJ(1)"
     assert len(dataset) == 1
     assert dataset.num_features == 1
 
@@ -34,7 +34,7 @@ def test_pems():
 @onlyOnline
 @pytest.mark.parametrize("val_pct", [0.1, 0.2])
 def test_pems_validation_split(val_pct):
-    dataset = PEMS(root="./datasets/PEMS", validation_percentage=val_pct)
+    dataset = PemsSJ(root="./datasets/PemsSJ", validation_percentage=val_pct)
     data = dataset[0]
 
     # Val mask carved from train: no three-way overlap

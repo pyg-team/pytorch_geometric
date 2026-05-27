@@ -86,7 +86,7 @@ from .tag_dataset import TAGDataset
 from .city import CityNetwork
 from .teeth3ds import Teeth3DS
 from .graphland import GraphLandDataset
-from .pems import PEMS
+from .pemssj import PemsSJ
 
 from .dbp15k import DBP15K
 from .aminer import AMiner

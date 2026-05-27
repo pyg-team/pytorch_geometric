@@ -7,8 +7,8 @@ import torch
 from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
-class PEMS(InMemoryDataset):
-    r"""Curated graph from the PEMS road network dataset;
+class PemsSJ(InMemoryDataset):
+    r"""Curated graph from the PeMS road network dataset (San Jose Area);
     Review `"Matérn Gaussian Processes on Graphs"
     <https://arxiv.org/abs/2010.15538>`_ for details and
     `"Do Deep Ensembles Actually Capture Uncertainty
@@ -27,6 +27,11 @@ class PEMS(InMemoryDataset):
     the splits from the referenced papers. If a validation set is needed
     (e.g., for hyperparameter tuning), we advise retraining on the full
     training data before reporting test performance.
+
+    Edge features are inversely proportional to the road segment's length
+    concretely, mean_total_length / length.
+    The :obj:`pos` feature corresponds to the longitude and latitude
+    of each node.
 
     .. note::
         The targets are standardised by default. Access the original standard
