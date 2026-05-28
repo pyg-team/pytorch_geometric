@@ -5,7 +5,7 @@ from torch_geometric.testing import onlyOnline
 
 
 @onlyOnline
-def test_pems():
+def test_pemssj():
     dataset = PemsSJ(root="./datasets/PemsSJ")
 
     assert str(dataset) == "PemsSJ(1)"
@@ -33,7 +33,7 @@ def test_pems():
 
 @onlyOnline
 @pytest.mark.parametrize("val_pct", [0.1, 0.2])
-def test_pems_validation_split(val_pct):
+def test_pemssj_validation_split(val_pct):
     dataset = PemsSJ(root="./datasets/PemsSJ", validation_percentage=val_pct)
     data = dataset[0]
 
