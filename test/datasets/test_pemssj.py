@@ -27,8 +27,8 @@ def test_pems():
     overlap = (data.train_mask & data.test_mask).sum().item()
     assert overlap == 0
 
-    assert dataset.original_mean == pytest.approx(51.06)
-    assert dataset.original_std == pytest.approx(17.3341)
+    assert dataset.original_mean.item() == pytest.approx(51.06)
+    assert dataset.original_std.item() == pytest.approx(17.3341)
 
 
 @onlyOnline
@@ -46,4 +46,4 @@ def test_pems_validation_split(val_pct):
     n_train_default = 250
     num_val = data.val_mask.sum().item()
     assert num_val > 0
-    assert n_train_default * val_pct == num_val
+    assert int(n_train_default * val_pct) == num_val

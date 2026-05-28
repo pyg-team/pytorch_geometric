@@ -28,7 +28,7 @@ class PemsSJ(InMemoryDataset):
     (e.g., for hyperparameter tuning), we advise retraining on the full
     training data before reporting test performance.
 
-    Edge features are inversely proportional to the road segment's length
+    Edge features are inversely proportional to the road segment's length;
     concretely, mean_total_length / length.
     The :obj:`pos` feature corresponds to the longitude and latitude
     of each node.
@@ -92,12 +92,12 @@ class PemsSJ(InMemoryDataset):
         return f"transformed_data_{self.validation_percentage}.pt"
 
     @property
-    def original_std(self) -> float:
+    def original_std(self) -> torch.Tensor:
         """The standard deviation of the original (unstandardised) targets."""
         return self._data.original_std
 
     @property
-    def original_mean(self) -> float:
+    def original_mean(self) -> torch.Tensor:
         """The mean of the original (unstandardised) targets."""
         return self._data.original_mean
 

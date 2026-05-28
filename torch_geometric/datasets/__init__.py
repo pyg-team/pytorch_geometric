@@ -210,7 +210,7 @@ homo_datasets = [
     'CityNetwork',
     'Teeth3DS',
     'GraphLandDataset',
-    "PEMS",
+    "PemsSJ",
 ]
 
 hetero_datasets = [
