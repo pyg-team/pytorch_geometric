@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Added curated instance of PeMS dataset benchmark via `PemsSJ` ([#XXXX](https://github.com/pyg-team/pytorch_geometric/pull/XXXX))
+- Added curated instance of PeMS dataset benchmark via `PemsSJ` ([#10705](https://github.com/pyg-team/pytorch_geometric/pull/10705))
 - Added `txt2qa.py` example for synthetic multi-hop QA generation from text documents, supporting vLLM (local) and NVIDIA NIM (API) backends ([#10559](https://github.com/pyg-team/pytorch_geometric/pull/10559))
 
 ### Changed
