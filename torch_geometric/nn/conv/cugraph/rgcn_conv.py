@@ -11,11 +11,13 @@ from torch_geometric.nn.inits import glorot, zeros
 
 try:
     if LEGACY_MODE:
-        from pylibcugraphops.torch.autograd import \
-            agg_hg_basis_n2n_post as RGCNConvAgg
+        from pylibcugraphops.torch.autograd import (
+            agg_hg_basis_n2n_post as RGCNConvAgg,
+        )
     else:
-        from pylibcugraphops.pytorch.operators import \
-            agg_hg_basis_n2n_post as RGCNConvAgg
+        from pylibcugraphops.pytorch.operators import (
+            agg_hg_basis_n2n_post as RGCNConvAgg,
+        )
 except ImportError:
     pass
 
