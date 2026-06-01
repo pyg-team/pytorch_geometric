@@ -11,7 +11,7 @@ def test_rbgv_dataset():
     dataset = RBGVDataset(num_graphs=10)
 
     assert str(dataset) == ('RBGVDataset(10, topology=erdos_renyi, '
-                            'leakage_target=none, leakage_strategy=all)')
+                            'spurious_target=none, spurious_strategy=all)')
     assert len(dataset) == 10
 
     for data in dataset:
@@ -38,7 +38,7 @@ def test_rbgv_dataset():
         # Causally relevant nodes are exactly the red/blue ones:
         assert int(data.node_mask.sum()) == num_nodes - 2
 
-        # Without leakage, the confounders stay isolated -> all edges relevant:
+        # Without spurious edges, confounders stay isolated -> all relevant:
         assert int(data.edge_mask.sum()) == data.num_edges
 
         assert is_undirected(data.edge_index)
@@ -57,45 +57,111 @@ def test_rbgv_dataset_label():
 
 
 @pytest.mark.parametrize('topology', ['erdos_renyi', 'barabasi_albert'])
-@pytest.mark.parametrize('leakage_target', ['red', 'blue', 'both'])
-@pytest.mark.parametrize('leakage_strategy', ['all', 'normal'])
-def test_rbgv_dataset_leakage(topology, leakage_target, leakage_strategy):
+@pytest.mark.parametrize('target', ['red', 'blue', 'both'])
+@pytest.mark.parametrize('strategy', ['all', 'normal'])
+def test_rbgv_dataset_spurious(topology, target, strategy):
     seed_everything(12345)
     dataset = RBGVDataset(
         num_graphs=10,
         topology=topology,
-        leakage_target=leakage_target,
-        leakage_strategy=leakage_strategy,
+        spurious_target=target,
+        spurious_strategy=strategy,
     )
 
     for data in dataset:
         data.validate(raise_on_error=True)
         num_nodes = data.num_nodes
 
-        # A leakage edge is exactly an edge touching a confounder:
-        is_leakage = data.edge_mask < 0.5
+        # A spurious edge is exactly an edge touching a confounder:
+        is_spurious = data.edge_mask < 0.5
         touches_confounder = (data.edge_index >= num_nodes - 2).any(dim=0)
-        assert torch.equal(is_leakage, touches_confounder)
+        assert torch.equal(is_spurious, touches_confounder)
 
         assert is_undirected(data.edge_index)
 
 
-def test_rbgv_dataset_all_leakage_targets():
-    # The `'all'` strategy connects every confounder to every target node, so
-    # the (undirected) leakage edge count is deterministic given the colors.
+def test_rbgv_dataset_asymmetric_dict():
+    # Per-confounder dicts: green densely connects to every red node, violet
+    # densely to every blue node, fully independently.
     seed_everything(12345)
-    dataset = RBGVDataset(num_graphs=10, leakage_target='both',
-                          leakage_strategy='all')
+    dataset = RBGVDataset(
+        num_graphs=10,
+        spurious_target={
+            'green': 'red',
+            'violet': 'blue'
+        },
+        spurious_strategy={
+            'green': 'all',
+            'violet': 'all'
+        },
+    )
+
+    assert str(dataset) == (
+        "RBGVDataset(10, topology=erdos_renyi, "
+        "spurious_target={'green': 'red', 'violet': 'blue'}, "
+        "spurious_strategy={'green': 'all', 'violet': 'all'})")
 
     for data in dataset:
+        colors = data.x.argmax(dim=1)
         num_nodes = data.num_nodes
-        num_main = num_nodes - 2
-        num_leakage = int((data.edge_mask < 0.5).sum())
-        # Two confounders, each wired to all `num_main` nodes, counted in both
-        # directions: `2 * num_main * 2`.
-        assert num_leakage == 2 * num_main * 2
-        # Both relevant (1) and leakage (0) edges are present:
-        assert data.edge_mask.min() == 0 and data.edge_mask.max() == 1
+        green_idx, violet_idx = num_nodes - 2, num_nodes - 1
+        row, col = data.edge_index
+
+        # Green is connected to *all* and *only* red nodes:
+        green_neighbors = col[row == green_idx]
+        assert bool((colors[green_neighbors] == 0).all())
+        assert int(green_neighbors.numel()) == int((colors == 0).sum())
+        # Violet is connected to *all* and *only* blue nodes:
+        violet_neighbors = col[row == violet_idx]
+        assert bool((colors[violet_neighbors] == 1).all())
+        assert int(violet_neighbors.numel()) == int((colors == 1).sum())
+
+
+def test_rbgv_dataset_mixed_strategies():
+    # Green dense over red, violet stochastic over blue -> still a valid graph
+    # whose spurious edges are exactly the confounder-touching ones.
+    seed_everything(12345)
+    dataset = RBGVDataset(
+        num_graphs=10,
+        spurious_target={
+            'green': 'red',
+            'violet': 'blue'
+        },
+        spurious_strategy={
+            'green': 'all',
+            'violet': 'normal'
+        },
+    )
+
+    for data in dataset:
+        data.validate(raise_on_error=True)
+        num_nodes = data.num_nodes
+        is_spurious = data.edge_mask < 0.5
+        touches_confounder = (data.edge_index >= num_nodes - 2).any(dim=0)
+        assert torch.equal(is_spurious, touches_confounder)
+
+
+def test_rbgv_dataset_string_equals_symmetric_dict():
+    # A single string must behave exactly like the equivalent symmetric dict.
+    seed_everything(12345)
+    dataset1 = RBGVDataset(num_graphs=5, spurious_target='both',
+                           spurious_strategy='normal')
+
+    seed_everything(12345)
+    dataset2 = RBGVDataset(
+        num_graphs=5,
+        spurious_target={
+            'green': 'both',
+            'violet': 'both'
+        },
+        spurious_strategy={
+            'green': 'normal',
+            'violet': 'normal'
+        },
+    )
+
+    for data1, data2 in zip(dataset1, dataset2):
+        assert torch.equal(data1.edge_index, data2.edge_index)
 
 
 def test_rbgv_dataset_invalid_args():
@@ -103,20 +169,44 @@ def test_rbgv_dataset_invalid_args():
         RBGVDataset(num_graphs=1, min_nodes=10, max_nodes=5)
     with pytest.raises(ValueError, match="topology"):
         RBGVDataset(num_graphs=1, topology='unknown')
-    with pytest.raises(ValueError, match="leakage target"):
-        RBGVDataset(num_graphs=1, leakage_target='yellow')
-    with pytest.raises(ValueError, match="leakage strategy"):
-        RBGVDataset(num_graphs=1, leakage_strategy='dense')
+    with pytest.raises(ValueError, match="spurious_target"):
+        RBGVDataset(num_graphs=1, spurious_target='yellow')
+    with pytest.raises(ValueError, match="spurious_strategy"):
+        RBGVDataset(num_graphs=1, spurious_strategy='dense')
+    # Dictionary with the wrong keys:
+    with pytest.raises(ValueError, match="exactly the keys"):
+        RBGVDataset(num_graphs=1, spurious_target={'green': 'red'})
+    # Per-confounder dict value out of range:
+    with pytest.raises(ValueError, match="violet confounder"):
+        RBGVDataset(num_graphs=1, spurious_target={
+            'green': 'red',
+            'violet': 'yellow'
+        })
+    # Wrong type:
+    with pytest.raises(TypeError, match="must be a string or a dictionary"):
+        RBGVDataset(num_graphs=1, spurious_target=42)
 
 
 def test_rbgv_dataset_reproducibility():
     seed_everything(12345)
-    dataset1 = RBGVDataset(num_graphs=10, leakage_target='both',
-                           leakage_strategy='normal')
+    dataset1 = RBGVDataset(
+        num_graphs=10,
+        spurious_target={
+            'green': 'red',
+            'violet': 'both'
+        },
+        spurious_strategy='normal',
+    )
 
     seed_everything(12345)
-    dataset2 = RBGVDataset(num_graphs=10, leakage_target='both',
-                           leakage_strategy='normal')
+    dataset2 = RBGVDataset(
+        num_graphs=10,
+        spurious_target={
+            'green': 'red',
+            'violet': 'both'
+        },
+        spurious_strategy='normal',
+    )
 
     for data1, data2 in zip(dataset1, dataset2):
         assert torch.equal(data1.edge_index, data2.edge_index)
