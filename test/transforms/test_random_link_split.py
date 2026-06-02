@@ -352,6 +352,6 @@ def test_random_link_split_undirected_overlap():
 
     val_neg_set = set(map(tuple, val_neg.t().tolist()))
     test_neg_set = set(map(tuple, test_neg.t().tolist()))
-    test_neg_rev_set = set([(v, u) for u, v in test_neg_set])
+    test_neg_rev_set = {(v, u) for u, v in test_neg_set}
 
     assert not val_neg_set.intersection(test_neg_rev_set)
