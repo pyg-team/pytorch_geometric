@@ -107,8 +107,14 @@ class GravNetConv(MessagePassing):
         s_l: Tensor = self.lin_s(x[0])
         s_r: Tensor = self.lin_s(x[1]) if is_bipartite else s_l
 
-        ptr_l = None if b[0] is None else index2ptr(b[0])
-        ptr_r = None if b[1] is None else index2ptr(b[1])
+        ptr_l: Optional[Tensor] = None
+        b0 = b[0]
+        if b0 is not None:
+            ptr_l = index2ptr(b0)
+        ptr_r: Optional[Tensor] = None
+        b1 = b[1]
+        if b1 is not None:
+            ptr_r = index2ptr(b1)
         edge_index = torch.ops.pyg.knn(s_l, s_r, ptr_l, ptr_r, self.k, False,
                                        1).flip([0])
 
