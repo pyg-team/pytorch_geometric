@@ -4,9 +4,10 @@ import torch
 from torch_geometric.data import HeteroData
 from torch_geometric.loader import HGTLoader
 from torch_geometric.nn import GraphConv, to_hetero
+import pytest
+
 from torch_geometric.testing import (
     get_random_edge_index,
-    onlyOnline,
     withPackage,
 )
 from torch_geometric.typing import SparseTensor
@@ -136,7 +137,7 @@ def test_hgt_loader():
         assert torch.cat([row, col]).unique().numel() >= 59
 
 
-@onlyOnline
+@pytest.mark.dataset
 @withPackage('torch_sparse')
 def test_hgt_loader_on_cora(get_dataset):
     dataset = get_dataset(name='Cora')

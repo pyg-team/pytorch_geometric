@@ -26,7 +26,7 @@ from torch_geometric.graphgym.utils import (
     auto_select_device,
     params_count,
 )
-from torch_geometric.testing import onlyLinux, onlyOnline, withPackage
+from torch_geometric.testing import onlyLinux, withPackage
 
 num_trivial_metric_calls = 0
 
@@ -41,7 +41,7 @@ def trivial_metric(true, pred, task_type):
     return 1
 
 
-@onlyOnline
+@pytest.mark.dataset
 @withPackage('yacs', 'pytorch_lightning')
 @pytest.mark.parametrize('auto_resume', [True, False])
 @pytest.mark.parametrize('skip_train_eval', [True, False])
@@ -109,7 +109,7 @@ def test_run_single_graphgym(tmp_path, capfd, auto_resume, skip_train_eval,
     assert "val: {'epoch': 5," in out
 
 
-@onlyOnline
+@pytest.mark.dataset
 @withPackage('yacs', 'pytorch_lightning')
 def test_graphgym_module(tmp_path):
     import pytorch_lightning as pl
@@ -170,7 +170,7 @@ def destroy_process_group():
         torch.distributed.destroy_process_group()
 
 
-@onlyOnline
+@pytest.mark.dataset
 @onlyLinux
 @withPackage('yacs', 'pytorch_lightning')
 def test_train(destroy_process_group, tmp_path, capfd):

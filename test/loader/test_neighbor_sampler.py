@@ -3,7 +3,9 @@ import torch
 
 from torch_geometric.loader import NeighborSampler
 from torch_geometric.nn.conv import GATConv, SAGEConv
-from torch_geometric.testing import onlyOnline, withPackage
+import pytest
+
+from torch_geometric.testing import withPackage
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import erdos_renyi_graph
 
@@ -47,7 +49,7 @@ def test_neighbor_sampler_invalid_kwargs():
     NeighborSampler(edge_index, sizes=[-1], collate_fn=None, dataset=None)
 
 
-@onlyOnline
+@pytest.mark.dataset
 @withPackage('torch_sparse')
 def test_neighbor_sampler_on_cora(get_dataset):
     dataset = get_dataset(name='Cora')
