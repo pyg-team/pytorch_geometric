@@ -5,9 +5,6 @@ on:  # yamllint disable-line rule:truthy
     branches:
       - master
   pull_request:
-    # Re-run when the `ci: full` label is added or removed so that the full
-    # test suite can be triggered on demand:
-    types: [opened, synchronize, reopened, labeled, unlabeled]
   schedule:
     - cron: "0 6 * * *"  # Everyday at 6:00am UTC/10:00pm PST
 
