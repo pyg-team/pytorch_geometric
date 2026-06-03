@@ -63,7 +63,7 @@ jobs:
     needs: trigger
     # Skip the regular test suite when `ci: full` is set; `pytest-full` runs
     # the full matrix instead:
-    if: ${{ needs.trigger.outputs.triggered == 'true' && github.repository == 'pyg-team/pytorch_geometric' && github.event_name != 'schedule' && !contains(github.event.pull_request.labels.*.name, 'ci: full') }}
+    if: "${{ needs.trigger.outputs.triggered == 'true' && github.repository == 'pyg-team/pytorch_geometric' && github.event_name != 'schedule' && !contains(github.event.pull_request.labels.*.name, 'ci: full') }}"
     uses: ./.github/workflows/_testing.yml
     with:
       test-matrix: |
@@ -79,7 +79,7 @@ jobs:
 
   pytest-full:
     # Run on the nightly schedule, or on demand for PRs labeled `ci: full`:
-    if: ${{ github.repository == 'pyg-team/pytorch_geometric' && (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'ci: full')) }}
+    if: "${{ github.repository == 'pyg-team/pytorch_geometric' && (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'ci: full')) }}"
     uses: ./.github/workflows/_testing.yml
     with:
       test-matrix: |
