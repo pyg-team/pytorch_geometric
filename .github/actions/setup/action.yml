@@ -90,6 +90,8 @@ runs:
           TORCHVISION_VERSION=0.25.0
         elif [ ${{ inputs.torch-version }} == '2.9.0' ]; then
           TORCHVISION_VERSION=0.24.0
+        elif [ ${{ inputs.torch-version }} == '2.8.0' ]; then
+          TORCHVISION_VERSION=0.23.0
         elif [ ${{ inputs.torch-version }} == '2.7.0' ]; then
           TORCHVISION_VERSION=0.22.0
         elif [ ${{ inputs.torch-version }} == '2.6.0' ]; then
