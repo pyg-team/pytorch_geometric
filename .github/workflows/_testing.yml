@@ -57,6 +57,10 @@ jobs:
         timeout-minutes: 20
         run: |
           pytest -m "not rag and not dataset" --cov --cov-report=xml --durations 10
+      - name: Run dataset tests (temporary - verifying pytest.mark.dataset migration)
+        timeout-minutes: 20
+        run: |
+          pytest -m "dataset" --no-cov --durations 10
         env:
           FULL_TEST: ${{ matrix.full_test }}
 
