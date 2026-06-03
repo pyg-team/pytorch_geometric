@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Added PyTorch 2.11 and 2.12 support ([#XXXX](https://github.com/pyg-team/pytorch_geometric/pull/XXXX))
+- Added PyTorch 2.11 and 2.12 support ([#10708](https://github.com/pyg-team/pytorch_geometric/pull/10708))
 - Added `txt2qa.py` example for synthetic multi-hop QA generation from text documents, supporting vLLM (local) and NVIDIA NIM (API) backends ([#10559](https://github.com/pyg-team/pytorch_geometric/pull/10559))
 
 ### Changed
@@ -22,7 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Removed
 
-- Dropped support for PyTorch 2.8 ([#XXXX](https://github.com/pyg-team/pytorch_geometric/pull/XXXX))
+- Dropped support for PyTorch 2.8 ([#10708](https://github.com/pyg-team/pytorch_geometric/pull/10708))
 
 ### Fixed
 
