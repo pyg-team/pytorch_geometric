@@ -86,18 +86,6 @@ jobs:
           "full-test": "1"
         }
 
-  # gpu:
-  #   if: github.repository == 'pyg-team/pytorch_geometric'
-  #   uses: ./.github/workflows/_testing.yml
-  #   with:
-  #     test-matrix: |
-  #       {
-  #         "os": [["self-hosted, nvidia"]],
-  #         "python-version": ["3.10"],
-  #         "torch-version": ["2.12.0"],
-  #         "cuda-version": ["cu128"]
-  #       }
-
   status:
     if: always() && github.event_name == 'pull_request'
     needs:
