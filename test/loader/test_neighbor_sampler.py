@@ -1,10 +1,9 @@
 import numpy as np
+import pytest
 import torch
 
 from torch_geometric.loader import NeighborSampler
 from torch_geometric.nn.conv import GATConv, SAGEConv
-import pytest
-
 from torch_geometric.testing import withPackage
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import erdos_renyi_graph
