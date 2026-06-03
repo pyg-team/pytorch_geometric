@@ -104,12 +104,5 @@ runs:
         UV_INDEX_STRATEGY: unsafe-best-match
       run: |
         uv pip install scipy
-        # `torch-scatter` and `torch-sparse` are legacy extensions (superseded by
-        # `pyg-lib`) and are not always built for the latest PyTorch releases.
-        # Install each independently and skip it if no wheel is published yet.
-        WHEEL_INDEX=https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
-        for pkg in torch-scatter torch-sparse; do
-          uv pip install --no-index --upgrade "${pkg}" -f "${WHEEL_INDEX}" \
-            || echo "::warning::No ${pkg} wheel for torch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}; skipping"
-        done
+        uv pip install --no-index --upgrade torch-scatter torch-sparse -f https://data.pyg.org/whl/torch-${{ inputs.torch-version }}+${{ inputs.cuda-version }}.html
       shell: bash
