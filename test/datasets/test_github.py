@@ -1,9 +1,10 @@
 from torch_geometric.datasets import GitHub
-from torch_geometric.testing import onlyFullTest, onlyOnline
+from torch_geometric.testing import onlyFullTest, onlyOnline, withPackage
 
 
 @onlyOnline
 @onlyFullTest
+@withPackage('pandas')
 def test_github():
     dataset = GitHub(root='./data/GitHub')
     data = dataset[0]

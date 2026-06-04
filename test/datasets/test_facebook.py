@@ -1,9 +1,10 @@
 from torch_geometric.datasets import FacebookPagePage
-from torch_geometric.testing import onlyFullTest, onlyOnline
+from torch_geometric.testing import onlyFullTest, onlyOnline, withPackage
 
 
 @onlyOnline
 @onlyFullTest
+@withPackage('pandas')
 def test_facebook():
     dataset = FacebookPagePage(root='./data/FacebookPagePage')
     data = dataset[0]
