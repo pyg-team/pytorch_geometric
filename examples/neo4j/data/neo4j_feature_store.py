@@ -1,5 +1,5 @@
 import atexit
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
 import torch
@@ -14,7 +14,7 @@ from torch_geometric.typing import NodeType
 
 
 class Neo4jFeatureStore(DatabaseFeatureStore):
-    r"""A generalised :class:`~torch_geometric.data.DatabaseFeatureStore`
+    r"""A generalized :class:`~torch_geometric.data.DatabaseFeatureStore`
     backed by Neo4j.
 
     The set of tensor attributes and their
@@ -24,7 +24,7 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
     *default_node_label* when ``group_name`` is ``None``.
 
     A single database round-trip is issued for all attrs that share the same
-    node index (the normal mini-batch path), mirroring the optimisation in
+    node index (the normal mini-batch path), mirroring the optimization in
     :class:`DatabaseFeatureStore`.
 
     Highly recommended to override :meth:`_multi_fetch_remote_attrs` and
@@ -32,9 +32,9 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
     database round-trip (e.g. one Cypher query for both ``x`` and ``y``).
 
     Args:
-        attr_map: Either a flat ``Dict[str, spec]`` (homogeneous: attrs
+        attr_map: Either a flat ``dict[str, spec]`` (homogeneous: attrs
             live under ``group_name=None`` / ``default_node_label``), or a
-            nested ``Dict[Optional[NodeType], Dict[str, spec]]`` keyed by
+            nested ``dict[NodeType | None, dict[str, spec]]`` keyed by
             node label for heterogeneous graphs. Each *spec* is a plain
             dict with the keys:
 
@@ -60,14 +60,14 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
     """
     def __init__(
         self,
-        attr_map: Dict[Any, Any],
-        uri: Optional[str] = None,
-        user: Optional[str] = None,
-        pwd: Optional[str] = None,
-        cache: Optional[FeatureCache] = None,
-        database_name: Optional[str] = None,
+        attr_map: dict[Any, Any],
+        uri: str | None = None,
+        user: str | None = None,
+        pwd: str | None = None,
+        cache: FeatureCache | None = None,
+        database_name: str | None = None,
         nodeid_property: str = "nodeId",
-        default_node_label: Optional[str] = None,
+        default_node_label: str | None = None,
     ) -> None:
         if not attr_map:
             raise ValueError("attr_map must contain at least one entry.")
@@ -75,7 +75,7 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
         self.uri = uri
         self.user = user
         self.pwd = pwd
-        self._driver: Optional[Driver] = None
+        self._driver: Driver | None = None
         self.database_name = database_name
         self.nodeid_property = nodeid_property
         self.default_node_label = default_node_label
@@ -89,23 +89,21 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
             isinstance(v, dict) for v in attr_map.values()
         ) and not {"property", "dtype", "encoding"} & set(sample_val.keys())
         if is_nested:
-            self.attr_map: Dict[Optional[NodeType],
-                                Dict[str, Dict[str, str]]] = {
-                                    g: dict(spec)
-                                    for g, spec in attr_map.items()
-                                }
+            self.attr_map: dict[NodeType | None, dict[str, dict[str, str]]] = {
+                g: dict(spec)
+                for g, spec in attr_map.items()
+            }
         else:
             self.attr_map = {default_node_label: dict(attr_map)}
 
-        self._labels: Dict[Tuple[Optional[NodeType], str], Dict[str, int]] = {
+        self._labels: dict[tuple[NodeType | None, str], dict[str, int]] = {
             (group, name): {}
             for group, group_map in self.attr_map.items()
             for name, spec in group_map.items() if spec.get("dtype") == "str"
         }
 
-    def _resolve_group(self,
-                       group_name: Optional[NodeType]) -> Optional[NodeType]:
-        """Pick the attr_map group key for *group_name*.
+    def _resolve_group(self, group_name: NodeType | None) -> NodeType | None:
+        r"""Pick the attr_map group key for *group_name*.
 
         Tries the literal group, then ``default_node_label``, then ``None``.
         Returns the first key present in :attr:`attr_map`.
@@ -120,9 +118,9 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
 
     def _get_spec(
         self,
-        group_name: Optional[NodeType],
+        group_name: NodeType | None,
         attr_name: str,
-    ) -> Dict[str, str]:
+    ) -> dict[str, str]:
         group = self._resolve_group(group_name)
         group_map = self.attr_map[group]
         if attr_name not in group_map:
@@ -132,11 +130,11 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
 
     def _build_query(
         self,
-        attr_names: List[str],
-        node_label: Optional[str],
-        group_key: Optional[NodeType],
+        attr_names: list[str],
+        node_label: str | None,
+        group_key: NodeType | None,
     ) -> str:
-        """Build a single Cypher query that returns all requested attrs."""
+        r"""Build a single Cypher query that returns all requested attrs."""
         lf = f":{node_label}" if node_label else ""
         group_map = self.attr_map[group_key]
         return_cols = ", ".join(f"n.{group_map[name]['property']} AS {name}"
@@ -148,10 +146,10 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
     def _fetch_remote_attrs(
         self,
         attr: TensorAttr,
-    ) -> Tuple[List[object], List[int]]:
-        """Fetch a single attr from the database."""
+    ) -> tuple[list[object], list[int]]:
+        r"""Fetch a single attr from the database."""
         index = attr.index
-        node_ids: List[int] = (index.tolist() if isinstance(
+        node_ids: list[int] = (index.tolist() if isinstance(
             index, torch.Tensor) else list(index))
 
         group_key = self._resolve_group(attr.group_name)
@@ -167,10 +165,10 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
 
     def _decode_remote_attrs(
         self,
-        records: List[object],
+        records: list[object],
         attr: TensorAttr,
     ) -> np.ndarray:
-        """Decode a single attr from records."""
+        r"""Decode a single attr from records."""
         name = attr.attr_name
         spec = self._get_spec(attr.group_name, name)
 
@@ -189,7 +187,7 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
 
     def _decode_float_col(
         self,
-        records: List[object],
+        records: list[object],
         field: str,
         encoding: str,
     ) -> np.ndarray:
@@ -202,8 +200,8 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
 
     def _decode_label_col(
         self,
-        records: List[object],
-        group_name: Optional[NodeType],
+        records: list[object],
+        group_name: NodeType | None,
         field: str,
         string_labels: bool,
     ) -> np.ndarray:
@@ -225,13 +223,13 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
             self._labels[(group_key, field)] = vocab
         return arr
 
-    def get_all_tensor_attrs(self) -> List[TensorAttr]:
+    def get_all_tensor_attrs(self) -> list[TensorAttr]:
         return [
             TensorAttr(group_name=group, attr_name=name)
             for group, group_map in self.attr_map.items() for name in group_map
         ]
 
-    def _get_tensor_size(self, attr: TensorAttr) -> Optional[Tuple[int, ...]]:
+    def _get_tensor_size(self, attr: TensorAttr) -> tuple[int, ...] | None:
         out = self._get_tensor(attr)
         if out is None:
             return None
@@ -251,12 +249,12 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
         dtype = spec.get("dtype", "float32")
 
         index = attr.index
-        node_ids: List[int] = (index.tolist() if isinstance(
+        node_ids: list[int] = (index.tolist() if isinstance(
             index, torch.Tensor) else list(index))
 
         arr = tensor.detach().cpu().numpy()
 
-        rows: List[dict] = []
+        rows: list[dict] = []
         for i, nid in enumerate(node_ids):
             row = arr[i]
             if dtype == "float32" and encoding == "byte[]":
@@ -295,7 +293,7 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
 
         if attr.index is not None:
             index = attr.index
-            node_ids: List[int] = (index.tolist() if isinstance(
+            node_ids: list[int] = (index.tolist() if isinstance(
                 index, torch.Tensor) else list(index))
             query = (f"UNWIND $node_ids AS nid "
                      f"MATCH (n{lf} {{{self.nodeid_property}: nid}}) "
@@ -312,7 +310,7 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
         return True
 
     def apoc_available(self) -> bool:
-        """Return :obj:`True` if the APOC plugin is installed in the target
+        r"""Return :obj:`True` if the APOC plugin is installed in the target
         database. Probes via ``RETURN apoc.version()``; any driver error
         (procedure missing, auth, connectivity) is treated as unavailable.
         """
@@ -339,11 +337,11 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
             finally:
                 self._driver = None
 
-    def __getstate__(self) -> Dict[str, Any]:
+    def __getstate__(self) -> dict[str, Any]:
         state = self.__dict__.copy()
         state["_driver"] = None
         return state
 
-    def __setstate__(self, state: Dict[str, Any]) -> None:
+    def __setstate__(self, state: dict[str, Any]) -> None:
         self.__dict__.update(state)
         self._driver = None

@@ -1,5 +1,4 @@
 import atexit
-from typing import List, Optional
 
 import torch
 from neo4j import Driver, GraphDatabase
@@ -10,7 +9,7 @@ from torch_geometric.typing import EdgeTensorType
 
 
 class Neo4jGraphStore(DatabaseGraphStore):
-    """Neo4j-backed graph store.
+    r"""Neo4j-backed graph store.
 
     Implements all abstract methods of :class:`DatabaseGraphStore` against a
     Neo4j database.  The driver is created lazily per process, making this
@@ -29,13 +28,13 @@ class Neo4jGraphStore(DatabaseGraphStore):
         user: str,
         pwd: str,
         nodeid_property: str,
-        database_name: Optional[str] = None,
+        database_name: str | None = None,
     ):
         super().__init__()
         self.uri = uri
         self.user = user
         self.pwd = pwd
-        self._driver: Optional[Driver] = None
+        self._driver: Driver | None = None
         self.database_name = database_name
         self.nodeid_property = nodeid_property
 
@@ -63,7 +62,7 @@ class Neo4jGraphStore(DatabaseGraphStore):
         self._driver = None
 
     def apoc_available(self) -> bool:
-        """Return :obj:`True` if the APOC plugin is installed in the target
+        r"""Return :obj:`True` if the APOC plugin is installed in the target
         database. Probes via ``RETURN apoc.version()``; any driver error
         (procedure missing, auth, connectivity) is treated as unavailable.
         """
@@ -75,11 +74,11 @@ class Neo4jGraphStore(DatabaseGraphStore):
         except Exception:
             return False
 
-    def get_all_edge_attrs(self) -> List[EdgeAttr]:
+    def get_all_edge_attrs(self) -> list[EdgeAttr]:
         return []
 
-    def query_db(self, query: str, kwargs: dict) -> Optional[dict]:
-        """Execute *query* against the DB and return the first result record.
+    def query_db(self, query: str, kwargs: dict) -> dict | None:
+        r"""Execute *query* against the DB and return the first result record.
 
         Returns the record dict, or ``None`` if the query produced no rows.
         """
@@ -90,7 +89,7 @@ class Neo4jGraphStore(DatabaseGraphStore):
         return records[0] if records else None
 
     # GraphStore ABC ##########################################################
-    def _get_edge_index(self, edge_attr: EdgeAttr) -> Optional[EdgeTensorType]:
+    def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType | None:
         src_type, rel_type, dst_type = edge_attr.edge_type
         nid = self.nodeid_property
 
@@ -121,7 +120,7 @@ class Neo4jGraphStore(DatabaseGraphStore):
         edge_index: EdgeTensorType,
         edge_attr: EdgeAttr,
     ) -> bool:
-        """Write edges to Neo4j via ``MERGE``.
+        r"""Write edges to Neo4j via ``MERGE``.
 
         Values in *edge_index* must be global node IDs stored under
         ``nodeid_property``.
@@ -143,7 +142,7 @@ class Neo4jGraphStore(DatabaseGraphStore):
         return True
 
     def _remove_edge_index(self, edge_attr: EdgeAttr) -> bool:
-        """Delete all relationships of the given edge type from Neo4j."""
+        r"""Delete all relationships of the given edge type from Neo4j."""
         src_type, rel_type, dst_type = edge_attr.edge_type
         query = (f"MATCH (:{src_type})-[r:{rel_type}]->(:{dst_type}) "
                  f"DELETE r")

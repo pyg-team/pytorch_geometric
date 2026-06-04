@@ -1,4 +1,4 @@
-from typing import Any, Optional, Tuple, Union
+from typing import Any
 
 import torch
 from torch import Tensor
@@ -15,7 +15,7 @@ from torch_geometric.sampler.base import (
 
 class DatabaseSampler(BaseSampler):
     r"""Abstract base class for samplers that push multi-hop neighbor sampling
-    into a database via a native query language (e.g. Cypher, GSQL).
+    into a database via a native query language (e.g Cypher, SQL, SQL/PGQ).
 
     Pipeline for both :meth:`sample_from_nodes` and :meth:`sample_from_edges`:
 
@@ -53,16 +53,16 @@ class DatabaseSampler(BaseSampler):
         r"""Whether the sampler operates on a heterogeneous graph."""
         return self._is_hetero
 
-    def _build_node_sampling_query(self) -> Optional[str]:
-        """Compile native query for node-seed multi-hop sampling.
+    def _build_node_sampling_query(self) -> str | None:
+        r"""Compile native query for node-seed multi-hop sampling.
 
         Override to enable :meth:`sample_from_nodes`. Returns :obj:`None`
         if node-seed sampling is not supported.
         """
         return None
 
-    def _build_edge_sampling_query(self) -> Optional[str]:
-        """Compile native query for edge-seed multi-hop sampling.
+    def _build_edge_sampling_query(self) -> str | None:
+        r"""Compile native query for edge-seed multi-hop sampling.
 
         Override to enable :meth:`sample_from_edges`. Returns :obj:`None`
         if edge-seed sampling is not supported.
@@ -70,7 +70,7 @@ class DatabaseSampler(BaseSampler):
         return None
 
     def _build_node_query_params(self, seeds: Tensor, **kwargs) -> dict:
-        """Build query parameter dict for seed node IDs.
+        r"""Build query parameter dict for seed node IDs.
 
         Args:
             seeds (torch.Tensor): 1-D int64 tensor of seed node IDs.
@@ -83,7 +83,7 @@ class DatabaseSampler(BaseSampler):
         return None
 
     def _build_edge_query_params(self, seeds: Tensor, **kwargs) -> dict:
-        """Build query parameter dict for seed edge endpoint IDs.
+        r"""Build query parameter dict for seed edge endpoint IDs.
 
         Same contract as :meth:`_build_node_query_params`; ``seeds`` are the
         unique endpoint node IDs of the seed edges.
@@ -93,7 +93,7 @@ class DatabaseSampler(BaseSampler):
     @staticmethod
     def _empty_result(
         seed_nodes: Tensor, is_hetero: bool
-    ) -> Union[Tuple[Tensor, Tensor, Tensor], Tuple[dict, dict, dict]]:
+    ) -> tuple[Tensor, Tensor, Tensor] | tuple[dict, dict, dict]:
         r"""Return empty ``(node, row, col)`` triple for the given layout."""
         if is_hetero:
             return {}, {}, {}
@@ -101,7 +101,7 @@ class DatabaseSampler(BaseSampler):
         return seed_nodes, empty, empty
 
     def _decode_node_sampling_record(self, record: Any,
-                                     seeds: Tensor) -> Optional[Any]:
+                                     seeds: Tensor) -> Any | None:
         r"""Decode a raw record into ``(node, row, col)`` for node sampling.
 
         Args:
@@ -116,7 +116,7 @@ class DatabaseSampler(BaseSampler):
         raise NotImplementedError
 
     def _decode_edge_sampling_record(self, record: Any,
-                                     seeds: Tensor) -> Optional[Any]:
+                                     seeds: Tensor) -> Any | None:
         r"""Decode a raw record into ``(node, row, col)`` for edge sampling.
 
         Same contract as :meth:`_decode_node_sampling_record`.
@@ -130,8 +130,8 @@ class DatabaseSampler(BaseSampler):
         col,
         seeds: Tensor,
         seed_time,
-        input_type: Optional[str] = None,
-    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+        input_type: str | None = None,
+    ) -> SamplerOutput | HeteroSamplerOutput:
         r"""Wrap ``(node, row, col)`` into a homo or hetero sampler output."""
         if self._is_hetero:
             if input_type is not None and input_type not in node:
@@ -157,7 +157,7 @@ class DatabaseSampler(BaseSampler):
         self,
         index: NodeSamplerInput,
         **kwargs,
-    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+    ) -> SamplerOutput | HeteroSamplerOutput:
         r"""Sample a subgraph starting from the seed nodes in ``index``.
 
         Args:
@@ -193,7 +193,7 @@ class DatabaseSampler(BaseSampler):
         index: EdgeSamplerInput,
         neg_sampling=None,
         **kwargs,
-    ) -> Union[SamplerOutput, HeteroSamplerOutput]:
+    ) -> SamplerOutput | HeteroSamplerOutput:
         r"""Sample a subgraph starting from the seed edges in ``index``.
 
         Args:

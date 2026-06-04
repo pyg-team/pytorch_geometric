@@ -1,6 +1,6 @@
 import re
 from abc import ABC
-from typing import Any, List, Optional, Tuple
+from typing import Any
 
 import torch
 from torch import Tensor
@@ -12,7 +12,7 @@ _CYPHER_IDENT_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 
 
 class Neo4jSampler(DatabaseSampler, ABC):
-    """Abstract base for Neo4j-backed samplers.
+    r"""Abstract base for Neo4j-backed samplers.
 
     Handles Neo4j-specific init shared across variants: Cypher identifier
     validation for ``node_label`` / ``rel_type``, and storage of common
@@ -36,8 +36,8 @@ class Neo4jSampler(DatabaseSampler, ABC):
     def __init__(
         self,
         graph_store: DatabaseGraphStore,
-        node_label: Optional[str] = None,
-        rel_type: Optional[str] = None,
+        node_label: str | None = None,
+        rel_type: str | None = None,
         profile: bool = False,
         **kwargs,
     ) -> None:
@@ -52,8 +52,8 @@ class Neo4jSampler(DatabaseSampler, ABC):
         super().__init__(graph_store, **kwargs)
 
     @staticmethod
-    def _validate_cypher_ident(name: str, value: Optional[str]) -> None:
-        """Reject ``value`` if set and not a valid Cypher identifier.
+    def _validate_cypher_ident(name: str, value: str | None) -> None:
+        r"""Reject ``value`` if set and not a valid Cypher identifier.
 
         Blocks Cypher injection via label / relationship type strings.
         Raises :class:`ValueError` on a bad identifier.
@@ -65,7 +65,7 @@ class Neo4jSampler(DatabaseSampler, ABC):
 
     @staticmethod
     def _probe_apoc(graph_store: DatabaseGraphStore) -> None:
-        """Verify APOC is installed in the target Neo4j database.
+        r"""Verify APOC is installed in the target Neo4j database.
 
         Call from subclass ``__init__`` when the sampling query uses
         ``apoc.*`` procedures. Raises :class:`RuntimeError` if missing.
@@ -78,11 +78,11 @@ class Neo4jSampler(DatabaseSampler, ABC):
 
 
 class Neo4jGraphSAGESampler(Neo4jSampler):
-    """Neo4j-backed GraphSAGE neighbor sampler.
+    r"""Neo4j-backed GraphSAGE neighbor sampler.
 
     Pushes a pre-compiled Cypher query into Neo4j for multi-hop neighbor
     sampling. Mirrors pyg-lib ``_sample`` semantics with ``replace=False``
-    and ``disjoint=False``: if ``k < 0`` or ``k >= |neighbourhood|`` all
+    and ``disjoint=False``: if ``k < 0`` or ``k >= |neighborhood|`` all
     neighbors are taken (pyg-lib Case 1), else ``k`` are sampled uniformly
     via ``apoc.coll.randomItems``.
 
@@ -91,7 +91,7 @@ class Neo4jGraphSAGESampler(Neo4jSampler):
 
     Args:
         graph_store (DatabaseGraphStore): Neo4j-backed graph store.
-        num_neighbors (List[int]): Neighbors to sample per hop. ``-1`` =
+        num_neighbors (list[int]): Neighbors to sample per hop. ``-1`` =
             take all neighbors at that hop.
         direction (str): Edge direction from each frontier node. One of
             ``'incoming'``, ``'outgoing'``, ``'undirected'``.
@@ -106,10 +106,10 @@ class Neo4jGraphSAGESampler(Neo4jSampler):
     def __init__(
         self,
         graph_store: DatabaseGraphStore,
-        num_neighbors: List[int],
+        num_neighbors: list[int],
         direction: str = 'incoming',
-        node_label: Optional[str] = None,
-        rel_type: Optional[str] = None,
+        node_label: str | None = None,
+        rel_type: str | None = None,
         profile: bool = False,
     ) -> None:
         if direction not in ('incoming', 'outgoing', 'undirected'):
@@ -137,7 +137,7 @@ class Neo4jGraphSAGESampler(Neo4jSampler):
         return {"seed_ids": seeds.tolist()}
 
     def _build_node_sampling_query(self) -> str:
-        """Compile the multi-hop neighbor-sampling Cypher query.
+        r"""Compile the multi-hop neighbor-sampling Cypher query.
 
         Parameterised by ``$seed_ids`` (see :meth:`_build_node_query_params`).
         Returns a single record with:
@@ -173,7 +173,7 @@ class Neo4jGraphSAGESampler(Neo4jSampler):
         q = []
 
         q.append(f"""
-        // 1. initialise the frontier, visited and edges (single batched
+        // 1. initialize the frontier, visited and edges (single batched
         //    index seek; fail-loud if any seed_id is missing in the DB).
         {profile_prefix}MATCH (s{seed_label})
         WHERE s.{self.nodeid_property} IN $seed_ids
@@ -243,8 +243,8 @@ class Neo4jGraphSAGESampler(Neo4jSampler):
         self,
         record: Any,
         seed_nodes: Tensor,
-    ) -> Tuple[Tensor, Tensor, Tensor]:
-        """Convert a raw record into ``(node, row, col)`` COO tensors.
+    ) -> tuple[Tensor, Tensor, Tensor]:
+        r"""Convert a raw record into ``(node, row, col)`` COO tensors.
 
         On an empty result returns ``seed_nodes`` plus zero-length edge
         tensors.

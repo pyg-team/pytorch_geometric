@@ -10,26 +10,23 @@ Database graph storage for PyG
     (e.g. Neo4j).
 
 A common way to support large-graph GNN training is to keep graph
-representations in-memory across a distributed system. This can
+topology and features in RAM of the training machine(s). This can
 enable highly efficient mini-batch computation, but may also require
 substantial hardware resources.
 
 The Database abstractions provide an alternative approach in which
-the training process requests graph structure and features from an
-external database during training, with neighborhood sampling executed
-inside the database rather than in PyG. As a result, the training process
-receives only the sampled subgraph and the requested
-features for each mini-batch. This can reduce the memory requirements
-of the training machine, making database-backed workflows practical on
-more modest hardware while preserving the usual PyG loader and model
-interfaces.
+the training process only fetches relevant graph data per batch, and
+the database backend handles neighbor sampling and feature retrieval.
+This can drastically reduce the memory requirements
+of the training machine, and enable large-graph training on more
+modest hardware, at the cost of some additional latency per batch.
 
 Key Advantages
 --------------
 
 #. **Train on graphs that don't fit in memory** — only sampled subgraphs
    and the features for their nodes are pulled into the trainer at each
-   step. This enables large graph training without the need for a big RAM machine.
+   batch. This enables large graph training without the need for a big RAM machine.
 #. **Backend-agnostic ABCs** — any database with a query language can be
    plugged in by subclassing three abstract classes
    (:class:`~torch_geometric.data.DatabaseGraphStore`,
@@ -124,6 +121,11 @@ Database Graph Store
 :meth:`~torch_geometric.data.DatabaseGraphStore.query_db(query, params)` hook that the
 sampler (and any other caller) uses for all database round-trips — sampling,
 edge lookups, and ad-hoc inspection alike.
+
+.. warning::
+    The :class:`~torch_geometric.data.DatabaseGraphStore` is not responsible for
+    decoding the raw record into PyG tensors; the caller (e.g.
+    :class:`~torch_geometric.sampler.DatabaseSampler`) is.
 
 
 Database Feature Store

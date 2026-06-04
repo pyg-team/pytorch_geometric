@@ -1,7 +1,7 @@
 import copy
 from abc import ABC, abstractmethod
 from collections import OrderedDict
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
 import torch
@@ -11,7 +11,7 @@ from torch_geometric.data.feature_store import FeatureStore, TensorAttr
 from torch_geometric.typing import FeatureTensorType, NodeType
 
 
-def _nids_from_attr(attr: TensorAttr) -> List[int]:
+def _nids_from_attr(attr: TensorAttr) -> list[int]:
     r"""Coerce ``attr.index`` to a list of Python ints."""
     nids = (attr.index.tolist()
             if isinstance(attr.index, Tensor) else list(attr.index))
@@ -42,7 +42,7 @@ class FeatureCache(ABC):
         cache like Redis or share a single store via ``num_workers=0``.
     """
     @abstractmethod
-    def get(self, attr: TensorAttr) -> Dict[int, np.ndarray]:
+    def get(self, attr: TensorAttr) -> dict[int, np.ndarray]:
         r"""Return ``{nid: row}`` for the cached node IDs in ``attr.index``,
         where each *row* is a :obj:`np.ndarray`.
         Missing IDs are absent from the dict.
@@ -51,17 +51,17 @@ class FeatureCache(ABC):
     @abstractmethod
     def put(
         self,
-        group_name: Optional[NodeType],
+        group_name: NodeType | None,
         attr_name: str,
-        nid_map: Dict[int, np.ndarray],
+        nid_map: dict[int, np.ndarray],
     ) -> None:
         r"""Store ``{nid: row}`` for the ``(group_name, attr_name)`` slice."""
 
     def multi_get(
         self,
-        attrs: List[TensorAttr],
-    ) -> Tuple[Dict[Tuple[Optional[NodeType], str], Dict[int, np.ndarray]],
-               List[TensorAttr]]:
+        attrs: list[TensorAttr],
+    ) -> tuple[dict[tuple[NodeType | None, str], dict[int, np.ndarray]],
+               list[TensorAttr]]:
         r"""Look up multiple :class:`TensorAttr` in the cache.
 
         Returns:
@@ -72,9 +72,8 @@ class FeatureCache(ABC):
             uncached node IDs. Fully-cached attrs are omitted from
             *missing_attrs*.
         """
-        cached: Dict[Tuple[Optional[NodeType], str], Dict[int,
-                                                          np.ndarray]] = {}
-        missing: List[TensorAttr] = []
+        cached: dict[tuple[NodeType | None, str], dict[int, np.ndarray]] = {}
+        missing: list[TensorAttr] = []
         for attr in attrs:
             hits = self.get(attr)
             if hits:
@@ -88,7 +87,7 @@ class FeatureCache(ABC):
 
     def multi_put(
         self,
-        values: Dict[Tuple[Optional[NodeType], str], Dict[int, np.ndarray]],
+        values: dict[tuple[NodeType | None, str], dict[int, np.ndarray]],
     ) -> None:
         r"""Write a ``{(group_name, attr_name): {nid: row}}`` mapping into
         the cache via :meth:`put`. Override this method for efficient
@@ -100,9 +99,9 @@ class FeatureCache(ABC):
     @abstractmethod
     def invalidate(
         self,
-        group_name: Optional[NodeType],
+        group_name: NodeType | None,
         attr_name: str,
-        nids: Optional[List[int]] = None,
+        nids: list[int] | None = None,
     ) -> None:
         r"""Drop cached rows for the ``(group_name, attr_name)`` slice.
 
@@ -134,11 +133,11 @@ class LRUFeatureCache(FeatureCache):
         if maxsize <= 0:
             raise ValueError(f"maxsize must be positive, got {maxsize}")
         self._maxsize = maxsize
-        self._data: "OrderedDict[Tuple[Optional[NodeType], str, int], np.ndarray]" = (  # noqa: E501
-            OrderedDict())
+        self._data: OrderedDict[tuple[NodeType | None, str, int],
+                                np.ndarray] = OrderedDict()
 
-    def get(self, attr: TensorAttr) -> Dict[int, np.ndarray]:
-        hits: Dict[int, np.ndarray] = {}
+    def get(self, attr: TensorAttr) -> dict[int, np.ndarray]:
+        hits: dict[int, np.ndarray] = {}
         for nid in _nids_from_attr(attr):
             key = (attr.group_name, attr.attr_name, nid)
             val = self._data.get(key)
@@ -149,9 +148,9 @@ class LRUFeatureCache(FeatureCache):
 
     def put(
         self,
-        group_name: Optional[NodeType],
+        group_name: NodeType | None,
         attr_name: str,
-        nid_map: Dict[int, np.ndarray],
+        nid_map: dict[int, np.ndarray],
     ) -> None:
         for nid, value in nid_map.items():
             key = (group_name, attr_name, int(nid))
@@ -163,9 +162,9 @@ class LRUFeatureCache(FeatureCache):
 
     def invalidate(
         self,
-        group_name: Optional[NodeType],
+        group_name: NodeType | None,
         attr_name: str,
-        nids: Optional[List[int]] = None,
+        nids: list[int] | None = None,
     ) -> None:
         if nids is None:
             doomed = [
@@ -183,7 +182,7 @@ class LRUFeatureCache(FeatureCache):
     def __len__(self) -> int:
         return len(self._data)
 
-    def __contains__(self, key: Tuple[Optional[NodeType], str, int]) -> bool:
+    def __contains__(self, key: tuple[NodeType | None, str, int]) -> bool:
         return key in self._data
 
 
@@ -215,16 +214,16 @@ class DatabaseFeatureStore(FeatureStore, ABC):
     """
     def __init__(
         self,
-        cache: Optional[FeatureCache] = None,
-        tensor_attr_cls: Optional[Any] = None,
+        cache: FeatureCache | None = None,
+        tensor_attr_cls: Any | None = None,
     ):
         super().__init__(tensor_attr_cls=tensor_attr_cls)
-        self._cache: Optional[FeatureCache] = cache
+        self._cache: FeatureCache | None = cache
 
     def _multi_get_tensor(
         self,
-        attrs: List[TensorAttr],
-    ) -> List[FeatureTensorType]:
+        attrs: list[TensorAttr],
+    ) -> list[FeatureTensorType]:
         r"""Fetch all *attrs* in as few database round-trips as possible.
 
         Supports partial cache hits: for each attr (group_name:str,
@@ -235,21 +234,21 @@ class DatabaseFeatureStore(FeatureStore, ABC):
 
         .. note::
             Override :meth:`_fetch_remote_attrs`, :meth:`_decode_remote_attrs`,
-            :meth:`_cache_get`, and :meth:`_cache_put` to customise remote
-            access behaviour.  Override :meth:`_multi_fetch_remote_attrs` and
+            :meth:`_cache_get`, and :meth:`_cache_put` to customize remote
+            access behavior.  Override :meth:`_multi_fetch_remote_attrs` and
             :meth:`_multi_decode_remote_attrs` to batch multiple attrs into a
             single database round-trip.
         """
         if not attrs:
             return []
 
-        cached: Dict[Tuple[Optional[NodeType], str], Dict[int, np.ndarray]]
-        missing_attrs: List[TensorAttr]
+        cached: dict[tuple[NodeType | None, str], dict[int, np.ndarray]]
+        missing_attrs: list[TensorAttr]
         cached, missing_attrs = self._cache_get(attrs)
 
         # decoded_map: {(group_name, attr_name): (np.ndarray, [fetched_nids])}
-        decoded_map: Dict[Tuple[Optional[NodeType], str],
-                          Tuple[np.ndarray, List[int]]] = {}
+        decoded_map: dict[tuple[NodeType | None, str], tuple[np.ndarray,
+                                                             list[int]]] = {}
         if missing_attrs:
             fetched = self._multi_fetch_remote_attrs(missing_attrs)
             decoded_map = self._multi_decode_remote_attrs(
@@ -257,7 +256,7 @@ class DatabaseFeatureStore(FeatureStore, ABC):
             self._cache_put(
                 self._decoded_to_nid_map(decoded_map, missing_attrs))
 
-        result: List[FeatureTensorType] = []
+        result: list[FeatureTensorType] = []
         for attr in attrs:
             key = (attr.group_name, attr.attr_name)
             nids = attr.index.tolist() if isinstance(
@@ -302,7 +301,7 @@ class DatabaseFeatureStore(FeatureStore, ABC):
     def _fetch_remote_attrs(
         self,
         attr: TensorAttr,
-    ) -> Tuple[Any, List[int]]:
+    ) -> tuple[Any, list[int]]:
         r"""Fetch a single *attr* from the database. ``attr.index`` may be
         narrowed to uncached node IDs.
 
@@ -338,15 +337,15 @@ class DatabaseFeatureStore(FeatureStore, ABC):
 
     def _multi_fetch_remote_attrs(
         self,
-        attrs: List[TensorAttr],
-    ) -> Dict[Tuple[Optional[NodeType], str], Tuple[List[object], List[int]]]:
-        """Fetch all attrs individually. Override to batch for fewer
+        attrs: list[TensorAttr],
+    ) -> dict[tuple[NodeType | None, str], tuple[list[object], list[int]]]:
+        r"""Fetch all attrs individually. Override to batch for fewer
         round-trips when attrs share group_name and index.
 
         Returns mapping: (group_name, attr_name) -> (records, fetched_nids)
         """
-        result: Dict[Tuple[Optional[NodeType], str], Tuple[List[object],
-                                                           List[int]]] = {}
+        result: dict[tuple[NodeType | None, str], tuple[list[object],
+                                                        list[int]]] = {}
         for attr in attrs:
             records, fetched_nids = self._fetch_remote_attrs(attr)
             result[(attr.group_name, attr.attr_name)] = (records, fetched_nids)
@@ -354,11 +353,11 @@ class DatabaseFeatureStore(FeatureStore, ABC):
 
     def _multi_decode_remote_attrs(
         self,
-        fetched: Dict[Tuple[Optional[NodeType], str], Tuple[List[object],
-                                                            List[int]]],
-        attrs: List[TensorAttr],
-    ) -> Dict[Tuple[Optional[NodeType], str], Tuple[np.ndarray, List[int]]]:
-        """Decode all attrs. Override to optimize batch decoding.
+        fetched: dict[tuple[NodeType | None, str], tuple[list[object],
+                                                         list[int]]],
+        attrs: list[TensorAttr],
+    ) -> dict[tuple[NodeType | None, str], tuple[np.ndarray, list[int]]]:
+        r"""Decode all attrs. Override to optimize batch decoding.
 
         Coerces :class:`~torch.Tensor` returns from
         :meth:`_decode_remote_attrs` to :class:`numpy.ndarray` so the cache
@@ -367,8 +366,8 @@ class DatabaseFeatureStore(FeatureStore, ABC):
         Returns mapping:
             (group_name, attr_name) -> (decoded_array, fetched_nids)
         """
-        result: Dict[Tuple[Optional[NodeType], str], Tuple[np.ndarray,
-                                                           List[int]]] = {}
+        result: dict[tuple[NodeType | None, str], tuple[np.ndarray,
+                                                        list[int]]] = {}
         for attr in attrs:
             key = (attr.group_name, attr.attr_name)
             records, fetched_nids = fetched[key]
@@ -380,15 +379,15 @@ class DatabaseFeatureStore(FeatureStore, ABC):
 
     @staticmethod
     def _decoded_to_nid_map(
-        decoded_map: Dict[Tuple[Optional[NodeType], str], Tuple[np.ndarray,
-                                                                List[int]]],
-        attrs: List[TensorAttr],
-    ) -> Dict[Tuple[Optional[NodeType], str], Dict[int, np.ndarray]]:
+        decoded_map: dict[tuple[NodeType | None, str], tuple[np.ndarray,
+                                                             list[int]]],
+        attrs: list[TensorAttr],
+    ) -> dict[tuple[NodeType | None, str], dict[int, np.ndarray]]:
         r"""Build a ``{(group_name, attr_name): {nid: row}}`` mapping from
         the decoded arrays and their ``fetched_nids``, ready for
         :meth:`_cache_put`.  Attrs missing from *decoded_map* are skipped.
         """
-        out: Dict[Tuple[Optional[NodeType], str], Dict[int, np.ndarray]] = {}
+        out: dict[tuple[NodeType | None, str], dict[int, np.ndarray]] = {}
         for a in attrs:
             key = (a.group_name, a.attr_name)
             if key not in decoded_map:
@@ -402,9 +401,9 @@ class DatabaseFeatureStore(FeatureStore, ABC):
 
     def _cache_get(
         self,
-        attrs: List[TensorAttr],
-    ) -> Tuple[Dict[Tuple[Optional[NodeType], str], Dict[int, np.ndarray]],
-               List[TensorAttr]]:
+        attrs: list[TensorAttr],
+    ) -> tuple[dict[tuple[NodeType | None, str], dict[int, np.ndarray]],
+               list[TensorAttr]]:
         r"""Look up *attrs* in the cache via
         :meth:`FeatureCache.multi_get`.
 
@@ -424,7 +423,7 @@ class DatabaseFeatureStore(FeatureStore, ABC):
 
     def _cache_put(
         self,
-        values: Dict[Tuple[Optional[NodeType], str], Dict[int, np.ndarray]],
+        values: dict[tuple[NodeType | None, str], dict[int, np.ndarray]],
     ) -> None:
         r"""Write *values* (``{(group_name, attr_name): {nid: row}}``) into
         the cache via :meth:`FeatureCache.multi_put`.  No-op when
@@ -433,7 +432,7 @@ class DatabaseFeatureStore(FeatureStore, ABC):
         if self._cache is not None:
             self._cache.multi_put(values)
 
-    def _get_tensor(self, attr: TensorAttr) -> Optional[FeatureTensorType]:
+    def _get_tensor(self, attr: TensorAttr) -> FeatureTensorType | None:
         r"""Fetch a single *attr* from the database. ``attr.index`` may be
         narrowed to uncached node IDs.
 
@@ -445,7 +444,7 @@ class DatabaseFeatureStore(FeatureStore, ABC):
         return out[0] if out else None
 
     @abstractmethod
-    def _get_tensor_size(self, attr: TensorAttr) -> Optional[Tuple[int, ...]]:
+    def _get_tensor_size(self, attr: TensorAttr) -> tuple[int, ...] | None:
         ...
 
     def _put_tensor(self, tensor: FeatureTensorType, attr: TensorAttr) -> bool:
@@ -484,5 +483,5 @@ class DatabaseFeatureStore(FeatureStore, ABC):
         """
 
     @abstractmethod
-    def get_all_tensor_attrs(self) -> List[TensorAttr]:
+    def get_all_tensor_attrs(self) -> list[TensorAttr]:
         ...

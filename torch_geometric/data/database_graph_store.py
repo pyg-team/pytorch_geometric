@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any
 
 from torch_geometric.data.graph_store import GraphStore
 
@@ -7,7 +7,7 @@ from torch_geometric.data.graph_store import GraphStore
 class DatabaseGraphStore(GraphStore, ABC):
     r"""Abstract :class:`GraphStore` backed by a database or sampling service.
 
-    Database stores cannot cheaply materialise the full edge index; sampling
+    Database stores cannot cheaply materialize the full edge index; sampling
     is pushed to the backend instead. Subclasses implement one hook,
     :meth:`query_db`, which executes a backend query and returns the raw
     record. Decoding into PyG tensors is owned by
@@ -17,7 +17,7 @@ class DatabaseGraphStore(GraphStore, ABC):
         edge_attr_cls (EdgeAttr, optional): User-defined :class:`EdgeAttr`
             subclass. (default: :obj:`None`)
     """
-    def __init__(self, edge_attr_cls: Optional[Any] = None):
+    def __init__(self, edge_attr_cls: Any | None = None):
         super().__init__(edge_attr_cls=edge_attr_cls)
 
     @abstractmethod
