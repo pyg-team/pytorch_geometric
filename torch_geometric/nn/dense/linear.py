@@ -11,6 +11,7 @@ from torch.nn.parameter import Parameter
 import torch_geometric.backend
 import torch_geometric.typing
 from torch_geometric import is_compiling
+from torch_geometric._jit import is_scripting
 from torch_geometric.index import index2ptr
 from torch_geometric.nn import inits
 from torch_geometric.typing import pyg_lib
@@ -301,7 +302,7 @@ class HeteroLinear(torch.nn.Module):
         if torch_geometric.backend.use_segment_matmul is None:
             use_segment_matmul = False
             if (torch_geometric.typing.WITH_SEGMM and not is_compiling()
-                    and not torch.jit.is_scripting()):
+                    and not is_scripting()):
 
                 # Use "magnitude" of number of rows as timing key:
                 key = math.floor(math.log10(x.size(0)))
@@ -435,7 +436,7 @@ class HeteroDictLinear(torch.nn.Module):
             use_segment_matmul = len(x_dict) >= 10
 
         if (use_segment_matmul and torch_geometric.typing.WITH_GMM
-                and not is_compiling() and not torch.jit.is_scripting()):
+                and not is_compiling() and not is_scripting()):
             xs, weights, biases = [], [], []
             for key, lin in self.lins.items():
                 if key in x_dict:

@@ -1,9 +1,9 @@
-import typing
 from typing import Optional, Tuple, Union
 
 import torch.nn.functional as F
 from torch import Tensor
 
+from torch_geometric._jit import overload_method as overload
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.nn.dense.linear import Linear
@@ -17,11 +17,6 @@ from torch_geometric.typing import (
 )
 from torch_geometric.utils import is_torch_sparse_tensor
 from torch_geometric.utils.sparse import set_sparse_value
-
-if typing.TYPE_CHECKING:
-    from typing import overload
-else:
-    from torch.jit import _overload_method as overload
 
 
 class FAConv(MessagePassing):

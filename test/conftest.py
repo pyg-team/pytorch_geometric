@@ -95,3 +95,37 @@ def without_extensions(request):
 def spawn_context():
     torch.multiprocessing.set_start_method('spawn', force=True)
     logging.info("Setting torch.multiprocessing context to 'spawn'")
+
+
+if torch_geometric.typing.WITH_PT212:
+
+    @pytest.fixture(autouse=True)
+    def _jit_deprecation_monkeypatch(monkeypatch):
+        r"""Monkeypatch deprecated :obj:`torch.jit` functions in PyTorch
+        >= 2.12 so that existing tests continue to pass without modification.
+        """
+        import warnings
+
+        def _script(obj, *args, **kwargs):
+            return obj
+
+        def _export(obj, *args, **kwargs):
+            return obj
+
+        def _save(obj, f, *args, **kwargs):
+            warnings.warn(
+                "torch.jit.save() is deprecated in PyTorch >= 2.12. "
+                "Use torch.save() instead.",
+                FutureWarning,
+                stacklevel=2,
+            )
+
+        def _load(f, *args, **kwargs):
+            raise NotImplementedError(
+                "torch.jit.load() is deprecated in PyTorch >= 2.12. "
+                "Use torch.load() instead.")
+
+        monkeypatch.setattr(torch.jit, 'script', _script)
+        monkeypatch.setattr(torch.jit, 'export', _export)
+        monkeypatch.setattr(torch.jit, 'save', _save)
+        monkeypatch.setattr(torch.jit, 'load', _load)

@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import BatchNorm1d, Linear, ReLU, Sequential
 
+import torch_geometric.typing
 from torch_geometric.nn import GINConv, global_mean_pool
 
 
@@ -47,5 +48,6 @@ class GIN(torch.nn.Module):
 
 
 model = GIN(32, 64, 16, num_layers=3)
-model = torch.jit.script(model)
+if not torch_geometric.typing.WITH_PT212:
+    model = torch.jit.script(model)
 model.save('model.pt')
