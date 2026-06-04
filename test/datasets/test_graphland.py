@@ -2,10 +2,10 @@ import pytest
 import torch
 
 from torch_geometric.datasets import GraphLandDataset
-from torch_geometric.testing import onlyOnline, withPackage
+from torch_geometric.testing import withPackage
 
 
-@onlyOnline
+@pytest.mark.dataset
 @withPackage('pandas', 'sklearn', 'yaml')
 @pytest.mark.parametrize('name', [
     'hm-categories',
@@ -37,7 +37,7 @@ def test_transductive_graphland(name: str):
             | data.x_categorical_mask).all().item()
 
 
-@onlyOnline
+@pytest.mark.dataset
 @withPackage('pandas', 'sklearn', 'yaml')
 @pytest.mark.parametrize('name', [
     'hm-categories',

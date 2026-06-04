@@ -7,7 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Added `from_relbench` utility to convert RelBench databases into `HeteroData` ([#10628](https://github.com/pyg-team/pytorch_geometric/pull/10628))
+- Added `from_relbench` to convert RelBench databases into `HeteroData` ([#10628](https://github.com/pyg-team/pytorch_geometric/pull/10628))
+- Added a `ci: full` PR label that triggers the full test suite (`pytest-full`) on demand instead of the regular one ([#10709](https://github.com/pyg-team/pytorch_geometric/pull/10709))
+- Added PyTorch 2.11 and 2.12 support ([#10708](https://github.com/pyg-team/pytorch_geometric/pull/10708))
 - Added `txt2qa.py` example for synthetic multi-hop QA generation from text documents, supporting vLLM (local) and NVIDIA NIM (API) backends ([#10559](https://github.com/pyg-team/pytorch_geometric/pull/10559))
 
 ### Changed
@@ -21,6 +23,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Deprecated support for `torch-spline-conv` in favor of `pyg-lib>=0.6.0` ([#10622](https://github.com/pyg-team/pytorch_geometric/pull/10622))
 
 ### Removed
+
+- Dropped support for PyTorch 2.8 ([#10708](https://github.com/pyg-team/pytorch_geometric/pull/10708))
 
 ### Fixed
 

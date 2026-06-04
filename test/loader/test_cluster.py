@@ -3,7 +3,7 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.loader import ClusterData, ClusterLoader
-from torch_geometric.testing import onlyFullTest, onlyOnline, withMETIS
+from torch_geometric.testing import onlyFullTest, withMETIS
 from torch_geometric.utils import sort_edge_index
 
 
@@ -150,7 +150,7 @@ def test_keep_inter_cluster_edges():
 
 
 @withMETIS
-@onlyOnline
+@pytest.mark.dataset
 @onlyFullTest
 @pytest.mark.parametrize('sparse_format', ['csr', 'csc'])
 def test_cluster_gcn_correctness(get_dataset, sparse_format):
