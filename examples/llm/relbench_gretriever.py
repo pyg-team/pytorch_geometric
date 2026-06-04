@@ -19,11 +19,13 @@ import argparse
 
 import torch
 import torch.nn as nn
+from packaging.version import Version
 from relbench.datasets import get_dataset
 
+from torch_geometric.contrib.utils import from_relbench
+from torch_geometric.data import HeteroData
 from torch_geometric.llm.models import LLM, GRetriever
 from torch_geometric.nn import GAT, HeteroDictLinear
-from torch_geometric.utils import from_relbench
 
 try:
     import transformers
@@ -32,16 +34,14 @@ except ImportError as exc:
         'The `transformers` package is required. Install it with: '
         '`pip install "transformers>=4.51,<5.0"`.') from exc
 
-transformers_version = tuple(
-    int(x) for x in transformers.__version__.split('.')[:2])
-if transformers_version[0] >= 5:
+if Version(transformers.__version__) >= Version('5.0'):
     raise RuntimeError(
         f'Unsupported transformers version {transformers.__version__}. '
         'This example requires transformers 4.x. Install with: '
         '`pip install "transformers>=4.51,<5.0"`.')
 
 # CLI options
-parser = argparse.ArgumentParser(description='RelBench -> GRetriever example.')
+parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='rel-f1',
                     help='RelBench dataset name (default: rel-f1)')
 parser.add_argument('--llm', type=str, default='Qwen/Qwen2-0.5B',
@@ -55,16 +55,16 @@ parser.add_argument('--lr', type=float, default=1e-4, help='Learning rate')
 parser.add_argument('--dtype', type=str, default='bfloat16',
                     choices=['float32', 'bfloat16', 'float16'],
                     help='LLM dtype (use float32 for CPU-only)')
-parser.add_argument('--n_gpus', type=int, default=1,
+parser.add_argument('--n_gpus', type=int, default=torch.cuda.device_count(),
                     help='Number of GPUs for the LLM (0 for CPU)')
 args = parser.parse_args()
 
-_dtype_map = {
+dtype_map = {
     'float32': torch.float32,
     'bfloat16': torch.bfloat16,
     'float16': torch.float16,
 }
-args.torch_dtype = _dtype_map[args.dtype]
+args.torch_dtype = dtype_map[args.dtype]
 
 # Load and sanitize RelBench data
 print(f'Loading RelBench {args.dataset} dataset...')
@@ -92,7 +92,7 @@ class HeteroFeatureProjector(nn.Module):
     Uses ``HeteroDictLinear`` for node types with numeric features
     and ``nn.Embedding`` for featureless structural tables.
     """
-    def __init__(self, data, common_dim: int):
+    def __init__(self, data: HeteroData, common_dim: int) -> None:
         super().__init__()
         featured = {}
         self.featureless = []
@@ -110,7 +110,7 @@ class HeteroFeatureProjector(nn.Module):
             for nt in self.featureless
         })
 
-    def forward(self, data):
+    def forward(self, data: HeteroData) -> dict[str, torch.Tensor]:
         """Return a dict of projected features, preserving autograd."""
         x_dict = {nt: data[nt].x for nt in self.lin.lins}
         out = self.lin(x_dict)
