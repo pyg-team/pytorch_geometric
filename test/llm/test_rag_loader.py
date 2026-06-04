@@ -16,7 +16,7 @@ from torch_geometric.llm.utils.feature_store import KNNRAGFeatureStore
 from torch_geometric.llm.utils.graph_store import NeighborSamplingRAGGraphStore
 from torch_geometric.llm.utils.vectorrag import VectorRetriever
 from torch_geometric.sampler import SamplerOutput
-from torch_geometric.testing import onlyRAG
+from torch_geometric.testing import withPackage
 
 
 class MockRAGFeatureStore:
@@ -200,7 +200,7 @@ class TestRAGQueryLoader:
         assert result.filtered is True
 
 
-@onlyRAG
+@withPackage('pyg_lib', 'torch_sparse')
 def test_rag_loader_integration(tmp_path):
     """Test RAGQueryLoader with real feature and graph stores from triples."""
     # Define test triplets - simple knowledge graph about cities/countries
@@ -217,7 +217,7 @@ def test_rag_loader_integration(tmp_path):
         ["Spain", "in_continent", "Europe"],
     ]
 
-    encoder_model = SentenceTransformer('prajjwal1/bert-tiny')
+    encoder_model = SentenceTransformer('bert-base-uncased')
     # Create graph from triplets
     graph_data = create_graph_from_triples(triplets, encoder_model.encode)
 

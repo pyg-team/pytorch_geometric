@@ -1,4 +1,5 @@
 import copy
+import os
 import os.path as osp
 import re
 import sys
@@ -258,7 +259,7 @@ class Dataset(torch.utils.data.Dataset):
         if not self.force_reload and files_exist(self.processed_paths):
             return
 
-        if self.log and 'pytest' not in sys.modules:
+        if self.log and 'PYTEST_CURRENT_TEST' not in os.environ:
             print('Processing...', file=sys.stderr)
 
         fs.makedirs(self.processed_dir, exist_ok=True)
@@ -269,7 +270,7 @@ class Dataset(torch.utils.data.Dataset):
         path = osp.join(self.processed_dir, 'pre_filter.pt')
         fs.torch_save(_repr(self.pre_filter), path)
 
-        if self.log and 'pytest' not in sys.modules:
+        if self.log and 'PYTEST_CURRENT_TEST' not in os.environ:
             print('Done!', file=sys.stderr)
 
     def __len__(self) -> int:

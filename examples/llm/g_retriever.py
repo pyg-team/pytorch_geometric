@@ -85,6 +85,12 @@ def load_params_dict(model, save_path):
     return model
 
 
+def normalize_batch_dtype(batch):
+    batch.x = batch.x.float()
+    if hasattr(batch, "edge_attr") and batch.edge_attr is not None:
+        batch.edge_attr = batch.edge_attr.float()
+
+
 def get_loss(model, batch, model_save_name="gnn+llm") -> Tensor:
     """Compute the loss for a given model and batch of data.
 
@@ -101,6 +107,7 @@ def get_loss(model, batch, model_save_name="gnn+llm") -> Tensor:
         # For LLM models
         return model(batch.question, batch.label, batch.desc)
     else:  # (GNN+LLM)
+        normalize_batch_dtype(batch)
         return model(
             batch.question,  # ["list", "of", "questions", "here"]
             batch.x,  # [num_nodes, num_features]
@@ -132,6 +139,7 @@ def inference_step(model, batch, model_save_name="gnn+llm",
         return model.inference(batch.question, batch.desc,
                                max_out_tokens=max_out_tokens)
     else:  # (GNN+LLM)
+        normalize_batch_dtype(batch)
         return model.inference(batch.question, batch.x, batch.edge_index,
                                batch.batch, batch.edge_attr, batch.desc,
                                max_out_tokens=max_out_tokens)
