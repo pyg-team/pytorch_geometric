@@ -135,6 +135,7 @@ def test_edge_cnn(out_dim, dropout, act, norm, jk):
     assert str(model) == f'EdgeCNN(8, {out_channels}, num_layers=3)'
     assert model(x, edge_index).size() == (3, out_channels)
 
+
 def test_channel_list():
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
@@ -148,9 +149,11 @@ def test_channel_list():
     assert model.num_layers == 3
     assert model(x, edge_index).size() == (3, 64)
 
+
 def test_channel_list_with_jk_raises():
     with pytest.raises(ValueError, match="Varying hidden sizes"):
         GCN(channel_list=[8, 16, 32, 64], jk='last')
+
 
 def test_jit():
     x = torch.randn(3, 8)
