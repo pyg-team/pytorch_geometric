@@ -9,7 +9,6 @@ the graph structure and node features.
 """
 
 import argparse
-from typing import Tuple
 
 import torch
 import torch.nn.functional as F
@@ -110,7 +109,7 @@ def train() -> torch.Tensor:
 
 
 @torch.no_grad()
-def test() -> Tuple[float, float, float]:
+def test() -> tuple[float, float, float]:
     model.eval()
     pred = model(data.x_dict, data.edge_index_dict)[target_type].squeeze(-1)
     # denormalize for interpretable MAE
