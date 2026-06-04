@@ -1,3 +1,4 @@
+import json
 from typing import Callable, List, Optional
 
 import numpy as np
@@ -65,8 +66,6 @@ class DeezerEurope(InMemoryDataset):
         extract_zip(file_path, self.raw_dir)
 
     def process(self) -> None:
-        import json
-
         import pandas as pd
         edges = pd.read_csv(self.raw_paths[0], dtype=int)
         features = json.load(open(self.raw_paths[1]))

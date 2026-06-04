@@ -1,9 +1,10 @@
 from torch_geometric.datasets import LastFMAsia
-from torch_geometric.testing import onlyFullTest, onlyOnline
+from torch_geometric.testing import onlyFullTest, onlyOnline, withPackage
 
 
 @onlyOnline
 @onlyFullTest
+@withPackage('pandas')
 def test_lastfm_asia():
     dataset = LastFMAsia(root='./data/LastFMAsia')
     data = dataset[0]

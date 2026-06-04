@@ -1,9 +1,10 @@
 from torch_geometric.datasets import WikipediaNetwork
-from torch_geometric.testing import onlyFullTest, onlyOnline
+from torch_geometric.testing import onlyFullTest, onlyOnline, withPackage
 
 
 @onlyOnline
 @onlyFullTest
+@withPackage('pandas')
 def test_wikipedia_network():
     dataset = WikipediaNetwork(root='./data/WikipediaNetwork',
                                name='crocodile')

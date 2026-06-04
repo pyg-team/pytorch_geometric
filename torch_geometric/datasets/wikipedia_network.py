@@ -1,3 +1,4 @@
+import json
 import os.path as osp
 from typing import Callable, List, Optional, Union
 
@@ -148,8 +149,6 @@ class WikipediaNetwork(InMemoryDataset):
                         val_mask=val_mask, test_mask=test_mask)
 
         else:
-            import json
-
             import pandas as pd
             edges = pd.read_csv(self.raw_paths[0], dtype=int)
             features = json.load(open(self.raw_paths[1]))

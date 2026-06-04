@@ -1,11 +1,12 @@
 import pytest
 
 from torch_geometric.datasets import Twitch
-from torch_geometric.testing import onlyFullTest, onlyOnline
+from torch_geometric.testing import onlyFullTest, onlyOnline, withPackage
 
 
 @onlyOnline
 @onlyFullTest
+@withPackage('pandas')
 @pytest.mark.parametrize('name, n_dim, e_dim', [
     ('ENGB', 7126, 35324),
     ('ES', 4648, 59382),
