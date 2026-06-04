@@ -1,7 +1,7 @@
 import torch
 
+from torch_geometric.contrib.utils import from_relbench
 from torch_geometric.testing import withPackage
-from torch_geometric.utils import from_relbench
 
 
 @withPackage('relbench')

@@ -15,8 +15,8 @@ import torch
 import torch.nn.functional as F
 from relbench.datasets import get_dataset
 
+from torch_geometric.contrib.utils import from_relbench
 from torch_geometric.nn import Linear, SAGEConv, to_hetero
-from torch_geometric.utils import from_relbench
 
 parser = argparse.ArgumentParser(
     description='Train a heterogeneous GNN on a RelBench dataset.')
