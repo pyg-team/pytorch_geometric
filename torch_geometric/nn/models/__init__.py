@@ -33,6 +33,7 @@ from .lpformer import LPFormer
 from .sgformer import SGFormer
 
 from .polynormer import Polynormer
+from .nodeformer import NodeFormer
 # Deprecated:
 from torch_geometric.explain.algorithm.captum import (to_captum_input,
                                                       captum_output_to_dicts)
@@ -85,5 +86,6 @@ __all__ = classes = [
     'LPFormer',
     'SGFormer',
     'Polynormer',
+    'NodeFormer',
     'ARLinkPredictor',
 ]
