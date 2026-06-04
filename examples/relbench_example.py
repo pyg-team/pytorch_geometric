@@ -6,13 +6,6 @@ This example loads the Formula 1 RelBench dataset, converts it into a
 heterogeneous graph using ``from_relbench``, and trains a 2-layer GraphSAGE
 model (via ``to_hetero``) to predict championship standings points from
 the graph structure and node features.
-
-Requirements:
-    ``pip install relbench``
-
-Usage:
-    ``python relbench_example.py``
-    ``python relbench_example.py --epochs 50 --hidden_channels 128``
 """
 
 import argparse
@@ -39,7 +32,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print('Loading RelBench rel-f1 dataset...')
 dataset = get_dataset('rel-f1', download=True)
 db = dataset.get_db()
-data = from_relbench(db)
+data = from_relbench(db).to(device)
 print(f'Graph: {len(data.node_types)} node types, '
       f'{len(data.edge_types)} edge types')
 
@@ -47,7 +40,7 @@ print(f'Graph: {len(data.node_types)} node types, '
 # `from_relbench` preserves the original DataFrame column order from RelBench.
 # In rel-f1, the 'standings' table has 'points' as its first numeric column:
 target_type = 'standings'
-y = data[target_type].x[:, 0]  # points column (index 0 in rel-f1)
+y = data[target_type].x[:, 0].to(device)  # points column (index 0 in rel-f1)
 data[target_type].x = data[target_type].x[:, 1:]  # remove from input features
 
 # 3. Clean up features — fill NaN and standardize per column:
@@ -59,34 +52,26 @@ for node_type in data.node_types:
         data[node_type].x = (x - mean) / std
     else:
         # Zero-feature placeholder for featureless node types (e.g. drivers):
-        data[node_type].x = torch.zeros(data[node_type].num_nodes, 1)
+        data[node_type].x = torch.zeros(data[node_type].num_nodes, 1,
+                                        device=device)
 
 # 4. Create train/val/test splits (60/20/20) before computing target stats:
 num_nodes = data[target_type].num_nodes
-perm = torch.randperm(num_nodes)
-train_mask = torch.zeros(num_nodes, dtype=torch.bool)
-val_mask = torch.zeros(num_nodes, dtype=torch.bool)
-test_mask = torch.zeros(num_nodes, dtype=torch.bool)
+perm = torch.randperm(num_nodes, device=device)
+train_mask = torch.zeros(num_nodes, dtype=torch.bool, device=device)
+val_mask = torch.zeros(num_nodes, dtype=torch.bool, device=device)
+test_mask = torch.zeros(num_nodes, dtype=torch.bool, device=device)
 train_mask[perm[:int(0.6 * num_nodes)]] = True
 val_mask[perm[int(0.6 * num_nodes):int(0.8 * num_nodes)]] = True
 test_mask[perm[int(0.8 * num_nodes):]] = True
 
 # Normalize target using training set statistics only (prevents data leakage):
 y_mean = y[train_mask].mean()
-y_std = y[train_mask].std()
-y_std = y_std if y_std > 0 else torch.tensor(1.0)
+y_std = max(y[train_mask].std(), 1e-10)
 y_norm = (y - y_mean) / y_std
 
-# 5. Move all tensors to device — including masks to prevent device mismatch:
-data = data.to(device)
-y = y.to(device)
-y_norm = y_norm.to(device)
-train_mask = train_mask.to(device)
-val_mask = val_mask.to(device)
-test_mask = test_mask.to(device)
 
-
-# 6. Define a 2-layer GraphSAGE model with lazy input size inference:
+# 5. Define a 2-layer GraphSAGE model with lazy input size inference:
 class GNN(torch.nn.Module):
     def __init__(self, hidden_channels: int) -> None:
         super().__init__()
