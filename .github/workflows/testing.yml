@@ -58,44 +58,35 @@ jobs:
 
   pytest:
     needs: trigger
-    if: ${{ needs.trigger.outputs.triggered == 'true' && github.repository == 'pyg-team/pytorch_geometric' && github.event_name != 'schedule' }}
+    # Skip the regular test suite when `ci: full` is set; `pytest-full` runs
+    # the full matrix instead:
+    if: "${{ needs.trigger.outputs.triggered == 'true' && github.repository == 'pyg-team/pytorch_geometric' && github.event_name != 'schedule' && !contains(github.event.pull_request.labels.*.name, 'ci: full') }}"
     uses: ./.github/workflows/_testing.yml
     with:
       test-matrix: |
         { include: [
           { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "nightly", "cuda-version": "cpu" },
+          { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.12.0", "cuda-version": "cpu" },
+          { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.11.0", "cuda-version": "cpu" },
           { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.10.0", "cuda-version": "cpu" },
           { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.9.0", "cuda-version": "cpu" },
-          { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.8.0", "cuda-version": "cpu" },
-          { "os": "macos-14", "python-version": "3.10", "torch-version": "2.10.0", "cuda-version": "cpu" },
-          { "os": "windows-2022", "python-version": "3.10", "torch-version": "2.10.0", "cuda-version": "cpu" }
+          { "os": "macos-14", "python-version": "3.10", "torch-version": "2.12.0", "cuda-version": "cpu" },
+          { "os": "windows-2022", "python-version": "3.10", "torch-version": "2.12.0", "cuda-version": "cpu" }
         ]}
 
   pytest-full:
-    # Only run this on nightly schedule for now.
-    if: ${{ github.repository == 'pyg-team/pytorch_geometric' && github.event_name == 'schedule' }}
+    # Run on the nightly schedule, or on demand for PRs labeled `ci: full`:
+    if: "${{ github.repository == 'pyg-team/pytorch_geometric' && (github.event_name == 'schedule' || contains(github.event.pull_request.labels.*.name, 'ci: full')) }}"
     uses: ./.github/workflows/_testing.yml
     with:
       test-matrix: |
         {
           "os": ["ubuntu-22.04", "macos-14", "windows-2022"],
           "python-version": ["3.10"],
-          "torch-version": ["2.8.0", "2.9.0", "2.10.0", "nightly"],
+          "torch-version": ["2.9.0", "2.10.0", "2.11.0", "2.12.0", "nightly"],
           "cuda-version": ["cpu"],
-          "full-test": "1"
+          "full_test": ["1"]
         }
-
-  # gpu:
-  #   if: github.repository == 'pyg-team/pytorch_geometric'
-  #   uses: ./.github/workflows/_testing.yml
-  #   with:
-  #     test-matrix: |
-  #       {
-  #         "os": [["self-hosted, nvidia"]],
-  #         "python-version": ["3.10"],
-  #         "torch-version": ["2.8.0"],
-  #         "cuda-version": ["cu128"]
-  #       }
 
   status:
     if: always() && github.event_name == 'pull_request'
