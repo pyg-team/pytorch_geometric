@@ -198,7 +198,7 @@ addopts = [
     "--color=yes",
     "-vv",
     "-m",
-    "not dataset",
+    "not rag and not dataset",
 ]
 filterwarnings = [
     "ignore:distutils:DeprecationWarning",
