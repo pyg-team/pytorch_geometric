@@ -69,9 +69,9 @@ class BasicGNN(torch.nn.Module):
 
     def __init__(
         self,
-        in_channels: int,
-        hidden_channels: int,
-        num_layers: int,
+        in_channels: Optional[int] = None,
+        hidden_channels: Optional[int] = None,
+        num_layers: Optional[int] = None,
         out_channels: Optional[int] = None,
         dropout: float = 0.0,
         act: Union[str, Callable, None] = "relu",
@@ -82,8 +82,54 @@ class BasicGNN(torch.nn.Module):
         jk: Optional[str] = None,
         **kwargs,
     ):
+        channel_list = kwargs.pop('channel_list', None)
         super().__init__()
 
+        if channel_list is not None:
+            if not isinstance(channel_list, (tuple, list)):
+                raise ValueError(
+                    f"Argument `channel_list` must be a list or tuple "
+                    f"(got '{type(channel_list).__name__}')"
+                )
+            if len(channel_list) < 2:
+                raise ValueError(
+                    f"Argument `channel_list` must contain at least 2 "
+                    f"elements (got {len(channel_list)})"
+                )
+            in_channels = channel_list[0]
+            num_layers = len(channel_list) - 1
+            if len(channel_list) > 2:
+                hidden_channels = channel_list[1]
+            else:
+                hidden_channels = channel_list[-1]
+            
+            # If jk is used, out_channels must be provided separately, 
+            # otherwise it defaults to the last channel size.
+            if jk is not None and out_channels is not None:
+                pass # out_channels is already set from kwargs
+            else:
+                out_channels = channel_list[-1]
+        else:
+            if in_channels is None:
+                raise ValueError("Argument `in_channels` must be given")
+            if num_layers is None:
+                raise ValueError("Argument `num_layers` must be given")
+            if num_layers > 1 and hidden_channels is None:
+                raise ValueError(
+                    f"Argument `hidden_channels` must be given "
+                    f"for `num_layers={num_layers}`"
+                )
+            
+            if out_channels is None:
+                out_channels = hidden_channels
+                
+            channel_list = [in_channels] + [hidden_channels] * (num_layers - 1)
+            if out_channels is not None and jk is None:
+                channel_list.append(out_channels)
+            else:
+                channel_list.append(hidden_channels)
+            
+        self.channel_list = channel_list
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
         self.num_layers = num_layers
@@ -95,52 +141,71 @@ class BasicGNN(torch.nn.Module):
         self.norm = norm if isinstance(norm, str) else None
         self.norm_kwargs = norm_kwargs
 
-        if out_channels is not None:
-            self.out_channels = out_channels
-        else:
-            self.out_channels = hidden_channels
+        self.out_channels = out_channels
+
+        # Check for varying hidden sizes when using jk
+        if jk is not None:
+            hidden_sizes = channel_list[1:-1] if out_channels is not None and jk is None else channel_list[1:]
+            if len(set(hidden_sizes)) > 1:
+                raise ValueError(
+                    f"Varying hidden sizes are not supported when using "
+                    f"`jk` (got {hidden_sizes})"
+                )
 
         self.convs = ModuleList()
-        if num_layers > 1:
-            self.convs.append(
-                self.init_conv(in_channels, hidden_channels, **kwargs))
-            if isinstance(in_channels, (tuple, list)):
-                in_channels = (hidden_channels, hidden_channels)
+        in_c = channel_list[0]
+        for i in range(num_layers - 1):
+            out_c = channel_list[i + 1]
+            self.convs.append(self.init_conv(in_c, out_c, **kwargs))
+            if isinstance(in_c, (tuple, list)):
+                in_c = (out_c, out_c)
             else:
-                in_channels = hidden_channels
-        for _ in range(num_layers - 2):
-            self.convs.append(
-                self.init_conv(in_channels, hidden_channels, **kwargs))
-            if isinstance(in_channels, (tuple, list)):
-                in_channels = (hidden_channels, hidden_channels)
-            else:
-                in_channels = hidden_channels
+                in_c = out_c
+
+        out_c = channel_list[-1]
         if out_channels is not None and jk is None:
             self._is_conv_to_out = True
-            self.convs.append(
-                self.init_conv(in_channels, out_channels, **kwargs))
-        else:
-            self.convs.append(
-                self.init_conv(in_channels, hidden_channels, **kwargs))
+            
+        self.convs.append(self.init_conv(in_c, out_c, **kwargs))
 
         self.norms = ModuleList()
-        norm_layer = normalization_resolver(
+        
+        # Determine support for batch normalization
+        # Use the first hidden_c to determine batch norm support, or out_c if no hidden layers
+        test_hidden_c = channel_list[1] if len(channel_list) > 1 else channel_list[0]
+        test_norm_layer = normalization_resolver(
             norm,
-            hidden_channels,
+            test_hidden_c,
             **(norm_kwargs or {}),
         )
-        if norm_layer is None:
-            norm_layer = torch.nn.Identity()
-
+        if test_norm_layer is None:
+            test_norm_layer = torch.nn.Identity()
+            
         self.supports_norm_batch = False
-        if hasattr(norm_layer, 'forward'):
-            norm_params = inspect.signature(norm_layer.forward).parameters
+        if hasattr(test_norm_layer, 'forward'):
+            norm_params = inspect.signature(test_norm_layer.forward).parameters
             self.supports_norm_batch = 'batch' in norm_params
 
-        for _ in range(num_layers - 1):
+        for i in range(num_layers - 1):
+            hidden_c = channel_list[i + 1]
+            norm_layer = normalization_resolver(
+                norm,
+                hidden_c,
+                **(norm_kwargs or {}),
+            )
+            if norm_layer is None:
+                norm_layer = torch.nn.Identity()
             self.norms.append(copy.deepcopy(norm_layer))
-
         if jk is not None:
+            # In jk mode, the last output from convs is normalized
+            hidden_c = channel_list[-1]
+            norm_layer = normalization_resolver(
+                norm,
+                hidden_c,
+                **(norm_kwargs or {}),
+            )
+            if norm_layer is None:
+                norm_layer = torch.nn.Identity()
             self.norms.append(copy.deepcopy(norm_layer))
         else:
             self.norms.append(torch.nn.Identity())
