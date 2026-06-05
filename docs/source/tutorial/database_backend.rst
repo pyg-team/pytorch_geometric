@@ -1,5 +1,5 @@
-Database graph storage for PyG
-================================
+Database-backed graph storage and sampling
+==========================================
 
 .. note::
     This tutorial introduces the :class:`~torch_geometric.data.DatabaseGraphStore`,
@@ -14,12 +14,23 @@ topology and features in RAM of the training machine(s). This can
 enable highly efficient mini-batch computation, but may also require
 substantial hardware resources.
 
-The Database abstractions provide an alternative approach in which
-the training process only fetches relevant graph data per batch, and
-the database backend handles neighbor sampling and feature retrieval.
+The Database classes provide an alternative approach in which
+the training process only fetches relevant subgraph data per batch, and
+the database backend handles sampling and feature retrieval.
 This can drastically reduce the memory requirements
 of the training machine, and enable large-graph training on more
 modest hardware, at the cost of some additional latency per batch.
+
+Decoupling training from inference-time graph storage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The database abstractions can also be useful when faster in-memory training is
+preferred. In this setup, a GNN model can be trained with the full graph in
+memory. The graph can then be removed from RAM when keeping it in memory solely
+for inference is too costly, especially for infrequent inference requests. With
+the database classes, you can host the model on an inference machine without
+keeping the graph in memory, moving both neighborhood sampling and feature
+retrieval to the database for each inference request.
 
 Key Advantages
 --------------
@@ -33,7 +44,7 @@ Key Advantages
    :class:`~torch_geometric.data.DatabaseFeatureStore`,
    :class:`~torch_geometric.sampler.DatabaseSampler`) and writing the
    queries.
-#. **Server-side neighbor expansion** — the sampler ships a single
+#. **Server-side sampling** — the sampler ships a single
    pre-compiled query (e.g. Cypher) per mini-batch.
 #. **Pluggable feature cache** — :class:`~torch_geometric.data.FeatureCache`
    is an ABC; an in-memory :class:`LRUFeatureCache` is provided as a
@@ -44,6 +55,9 @@ Key Advantages
 #. **Avoid upfront graph exports** — when the graph already lives in a
    database, PyG can query it directly instead of requiring a separate export
    into a PyG-specific in-memory format.
+#. **Lightweight inference deployment** — the model can run without keeping
+  the full graph in memory, while sampling and feature retrieval are handled
+  by the database.
 
 Architecture Components
 -----------------------
@@ -58,9 +72,11 @@ Overall, the ``Database*`` stack is divided into the following components:
 * :class:`~torch_geometric.data.DatabaseGraphStore` — abstract
   :class:`~torch_geometric.data.GraphStore`. Owns the database connection
   and exposes one hook, :meth:`~torch_geometric.data.DatabaseGraphStore.query_db`,
-  through which any query (sampling, edge lookup) is executed. The module
-  calling the query_db on the database graph store is responsible for decoding
-  the raw record into PyG tensors (e.g. :class:`~torch_geometric.sampler.DatabaseSampler`)
+  through which any query (sampling, edge lookup) is executed. In this stack,
+  the query is often a database-side sampling algorithm, such as the
+  pre-compiled query passed in by :class:`~torch_geometric.sampler.DatabaseSampler`.
+  The caller is responsible for decoding the raw record into PyG tensors,
+  as the graph store is agnostic to the query semantics and output format.
 * :class:`~torch_geometric.data.DatabaseFeatureStore` — abstract
   :class:`~torch_geometric.data.FeatureStore`. Owns the full mini-batch
   retrieval loop: cache lookup -> batched database fetch -> decode -> cache
@@ -148,7 +164,7 @@ The base class wires these into a cache-aware ``_multi_get_tensor`` that:
 #. Issues a single round-trip per cache-miss group via
    :meth:`_multi_fetch_remote_attrs` — overridable to batch multiple attrs
    that share the same index into one query (e.g. one Cypher query
-   returning both ``x`` and ``y``).
+   returning both features ``x`` and targets ``y``).
 #. Decodes via :meth:`_multi_decode_remote_attrs` and writes the result
    back through :meth:`FeatureCache.multi_put`.
 #. Assembles the output tensor in seed order, blending cache hits and
@@ -159,15 +175,14 @@ The base class wires these into a cache-aware ``_multi_get_tensor`` that:
 Pass any :class:`~torch_geometric.data.FeatureCache` to the constructor,
 or :obj:`None` to disable. The default
 :class:`~torch_geometric.data.LRUFeatureCache` is a bounded in-memory LRU
-backed by an :class:`collections.OrderedDict`; for cross-process or
-shared-cache setups, subclass :class:`FeatureCache` and back it with Redis
-or an on-disk store.
+backed by an :class:`collections.OrderedDict`.
 
 .. warning::
     In-memory caches are **per process**: each
     :class:`~torch.utils.data.DataLoader` worker spawned with
-    ``num_workers > 0`` warms its own copy. Use a network-backed cache or
-    ``num_workers=0`` if you need cross-worker coherence.
+    ``num_workers > 0`` warms its own copy. Use a network-backed
+    (e.g. Redis) cache or ``num_workers=0`` if you need cross-worker
+    coherence.
 
 Feature Cache
 ~~~~~~~~~~~~~
@@ -195,7 +210,8 @@ expansion **inside the database** via a single pre-compiled query per batch
 * :meth:`_decode_node_sampling_record` / :meth:`_decode_edge_sampling_record`
   — convert the raw record into local-COO ``(node, row, col)`` tensors.
 
-------------------------------
+Neo4j Reference Implementation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ``examples/neo4j`` directory provides a concrete stack against Neo4j
 5.x via the Bolt driver:

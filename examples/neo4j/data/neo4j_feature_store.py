@@ -1,4 +1,5 @@
-import atexit
+import re
+import weakref
 from typing import Any
 
 import numpy as np
@@ -11,6 +12,16 @@ from torch_geometric.data.database_feature_store import (
 )
 from torch_geometric.data.feature_store import TensorAttr
 from torch_geometric.typing import NodeType
+
+_CYPHER_IDENT_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
+
+def _close_driver(driver: Driver) -> None:
+    r"""Close *driver*, swallowing errors. Used as a weakref finalizer."""
+    try:
+        driver.close()
+    except Exception:
+        pass
 
 
 class Neo4jFeatureStore(DatabaseFeatureStore):
@@ -26,6 +37,13 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
     A single database round-trip is issued for all attrs that share the same
     node index (the normal mini-batch path), mirroring the optimization in
     :class:`DatabaseFeatureStore`.
+
+    .. warning::
+        ``pwd`` is kept in instance state so each DataLoader worker can
+        recreate its own driver after unpickling. It is therefore included
+        in the pickled state. Do not persist pickles of this store to disk
+        or send them over untrusted channels; prefer credentials from the
+        environment for sensitive deployments.
 
     Highly recommended to override :meth:`_multi_fetch_remote_attrs` and
     :meth:`_multi_decode_remote_attrs` to batch multiple attrs into a single
@@ -45,8 +63,8 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
             * ``"encoding"`` *(str, optional)* — ``"f64[]"`` (default) or
               ``"byte[]"``; only used when *dtype* is ``"float32"``.
 
-        uri (str, optional): Bolt URI used to create a driver when *driver*
-            is :obj:`None`. (default: :obj:`None`)
+        uri (str, optional): Bolt URI used to create the Neo4j driver.
+            (default: :obj:`None`)
         user (str, optional): Username. (default: :obj:`None`)
         pwd (str, optional): Password. (default: :obj:`None`)
         cache (FeatureCache, optional): Per-node-ID feature cache.
@@ -102,6 +120,28 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
             for name, spec in group_map.items() if spec.get("dtype") == "str"
         }
 
+        # All identifiers below are interpolated directly into Cypher, so
+        # reject anything that is not a plain identifier to block injection.
+        self._validate_cypher_ident("nodeid_property", nodeid_property)
+        self._validate_cypher_ident("default_node_label", default_node_label)
+        for group, group_map in self.attr_map.items():
+            self._validate_cypher_ident("group_name", group)
+            for name, spec in group_map.items():
+                self._validate_cypher_ident("attr_name", name)
+                self._validate_cypher_ident("property", spec["property"])
+
+    @staticmethod
+    def _validate_cypher_ident(name: str, value: str | None) -> None:
+        r"""Reject ``value`` if set and not a valid Cypher identifier.
+
+        Blocks Cypher injection via label / property / attr-name strings.
+        Raises :class:`ValueError` on a bad identifier.
+        """
+        if value is not None and not _CYPHER_IDENT_RE.match(value):
+            raise ValueError(
+                f"{name} must be a valid Cypher identifier matching "
+                f"{_CYPHER_IDENT_RE.pattern!r}; got {value!r}.")
+
     def _resolve_group(self, group_name: NodeType | None) -> NodeType | None:
         r"""Pick the attr_map group key for *group_name*.
 
@@ -135,6 +175,7 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
         group_key: NodeType | None,
     ) -> str:
         r"""Build a single Cypher query that returns all requested attrs."""
+        self._validate_cypher_ident("node_label", node_label)
         lf = f":{node_label}" if node_label else ""
         group_map = self.attr_map[group_key]
         return_cols = ", ".join(f"n.{group_map[name]['property']} AS {name}"
@@ -267,6 +308,7 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
 
         group = attr.group_name
         node_label = group if group is not None else self.default_node_label
+        self._validate_cypher_ident("node_label", node_label)
         lf = f":{node_label}" if node_label else ""
         query = (f"UNWIND $rows AS r "
                  f"MATCH (n{lf} {{{self.nodeid_property}: r.nid}}) "
@@ -289,6 +331,7 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
         prop = spec["property"]
         group = attr.group_name
         node_label = group if group is not None else self.default_node_label
+        self._validate_cypher_ident("node_label", node_label)
         lf = f":{node_label}" if node_label else ""
 
         if attr.index is not None:
@@ -326,7 +369,11 @@ class Neo4jFeatureStore(DatabaseFeatureStore):
         if self._driver is None:
             self._driver = GraphDatabase.driver(self.uri,
                                                 auth=(self.user, self.pwd))
-            atexit.register(self.close)
+            # weakref.finalize (not atexit) so the handler is dropped when
+            # this store is garbage-collected. atexit.register would stack a
+            # new handler per unpickled copy (DataLoader workers) and never
+            # release it for the life of the process.
+            weakref.finalize(self, _close_driver, self._driver)
         return self._driver
 
     def close(self) -> None:

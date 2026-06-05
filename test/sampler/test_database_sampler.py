@@ -92,6 +92,18 @@ def test_sample_from_edges_seeds_are_unique_union():
     assert set(params["seed_ids"]) == {0, 1}
 
 
+def test_sample_from_edges_neg_sampling_not_supported():
+    gs = _make_graph_store(nodes=[0, 1], edges=[[0, 1]])
+    sampler = FakeDatabaseSampler(gs)
+    edge_input = EdgeSamplerInput(
+        input_id=None,
+        row=torch.tensor([0], dtype=torch.long),
+        col=torch.tensor([1], dtype=torch.long),
+    )
+    with pytest.raises(NotImplementedError, match="negative sampling"):
+        sampler.sample_from_edges(edge_input, neg_sampling=object())
+
+
 def test_sample_from_edges_missing_query_raises():
     class NoEdgeSampler(DatabaseSampler):
         def _build_node_sampling_query(self):

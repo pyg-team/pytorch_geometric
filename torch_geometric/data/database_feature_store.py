@@ -286,12 +286,19 @@ class DatabaseFeatureStore(FeatureStore, ABC):
             if key in decoded_map:
                 decoded_arr, attr_nids = decoded_map[key]
                 if attr_nids:
-                    pos = np.fromiter(
-                        (nid_to_pos[int(nid)]
-                         for nid in attr_nids if int(nid) in nid_to_pos),
-                        dtype=np.int64,
-                    )
-                    out[pos] = decoded_arr[:len(pos)]
+                    # decoded_arr[i] corresponds to attr_nids[i]. Pair each
+                    # row index (src) with its output position, skipping nids
+                    # the DB returned unexpectedly. Keeps rows aligned to their
+                    # nid instead of slicing, which would shift on a gap.
+                    pairs = [(nid_to_pos[int(nid)], src)
+                             for src, nid in enumerate(attr_nids)
+                             if int(nid) in nid_to_pos]
+                    if pairs:
+                        pos = np.fromiter((p for p, _ in pairs),
+                                          dtype=np.int64)
+                        src = np.fromiter((s for _, s in pairs),
+                                          dtype=np.int64)
+                        out[pos] = decoded_arr[src]
 
             result.append(torch.from_numpy(out))
 

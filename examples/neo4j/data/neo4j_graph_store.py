@@ -1,4 +1,4 @@
-import atexit
+import weakref
 
 import torch
 from neo4j import Driver, GraphDatabase
@@ -8,6 +8,14 @@ from torch_geometric.data.graph_store import EdgeAttr, EdgeLayout
 from torch_geometric.typing import EdgeTensorType
 
 
+def _close_driver(driver: Driver) -> None:
+    r"""Close *driver*, swallowing errors. Used as a weakref finalizer."""
+    try:
+        driver.close()
+    except Exception:
+        pass
+
+
 class Neo4jGraphStore(DatabaseGraphStore):
     r"""Neo4j-backed graph store.
 
@@ -15,12 +23,20 @@ class Neo4jGraphStore(DatabaseGraphStore):
     Neo4j database.  The driver is created lazily per process, making this
     safe to use with multi-process DataLoader workers (``num_workers > 0``).
 
+    .. warning::
+        ``pwd`` is kept in instance state so each DataLoader worker can
+        recreate its own driver after unpickling. It is therefore included
+        in the pickled state. Do not persist pickles of this store to disk
+        or send them over untrusted channels; prefer credentials from the
+        environment for sensitive deployments.
+
     Args:
         uri (str): Bolt URI of the Neo4j instance.
         user (str): Username.
         pwd (str): Password.
         database_name (str): Database name.
-        nodeid_property (str): Property used as the global node ID.
+        nodeid_property (str): Property holding the integer node ID, shared by
+            every node label.
     """
     def __init__(
         self,
@@ -42,7 +58,11 @@ class Neo4jGraphStore(DatabaseGraphStore):
         if self._driver is None:
             self._driver = GraphDatabase.driver(self.uri,
                                                 auth=(self.user, self.pwd))
-            atexit.register(self.close)
+            # weakref.finalize (not atexit) so the handler is dropped when
+            # this store is garbage-collected. atexit.register would stack a
+            # new handler per unpickled copy (DataLoader workers) and never
+            # release it for the life of the process.
+            weakref.finalize(self, _close_driver, self._driver)
         return self._driver
 
     def close(self) -> None:
@@ -77,26 +97,30 @@ class Neo4jGraphStore(DatabaseGraphStore):
     def get_all_edge_attrs(self) -> list[EdgeAttr]:
         return []
 
-    def query_db(self, query: str, kwargs: dict) -> dict | None:
+    def query_db(self, query: str, params: dict) -> dict | None:
         r"""Execute *query* against the DB and return the first result record.
 
         Returns the record dict, or ``None`` if the query produced no rows.
         """
         with self._get_driver().session(database=self.database_name,
                                         fetch_size=-1) as session:
-            result = session.run(query, **kwargs)
+            result = session.run(query, **params)
             records = list(result)
         return records[0] if records else None
 
     # GraphStore ABC ##########################################################
     def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType | None:
+        r"""Read edges of the given type from Neo4j and return as a COO tensor.
+
+        The returned edge index is ordered according to *edge_attr.layout*.
+        """
         src_type, rel_type, dst_type = edge_attr.edge_type
         nid = self.nodeid_property
 
         query = (f"MATCH (a:{src_type})-[r:{rel_type}]->(b:{dst_type}) "
                  f"RETURN a.{nid} AS src, b.{nid} AS dst")
-        with self._get_driver().session(database=self.database_name,
-                                        fetch_size=-1) as session:
+        with self._get_driver().session(
+                database=self.database_name) as session:
             records = list(session.run(query))
 
         if not records:

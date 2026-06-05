@@ -63,8 +63,8 @@ class Neo4jSampler(DatabaseSampler, ABC):
                 f"{name} must be a valid Cypher identifier matching "
                 f"{_CYPHER_IDENT_RE.pattern!r}; got {value!r}.")
 
-    @staticmethod
-    def _probe_apoc(graph_store: DatabaseGraphStore) -> None:
+    @classmethod
+    def _probe_apoc(cls, graph_store: DatabaseGraphStore) -> None:
         r"""Verify APOC is installed in the target Neo4j database.
 
         Call from subclass ``__init__`` when the sampling query uses
@@ -73,7 +73,7 @@ class Neo4jSampler(DatabaseSampler, ABC):
         check = getattr(graph_store, "apoc_available", None)
         if check is not None and not check():
             raise RuntimeError(
-                f"{__class__.__name__} requires the APOC plugin. "
+                f"{cls.__name__} requires the APOC plugin. "
                 "Install APOC in the target Neo4j database and try again.")
 
 
@@ -88,6 +88,11 @@ class Neo4jGraphSAGESampler(Neo4jSampler):
 
     Requires the Neo4j APOC plugin (``coll.distinct``, ``coll.flatten``,
     ``apoc.coll.randomItems``).
+
+    .. note::
+        Homogeneous only: one ``node_label`` and one ``rel_type``, emitting a
+        :class:`~torch_geometric.sampler.SamplerOutput`. Heterogeneous
+        sampling is not supported.
 
     Args:
         graph_store (DatabaseGraphStore): Neo4j-backed graph store.
@@ -174,7 +179,9 @@ class Neo4jGraphSAGESampler(Neo4jSampler):
 
         q.append(f"""
         // 1. initialize the frontier, visited and edges (single batched
-        //    index seek; fail-loud if any seed_id is missing in the DB).
+        //    index seek). The size() guard below drops the row when any
+        //    seed_id is missing in the DB, so the query returns no rows
+        //    rather than a partial frontier.
         {profile_prefix}MATCH (s{seed_label})
         WHERE s.{self.nodeid_property} IN $seed_ids
         WITH collect(s) AS frontier

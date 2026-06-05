@@ -92,8 +92,8 @@ class FakeDatabaseGraphStore(DatabaseGraphStore):
         self._records: Dict[str, Optional[dict]] = dict(records or {})
         self.executed_queries: List[Tuple[str, dict]] = []
 
-    def query_db(self, query: str, kwargs: dict) -> Optional[dict]:
-        self.executed_queries.append((query, kwargs))
+    def query_db(self, query: str, params: dict) -> Optional[dict]:
+        self.executed_queries.append((query, params))
         return self._records.get(query)
 
     # GraphStore ABC — not exercised in sampler/gs tests but required.

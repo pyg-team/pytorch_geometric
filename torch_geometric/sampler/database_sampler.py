@@ -69,7 +69,7 @@ class DatabaseSampler(BaseSampler):
         """
         return None
 
-    def _build_node_query_params(self, seeds: Tensor, **kwargs) -> dict:
+    def _build_node_query_params(self, seeds: Tensor, **kwargs) -> dict | None:
         r"""Build query parameter dict for seed node IDs.
 
         Args:
@@ -82,7 +82,7 @@ class DatabaseSampler(BaseSampler):
         """
         return None
 
-    def _build_edge_query_params(self, seeds: Tensor, **kwargs) -> dict:
+    def _build_edge_query_params(self, seeds: Tensor, **kwargs) -> dict | None:
         r"""Build query parameter dict for seed edge endpoint IDs.
 
         Same contract as :meth:`_build_node_query_params`; ``seeds`` are the
@@ -199,12 +199,18 @@ class DatabaseSampler(BaseSampler):
         Args:
             index (EdgeSamplerInput): Seed edge inputs.
             neg_sampling (NegativeSampling, optional): Negative sampling
-                configuration. (default: :obj:`None`)
+                configuration. Not supported; must be :obj:`None`.
+                (default: :obj:`None`)
             **kwargs: Forwarded to :meth:`_build_edge_query_params`.
 
         Returns:
             Sampled subgraph as local COO tensors.
         """
+        if neg_sampling is not None:
+            raise NotImplementedError(
+                "negative sampling is not supported by DatabaseSampler; "
+                f"got neg_sampling={neg_sampling!r}.")
+
         if not self.edge_sampling_query:
             raise ValueError("Edge sampling query is not built.")
 
@@ -219,7 +225,7 @@ class DatabaseSampler(BaseSampler):
                 "Query parameters are empty. Check the implementation of "
                 "_build_edge_query_params.")
         record = self.graph_store.query_db(self.edge_sampling_query, params)
-        decoded = self._decode_edge_sampling_record(record)
+        decoded = self._decode_edge_sampling_record(record, seeds)
         if decoded is None:
             node, row, col = self._empty_result(seeds, self._is_hetero)
         else:

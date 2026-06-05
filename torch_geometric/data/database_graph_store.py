@@ -21,12 +21,12 @@ class DatabaseGraphStore(GraphStore, ABC):
         super().__init__(edge_attr_cls=edge_attr_cls)
 
     @abstractmethod
-    def query_db(self, query: str, kwargs: dict) -> Any:
+    def query_db(self, query: str, params: dict) -> Any:
         r"""Execute ``query`` against the backend and return the raw result.
 
         Args:
             query (str): Backend query string (e.g. Cypher).
-            kwargs (dict): Query parameters.
+            params (dict): Query parameters.
 
         Returns:
             The raw database response.
