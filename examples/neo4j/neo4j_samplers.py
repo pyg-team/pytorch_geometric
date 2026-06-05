@@ -105,6 +105,12 @@ class Neo4jGraphSAGESampler(Neo4jSampler):
             :obj:`None` matches all labels. (default: :obj:`None`)
         rel_type (str, optional): Relationship type filter (e.g. ``"KNOWS"``).
             :obj:`None` matches all types. (default: :obj:`None`)
+        induced (bool): Return the *induced* subgraph on the sampled node set.
+            When :obj:`True`, every edge in the database between two sampled
+            nodes is emitted (mirrors
+            :obj:`~torch_geometric.sampler.SubgraphType.induced`), not only the
+            edges traversed during sampling. When :obj:`False`, only traversed
+            edges are returned (directional). (default: :obj:`False`)
         profile (bool): Prepend ``PROFILE`` to the query for execution-plan
             profiling. (default: :obj:`False`)
     """
@@ -115,6 +121,7 @@ class Neo4jGraphSAGESampler(Neo4jSampler):
         direction: str = 'incoming',
         node_label: str | None = None,
         rel_type: str | None = None,
+        induced: bool = False,
         profile: bool = False,
     ) -> None:
         if direction not in ('incoming', 'outgoing', 'undirected'):
@@ -124,6 +131,7 @@ class Neo4jGraphSAGESampler(Neo4jSampler):
 
         self.num_neighbors = num_neighbors
         self.direction = direction
+        self.induced = induced
 
         super().__init__(
             graph_store,
@@ -147,8 +155,9 @@ class Neo4jGraphSAGESampler(Neo4jSampler):
         Parameterised by ``$seed_ids`` (see :meth:`_build_node_query_params`).
         Returns a single record with:
 
-        * ``edges`` — ``[src_id, dst_id]`` pairs (global node IDs) for every
-          sampled edge across all hops.
+        * ``edges`` — ``[src_id, dst_id]`` pairs (global node IDs). With
+          ``induced=False`` these are the edges traversed during sampling;
+          with ``induced=True`` they are every edge between two visited nodes.
         * ``nodes`` — visited global node IDs in BFS order (seeds first,
           then each hop's new frontier), deduplicated.
         """
@@ -238,7 +247,27 @@ class Neo4jGraphSAGESampler(Neo4jSampler):
                 next_edges AS edges
             """)
 
-        q.append(f"""
+        if self.induced:
+            # induced subgraph: replace the traversed edge set with every
+            # edge between two visited nodes. The scoped CALL keeps the single
+            # carrying row alive even when no such edges exist (collect over
+            # zero rows returns []), so the node list is never dropped.
+            q.append(f"""
+            WITH visited
+            CALL (visited) {{
+                UNWIND visited AS a
+                MATCH (a){edge_pat}(b{nbr_label})
+                WHERE b IN visited
+                RETURN collect(DISTINCT
+                    [startNode(r).{self.nodeid_property},
+                     endNode(r).{self.nodeid_property}]) AS edges
+            }}
+            RETURN
+                edges AS edges,
+                [n IN visited | n.{self.nodeid_property}] AS nodes
+            """)
+        else:
+            q.append(f"""
             RETURN
                 edges AS edges,
                 [n IN visited | n.{self.nodeid_property}] AS nodes
