@@ -4,10 +4,8 @@ Database-backed graph storage and sampling
 .. note::
     This tutorial introduces the :class:`~torch_geometric.data.DatabaseGraphStore`,
     :class:`~torch_geometric.data.DatabaseFeatureStore`, and
-    :class:`~torch_geometric.sampler.DatabaseSampler` abstractions, plus a
-    reference Neo4j implementation under examples/neo4j.
-    Use these to interact with graph topology and features that live in an external database
-    (e.g. Neo4j).
+    :class:`~torch_geometric.sampler.DatabaseSampler` abstractions.
+    See `examples/neo4j/cora` for a runnable example using Neo4j as the backend.
 
 A common way to support large-graph GNN training is to keep graph
 topology and features in RAM of the training machine(s). This can
@@ -21,7 +19,7 @@ This can drastically reduce the memory requirements
 of the training machine, and enable large-graph training on more
 modest hardware, at the cost of some additional latency per batch.
 
-Decoupling training from inference-time graph storage
+Inference Without In-Memory Graphs
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The database abstractions can also be useful when faster in-memory training is
@@ -209,33 +207,3 @@ expansion **inside the database** via a single pre-compiled query per batch
   build the per-batch parameter dict, e.g. ``{"seed_ids": [...]}``.
 * :meth:`_decode_node_sampling_record` / :meth:`_decode_edge_sampling_record`
   — convert the raw record into local-COO ``(node, row, col)`` tensors.
-
-Neo4j Reference Implementation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The ``examples/neo4j`` directory provides a concrete stack against Neo4j
-5.x via the Bolt driver:
-
-:class:`Neo4jGraphStore`
-    Implements :meth:`query_db` against a Neo4j session. Includes
-    :meth:`_get_edge_index` / :meth:`_put_edge_index` /
-    :meth:`_remove_edge_index` so the same store also serves as a vanilla
-    :class:`~torch_geometric.data.GraphStore` for one-shot edge dumps.
-
-:class:`Neo4jFeatureStore`
-    Driven by an *attr_map* that maps each :class:`TensorAttr`
-    (group_name, attr_name) to a Neo4j node property plus a dtype
-    (``"float32"`` / ``"int64"`` / ``"str"``). Heterogeneous graphs use a
-    nested ``{node_label: {attr_name: spec}}`` form. A single Cypher query
-    is issued per fetch group, fetching only the requested properties.
-
-:class:`Neo4jGraphSAGESampler`
-    A pyg-lib-equivalent GraphSAGE neighbor sampler whose entire multi-hop
-    expansion is a single Cypher query parameterised by ``$seed_ids``. Uses
-    APOC procedures (``apoc.coll.randomItems``, ``apoc.coll.flatten``,
-    ``coll.distinct``) for uniform sampling without replacement, mirroring
-    pyg-lib's ``replace=False, disjoint=False`` semantics.
-
-
-See the runnable notebook at
-``examples/neo4j/example_with_cora/training.ipynb``.
