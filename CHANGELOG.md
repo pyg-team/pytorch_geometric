@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Added a `ci: full` PR label that triggers the full test suite (`pytest-full`) on demand instead of the regular one ([#10709](https://github.com/pyg-team/pytorch_geometric/pull/10709))
 - Added PyTorch 2.11 and 2.12 support ([#10708](https://github.com/pyg-team/pytorch_geometric/pull/10708))
 - Added `txt2qa.py` example for synthetic multi-hop QA generation from text documents, supporting vLLM (local) and NVIDIA NIM (API) backends ([#10559](https://github.com/pyg-team/pytorch_geometric/pull/10559))
+- Added GraphLand benchmark via `GraphLandDataset` ([#10458](https://github.com/pyg-team/pytorch_geometric/pull/10458))
 
 ### Changed
 
@@ -41,7 +42,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Added GraphLand benchmark via `GraphLandDataset` ([#10458](https://github.com/pyg-team/pytorch_geometric/pull/10458))
 - Added llm generated explanations to `TAGDataset` ([#9918](https://github.com/pyg-team/pytorch_geometric/pull/9918))
 - Added `torch_geometric.llm` and its examples ([#10436](https://github.com/pyg-team/pytorch_geometric/pull/10436))
 - Added support for negative weights in `sparse_cross_entropy` ([#10432](https://github.com/pyg-team/pytorch_geometric/pull/10432))
