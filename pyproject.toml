@@ -197,6 +197,8 @@ addopts = [
     "--capture=no",
     "--color=yes",
     "-vv",
+    "-m",
+    "not rag and not dataset",
 ]
 filterwarnings = [
     "ignore:distutils:DeprecationWarning",
@@ -223,6 +225,7 @@ filterwarnings = [
 ]
 markers = [
     "rag: mark test as RAG test",
+    "dataset: mark test as requiring dataset download (only runs when explicitly requested with -m dataset)",
 ]
 
 [tool.coverage.run]

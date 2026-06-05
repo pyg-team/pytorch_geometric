@@ -6,11 +6,11 @@ import pytest
 
 from torch_geometric.datasets import WebQSPDataset
 from torch_geometric.datasets.web_qsp_dataset import KGQABaseDataset
-from torch_geometric.testing import onlyFullTest, onlyOnline, withPackage
+from torch_geometric.testing import onlyFullTest, withPackage
 
 
 @pytest.mark.skip(reason="Times out")
-@onlyOnline
+@pytest.mark.dataset
 @onlyFullTest
 @withPackage("datasets", "pandas")
 def test_web_qsp_dataset(tmp_path):

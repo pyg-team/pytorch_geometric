@@ -75,6 +75,7 @@
 
 <script>
   var torchList = [
+    ['torch-2.12.0', 'PyTorch 2.12.*'],
     ['torch-2.11.0', 'PyTorch 2.11.*'],
     ['torch-2.10.0', 'PyTorch 2.10.*'],
     ['torch-2.9.0', 'PyTorch 2.9.*'],
@@ -95,6 +96,7 @@
     ['cu126', '12.6'],
     ['cu128', '12.8'],
     ['cu130', '13.0'],
+    ['cu132', '13.2'],
     ['cpu', 'CPU'],
   ];
 
@@ -113,17 +115,13 @@
       $("#command pre").text('# macOS binaries do not support CUDA');
     }
 
-    // else if (torch == "torch-2.9.0" && cuda == "cu129") {
-    //   $("#command pre").text('# PyTorch version does not support CUDA 12.9');
-    // }
+    else if (torch == "torch-2.12.0" && cuda == "cu128") {
+      $("#command pre").text('# PyTorch 2.12.* does not support CUDA 12.8');
+    }
 
-    // else if (torch == "torch-2.10.0" && cuda == "cu129") {
-    //   $("#command pre").text('# PyTorch version does not support CUDA 12.9');
-    // }
-
-    // else if (torch == "torch-2.11.0" && cuda == "cu129") {
-    //   $("#command pre").text('# PyTorch version does not support CUDA 12.9');
-    // }
+    else if (torch != "torch-2.12.0" && cuda == "cu132") {
+      $("#command pre").text('# Only PyTorch 2.12.* supports CUDA 13.2');
+    }
 
     else if (package == "conda") {
       $("#command pre").text('# Conda packages are no longer available since PyTorch >2.5.0. Please use pip instead.');
