@@ -272,19 +272,11 @@ def test_random_link_split_on_undirected_hetero_data():
 
 
 def test_random_link_split_undirected_overlap():
-    undirected_edges = to_undirected(
-        torch.tensor([
-            [0, 1, 2],
-            [1, 2, 3]
-        ])
-    )
+    undirected_edges = to_undirected(torch.tensor([[0, 1, 2], [1, 2, 3]]))
     data = Data(edge_index=undirected_edges, num_nodes=4)
 
-    transform = RandomLinkSplit(
-        is_undirected=True,
-        num_val=0.4, num_test=0.4,
-        add_negative_train_samples=False
-    )
+    transform = RandomLinkSplit(is_undirected=True, num_val=0.4, num_test=0.4,
+                                add_negative_train_samples=False)
     train_data, val_data, test_data = transform(data)
 
     val_neg_edges = val_data.edge_label_index[:, val_data.edge_label == 0]
@@ -294,7 +286,8 @@ def test_random_link_split_undirected_overlap():
     for i in range(val_neg_edges.size(1)):
         for j in range(test_neg_edges.size(1)):
             assert not torch.equal(val_neg_edges[:, i], test_neg_edges[:, j])
-            assert not torch.equal(val_neg_edges[:, i], test_neg_edges[:, j].flip([0]))
+            assert not torch.equal(val_neg_edges[:, i],
+                                   test_neg_edges[:, j].flip([0]))
 
     # Ensure negative edges are structured as u < v since is_undirected=True
     assert (val_neg_edges[0] < val_neg_edges[1]).all()

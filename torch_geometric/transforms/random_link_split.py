@@ -236,7 +236,8 @@ class RandomLinkSplit(BaseTransform):
                 size = size[0]
             num_neg_samples = num_neg * 2 if is_undirected else num_neg
             neg_edge_index = negative_sampling(
-                edge_index, size,
+                edge_index,
+                size,
                 num_neg_samples=num_neg_samples,
                 method='sparse',
                 force_undirected=is_undirected,
