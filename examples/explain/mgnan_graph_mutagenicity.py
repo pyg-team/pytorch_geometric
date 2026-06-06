@@ -26,12 +26,41 @@ from pathlib import Path
 import networkx as nx
 import torch
 from torch import nn
+from torch.utils.data import DataLoader
 from tqdm import tqdm
 
+from torch_geometric.data import Batch
 from torch_geometric.datasets import TUDataset
-from torch_geometric.loader.mgnan_dataloader import MGNANDataLoader
 from torch_geometric.nn.models import MGNAN
 from torch_geometric.utils import to_networkx
+
+
+def mgnan_collate(data_list):
+    """Collate :class:`~torch_geometric.data.Data` objects into a
+    :class:`~torch_geometric.data.Batch`, stacking the per-graph
+    ``node_distances`` and ``normalization_matrix`` tensors that M-GNAN
+    consumes into block-diagonal matrices.
+
+    The dense distance/normalisation matrices are specific to the M-GNAN
+    training pipeline, which is why this collate function lives next to the
+    example rather than in :mod:`torch_geometric.loader`.
+    """
+    node_distances = [d.node_distances for d in data_list]
+    norm_matrices = [d.normalization_matrix for d in data_list]
+    for d in data_list:
+        del d.node_distances
+        del d.normalization_matrix
+
+    batch = Batch.from_data_list(data_list)
+
+    # Restore per-graph attributes on the originals.
+    for d, nd, nm in zip(data_list, node_distances, norm_matrices):
+        d.node_distances = nd
+        d.normalization_matrix = nm
+
+    batch.node_distances = torch.block_diag(*node_distances)
+    batch.normalization_matrix = torch.block_diag(*norm_matrices)
+    return batch
 
 
 def compute_dist_and_norm(data) -> tuple[torch.Tensor, torch.Tensor]:
@@ -126,10 +155,13 @@ def main():
     val_dataset = dataset[indices[n_train:n_train + n_val]]
     test_dataset = dataset[indices[n_train + n_val:]]
 
-    # standard PyTorch DataLoader with custom collate function
-    train_loader = MGNANDataLoader(train_dataset, batch_size=1, shuffle=True)
-    val_loader = MGNANDataLoader(val_dataset, batch_size=32, shuffle=False)
-    test_loader = MGNANDataLoader(test_dataset, batch_size=32, shuffle=False)
+    # Standard PyTorch DataLoader with the M-GNAN-specific collate function.
+    train_loader = DataLoader(train_dataset, batch_size=1, shuffle=True,
+                              collate_fn=mgnan_collate)
+    val_loader = DataLoader(val_dataset, batch_size=32, shuffle=False,
+                            collate_fn=mgnan_collate)
+    test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False,
+                             collate_fn=mgnan_collate)
 
     # Pick a sample graph from the *test* split to track during training.
     sample_graph = test_dataset[0]
