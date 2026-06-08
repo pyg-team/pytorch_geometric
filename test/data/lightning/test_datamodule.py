@@ -22,7 +22,6 @@ from torch_geometric.testing import (
     onlyCUDA,
     onlyFullTest,
     onlyNeighborSampler,
-    onlyOnline,
     withPackage,
 )
 
@@ -77,7 +76,7 @@ class LinearGraphModule(LightningModule):
 
 
 @onlyCUDA
-@onlyOnline
+@pytest.mark.dataset
 @onlyFullTest
 @withPackage('pytorch_lightning>=2.0.0', 'torchmetrics>=0.11.0')
 @pytest.mark.parametrize('strategy_type', [None, 'ddp'])
@@ -204,7 +203,7 @@ class LinearNodeModule(LightningModule):
 
 
 @onlyCUDA
-@onlyOnline
+@pytest.mark.dataset
 @onlyFullTest
 @onlyNeighborSampler
 @withPackage('pytorch_lightning>=2.0.0', 'torchmetrics>=0.11.0', 'scipy')
@@ -469,7 +468,7 @@ def test_lightning_hetero_link_data_custom_store():
     assert 'edge_label_index' in batch['author', 'paper']
 
 
-@onlyOnline
+@pytest.mark.dataset
 @onlyNeighborSampler
 @withPackage('pytorch_lightning', 'scipy')
 def test_eval_loader_kwargs(get_dataset):
