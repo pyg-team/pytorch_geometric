@@ -22,7 +22,6 @@ from __future__ import annotations
 
 import random
 from pathlib import Path
-from typing import List, Optional
 
 import networkx as nx
 import torch
@@ -49,13 +48,13 @@ class MGNANCollater:
     """
     def __init__(
         self,
-        follow_batch: Optional[List[str]] = None,
-        exclude_keys: Optional[List[str]] = None,
+        follow_batch: list[str] | None = None,
+        exclude_keys: list[str] | None = None,
     ):
         self.follow_batch = follow_batch
         self.exclude_keys = exclude_keys
 
-    def __call__(self, data_list: List[BaseData]) -> Batch:
+    def __call__(self, data_list: list[BaseData]) -> Batch:
         node_distances_list = []
         normalization_matrix_list = []
 
