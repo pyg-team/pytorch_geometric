@@ -1,15 +1,16 @@
-from typing import Optional
+from typing import Optional, Union
 
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.explain import Explainer, Explanation
+from torch_geometric.explain import Explainer, Explanation, HeteroExplanation
 from torch_geometric.explain.config import MaskType, ModelMode, ModelReturnType
+from torch_geometric.explain.metric.fidelity import _hetero_model_kwargs
 
 
 def unfaithfulness(
     explainer: Explainer,
-    explanation: Explanation,
+    explanation: Union[Explanation, HeteroExplanation],
     top_k: Optional[int] = None,
 ) -> float:
     r"""Evaluates how faithful an :class:`~torch_geometric.explain.Explanation`
@@ -43,6 +44,9 @@ def unfaithfulness(
         raise ValueError("Cannot apply top-k feature selection based on a "
                          "node mask of type 'object'")
 
+    if isinstance(explanation, HeteroExplanation):
+        return _hetero_unfaithfulness(explainer, explanation, top_k)
+
     node_mask = explanation.get('node_mask')
     edge_mask = explanation.get('edge_mask')
     x, edge_index = explanation.x, explanation.edge_index
@@ -57,6 +61,47 @@ def unfaithfulness(
         _, top_k_index = feat_importance.topk(top_k)
         node_mask = torch.zeros_like(node_mask)
         node_mask[:, top_k_index] = 1.0
+
+    y_hat = explainer.get_masked_prediction(x, edge_index, node_mask,
+                                            edge_mask, **kwargs)
+
+    if explanation.get('index') is not None:
+        y, y_hat = y[explanation.index], y_hat[explanation.index]
+
+    if explainer.model_config.return_type == ModelReturnType.raw:
+        y, y_hat = y.softmax(dim=-1), y_hat.softmax(dim=-1)
+    elif explainer.model_config.return_type == ModelReturnType.log_probs:
+        y, y_hat = y.exp(), y_hat.exp()
+
+    kl_div = F.kl_div(y.log(), y_hat, reduction='batchmean')
+    return 1 - float(torch.exp(-kl_div))
+
+
+def _hetero_unfaithfulness(
+    explainer: Explainer,
+    explanation: HeteroExplanation,
+    top_k: Optional[int] = None,
+) -> float:
+    node_mask = explanation.collect('node_mask', allow_empty=True) or None
+    edge_mask = explanation.collect('edge_mask', allow_empty=True) or None
+    x = explanation.x_dict
+    edge_index = explanation.edge_index_dict
+    kwargs = _hetero_model_kwargs(explanation)
+
+    y = explanation.get('prediction')
+    if y is None:  # == ExplanationType.phenomenon
+        y = explainer.get_prediction(x, edge_index, **kwargs)
+
+    if node_mask is not None and top_k is not None:
+        new_node_mask = {}
+        for node_type, mask in node_mask.items():
+            feat_importance = mask.sum(dim=0)
+            k = min(top_k, feat_importance.size(0))
+            _, top_k_index = feat_importance.topk(k)
+            new_mask = torch.zeros_like(mask)
+            new_mask[:, top_k_index] = 1.0
+            new_node_mask[node_type] = new_mask
+        node_mask = new_node_mask
 
     y_hat = explainer.get_masked_prediction(x, edge_index, node_mask,
                                             edge_mask, **kwargs)

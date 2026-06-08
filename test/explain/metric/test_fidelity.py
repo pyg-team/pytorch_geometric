@@ -1,6 +1,7 @@
 import pytest
 import torch
 
+from torch_geometric.data import HeteroData
 from torch_geometric.explain import (
     DummyExplainer,
     Explainer,
@@ -8,11 +9,17 @@ from torch_geometric.explain import (
     fidelity,
     fidelity_curve_auc,
 )
+from torch_geometric.testing import get_random_edge_index
 
 
 class DummyModel(torch.nn.Module):
     def forward(self, x, edge_index):
         return x
+
+
+class HeteroDummyModel(torch.nn.Module):
+    def forward(self, x_dict, edge_index_dict, **kwargs):
+        return x_dict['paper']
 
 
 @pytest.mark.parametrize('explanation_type', ['model', 'phenomenon'])
@@ -44,6 +51,47 @@ def test_fidelity(explanation_type):
                             index=torch.arange(4))
 
     pos_fidelity, neg_fidelity = fidelity(explainer, explanation)
+    assert pos_fidelity == 0.0 and neg_fidelity == 0.0
+
+
+@pytest.mark.parametrize('explanation_type', ['model', 'phenomenon'])
+def test_fidelity_hetero(explanation_type):
+    data = HeteroData()
+    data['paper'].x = torch.randn(8, 4)
+    data['author'].x = torch.randn(10, 4)
+    data['paper', 'paper'].edge_index = get_random_edge_index(8, 8, 10)
+    data['paper', 'author'].edge_index = get_random_edge_index(8, 10, 10)
+    data['author', 'paper'].edge_index = get_random_edge_index(10, 8, 10)
+
+    explainer = Explainer(
+        HeteroDummyModel(),
+        algorithm=DummyExplainer(),
+        explanation_type=explanation_type,
+        node_mask_type='object',
+        edge_mask_type='object',
+        model_config=dict(
+            mode='multiclass_classification',
+            return_type='raw',
+            task_level='node',
+        ),
+    )
+
+    target = None
+    if explanation_type == 'phenomenon':
+        target = torch.randint(0, data['paper'].x.size(1),
+                               (data['paper'].x.size(0), ))
+
+    explanation = explainer(
+        data.x_dict,
+        data.edge_index_dict,
+        target=target,
+        index=torch.arange(4),
+    )
+
+    pos_fidelity, neg_fidelity = fidelity(explainer, explanation)
+    # `HeteroDummyModel` returns `x_dict['paper']` and the explainer applies
+    # object-level masks which uniformly scale each node's feature row, so the
+    # predicted class is preserved and both fidelity scores collapse to zero.
     assert pos_fidelity == 0.0 and neg_fidelity == 0.0
 
 
