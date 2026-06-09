@@ -7,10 +7,31 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+- Fix `supports_bipartite_graphs` in Python3.14 ([#10693](https://github.com/pyg-team/pytorch_geometric/pull/10693))
+
+### Security
+
+## [2.8.0] - 2026-06-05
+
+### Added
+
+- Added `from_relbench` to convert RelBench databases into `HeteroData` ([#10628](https://github.com/pyg-team/pytorch_geometric/pull/10628))
+- Added a `ci: full` PR label that triggers the full test suite (`pytest-full`) on demand instead of the regular one ([#10709](https://github.com/pyg-team/pytorch_geometric/pull/10709))
+- Added PyTorch 2.11 and 2.12 support ([#10708](https://github.com/pyg-team/pytorch_geometric/pull/10708))
 - Added `txt2qa.py` example for synthetic multi-hop QA generation from text documents, supporting vLLM (local) and NVIDIA NIM (API) backends ([#10559](https://github.com/pyg-team/pytorch_geometric/pull/10559))
+- Added GraphLand benchmark via `GraphLandDataset` ([#10458](https://github.com/pyg-team/pytorch_geometric/pull/10458))
 
 ### Changed
 
+- Improved runtime of `to_dense_batch` in both eager and `torch.compile` ([#10660](https://github.com/pyg-team/pytorch_geometric/pull/10660))
 - Dropped support for TorchScript in `GATConv` and `GATv2Conv` for correctness ([#10596](https://github.com/pyg-team/pytorch_geometric/pull/10596))
 
 ### Deprecated
@@ -20,10 +41,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Removed
 
+- Dropped support for PyTorch 2.8 ([#10708](https://github.com/pyg-team/pytorch_geometric/pull/10708))
+
 ### Fixed
 
-- Fix `supports_bipartite_graphs` in Python3.14 ([#10693](https://github.com/pyg-team/pytorch_geometric/pull/10693))
-- Fix MovieLens dataset incompatibility with `sentence-transformers>=5.0.0` ([#10668](https://github.com/pyg-team/pytorch_geometric/pull/10668)
+- Fixed dtype mismatch in `GRetriever.inference` ([#10681](https://github.com/pyg-team/pytorch_geometric/pull/10681))
+- Fix MovieLens dataset incompatibility with `sentence-transformers>=5.0.0` ([#10668](https://github.com/pyg-team/pytorch_geometric/pull/10668))
 - Removed an unnecessary device synchronization in `torch_geometric.utils.softmax` ([#10499](https://github.com/pyg-team/pytorch_geometric/pull/10499))
 - Fixed loading of legacy HuggingFace BERT checkpoints ([#10631](https://github.com/pyg-team/pytorch_geometric/pull/10631))
 - Fixed `return_attention_weights: bool` being not respected in `GATConv` and `GATv2Conv` ([#10596](https://github.com/pyg-team/pytorch_geometric/pull/10596))
@@ -35,7 +58,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Added GraphLand benchmark via `GraphLandDataset` ([#10458](https://github.com/pyg-team/pytorch_geometric/pull/10458))
 - Added llm generated explanations to `TAGDataset` ([#9918](https://github.com/pyg-team/pytorch_geometric/pull/9918))
 - Added `torch_geometric.llm` and its examples ([#10436](https://github.com/pyg-team/pytorch_geometric/pull/10436))
 - Added support for negative weights in `sparse_cross_entropy` ([#10432](https://github.com/pyg-team/pytorch_geometric/pull/10432))

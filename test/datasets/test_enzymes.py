@@ -2,11 +2,10 @@ import pytest
 import torch
 
 from torch_geometric.loader import DataListLoader, DataLoader, DenseDataLoader
-from torch_geometric.testing import onlyOnline
 from torch_geometric.transforms import ToDense
 
 
-@onlyOnline
+@pytest.mark.dataset
 def test_enzymes(get_dataset):
     dataset = get_dataset(name='ENZYMES')
     assert len(dataset) == 600
@@ -57,7 +56,7 @@ def test_enzymes(get_dataset):
         assert list(data.y.size()) == [600, 1]
 
 
-@onlyOnline
+@pytest.mark.dataset
 def test_enzymes_with_node_attr(get_dataset):
     dataset = get_dataset(name='ENZYMES', use_node_attr=True)
     assert dataset.num_node_features == 21
@@ -65,7 +64,7 @@ def test_enzymes_with_node_attr(get_dataset):
     assert dataset.num_edge_features == 0
 
 
-@onlyOnline
+@pytest.mark.dataset
 def test_cleaned_enzymes(get_dataset):
     dataset = get_dataset(name='ENZYMES', cleaned=True)
     assert len(dataset) == 595
