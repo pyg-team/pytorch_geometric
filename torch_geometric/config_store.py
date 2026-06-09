@@ -170,10 +170,24 @@ def map_annotation(
         if type(annotation).__name__ == 'GenericAlias':
             # If annotated with `list[...]` or `dict[...]`:
             annotation = origin[args]
+        elif origin is Union:
+            # If annotated with `typing.Union[...]` or `typing.Optional[...]`.
+            # Rebuild instead of mutating `__args__`, which is read-only on
+            # Python >= 3.14 (`typing.Union` instances no longer allow
+            # in-place attribute assignment).
+            annotation = Union[args]
         else:
-            # If annotated with `typing.List[...]` or `typing.Dict[...]`:
-            annotation = copy.copy(annotation)
-            annotation.__args__ = args
+            # If annotated with `typing.List[...]` or `typing.Dict[...]`.
+            # Prefer the non-mutating `copy_with` reconstruction; fall back to
+            # the legacy in-place rewrite only if it is unavailable. The
+            # in-place `annotation.__args__ = args` path raises on
+            # Python >= 3.14, where generic-alias `__args__` is read-only.
+            copy_with = getattr(annotation, 'copy_with', None)
+            if copy_with is not None:
+                annotation = copy_with(tuple(args))
+            else:
+                annotation = copy.copy(annotation)
+                annotation.__args__ = args
 
         return annotation
 
