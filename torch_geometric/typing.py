@@ -25,7 +25,7 @@ WITH_PT212 = WITH_PT20 and int(torch.__version__.split('.')[1]) >= 12
 WITH_PT113 = WITH_PT20 or int(torch.__version__.split('.')[1]) >= 13
 
 WITH_WINDOWS = os.name == 'nt'
-NO_MKL = 'USE_MKL=OFF' in torch.__config__.show() or WITH_WINDOWS
+NO_MKL = 'USE_MKL=ON' not in torch.__config__.show() or WITH_WINDOWS
 
 MAX_INT64 = torch.iinfo(torch.int64).max
 
