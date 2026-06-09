@@ -23,6 +23,14 @@ from torch_geometric.testing import (
 )
 
 
+@pytest.fixture(autouse=True)
+def chdir_to_tmp_path(tmp_path):
+    old_cwd = os.getcwd()
+    os.chdir(tmp_path)
+    yield
+    os.chdir(old_cwd)
+
+
 @withDevice
 @onlyLinux
 def test_timeit(device):
