@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fix `supports_bipartite_graphs` in Python3.14 ([#10693](https://github.com/pyg-team/pytorch_geometric/pull/10693))
+
 ### Security
 
 ## [2.8.0] - 2026-06-05

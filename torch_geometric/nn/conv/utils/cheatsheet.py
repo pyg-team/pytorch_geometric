@@ -37,7 +37,9 @@ def supports_edge_features(cls: str) -> bool:
 def supports_bipartite_graphs(cls: str) -> bool:
     cls = importlib.import_module('torch_geometric.nn.conv').__dict__[cls]
     signature = inspect.signature(cls.forward)
-    return 'Union[torch.Tensor, Tuple[torch.Tensor' in str(signature)
+    sig_str = str(signature)
+    return ('Union[torch.Tensor, Tuple[torch.Tensor' in sig_str
+            or 'torch.Tensor | Tuple[torch.Tensor' in sig_str)
 
 
 def supports_static_graphs(cls: str) -> bool:
