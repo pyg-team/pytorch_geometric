@@ -76,8 +76,8 @@ class HomologySanitizer(BaseTransform):
                 continue
 
             # Convert to undirected for cycle analysis
-            edge_index_undirected = to_undirected(
-                edge_index, num_nodes=num_nodes)
+            edge_index_undirected = to_undirected(edge_index,
+                                                  num_nodes=num_nodes)
             edge_list = edge_index_undirected.t().cpu().numpy()
 
             # Import optional dependencies lazily
@@ -125,12 +125,10 @@ class HomologySanitizer(BaseTransform):
 
             # --- Phase 2: Ego-Network Surgical Audit ---
             anomalous_nodes = set()
-            run_exact = (
-                self.use_exact and
-                (self.fast_path_limit is None or
-                 num_nodes <= self.fast_path_limit) and
-                len(suspicious_nodes) > 0
-            )
+            run_exact = (self.use_exact
+                         and (self.fast_path_limit is None
+                              or num_nodes <= self.fast_path_limit)
+                         and len(suspicious_nodes) > 0)
 
             if run_exact:
                 G = nx.Graph()
@@ -161,11 +159,14 @@ class HomologySanitizer(BaseTransform):
                 continue
 
             anomalous_tensor = torch.tensor(
-                sorted(anomalous_nodes), dtype=torch.long,
+                sorted(anomalous_nodes),
+                dtype=torch.long,
                 device=edge_index.device,
             )
             is_anomalous = torch.zeros(
-                num_nodes, dtype=torch.bool, device=edge_index.device,
+                num_nodes,
+                dtype=torch.bool,
+                device=edge_index.device,
             )
             is_anomalous[anomalous_tensor] = True
 

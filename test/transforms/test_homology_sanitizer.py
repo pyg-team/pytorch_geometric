@@ -26,8 +26,8 @@ def test_homology_sanitizer_trigger_removal():
     out = transform(data)
 
     # Clique edges should be removed; tree edges should remain
-    out_set = set(tuple(e) for e in out.edge_index.t().tolist())
-    tree_set = set(tuple(e) for e in tree_edges.t().tolist())
+    out_set = {tuple(e) for e in out.edge_index.t().tolist()}
+    tree_set = {tuple(e) for e in tree_edges.t().tolist()}
 
     assert tree_set.issubset(out_set), "Tree edges were incorrectly removed"
 
@@ -77,8 +77,8 @@ def test_homology_sanitizer_community_isolation():
     out = transform(data)
 
     # Tree component should be untouched
-    out_set = set(tuple(e) for e in out.edge_index.t().tolist())
-    tree_set = set(tuple(e) for e in tree.t().tolist())
+    out_set = {tuple(e) for e in out.edge_index.t().tolist()}
+    tree_set = {tuple(e) for e in tree.t().tolist()}
     assert tree_set.issubset(out_set)
 
     # Trigger component should be pruned
@@ -142,8 +142,7 @@ def test_homology_sanitizer_fast_path():
 
 @withPackage('networkx', 'scipy')
 def test_homology_sanitizer_repr():
-    transform = HomologySanitizer(
-        threshold=3, ego_hops=1, community_cycle_ratio=0.5)
-    assert str(transform) == (
-        'HomologySanitizer(threshold=3, ego_hops=1, '
-        'community_cycle_ratio=0.5)')
+    transform = HomologySanitizer(threshold=3, ego_hops=1,
+                                  community_cycle_ratio=0.5)
+    assert str(transform) == ('HomologySanitizer(threshold=3, ego_hops=1, '
+                              'community_cycle_ratio=0.5)')
