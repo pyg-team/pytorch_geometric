@@ -449,12 +449,15 @@ def type_repr(obj: Any, _globals: Dict[str, Any]) -> str:
 
     if obj.__module__ == 'typing':  # Special logic for `typing.*` types:
 
-        if not hasattr(obj, '_name'):
-            return repr(obj)
-
-        name = obj._name
-        if name is None:  # In some cases, `_name` is not populated.
-            name = str(obj.__origin__).split('.')[-1]
+        name = getattr(obj, '_name', None)
+        if name is None:
+            origin = getattr(obj, '__origin__', None)
+            if origin is typing.Union:
+                name = 'Union'
+            elif origin is not None:
+                name = str(origin).split('.')[-1].rstrip("'>")
+            else:
+                return repr(obj)
 
         args = getattr(obj, '__args__', None)
         if args is None or len(args) == 0:

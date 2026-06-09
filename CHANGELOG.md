@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fix Optional representation in Python3.14 ([#10691](https://github.com/pyg-team/pytorch_geometric/pull/10691))
+
 ### Security
 
 ## [2.8.0] - 2026-06-05
