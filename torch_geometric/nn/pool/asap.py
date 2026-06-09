@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Linear
 
+import torch_geometric.typing
 from torch_geometric.nn import LEConv
 from torch_geometric.nn.pool.select import SelectTopK
 from torch_geometric.utils import (
@@ -144,10 +145,16 @@ class ASAPooling(torch.nn.Module):
         batch = batch[perm]
 
         # Graph coarsening.
-        A = to_torch_csr_tensor(edge_index, edge_weight, size=(N, N))
-        S = to_torch_coo_tensor(edge_index, score, size=(N, N))
-        S = S.index_select(1, perm).to_sparse_csr()
-        A = S.t().to_sparse_csr() @ (A @ S)
+        if torch_geometric.typing.NO_MKL:  # pragma: no cover
+            A = to_torch_coo_tensor(edge_index, edge_weight, size=(N, N))
+            S = to_torch_coo_tensor(edge_index, score, size=(N, N))
+            S = S.index_select(1, perm)
+            A = S.t() @ (A @ S)
+        else:
+            A = to_torch_csr_tensor(edge_index, edge_weight, size=(N, N))
+            S = to_torch_coo_tensor(edge_index, score, size=(N, N))
+            S = S.index_select(1, perm).to_sparse_csr()
+            A = S.t().to_sparse_csr() @ (A @ S)
 
         if edge_weight is None:
             edge_index, _ = to_edge_index(A)
