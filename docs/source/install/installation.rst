@@ -50,7 +50,7 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
    .. code-block:: none
 
       python -c "import torch; print(torch.__version__)"
-      >>> 2.11.0
+      >>> 2.12.0
 
 #. Find the CUDA version :pytorch:`PyTorch` was installed with:
 
@@ -67,7 +67,8 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
 
    where :obj:`${TORCH}` and :obj:`${CUDA}` should be replaced by the specific :pytorch:`PyTorch` and CUDA versions, respectively:
 
-   * :pytorch:`PyTorch` 2.11.*: :obj:`${TORCH}=2.10.0` and :obj:`${CUDA}=cpu|cu126|cu128|cu130`
+   * :pytorch:`PyTorch` 2.12.*: :obj:`${TORCH}=2.12.0` and :obj:`${CUDA}=cpu|cu126|cu130|cu132`
+   * :pytorch:`PyTorch` 2.11.*: :obj:`${TORCH}=2.11.0` and :obj:`${CUDA}=cpu|cu126|cu128|cu130`
    * :pytorch:`PyTorch` 2.10.*: :obj:`${TORCH}=2.10.0` and :obj:`${CUDA}=cpu|cu126|cu128|cu130`
    * :pytorch:`PyTorch` 2.9.*: :obj:`${TORCH}=2.9.0` and :obj:`${CUDA}=cpu|cu126|cu128|cu130`
    * :pytorch:`PyTorch` 2.8.*: :obj:`${TORCH}=2.8.0` and :obj:`${CUDA}=cpu|cu126|cu128|cu129`
@@ -81,11 +82,11 @@ For ease of installation of these extensions, we provide :obj:`pip` wheels for t
    * :pytorch:`PyTorch` 2.0.*: :obj:`${TORCH}=2.0.0` and :obj:`${CUDA}=cpu|cu117|cu118`
    * :pytorch:`PyTorch` 1.13.*: :obj:`${TORCH}=1.13.0` and :obj:`${CUDA}=cpu|cu116|cu117`
 
-   For example, for :pytorch:`PyTorch` 2.11.* and CUDA 13.0, type:
+   For example, for :pytorch:`PyTorch` 2.12.* and CUDA 13.2, type:
 
    .. code-block:: none
 
-      pip install pyg_lib torch_scatter torch_sparse -f https://data.pyg.org/whl/torch-2.11.0+cu130.html
+      pip install pyg_lib torch_scatter torch_sparse -f https://data.pyg.org/whl/torch-2.12.0+cu132.html
 
    For example, for :pytorch:`PyTorch` 2.10.* and CUDA 12.8, type:
 
