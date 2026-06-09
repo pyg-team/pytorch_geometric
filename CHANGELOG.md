@@ -7,6 +7,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Added `MGNAN` (M-GNAN, an extension of `GNAN` to multivariate shape functions) model plus an example ([#10371](https://github.com/pyg-team/pytorch_geometric/pull/10371))
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## [2.8.0] - 2026-06-05
+
+### Added
+
 - Added `from_relbench` to convert RelBench databases into `HeteroData` ([#10628](https://github.com/pyg-team/pytorch_geometric/pull/10628))
 - Added a `ci: full` PR label that triggers the full test suite (`pytest-full`) on demand instead of the regular one ([#10709](https://github.com/pyg-team/pytorch_geometric/pull/10709))
 - Added PyTorch 2.11 and 2.12 support ([#10708](https://github.com/pyg-team/pytorch_geometric/pull/10708))
@@ -100,7 +116,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Allowed users to pass `edge_weight` to `GraphUNet` models ([#9737](https://github.com/pyg-team/pytorch_geometric/pull/9737))
 - Consolidated `examples/ogbn_{papers_100m,products_gat,products_sage}.py` into `examples/ogbn_train.py` ([#9467](https://github.com/pyg-team/pytorch_geometric/pull/9467))
 - Add ComplexWebQuestions (CWQ) dataset ([#9950](https://github.com/pyg-team/pytorch_geometric/pull/9950))
-- Add `MGNAN` (M-GNAN, an extension of `GNAN` to multivariate shape functions) model plus an example (https://github.com/pyg-team/pytorch_geometric/pull/10371)
 
 ### Changed
 
