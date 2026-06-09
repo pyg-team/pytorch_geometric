@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fix write-permission errors in test_profile.py
+
 ### Security
 
 ## [2.8.0] - 2026-06-05
