@@ -65,6 +65,10 @@ def test_map_annotation():
     assert map_annotation(List[Optional[int]], mapping) == List[Optional[Any]]
     assert map_annotation(Dict[str, Optional[int]],
                           mapping) == Dict[str, Optional[Any]]
+    # When every Union member maps to the same type, the rebuilt annotation
+    # collapses to canonical `Any` (the old in-place mutation left a
+    # degenerate `Union[Any, Any]`):
+    assert map_annotation(Union[int, str], {int: Any, str: Any}) == Any
 
 
 def test_register():
