@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Added `HomologySanitizer` transform for anomalous cyclic subgraph detection ([#10721](https://github.com/pyg-team/pytorch_geometric/pull/10721))
+
 ### Changed
 
 ### Deprecated
