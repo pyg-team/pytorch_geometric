@@ -3,12 +3,14 @@ from typing import Callable, List, Union
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.nn import GCNConv, TopKPooling
 from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.typing import OptTensor, PairTensor
 from torch_geometric.utils import (
     add_self_loops,
     remove_self_loops,
+    to_torch_coo_tensor,
     to_torch_csr_tensor,
 )
 from torch_geometric.utils.repeat import repeat
@@ -140,8 +142,12 @@ class GraphUNet(torch.nn.Module):
         edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
         edge_index, edge_weight = add_self_loops(edge_index, edge_weight,
                                                  num_nodes=num_nodes)
-        adj = to_torch_csr_tensor(edge_index, edge_weight,
-                                  size=(num_nodes, num_nodes))
+        if torch_geometric.typing.NO_MKL:  # pragma: no cover
+            adj = to_torch_coo_tensor(edge_index, edge_weight,
+                                      size=(num_nodes, num_nodes))
+        else:
+            adj = to_torch_csr_tensor(edge_index, edge_weight,
+                                      size=(num_nodes, num_nodes))
         adj = (adj @ adj).to_sparse_coo()
         edge_index, edge_weight = adj.indices(), adj.values()
         edge_index, edge_weight = remove_self_loops(edge_index, edge_weight)
