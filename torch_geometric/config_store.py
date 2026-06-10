@@ -1,4 +1,3 @@
-import copy
 import inspect
 import typing
 from collections import defaultdict
@@ -178,16 +177,9 @@ def map_annotation(
             annotation = Union[args]
         else:
             # If annotated with `typing.List[...]` or `typing.Dict[...]`.
-            # Prefer the non-mutating `copy_with` reconstruction; fall back to
-            # the legacy in-place rewrite only if it is unavailable. The
-            # in-place `annotation.__args__ = args` path raises on
-            # Python >= 3.14, where generic-alias `__args__` is read-only.
-            copy_with = getattr(annotation, 'copy_with', None)
-            if copy_with is not None:
-                annotation = copy_with(tuple(args))
-            else:
-                annotation = copy.copy(annotation)
-                annotation.__args__ = args
+            # Rebuild via `copy_with` rather than mutating `__args__`, which is
+            # read-only on Python >= 3.14.
+            annotation = annotation.copy_with(tuple(args))
 
         return annotation
 
