@@ -4,7 +4,7 @@ build-backend="flit_core.buildapi"
 
 [project]
 name="torch-geometric"
-version="2.8.0"
+version="2.9.0"
 authors=[
     {name="Matthias Fey", email="matthias@pyg.org"},
 ]
@@ -27,6 +27,7 @@ classifiers=[
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Programming Language :: Python :: 3 :: Only",
 ]
 dependencies=[
@@ -58,13 +59,19 @@ benchmark=[
     "wandb",
 ]
 rag=[
+    "faiss-cpu",
+    "json-repair",
+    "langgraph",
+    "openai",
     "pcst_fast",
+    "PyYAML",
     "datasets",
     "transformers",
     "pandas",
     "sentencepiece",
     "accelerate",
     "torchmetrics",
+    "peft",
 ]
 test=[
     "onnx",
@@ -114,6 +121,10 @@ changelog="https://github.com/pyg-team/pytorch_geometric/blob/master/CHANGELOG.m
 
 [tool.flit.module]
 name="torch_geometric"
+
+[tool.uv]
+exclude-newer = "7 days"
+exclude-newer-package = { torch = "2099-01-01", torchvision = "2099-01-01" }
 
 [tool.yapf]
 based_on_style = "pep8"
@@ -186,6 +197,8 @@ addopts = [
     "--capture=no",
     "--color=yes",
     "-vv",
+    "-m",
+    "not rag and not dataset",
 ]
 filterwarnings = [
     "ignore:distutils:DeprecationWarning",
@@ -212,6 +225,7 @@ filterwarnings = [
 ]
 markers = [
     "rag: mark test as RAG test",
+    "dataset: mark test as requiring dataset download (only runs when explicitly requested with -m dataset)",
 ]
 
 [tool.coverage.run]

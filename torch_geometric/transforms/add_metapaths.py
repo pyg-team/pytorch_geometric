@@ -197,6 +197,7 @@ class AddMetaPaths(BaseTransform):
         edge_index: EdgeIndex,
         edge_weight: Optional[Tensor],
     ) -> Tuple[EdgeIndex, Optional[Tensor]]:
+        assert self.max_sample is not None
 
         deg = degree(edge_index[0], num_nodes=edge_index.get_sparse_size(0))
         prob = (self.max_sample * (1. / deg))[edge_index[0]]

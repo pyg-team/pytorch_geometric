@@ -8,7 +8,7 @@ from torch_geometric.testing import onlyFullTest, withPackage
 
 
 @onlyFullTest
-@withPackage('torch_cluster')
+@withPackage('pyg_lib')
 def test_radius_graph_jit():
     class Net(torch.nn.Module):
         def forward(self, x: Tensor, batch: Optional[Tensor] = None) -> Tensor:
