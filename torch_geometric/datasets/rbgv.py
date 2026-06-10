@@ -3,8 +3,7 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 import torch
 import torch.nn.functional as F
 
-from torch_geometric.data import InMemoryDataset
-from torch_geometric.explain import Explanation
+from torch_geometric.data import Data, InMemoryDataset
 from torch_geometric.utils import (
     barabasi_albert_graph,
     erdos_renyi_graph,
@@ -15,13 +14,13 @@ from torch_geometric.utils import (
 RED, BLUE, GREEN, VIOLET = 0, 1, 2, 3
 
 
-def _as_confounder_dict(
+def _as_spurious_dict(
     value: Union[str, Dict[str, str]],
     valid: Tuple[str, ...],
     name: str,
 ) -> Dict[str, str]:
-    r"""Normalizes a per-confounder option to a :obj:`{'green', 'violet'}`
-    dictionary. A single string is broadcast to both confounders, while a
+    r"""Normalizes a per-spurious-node option to a :obj:`{'green', 'violet'}`
+    dictionary. A single string is broadcast to both spurious nodes, while a
     dictionary is validated to hold exactly those two keys.
     """
     if isinstance(value, str):
@@ -39,42 +38,38 @@ def _as_confounder_dict(
     for color, option in resolved.items():
         if option not in valid:
             raise ValueError(
-                f"Unknown {name} '{option}' for the {color} confounder")
+                f"Unknown {name} '{option}' for the {color} spurious node")
     return resolved
 
 
 class RBGVDataset(InMemoryDataset):
     r"""The synthetic RBGV (Red, Blue, Green, Violet) graph classification
-    dataset for evaluating explainability algorithms, as described in the
+    dataset, based on the construction from the
     `"GNN Explanations that do not Explain and How to find Them"
     <https://arxiv.org/abs/2601.20815>`_ paper.
 
     Each graph contains a main subgraph of red and blue nodes whose label is
     *fully* determined by their ratio (class :obj:`1` iff blue nodes strictly
-    outnumber red nodes), plus exactly two confounder nodes (one green and one
-    violet) that carry no causal information.
+    outnumber red nodes), plus exactly two spurious nodes (one green and one
+    violet) that carry no causal information about the label.
 
     On top of the original construction, this implementation exposes a
-    **spurious connection** mechanism: the confounders can be wired into the
+    **spurious connection** mechanism: the spurious nodes can be wired into the
     main subgraph through a configurable target pool (:obj:`spurious_target`)
     and connection strategy (:obj:`spurious_strategy`). Both options accept
-    either a single string, applied symmetrically to both confounders, or a
-    :obj:`{'green', 'violet'}` dictionary to control each confounder
-    independently. These connections inject a spurious correlation an explainer
-    may latch onto, which makes the dataset well suited to stress-test GNN
-    explainers.
+    either a single string, applied symmetrically to both spurious nodes, or a
+    :obj:`{'green', 'violet'}` dictionary to control each spurious node
+    independently. These connections inject a spurious correlation between the
+    spurious nodes and the label, letting the dataset test whether a GNN relies
+    on the causal red/blue ratio or latches onto the spurious structure.
 
-    Every graph is returned as an
-    :class:`~torch_geometric.explain.Explanation` object whose ground-truth
-    :obj:`node_mask` and :obj:`edge_mask` mark the causally relevant
-    substructure (the red/blue subgraph), so explainer fidelity can be
-    measured directly.
+    Each graph is returned as a :class:`~torch_geometric.data.Data` object.
 
     .. code-block:: python
 
         from torch_geometric.datasets import RBGVDataset
 
-        # Symmetric: both confounders densely connect to every red node.
+        # Symmetric: both spurious nodes densely connect to every red node.
         dataset = RBGVDataset(
             num_graphs=1000,
             spurious_target='red',
@@ -108,15 +103,15 @@ class RBGVDataset(InMemoryDataset):
             :obj:`"normal"` spurious strategy under that same topology.
             (default: :obj:`2`)
         spurious_target (str or dict, optional): Pool of main-subgraph nodes
-            the confounders may connect to, one of :obj:`"none"` (isolated
-            confounders, original paper setup), :obj:`"red"`, :obj:`"blue"` or
-            :obj:`"both"`. Pass a :obj:`{'green', 'violet'}` dictionary to set
-            it per confounder. (default: :obj:`"none"`)
-        spurious_strategy (str or dict, optional): How the confounders connect
-            to their target pool, either :obj:`"all"` (dense, connect to every
-            target node) or :obj:`"normal"` (stochastic, mirroring the
+            the spurious nodes may connect to, one of :obj:`"none"` (isolated
+            spurious nodes, original paper setup), :obj:`"red"`, :obj:`"blue"`
+            or :obj:`"both"`. Pass a :obj:`{'green', 'violet'}` dictionary to
+            set it per spurious node. (default: :obj:`"none"`)
+        spurious_strategy (str or dict, optional): How the spurious nodes
+            connect to their target pool, either :obj:`"all"` (dense, connect
+            to every target node) or :obj:`"normal"` (stochastic, mirroring the
             main-subgraph topology). Pass a :obj:`{'green', 'violet'}`
-            dictionary to set it per confounder. (default: :obj:`"all"`)
+            dictionary to set it per spurious node. (default: :obj:`"all"`)
         transform (callable, optional): A function/transform that takes in an
             :obj:`torch_geometric.data.Data` object and returns a transformed
             version. The data object will be transformed before every access.
@@ -168,22 +163,21 @@ class RBGVDataset(InMemoryDataset):
         self.spurious_target = spurious_target
         self.spurious_strategy = spurious_strategy
 
-        # Normalize the per-confounder options to `{'green', 'violet'}` dicts:
-        self._target = _as_confounder_dict(spurious_target,
-                                           ('none', 'red', 'blue', 'both'),
-                                           'spurious_target')
-        self._strategy = _as_confounder_dict(spurious_strategy,
-                                             ('all', 'normal'),
-                                             'spurious_strategy')
+        # Normalize the per-spurious-node options to `{'green', 'violet'}`
+        # dicts:
+        self._target = _as_spurious_dict(spurious_target,
+                                         ('none', 'red', 'blue', 'both'),
+                                         'spurious_target')
+        self._strategy = _as_spurious_dict(spurious_strategy,
+                                           ('all', 'normal'),
+                                           'spurious_strategy')
 
-        data_list: List[Explanation] = [
-            self.get_graph() for _ in range(num_graphs)
-        ]
+        data_list: List[Data] = [self.get_graph() for _ in range(num_graphs)]
         self.data, self.slices = self.collate(data_list)
 
     def _target_pool(self, target: str, main_colors: torch.Tensor,
                      num_main: int) -> torch.Tensor:
-        r"""Returns the indices of the main-subgraph nodes a confounder with
+        r"""Returns the indices of the main-subgraph nodes a spurious node with
         the given :obj:`target` may connect to.
         """
         if target == 'none':
@@ -196,7 +190,7 @@ class RBGVDataset(InMemoryDataset):
 
     def _sample_targets(self, pool: torch.Tensor,
                         strategy: str) -> torch.Tensor:
-        r"""Selects the subset of :obj:`pool` a confounder connects to,
+        r"""Selects the subset of :obj:`pool` a spurious node connects to,
         according to the given :obj:`strategy` and the main-subgraph topology.
         """
         num_pool = int(pool.numel())
@@ -213,9 +207,9 @@ class RBGVDataset(InMemoryDataset):
         idx = torch.rand(num_pool).argsort()[:k]
         return pool[idx]
 
-    def get_graph(self) -> Explanation:
-        r"""Samples and returns a single RBGV graph as an
-        :class:`~torch_geometric.explain.Explanation` object.
+    def get_graph(self) -> Data:
+        r"""Samples and returns a single RBGV graph as a
+        :class:`~torch_geometric.data.Data` object.
         """
         # --- 1. Main subgraph: red/blue nodes and the causal label ----------
         num_main = int(torch.randint(self.min_nodes, self.max_nodes + 1,
@@ -237,7 +231,7 @@ class RBGVDataset(InMemoryDataset):
             main_edge_index = barabasi_albert_graph(num_main,
                                                     self.num_edges_per_node)
 
-        # --- 2. Confounders: one green, one violet node ---------------------
+        # --- 2. Spurious nodes: one green, one violet -----------------------
         green_idx, violet_idx = num_main, num_main + 1
         num_total = num_main + 2
 
@@ -246,8 +240,8 @@ class RBGVDataset(InMemoryDataset):
         x = F.one_hot(colors, num_classes=4).to(torch.float)
 
         # --- 3. Spurious connections ----------------------------------------
-        # Each confounder is wired independently, with its own target pool and
-        # connection strategy.
+        # Each spurious node is wired independently, with its own target pool
+        # and connection strategy.
         src_parts, dst_parts = [], []
         for node_idx, color in ((green_idx, 'green'), (violet_idx, 'violet')):
             pool = self._target_pool(self._target[color], main_colors,
@@ -270,23 +264,7 @@ class RBGVDataset(InMemoryDataset):
         edge_index = torch.cat([main_edge_index, spurious_edge_index], dim=1)
         edge_index = to_undirected(edge_index, num_nodes=num_total)
 
-        # --- 5. Ground-truth explanation masks ------------------------------
-        # Causally relevant nodes are exactly the red/blue ones (color < 2).
-        node_mask = (colors < GREEN).to(torch.float).view(-1, 1)
-
-        # An edge is internal to the main subgraph iff neither endpoint is a
-        # confounder; every spurious edge touches a confounder (id >=
-        # num_main). Deriving the mask from endpoint ids stays correct after
-        # coalescing.
-        edge_mask = (edge_index < num_main).all(dim=0).to(torch.float)
-
-        return Explanation(
-            x=x,
-            edge_index=edge_index,
-            y=y,
-            node_mask=node_mask,
-            edge_mask=edge_mask,
-        )
+        return Data(x=x, edge_index=edge_index, y=y)
 
     def __repr__(self) -> str:
         return (f'{self.__class__.__name__}({len(self)}, '
