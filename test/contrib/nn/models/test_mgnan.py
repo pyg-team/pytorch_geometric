@@ -1,8 +1,8 @@
 import pytest
 import torch
 
+from torch_geometric.contrib.nn.models import MGNAN
 from torch_geometric.data import Data
-from torch_geometric.nn.models import MGNAN
 
 
 def _dummy_data(num_nodes: int = 5, num_feats: int = 4):

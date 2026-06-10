@@ -29,10 +29,10 @@ from torch import nn
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
+from torch_geometric.contrib.nn.models import MGNAN
 from torch_geometric.data import Batch
 from torch_geometric.data.data import BaseData
 from torch_geometric.datasets import TUDataset
-from torch_geometric.nn.models import MGNAN
 from torch_geometric.utils import to_networkx
 
 
@@ -50,7 +50,7 @@ class MGNANCollater:
         self,
         follow_batch: list[str] | None = None,
         exclude_keys: list[str] | None = None,
-    ):
+    ) -> None:
         self.follow_batch = follow_batch
         self.exclude_keys = exclude_keys
 
@@ -138,26 +138,20 @@ def compute_dist_and_norm(data) -> tuple[torch.Tensor, torch.Tensor]:
 
 class PreprocessDistances:
     """PyG Transform that adds M-GNAN distance attributes to each graph."""
-    def __call__(self, data):  # noqa: D401
+    def __call__(self, data) -> BaseData:  # noqa: D401
         dist, norm = compute_dist_and_norm(data)
         data.node_distances = dist
         data.normalization_matrix = norm
         return data
 
 
-# -----------------------------------------------------------------------------
-
-
-def seed_everything(seed: int = 42):
+def seed_everything(seed: int = 42) -> None:
     random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
 
 
-# -----------------------------------------------------------------------------
-
-
-def main():
+def main() -> None:
     seed_everything()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -216,7 +210,7 @@ def main():
         optimizer, mode='max', factor=0.5, patience=3)
     criterion = nn.BCEWithLogitsLoss()
 
-    def evaluate(loader):
+    def evaluate(loader) -> float:
         model.eval()
         correct = 0
         for data in tqdm(loader, desc="Evaluating"):
