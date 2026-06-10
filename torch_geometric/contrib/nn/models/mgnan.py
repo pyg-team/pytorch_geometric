@@ -165,8 +165,7 @@ class MGNAN(nn.Module):
     By default it aggregates node scores to produce *graph‐level* predictions
     (shape ``[batch_size, out_channels]``).  Set ``graph_level=False`` to
     obtain *node‐level* predictions instead, in which case the forward returns
-    a tensor of shape ``[num_nodes, out_channels]`` or ``[len(node_ids),
-    out_channels]`` if ``node_ids`` is provided.
+    a tensor of shape ``[num_nodes, out_channels]``.
 
     Args:
         in_channels (int): Number of input node features.

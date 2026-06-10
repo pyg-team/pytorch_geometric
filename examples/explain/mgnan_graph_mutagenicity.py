@@ -15,7 +15,7 @@ Run with:
     python examples/explain/mgnan_graph_mutagenicity.py
 
 Graphs in Mutagenicity are small (≈30 nodes), therefore the dense distance
-matrix fits comfortably in memory and can be coqmputed on the fly.
+matrix fits comfortably in memory and can be computed on the fly.
 """
 
 from __future__ import annotations
