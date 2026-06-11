@@ -11,7 +11,16 @@ from torch_geometric import is_in_onnx_export, safe_onnx_export
 
 # Global mock to prevent ANY real ONNX calls in tests
 # This ensures no deprecation warnings or real ONNX issues
-pytestmark = pytest.mark.filterwarnings("ignore::DeprecationWarning")
+pytestmark = [
+    pytest.mark.filterwarnings("ignore::DeprecationWarning"),
+    pytest.mark.filterwarnings("ignore:Retrying ONNX export.*:UserWarning"),
+    pytest.mark.filterwarnings(
+        "ignore:Encountered known ONNX serialization issue.*:UserWarning"
+    ),
+    pytest.mark.filterwarnings(
+        "ignore:ONNX export skipped due to known upstream issue.*:UserWarning"
+    ),
+]
 
 
 class SimpleModel(torch.nn.Module):
