@@ -32,7 +32,7 @@ class RPCCallFeatureLookup(RPCCallBase):
         raise NotImplementedError
 
 
-@dataclass
+@dataclass(eq=False)
 class LocalTensorAttr(TensorAttr):
     r"""Tensor attribute for storing features without :obj:`index`."""
     def __init__(

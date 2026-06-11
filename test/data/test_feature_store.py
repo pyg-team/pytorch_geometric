@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+import numpy as np
 import pytest
 import torch
 
@@ -30,6 +31,10 @@ def test_feature_store():
     index = torch.tensor([0, 1, 2])
     attr = TensorAttr(group_name, attr_name, index)
     assert TensorAttr(group_name).update(attr) == attr
+    assert TensorAttr(group_name, attr_name, index) == attr
+    array_index = np.array([0, 1, 2])
+    array_attr = TensorAttr(group_name, attr_name, array_index)
+    assert array_attr == TensorAttr(group_name, attr_name, array_index)
 
     # Normal API:
     store.put_tensor(tensor, attr)

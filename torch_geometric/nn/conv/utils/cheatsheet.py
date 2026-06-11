@@ -1,7 +1,7 @@
 import importlib
 import inspect
 import re
-from typing import Optional
+from typing import Optional, get_args, get_origin
 
 
 def paper_title(cls: str) -> Optional[str]:
@@ -37,7 +37,16 @@ def supports_edge_features(cls: str) -> bool:
 def supports_bipartite_graphs(cls: str) -> bool:
     cls = importlib.import_module('torch_geometric.nn.conv').__dict__[cls]
     signature = inspect.signature(cls.forward)
+    x = signature.parameters.get('x')
+    if x is not None and _contains_tuple(x.annotation):
+        return True
     return 'Union[torch.Tensor, Tuple[torch.Tensor' in str(signature)
+
+
+def _contains_tuple(annotation) -> bool:
+    if get_origin(annotation) is tuple:
+        return True
+    return any(_contains_tuple(arg) for arg in get_args(annotation))
 
 
 def supports_static_graphs(cls: str) -> bool:
