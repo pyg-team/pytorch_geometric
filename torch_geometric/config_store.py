@@ -1,5 +1,6 @@
 import copy
 import inspect
+import types
 import typing
 from collections import defaultdict
 from dataclasses import dataclass, field, make_dataclass
@@ -164,12 +165,19 @@ def map_annotation(
 ) -> Any:
     origin = getattr(annotation, '__origin__', None)
     args: Tuple[Any, ...] = getattr(annotation, '__args__', tuple())
-    if origin in {Union, list, dict, tuple}:
+
+    if origin is Union or isinstance(annotation, types.UnionType):
+        args = tuple(map_annotation(a, mapping) for a in args)
+        return Union[args]
+
+    if origin in {list, dict, tuple}:
         assert origin is not None
         args = tuple(map_annotation(a, mapping) for a in args)
         if type(annotation).__name__ == 'GenericAlias':
             # If annotated with `list[...]` or `dict[...]`:
             annotation = origin[args]
+        elif hasattr(annotation, 'copy_with'):
+            annotation = annotation.copy_with(args)
         else:
             # If annotated with `typing.List[...]` or `typing.Dict[...]`:
             annotation = copy.copy(annotation)
