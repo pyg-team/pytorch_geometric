@@ -82,7 +82,7 @@ jobs:
       test-matrix: |
         {
           "os": ["ubuntu-22.04", "macos-14", "windows-2022"],
-          "python-version": ["3.10"],
+          "python-version": ["3.10", "3.14"],
           "torch-version": ["2.9.0", "2.10.0", "2.11.0", "2.12.0", "nightly"],
           "cuda-version": ["cpu"],
           "full_test": ["1"]
