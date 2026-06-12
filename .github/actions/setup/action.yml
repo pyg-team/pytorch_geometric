@@ -31,7 +31,11 @@ runs:
 
     - name: Install numpy
       run: |
-        uv pip install "numpy<2"
+        if [ "${{ inputs.python-version }}" = '3.14' ]; then
+          uv pip install "numpy<3"
+        else
+          uv pip install "numpy<2"
+        fi
       shell: bash
 
     - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
@@ -69,7 +73,7 @@ runs:
       if: ${{ inputs.full_install == 'true' && inputs.cuda-version == 'cpu' && runner.os == 'Linux' }}
       run: |
         if [ "${{ inputs.python-version }}" = '3.14' ]; then
-          uv pip install 'faiss-cpu!=1.8.0' 'numpy<2'
+          uv pip install 'faiss-cpu!=1.8.0' 'numpy<3'
         else
           uv pip install faiss-cpu==1.7.2
         fi

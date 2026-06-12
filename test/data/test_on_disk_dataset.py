@@ -1,4 +1,5 @@
 import os.path as osp
+import pickle
 from typing import Any, Dict
 
 import torch
@@ -38,6 +39,14 @@ def test_pickle(tmp_path):
         assert torch.equal(out.x, data.x)
         assert torch.equal(out.edge_index, data.edge_index)
         assert out.num_nodes == data.num_nodes
+
+    restored = pickle.loads(pickle.dumps(dataset))
+    assert len(restored) == 4
+    out = restored.get(0)
+    assert torch.equal(out.x, data_list[0].x)
+    assert torch.equal(out.edge_index, data_list[0].edge_index)
+    assert out.num_nodes == data_list[0].num_nodes
+    restored.close()
 
     dataset.close()
 
