@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Added `ARGO`, a runtime system to improve performance on multi-core CPUs ([#8841](https://github.com/pyg-team/pytorch_geometric/pull/8841))
+
 ### Changed
 
 ### Deprecated
