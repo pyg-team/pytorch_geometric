@@ -15,8 +15,7 @@ pytestmark = [
     pytest.mark.filterwarnings("ignore::DeprecationWarning"),
     pytest.mark.filterwarnings("ignore:Retrying ONNX export.*:UserWarning"),
     pytest.mark.filterwarnings(
-        "ignore:Encountered known ONNX serialization issue.*:UserWarning"
-    ),
+        "ignore:Encountered known ONNX serialization issue.*:UserWarning"),
     pytest.mark.filterwarnings(
         "ignore:ONNX export skipped due to known upstream issue.*:UserWarning"
     ),
