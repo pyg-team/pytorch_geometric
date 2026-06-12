@@ -1,4 +1,3 @@
-import copy
 import inspect
 import types
 import typing
@@ -176,12 +175,11 @@ def map_annotation(
         if type(annotation).__name__ == 'GenericAlias':
             # If annotated with `list[...]` or `dict[...]`:
             annotation = origin[args]
-        elif hasattr(annotation, 'copy_with'):
-            annotation = annotation.copy_with(args)
         else:
-            # If annotated with `typing.List[...]` or `typing.Dict[...]`:
-            annotation = copy.copy(annotation)
-            annotation.__args__ = args
+            # If annotated with `typing.List[...]` or `typing.Dict[...]`.
+            # Rebuild via `copy_with` rather than mutating `__args__`, which is
+            # read-only on Python >= 3.14.
+            annotation = annotation.copy_with(tuple(args))
 
         return annotation
 
