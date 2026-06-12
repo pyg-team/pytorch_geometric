@@ -171,10 +171,9 @@ def main() -> None:
     # Simple 80/10/10 split
     indices = list(range(len(dataset)))
     random.shuffle(indices)
-    n_train = int(0.8 * len(indices))
-    n_val = int(0.1 * len(indices))
+    n_train = int(0.8 * len(dataset))
+    n_val = int(0.1 * len(dataset))
 
-    # print("=" * 60)
     train_dataset = dataset[indices[:n_train]]
     val_dataset = dataset[indices[n_train:n_train + n_val]]
     test_dataset = dataset[indices[n_train + n_val:]]

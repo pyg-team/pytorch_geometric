@@ -11,7 +11,7 @@ __all__ = [
 ]
 
 
-def _init_weights(module: nn.Module, std: float = 1.0):
+def _init_weights(module: nn.Module, std: float = 1.0) -> None:
     """Utility that mimics Xavier initialisation with configurable std."""
     for name, param in module.named_parameters():
         if 'weight' in name:
