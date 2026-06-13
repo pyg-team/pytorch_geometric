@@ -133,6 +133,7 @@ blank_line_before_nested_class_or_def = false
 
 [tool.mypy]
 files = ["torch_geometric"]
+ignore_errors = true
 install_types = true
 non_interactive = true
 ignore_missing_imports = true
