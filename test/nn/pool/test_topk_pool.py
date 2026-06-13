@@ -2,7 +2,6 @@ import torch
 
 from torch_geometric.nn.pool import TopKPooling
 from torch_geometric.nn.pool.connect.filter_edges import filter_adj
-from torch_geometric.testing import is_full_test
 
 
 def test_filter_adj():
@@ -14,13 +13,6 @@ def test_filter_adj():
     out = filter_adj(edge_index, edge_attr, perm)
     assert out[0].tolist() == [[0, 1], [1, 0]]
     assert out[1].tolist() == [6.0, 8.0]
-
-    if is_full_test():
-        jit = torch.jit.script(filter_adj)
-
-        out = jit(edge_index, edge_attr, perm)
-        assert out[0].tolist() == [[0, 1], [1, 0]]
-        assert out[1].tolist() == [6.0, 8.0]
 
 
 def test_topk_pooling():
@@ -47,13 +39,3 @@ def test_topk_pooling():
     out3 = pool3(x, edge_index)
     assert out3[0].size() == (2, in_channels)
     assert out3[1].size() == (2, 2)
-
-    if is_full_test():
-        jit1 = torch.jit.script(pool1)
-        assert torch.allclose(jit1(x, edge_index)[0], out1[0])
-
-        jit2 = torch.jit.script(pool2)
-        assert torch.allclose(jit2(x, edge_index)[0], out2[0])
-
-        jit3 = torch.jit.script(pool3)
-        assert torch.allclose(jit3(x, edge_index)[0], out3[0])

@@ -2,7 +2,6 @@ import pytest
 import torch
 
 from torch_geometric.nn import DenseGATConv, GATConv
-from torch_geometric.testing import is_full_test
 
 
 @pytest.mark.parametrize('heads', [1, 4])
@@ -40,10 +39,6 @@ def test_dense_gat_conv(heads, concat):
     mask = torch.tensor([[1, 1, 1], [1, 1, 0]], dtype=torch.bool)
 
     dense_out = dense_conv(x, adj, mask)
-
-    if is_full_test():
-        jit = torch.jit.script(dense_conv)
-        assert torch.allclose(jit(x, adj, mask), dense_out)
 
     assert dense_out[1, 2].abs().sum() == 0
     dense_out = dense_out.view(6, dense_out.size(-1))[:-1]

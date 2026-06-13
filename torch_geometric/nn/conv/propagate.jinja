@@ -1,4 +1,3 @@
-import typing
 from typing import Union
 
 import torch
@@ -26,7 +25,7 @@ def propagate(
 ) -> {{signature.return_type_repr}}:
 
     # Begin Propagate Forward Pre Hook #########################################
-    if not torch.jit.is_scripting() and not is_compiling():
+    if not is_compiling():
         for hook in self._propagate_forward_pre_hooks.values():
             hook_kwargs = dict(
 {%- for name in signature.param_dict %}
@@ -48,7 +47,7 @@ def propagate(
     if self.fuse:
         if is_sparse(edge_index):
             fuse = True
-        elif not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        elif isinstance(edge_index, EdgeIndex):
             if self.SUPPORTS_FUSED_EDGE_INDEX and edge_index.is_sorted_by_col:
                 fuse = True
 
@@ -56,7 +55,7 @@ def propagate(
 
 {%- if fuse %}
         # Begin Message and Aggregate Forward Pre Hook #########################
-        if not torch.jit.is_scripting() and not is_compiling():
+        if not is_compiling():
             for hook in self._message_and_aggregate_forward_pre_hooks.values():
                 hook_kwargs = dict(
 {%- for name in message_and_aggregate_args %}
@@ -79,7 +78,7 @@ def propagate(
         )
 
         # Begin Message and Aggregate Forward Hook #############################
-        if not torch.jit.is_scripting() and not is_compiling():
+        if not is_compiling():
             for hook in self._message_and_aggregate_forward_hooks.values():
                 hook_kwargs = dict(
 {%- for name in message_and_aggregate_args %}
@@ -111,7 +110,7 @@ def propagate(
         )
 
         # Begin Message Forward Pre Hook #######################################
-        if not torch.jit.is_scripting() and not is_compiling():
+        if not is_compiling():
             for hook in self._message_forward_pre_hooks.values():
                 hook_kwargs = dict(
 {%- for name in message_args %}
@@ -139,7 +138,7 @@ def propagate(
         )
 
         # Begin Message Forward Hook ###########################################
-        if not torch.jit.is_scripting() and not is_compiling():
+        if not is_compiling():
             for hook in self._message_forward_hooks.values():
                 hook_kwargs = dict(
 {%- for name in message_args %}
@@ -151,7 +150,7 @@ def propagate(
         # End Message Forward Hook #############################################
 
         # Begin Aggregate Forward Pre Hook #####################################
-        if not torch.jit.is_scripting() and not is_compiling():
+        if not is_compiling():
             for hook in self._aggregate_forward_pre_hooks.values():
                 hook_kwargs = dict(
 {%- for name in aggregate_args %}
@@ -180,7 +179,7 @@ def propagate(
         )
 
         # Begin Aggregate Forward Hook #########################################
-        if not torch.jit.is_scripting() and not is_compiling():
+        if not is_compiling():
             for hook in self._aggregate_forward_hooks.values():
                 hook_kwargs = dict(
 {%- for name in aggregate_args %}
@@ -199,7 +198,7 @@ def propagate(
         )
 
     # Begin Propagate Forward Hook ############################################
-    if not torch.jit.is_scripting() and not is_compiling():
+    if not is_compiling():
         for hook in self._propagate_forward_hooks.values():
             hook_kwargs = dict(
 {%- for name in signature.param_dict %}

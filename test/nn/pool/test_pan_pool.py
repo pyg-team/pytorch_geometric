@@ -1,7 +1,7 @@
 import torch
 
 from torch_geometric.nn import PANConv, PANPooling
-from torch_geometric.testing import is_full_test, withPackage
+from torch_geometric.testing import withPackage
 
 
 @withPackage('torch_sparse')
@@ -23,13 +23,3 @@ def test_pan_pooling():
     assert edge_weight.size() == (4, )
     assert perm.size() == (2, )
     assert score.size() == (2, )
-
-    if is_full_test():
-        jit = torch.jit.script(pool)
-        out = jit(x, M)
-        assert torch.allclose(h, out[0])
-        assert torch.equal(edge_index, out[1])
-        assert torch.allclose(edge_weight, out[2])
-        assert torch.equal(batch, out[3])
-        assert torch.equal(perm, out[4])
-        assert torch.allclose(score, out[5])

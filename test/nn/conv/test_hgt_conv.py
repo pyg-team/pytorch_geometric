@@ -55,9 +55,6 @@ def test_hgt_conv_same_dimensions():
         for key in out_dict1.keys():
             assert torch.allclose(out_dict1[key], out_dict3[key], atol=1e-6)
 
-    # TODO: Test JIT functionality. We need to wait on this one until PyTorch
-    # allows indexing `ParameterDict` mappings :(
-
 
 def test_hgt_conv_different_dimensions():
     x_dict = {

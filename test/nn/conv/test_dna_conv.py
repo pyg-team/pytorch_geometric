@@ -3,7 +3,6 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import DNAConv
-from torch_geometric.testing import is_full_test
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_csc_tensor
 
@@ -19,28 +18,16 @@ def test_dna_conv(channels, num_layers):
     out = conv(x, edge_index)
     assert out.size() == (4, channels)
 
-    if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x, edge_index), out, atol=1e-6)
-
     conv = DNAConv(channels, heads=1, groups=1, dropout=0.0)
     assert str(conv) == 'DNAConv(32, heads=1, groups=1)'
     out = conv(x, edge_index)
     assert out.size() == (4, channels)
-
-    if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x, edge_index), out, atol=1e-6)
 
     conv = DNAConv(channels, heads=1, groups=1, dropout=0.0, cached=True)
     out = conv(x, edge_index)
     assert conv._cached_edge_index is not None
     out = conv(x, edge_index)
     assert out.size() == (4, channels)
-
-    if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x, edge_index), out, atol=1e-6)
 
 
 @pytest.mark.parametrize('channels', [32])
@@ -66,15 +53,6 @@ def test_dna_conv_sparse_tensor(channels, num_layers):
         adj4 = SparseTensor.from_edge_index(edge_index, value, (4, 4))
         assert torch.allclose(conv(x, adj3.t()), out1, atol=1e-6)
         assert torch.allclose(conv(x, adj4.t()), out2, atol=1e-6)
-
-    if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x, edge_index), out1, atol=1e-6)
-        assert torch.allclose(jit(x, edge_index, value), out2, atol=1e-6)
-
-        if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x, adj3.t()), out1, atol=1e-6)
-            assert torch.allclose(jit(x, adj4.t()), out2, atol=1e-6)
 
     conv = DNAConv(channels, heads=1, groups=1, dropout=0.0, cached=True)
 

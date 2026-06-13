@@ -26,9 +26,6 @@ def test_multihead_attention_block(device: torch.device):
     out = block(x, y, x_mask, y_mask)
     assert out.size() == (2, 4, 8)
 
-    jit = torch.jit.script(block)
-    assert torch.allclose(jit(x, y, x_mask, y_mask), out)
-
 
 @withCUDA
 def test_multihead_attention_block_dropout(device: torch.device):
@@ -50,9 +47,6 @@ def test_set_attention_block():
     out = block(x, mask)
     assert out.size() == (2, 4, 8)
 
-    jit = torch.jit.script(block)
-    assert torch.allclose(jit(x, mask), out)
-
 
 def test_induced_set_attention_block():
     x = torch.randn(2, 4, 8)
@@ -65,9 +59,6 @@ def test_induced_set_attention_block():
     out = block(x, mask)
     assert out.size() == (2, 4, 8)
 
-    jit = torch.jit.script(block)
-    assert torch.allclose(jit(x, mask), out)
-
 
 def test_pooling_by_multihead_attention():
     x = torch.randn(2, 4, 8)
@@ -79,6 +70,3 @@ def test_pooling_by_multihead_attention():
 
     out = block(x, mask)
     assert out.size() == (2, 2, 8)
-
-    jit = torch.jit.script(block)
-    assert torch.allclose(jit(x, mask), out)

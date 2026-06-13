@@ -3,7 +3,6 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import ResGatedGraphConv
-from torch_geometric.testing import is_full_test
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_csc_tensor
 
@@ -27,13 +26,6 @@ def test_res_gated_graph_conv(edge_dim):
         adj2 = SparseTensor.from_edge_index(edge_index, edge_attr, (4, 4))
         assert torch.allclose(conv(x1, adj2.t()), out, atol=1e-6)
 
-    if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x1, edge_index, edge_attr), out, atol=1e-6)
-
-        if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x1, adj2.t()), out, atol=1e-6)
-
     # Test bipartite message passing:
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 2))
 
@@ -47,11 +39,3 @@ def test_res_gated_graph_conv(edge_dim):
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj2 = SparseTensor.from_edge_index(edge_index, edge_attr, (4, 2))
         assert torch.allclose(conv((x1, x2), adj2.t()), out, atol=1e-6)
-
-    if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit((x1, x2), edge_index, edge_attr), out,
-                              atol=1e-6)
-
-        if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit((x1, x2), adj2.t()), out, atol=1e-6)

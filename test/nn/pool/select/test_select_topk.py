@@ -6,7 +6,6 @@ import torch
 from torch_geometric.nn.pool.select import SelectOutput, SelectTopK
 from torch_geometric.nn.pool.select.topk import topk
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import is_full_test
 
 
 def test_topk_ratio():
@@ -27,12 +26,6 @@ def test_topk_ratio():
     assert perm3.tolist() == [1, 0, 5, 3, 2]
     assert x[perm3].tolist() == [4.0, 2.0, 9.0, 6.0, 5.0]
     assert batch[perm3].tolist() == [0, 0, 1, 1, 1]
-
-    if is_full_test():
-        jit = torch.jit.script(topk)
-        assert torch.equal(jit(x, 0.5, batch), perm1)
-        assert torch.equal(jit(x, 2, batch), perm2)
-        assert torch.equal(jit(x, 3, batch), perm3)
 
 
 @pytest.mark.parametrize('min_score', [None, 2.0])

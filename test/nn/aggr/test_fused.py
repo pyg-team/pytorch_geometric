@@ -32,9 +32,6 @@ def test_fused_aggregation(aggrs):
     expected = torch.cat([aggr(y, index) for aggr in aggrs], dim=-1)
     assert torch.allclose(out, expected, atol=1e-5)
 
-    jit = torch.jit.script(aggr)
-    assert torch.allclose(torch.cat(jit(x, index), dim=-1), out, atol=1e-5)
-
     out.mean().backward()
     assert x.grad is not None
     expected.mean().backward()

@@ -300,38 +300,6 @@ def test_all_strategies_fail() -> None:
                         pass
 
 
-def test_pytest_environment_detection() -> None:
-    """Test pytest environment detection for better error messages."""
-    model = SimpleModel()
-    x = torch.randn(3, 4)
-
-    with patch('torch.onnx.export') as mock_export:
-        mock_export.side_effect = Exception(
-            "onnx_ir.serde.SerdeError: allowzero")
-
-        # Set pytest environment variable
-        with patch.dict(os.environ, {'PYTEST_CURRENT_TEST': 'test_something'}):
-            with tempfile.NamedTemporaryFile(suffix='.onnx',
-                                             delete=False) as f:
-                try:
-                    with pytest.raises(RuntimeError) as exc_info:
-                        safe_onnx_export(model, (x, ), f.name,
-                                         skip_on_error=False)
-
-                    # Should contain pytest-specific guidance
-                    assert "pytest environments" in str(exc_info.value)
-                    assert "torch.jit.script()" in str(exc_info.value)
-                finally:
-                    if os.path.exists(f.name):
-                        try:
-
-                            os.unlink(f.name)
-
-                        except (PermissionError, OSError):
-
-                            pass
-
-
 def test_warnings_emitted() -> None:
     """Test that appropriate warnings are emitted during workarounds."""
     model = SimpleModel()

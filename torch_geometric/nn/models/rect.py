@@ -59,7 +59,6 @@ class RECT_L(torch.nn.Module):
         x = F.dropout(x, p=self.dropout, training=self.training)
         return self.lin(x)
 
-    @torch.jit.export
     def embed(
         self,
         x: Tensor,
@@ -69,7 +68,6 @@ class RECT_L(torch.nn.Module):
         with torch.no_grad():
             return self.conv(x, edge_index, edge_weight)
 
-    @torch.jit.export
     def get_semantic_labels(
         self,
         x: Tensor,

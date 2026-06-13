@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.nn import BatchNorm, HeteroBatchNorm
-from torch_geometric.testing import is_full_test, withDevice
+from torch_geometric.testing import withDevice
 
 
 @withDevice
@@ -21,9 +21,6 @@ def test_batch_norm(device, conf):
     assert bn.track_running_stats == conf
     assert (bn.weight is not None) == conf
     assert (bn.bias is not None) == conf
-
-    if is_full_test():
-        torch.jit.script(norm)
 
     out = norm(x)
     assert out.size() == (100, 16)

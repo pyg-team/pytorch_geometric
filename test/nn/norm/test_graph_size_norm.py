@@ -1,7 +1,6 @@
 import torch
 
 from torch_geometric.nn import GraphSizeNorm
-from torch_geometric.testing import is_full_test
 
 
 def test_graph_size_norm():
@@ -13,7 +12,3 @@ def test_graph_size_norm():
 
     out = norm(x, batch)
     assert out.size() == (100, 16)
-
-    if is_full_test():
-        jit = torch.jit.script(norm)
-        assert torch.allclose(jit(x, batch), out)

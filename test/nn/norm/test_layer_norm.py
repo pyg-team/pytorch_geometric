@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.nn import HeteroLayerNorm, LayerNorm
-from torch_geometric.testing import is_full_test, withDevice
+from torch_geometric.testing import withDevice
 
 
 @withDevice
@@ -14,9 +14,6 @@ def test_layer_norm(device, affine, mode):
 
     norm = LayerNorm(16, affine=affine, mode=mode, device=device)
     assert str(norm) == f'LayerNorm(16, affine={affine}, mode={mode})'
-
-    if is_full_test():
-        torch.jit.script(norm)
 
     out1 = norm(x)
     assert out1.size() == (100, 16)

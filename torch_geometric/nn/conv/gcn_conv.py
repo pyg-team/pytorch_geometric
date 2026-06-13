@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, overload
 
 import torch
 from torch import Tensor
@@ -26,19 +26,29 @@ from torch_geometric.utils.num_nodes import maybe_num_nodes
 from torch_geometric.utils.sparse import set_sparse_value
 
 
-@torch.jit._overload
+@overload
 def gcn_norm(  # noqa: F811
-        edge_index, edge_weight, num_nodes, improved, add_self_loops, flow,
-        dtype):
-    # type: (Tensor, OptTensor, Optional[int], bool, bool, str, Optional[int]) -> OptPairTensor  # noqa
+    edge_index: Tensor,
+    edge_weight: OptTensor = None,
+    num_nodes: Optional[int] = None,
+    improved: bool = False,
+    add_self_loops: bool = True,
+    flow: str = "source_to_target",
+    dtype: Optional[torch.dtype] = None,
+) -> OptPairTensor:
     pass
 
 
-@torch.jit._overload
+@overload
 def gcn_norm(  # noqa: F811
-        edge_index, edge_weight, num_nodes, improved, add_self_loops, flow,
-        dtype):
-    # type: (SparseTensor, OptTensor, Optional[int], bool, bool, str, Optional[int]) -> SparseTensor  # noqa
+    edge_index: SparseTensor,
+    edge_weight: OptTensor = None,
+    num_nodes: Optional[int] = None,
+    improved: bool = False,
+    add_self_loops: bool = True,
+    flow: str = "source_to_target",
+    dtype: Optional[torch.dtype] = None,
+) -> SparseTensor:
     pass
 
 

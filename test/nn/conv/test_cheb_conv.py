@@ -2,7 +2,6 @@ import torch
 
 from torch_geometric.data import Batch, Data
 from torch_geometric.nn import ChebConv
-from torch_geometric.testing import is_full_test
 
 
 def test_cheb_conv():
@@ -21,14 +20,6 @@ def test_cheb_conv():
     out3 = conv(x, edge_index, edge_weight, lambda_max=3.0)
     assert out3.size() == (num_nodes, out_channels)
 
-    if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x, edge_index), out1)
-        assert torch.allclose(jit(x, edge_index, edge_weight), out2)
-        assert torch.allclose(
-            jit(x, edge_index, edge_weight, lambda_max=torch.tensor(3.0)),
-            out3)
-
     batch = torch.tensor([0, 0, 1, 1])
     edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 3, 2]])
     num_nodes = edge_index.max().item() + 1
@@ -40,11 +31,6 @@ def test_cheb_conv():
     assert out4.size() == (num_nodes, out_channels)
     out5 = conv(x, edge_index, edge_weight, batch, lambda_max)
     assert out5.size() == (num_nodes, out_channels)
-
-    if is_full_test():
-        assert torch.allclose(jit(x, edge_index, edge_weight, batch), out4)
-        assert torch.allclose(
-            jit(x, edge_index, edge_weight, batch, lambda_max), out5)
 
 
 def test_cheb_conv_batch():

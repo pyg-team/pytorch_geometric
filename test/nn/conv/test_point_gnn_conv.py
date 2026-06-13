@@ -2,7 +2,6 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import MLP, PointGNNConv
-from torch_geometric.testing import is_full_test
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_csc_tensor
 
@@ -31,10 +30,3 @@ def test_point_gnn_conv():
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(6, 6))
         assert torch.allclose(conv(x, pos, adj2.t()), out, atol=1e-6)
-
-    if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x, pos, edge_index), out, atol=1e-6)
-
-        if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x, pos, adj2.t()), out, atol=1e-6)

@@ -1,7 +1,6 @@
 import torch
 
 from torch_geometric.nn import MeanSubtractionNorm
-from torch_geometric.testing import is_full_test
 
 
 def test_mean_subtraction_norm():
@@ -10,9 +9,6 @@ def test_mean_subtraction_norm():
 
     norm = MeanSubtractionNorm()
     assert str(norm) == 'MeanSubtractionNorm()'
-
-    if is_full_test():
-        torch.jit.script(norm)
 
     out = norm(x)
     assert out.size() == (6, 16)

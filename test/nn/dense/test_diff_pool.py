@@ -4,7 +4,6 @@ import torch
 
 from torch_geometric.nn import dense_diff_pool
 from torch_geometric.profile import benchmark
-from torch_geometric.testing import is_full_test
 
 
 def test_dense_diff_pool():
@@ -19,14 +18,6 @@ def test_dense_diff_pool():
     assert adj_out.size() == (2, 10, 10)
     assert link_loss.item() >= 0
     assert ent_loss.item() >= 0
-
-    if is_full_test():
-        jit = torch.jit.script(dense_diff_pool)
-        x_jit, adj_jit, link_loss, ent_loss = jit(x, adj, s, mask)
-        assert torch.allclose(x_jit, x_out)
-        assert torch.allclose(adj_jit, adj_out)
-        assert link_loss.item() >= 0
-        assert ent_loss.item() >= 0
 
 
 if __name__ == '__main__':

@@ -1,7 +1,7 @@
 import torch
 
 from torch_geometric.nn import XConv
-from torch_geometric.testing import is_full_test, withPackage
+from torch_geometric.testing import withPackage
 
 
 @withPackage('pyg_lib')
@@ -20,12 +20,3 @@ def test_x_conv():
     torch.manual_seed(12345)
     out2 = conv(x, pos, batch)
     assert out2.size() == (8, 32)
-
-    if is_full_test():
-        jit = torch.jit.script(conv)
-
-        torch.manual_seed(12345)
-        assert torch.allclose(jit(x, pos), out1, atol=1e-6)
-
-        torch.manual_seed(12345)
-        assert torch.allclose(jit(x, pos, batch), out2, atol=1e-6)

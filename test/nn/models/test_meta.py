@@ -7,7 +7,6 @@ from torch.nn import ReLU
 from torch.nn import Sequential as Seq
 
 from torch_geometric.nn import MetaLayer
-from torch_geometric.testing import is_full_test
 from torch_geometric.utils import scatter
 
 count = 0
@@ -117,11 +116,3 @@ def test_meta_layer_example():
     assert x_out.size() == (20, 10)
     assert edge_attr_out.size() == (40, 5)
     assert u_out.size() == (2, 20)
-
-    if is_full_test():
-        jit = torch.jit.script(op)
-
-        x_out, edge_attr_out, u_out = jit(x, edge_index, edge_attr, u, batch)
-        assert x_out.size() == (20, 10)
-        assert edge_attr_out.size() == (40, 5)
-        assert u_out.size() == (2, 20)

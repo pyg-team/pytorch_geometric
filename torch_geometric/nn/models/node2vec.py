@@ -97,7 +97,6 @@ class Node2Vec(torch.nn.Module):
         return DataLoader(range(self.num_nodes), collate_fn=self.sample,
                           **kwargs)
 
-    @torch.jit.export
     def pos_sample(self, batch: Tensor) -> Tensor:
         batch = batch.repeat(self.walks_per_node)
         rw = self.random_walk_fn(self.rowptr, self.col, batch,
@@ -111,7 +110,6 @@ class Node2Vec(torch.nn.Module):
             walks.append(rw[:, j:j + self.context_size])
         return torch.cat(walks, dim=0)
 
-    @torch.jit.export
     def neg_sample(self, batch: Tensor) -> Tensor:
         batch = batch.repeat(self.walks_per_node * self.num_negative_samples)
 
@@ -125,13 +123,11 @@ class Node2Vec(torch.nn.Module):
             walks.append(rw[:, j:j + self.context_size])
         return torch.cat(walks, dim=0)
 
-    @torch.jit.export
     def sample(self, batch: Union[List[int], Tensor]) -> Tuple[Tensor, Tensor]:
         if not isinstance(batch, Tensor):
             batch = torch.tensor(batch)
         return self.pos_sample(batch), self.neg_sample(batch)
 
-    @torch.jit.export
     def loss(self, pos_rw: Tensor, neg_rw: Tensor) -> Tensor:
         r"""Computes the loss given positive and negative random walks."""
         # Positive loss.

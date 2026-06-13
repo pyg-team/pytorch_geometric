@@ -2,7 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.nn import InstanceNorm
-from torch_geometric.testing import is_full_test, withDevice
+from torch_geometric.testing import withDevice
 
 
 @withDevice
@@ -18,9 +18,6 @@ def test_instance_norm(conf, device):
     norm2 = InstanceNorm(16, affine=conf, track_running_stats=conf,
                          device=device)
     assert str(norm1) == 'InstanceNorm(16)'
-
-    if is_full_test():
-        torch.jit.script(norm1)
 
     out1 = norm1(x1)
     out2 = norm2(x1, batch)

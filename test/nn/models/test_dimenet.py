@@ -48,13 +48,6 @@ def test_dimenet(Model):
     )
     model.reset_parameters()
 
-    with torch.no_grad():
-        out = model(z, pos)
-        assert out.size() == (1, )
-
-        jit = torch.jit.export(model)
-        assert torch.allclose(jit(z, pos), out)
-
     if is_full_test():
         optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
 

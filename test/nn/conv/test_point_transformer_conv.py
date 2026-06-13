@@ -3,7 +3,6 @@ from torch.nn import Linear, ReLU, Sequential
 
 import torch_geometric.typing
 from torch_geometric.nn import PointTransformerConv
-from torch_geometric.testing import is_full_test
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_csc_tensor
 
@@ -26,13 +25,6 @@ def test_point_transformer_conv():
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
         assert torch.allclose(conv(x1, pos1, adj2.t()), out, atol=1e-6)
-
-    if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x1, pos1, edge_index), out, atol=1e-6)
-
-        if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x1, pos1, adj2.t()), out, atol=1e-6)
 
     pos_nn = Sequential(Linear(3, 16), ReLU(), Linear(16, 32))
     attn_nn = Sequential(Linear(32, 32), ReLU(), Linear(32, 32))
@@ -57,10 +49,3 @@ def test_point_transformer_conv():
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 2))
         assert torch.allclose(conv((x1, x2), (pos1, pos2), adj2.t()), out)
-
-    if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit((x1, x2), (pos1, pos2), edge_index), out)
-
-        if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit((x1, x2), (pos1, pos2), adj2.t()), out)

@@ -1,7 +1,7 @@
 import torch
 
 from torch_geometric.nn import GravNetConv
-from torch_geometric.testing import is_full_test, withPackage
+from torch_geometric.testing import withPackage
 
 
 @withPackage('pyg_lib')
@@ -25,11 +25,3 @@ def test_gravnet_conv():
 
     out22 = conv((x1, x2), (batch1, batch2))
     assert out22.size() == (4, 32)
-
-    if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x1), out11)
-        assert torch.allclose(jit(x1, batch1), out12)
-
-        assert torch.allclose(jit((x1, x2)), out21)
-        assert torch.allclose(jit((x1, x2), (batch1, batch2)), out22)

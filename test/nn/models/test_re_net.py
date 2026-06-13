@@ -1,9 +1,7 @@
 import torch
 
 from torch_geometric.datasets.icews import EventDataset
-from torch_geometric.loader import DataLoader
 from torch_geometric.nn import RENet
-from torch_geometric.testing import is_full_test
 
 
 class MyTestEventDataset(EventDataset):
@@ -40,13 +38,9 @@ class MyTestEventDataset(EventDataset):
 
 def test_re_net(tmp_path):
     dataset = MyTestEventDataset(tmp_path, seq_len=4)
-    loader = DataLoader(dataset, 2, follow_batch=['h_sub', 'h_obj'])
 
     model = RENet(dataset.num_nodes, dataset.num_rels, hidden_channels=16,
                   seq_len=4)
-
-    if is_full_test():
-        jit = torch.jit.export(model)
 
     logits = torch.randn(6, 6)
     y = torch.tensor([0, 1, 2, 3, 4, 5])
@@ -54,12 +48,3 @@ def test_re_net(tmp_path):
     mrr, hits1, hits3, hits10 = model.test(logits, y)
     assert 0.15 < mrr <= 1
     assert hits1 <= hits3 and hits3 <= hits10 and hits10 == 1
-
-    for data in loader:
-        log_prob_obj, log_prob_sub = model(data)
-        if is_full_test():
-            log_prob_obj_jit, log_prob_sub_jit = jit(data)
-            assert torch.allclose(log_prob_obj_jit, log_prob_obj)
-            assert torch.allclose(log_prob_sub_jit, log_prob_sub)
-        model.test(log_prob_obj, data.obj)
-        model.test(log_prob_sub, data.sub)

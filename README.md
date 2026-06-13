@@ -150,7 +150,7 @@ class EdgeConv(MessagePassing):
 PyG provides a multi-layer framework that enables users to build Graph Neural Network solutions on both low and high levels.
 It comprises of the following components:
 
-- The PyG **engine** utilizes the powerful PyTorch deep learning framework with full [`torch.compile`](https://pytorch-geometric.readthedocs.io/en/latest/advanced/compile.html) and [TorchScript](https://pytorch-geometric.readthedocs.io/en/latest/advanced/jit.html) support, as well as additions of efficient CPU/CUDA libraries for operating on sparse data, *e.g.*, [`pyg-lib`](https://github.com/pyg-team/pyg-lib).
+- The PyG **engine** utilizes the powerful PyTorch deep learning framework with full [`torch.compile`](https://pytorch-geometric.readthedocs.io/en/latest/advanced/compile.html) support, as well as additions of efficient CPU/CUDA libraries for operating on sparse data, *e.g.*, [`pyg-lib`](https://github.com/pyg-team/pyg-lib).
 - The PyG **storage** handles data processing, transformation and loading pipelines. It is capable of handling and processing large-scale graph datasets, and provides effective solutions for heterogeneous graphs. It further provides a variety of sampling solutions, which enable training of GNNs on large-scale graphs.
 - The PyG **operators** bundle essential functionalities for implementing Graph Neural Networks. PyG supports important GNN building blocks that can be combined and applied to various parts of a GNN model, ensuring rich flexibility of GNN design.
 - Finally, PyG provides an abundant set of GNN **models**, and examples that showcase GNN models on standard graph benchmarks. Thanks to its flexibility, users can easily build and modify custom GNN models to fit their specific needs.

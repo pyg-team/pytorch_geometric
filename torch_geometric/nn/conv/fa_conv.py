@@ -1,5 +1,4 @@
-import typing
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple, Union, overload
 
 import torch.nn.functional as F
 from torch import Tensor
@@ -17,11 +16,6 @@ from torch_geometric.typing import (
 )
 from torch_geometric.utils import is_torch_sparse_tensor
 from torch_geometric.utils.sparse import set_sparse_value
-
-if typing.TYPE_CHECKING:
-    from typing import overload
-else:
-    from torch.jit import _overload_method as overload
 
 
 class FAConv(MessagePassing):
@@ -220,7 +214,6 @@ class FAConv(MessagePassing):
             assert alpha is not None
             if isinstance(edge_index, Tensor):
                 if is_torch_sparse_tensor(edge_index):
-                    # TODO TorchScript requires to return a tuple
                     adj = set_sparse_value(edge_index, alpha)
                     return out, (adj, alpha)
                 else:

@@ -1,7 +1,7 @@
 import torch
 
 from torch_geometric.nn import GraphUNet
-from torch_geometric.testing import is_full_test, onlyLinux
+from torch_geometric.testing import onlyLinux
 
 
 @onlyLinux  # TODO  (matthias) Investigate CSR @ CSR support on Windows.
@@ -15,8 +15,3 @@ def test_graph_unet():
 
     out = model(x, edge_index)
     assert out.size() == (3, 8)
-
-    if is_full_test():
-        jit = torch.jit.export(model)
-        out = jit(x, edge_index)
-        assert out.size() == (3, 8)

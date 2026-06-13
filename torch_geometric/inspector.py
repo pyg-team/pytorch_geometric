@@ -110,7 +110,7 @@ class Inspector:
                 continue
 
             param_type = param.annotation
-            # Mimic TorchScript to auto-infer `Tensor` on non-present types:
+            # Auto-infer `Tensor` on non-present types:
             param_type = Tensor if param_type is inspect._empty else param_type
 
             param_dict[param.name] = Parameter(
@@ -121,7 +121,7 @@ class Inspector:
             )
 
         return_type = signature.return_annotation
-        # Mimic TorchScript to auto-infer `Tensor` on non-present types:
+        # Auto-infer `Tensor` on non-present types:
         return_type = Tensor if return_type is inspect._empty else return_type
 
         self._signature_dict[func.__name__] = Signature(

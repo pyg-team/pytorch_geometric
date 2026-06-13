@@ -4,7 +4,6 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn.aggr import SetTransformerAggregation
-from torch_geometric.testing import is_full_test
 
 
 def test_set_transformer_aggregation():
@@ -25,7 +24,3 @@ def test_set_transformer_aggregation():
                           stacklevel=2)
     else:
         assert out[2].abs().sum() == 0
-
-    if is_full_test():
-        jit = torch.jit.script(aggr)
-        assert torch.allclose(jit(x, index), out)

@@ -232,22 +232,3 @@ def test_summary_with_module_dict_model():
 +-------------------------+---------------+----------------+----------+
 """
     assert summary(model, x, 'prelu') == expected[1:-1]
-
-
-@withPackage('tabulate')
-def test_summary_with_jit_model():
-    model = nn.Sequential(nn.Linear(32, 16), nn.ReLU(), nn.Linear(16, 8))
-    model = torch.jit.script(model)
-    x = torch.randn(100, 32)
-
-    expected = """
-+----------------------------+---------------+----------------+----------+
-| Layer                      | Input Shape   | Output Shape   | #Param   |
-|----------------------------+---------------+----------------+----------|
-| RecursiveScriptModule      | --            | --             | 664      |
-| ├─(0)RecursiveScriptModule | --            | --             | 528      |
-| ├─(1)RecursiveScriptModule | --            | --             | --       |
-| ├─(2)RecursiveScriptModule | --            | --             | 136      |
-+----------------------------+---------------+----------------+----------+
-"""
-    assert summary(model, x) == expected[1:-1]

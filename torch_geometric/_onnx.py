@@ -13,8 +13,6 @@ def is_in_onnx_export() -> bool:
     """
     if is_compiling():
         return False
-    if torch.jit.is_scripting():
-        return False
     return torch.onnx.is_in_onnx_export()
 
 
@@ -218,8 +216,7 @@ def _apply_onnx_allowzero_workaround(
             "script)\n"
             "2. Update packages: pip install --upgrade onnx onnxscript "
             "onnx_ir\n"
-            "3. Use torch.jit.script() instead of ONNX export for testing\n"
-            "4. Use safe_onnx_export(..., skip_on_error=True) to skip "
+            "3. Use safe_onnx_export(..., skip_on_error=True) to skip "
             "gracefully in CI")
     else:
         error_msg += ("\n\nTry updating packages: pip install --upgrade onnx "

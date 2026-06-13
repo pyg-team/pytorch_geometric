@@ -1,7 +1,7 @@
 import torch
 
 from torch_geometric.nn import GNNFF
-from torch_geometric.testing import is_full_test, withPackage
+from torch_geometric.testing import withPackage
 
 
 @withPackage('torch_sparse')  # TODO `triplet` requires `SparseTensor` for now.
@@ -19,7 +19,3 @@ def test_gnnff():
 
     out = model(z, pos)
     assert out.size() == (20, 3)
-
-    if is_full_test():
-        jit = torch.jit.export(model)
-        assert torch.allclose(jit(z, pos), out)

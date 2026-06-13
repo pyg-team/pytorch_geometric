@@ -45,6 +45,3 @@ def test_multi_aggr(multi_aggr_tuple):
             aggr(x, ptr=ptr)
     else:
         assert torch.allclose(out, aggr(x, ptr=ptr))
-
-    jit = torch.jit.script(aggr)
-    assert torch.allclose(out, jit(x, index))

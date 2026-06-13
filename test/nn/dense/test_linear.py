@@ -142,9 +142,6 @@ def test_hetero_linear_basic(device):
     out = lin(x, type_vec)
     assert out.size() == (3, 32)
 
-    jit = torch.jit.script(lin)
-    assert torch.allclose(jit(x, type_vec), out, atol=1e-3)
-
 
 def test_hetero_linear_initializer():
     lin = HeteroLinear(
@@ -218,18 +215,6 @@ def test_hetero_dict_linear(bias, device):
     assert len(out_dict) == 2
     assert out_dict['v'].size() == (3, 32)
     assert out_dict['w'].size() == (2, 32)
-
-
-def test_hetero_dict_linear_jit():
-    x_dict = {
-        'v': torch.randn(3, 16),
-        'w': torch.randn(2, 8),
-    }
-
-    lin = HeteroDictLinear({'v': 16, 'w': 8}, 32)
-
-    jit = torch.jit.script(lin)
-    assert len(jit(x_dict)) == 2
 
 
 @withDevice

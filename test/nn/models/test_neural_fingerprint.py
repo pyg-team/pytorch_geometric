@@ -3,7 +3,6 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import NeuralFingerprint
-from torch_geometric.testing import is_full_test
 from torch_geometric.typing import SparseTensor
 
 
@@ -22,7 +21,3 @@ def test_neural_fingerprint(batch):
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(3, 3))
         assert torch.allclose(model(x, adj.t(), batch), out)
-
-    if is_full_test():
-        jit = torch.jit.export(model)
-        assert torch.allclose(jit(x, edge_index, batch), out)

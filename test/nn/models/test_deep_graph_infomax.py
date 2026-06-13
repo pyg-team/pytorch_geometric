@@ -1,7 +1,7 @@
 import torch
 
 from torch_geometric.nn import GCN, DeepGraphInfomax
-from torch_geometric.testing import has_package, is_full_test, withDevice
+from torch_geometric.testing import has_package, withDevice
 
 
 @withDevice
@@ -26,12 +26,6 @@ def test_infomax(device):
 
     loss = model.loss(pos_z, neg_z, summary)
     assert float(loss) >= 0
-
-    if is_full_test():
-        jit = torch.jit.export(model)
-        pos_z, neg_z, summary = jit(x)
-        assert pos_z.size() == (20, 16) and neg_z.size() == (20, 16)
-        assert summary.size() == (16, )
 
     if has_package('sklearn'):
         acc = model.test(

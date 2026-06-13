@@ -3,7 +3,6 @@ import warnings
 
 import pytest
 import torch
-from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric import EdgeIndex
@@ -80,30 +79,6 @@ def test_spmm_layout(device, layout, reduce):
             spmm(src, other, reduce=reduce)
     else:
         spmm(src, other, reduce=reduce)
-
-
-@pytest.mark.parametrize('reduce', ['sum', 'mean'])
-def test_spmm_jit(reduce):
-    @torch.jit.script
-    def jit_torch_sparse(src: SparseTensor, other: Tensor,
-                         reduce: str) -> Tensor:
-        return spmm(src, other, reduce=reduce)
-
-    @torch.jit.script
-    def jit_torch(src: Tensor, other: Tensor, reduce: str) -> Tensor:
-        return spmm(src, other, reduce=reduce)
-
-    src = torch.randn(5, 4)
-    other = torch.randn(4, 8)
-
-    out1 = src @ other
-    out2 = jit_torch(src.to_sparse_csr(), other, reduce)
-    assert out1.size() == (5, 8)
-    if reduce == 'sum':
-        assert torch.allclose(out1, out2, atol=1e-6)
-    if torch_geometric.typing.WITH_TORCH_SPARSE:
-        out3 = jit_torch_sparse(SparseTensor.from_dense(src), other, reduce)
-        assert torch.allclose(out2, out3, atol=1e-6)
 
 
 @withCUDA

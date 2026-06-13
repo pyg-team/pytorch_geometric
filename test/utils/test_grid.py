@@ -1,6 +1,3 @@
-import torch
-
-from torch_geometric.testing import is_full_test
 from torch_geometric.utils import grid
 
 
@@ -17,10 +14,3 @@ def test_grid():
     assert row.tolist() == expected_row
     assert col.tolist() == expected_col
     assert pos.tolist() == expected_pos
-
-    if is_full_test():
-        jit = torch.jit.script(grid)
-        (row, col), pos = jit(height=3, width=2)
-        assert row.tolist() == expected_row
-        assert col.tolist() == expected_col
-        assert pos.tolist() == expected_pos

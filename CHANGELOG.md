@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Removed
 
+- Dropped TorchScript support across PyG.
+
 ### Fixed
 
 - Fixed Python 3.14 full-test CI setup compatibility.

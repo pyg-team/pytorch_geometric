@@ -3,7 +3,7 @@ from torch import Tensor as T
 
 from torch_geometric.data import Data
 from torch_geometric.nn import ARGA, ARGVA, GAE, VGAE
-from torch_geometric.testing import has_package, is_full_test
+from torch_geometric.testing import has_package
 from torch_geometric.transforms import RandomLinkSplit
 
 
@@ -26,11 +26,6 @@ def test_gae():
     edge_index = torch.tensor([[0, 1], [1, 2]])
     value = model.decode(z, edge_index)
     assert torch.allclose(value, torch.tensor([-1.0, 4.0]).sigmoid())
-
-    if is_full_test():
-        jit = torch.jit.export(model)
-        assert torch.allclose(jit.encode(x), z)
-        assert torch.allclose(jit.decode(z, edge_index), value)
 
     edge_index = torch.tensor([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]])
@@ -59,11 +54,6 @@ def test_vgae():
     model.eval()
     model.encode(x)
 
-    if is_full_test():
-        jit = torch.jit.export(model)
-        jit.encode(x)
-        assert float(jit.kl_loss()) > 0
-
 
 def test_arga():
     model = ARGA(encoder=lambda x: x, discriminator=lambda x: T([0.5]))
@@ -75,12 +65,6 @@ def test_arga():
     assert float(model.reg_loss(z)) > 0
     assert float(model.discriminator_loss(z)) > 0
 
-    if is_full_test():
-        jit = torch.jit.export(model)
-        assert torch.allclose(jit.encode(x), z)
-        assert float(jit.reg_loss(z)) > 0
-        assert float(jit.discriminator_loss(z)) > 0
-
 
 def test_argva():
     model = ARGVA(encoder=lambda x: (x, x), discriminator=lambda x: T([0.5]))
@@ -89,12 +73,6 @@ def test_argva():
     model.encode(x)
     model.reparametrize(model.__mu__, model.__logstd__)
     assert float(model.kl_loss()) > 0
-
-    if is_full_test():
-        jit = torch.jit.export(model)
-        jit.encode(x)
-        jit.reparametrize(jit.__mu__, jit.__logstd__)
-        assert float(jit.kl_loss()) > 0
 
 
 def test_init():

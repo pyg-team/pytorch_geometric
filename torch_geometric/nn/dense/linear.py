@@ -300,8 +300,7 @@ class HeteroLinear(torch.nn.Module):
 
         if torch_geometric.backend.use_segment_matmul is None:
             use_segment_matmul = False
-            if (torch_geometric.typing.WITH_SEGMM and not is_compiling()
-                    and not torch.jit.is_scripting()):
+            if torch_geometric.typing.WITH_SEGMM and not is_compiling():
 
                 # Use "magnitude" of number of rows as timing key:
                 key = math.floor(math.log10(x.size(0)))
@@ -435,7 +434,7 @@ class HeteroDictLinear(torch.nn.Module):
             use_segment_matmul = len(x_dict) >= 10
 
         if (use_segment_matmul and torch_geometric.typing.WITH_GMM
-                and not is_compiling() and not torch.jit.is_scripting()):
+                and not is_compiling()):
             xs, weights, biases = [], [], []
             for key, lin in self.lins.items():
                 if key in x_dict:

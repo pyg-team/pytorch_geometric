@@ -75,7 +75,7 @@ class QuantileAggregation(Aggregation):
         dim = x.dim() + dim if dim < 0 else dim
 
         self.assert_index_present(index)
-        assert index is not None  # Required for TorchScript.
+        assert index is not None
 
         count = torch.bincount(index, minlength=dim_size or 0)
         ptr = cumsum(count)[:-1]

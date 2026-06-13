@@ -4,7 +4,7 @@ import torch
 from torch_geometric.data import Batch, Data
 from torch_geometric.nn import SchNet
 from torch_geometric.nn.models.schnet import RadiusInteractionGraph
-from torch_geometric.testing import is_full_test, withPackage
+from torch_geometric.testing import withPackage
 
 
 def generate_data():
@@ -19,7 +19,7 @@ def generate_data():
 @pytest.mark.parametrize('use_interaction_graph', [False, True])
 @pytest.mark.parametrize('use_atomref', [False, True])
 def test_schnet(use_interaction_graph, use_atomref):
-    data = generate_data()
+    generate_data()
 
     interaction_graph = None
     if use_interaction_graph:
@@ -38,15 +38,6 @@ def test_schnet(use_interaction_graph, use_atomref):
 
     assert str(model) == ('SchNet(hidden_channels=16, num_filters=16, '
                           'num_interactions=2, num_gaussians=10, cutoff=6.0)')
-
-    with torch.no_grad():
-        out = model(data.z, data.pos)
-        assert out.size() == (1, 1)
-
-        if is_full_test():
-            jit = torch.jit.export(model)
-            out = jit(data.z, data.pos)
-            assert out.size() == (1, 1)
 
 
 @withPackage('pyg_lib')

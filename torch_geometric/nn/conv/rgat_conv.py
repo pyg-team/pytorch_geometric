@@ -360,7 +360,6 @@ class RGATConv(MessagePassing):
         if isinstance(return_attention_weights, bool):
             if isinstance(edge_index, Tensor):
                 if is_torch_sparse_tensor(edge_index):
-                    # TODO TorchScript requires to return a tuple
                     adj = set_sparse_value(edge_index, alpha)
                     return out, (adj, alpha)
                 else:

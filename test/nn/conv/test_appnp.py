@@ -2,7 +2,6 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import APPNP
-from torch_geometric.testing import is_full_test
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_csc_tensor
 
@@ -33,13 +32,6 @@ def test_appnp():
     conv.reset_parameters()
     assert conv._cached_edge_index is None
     assert conv._cached_adj_t is None
-
-    if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x, edge_index), out, rtol=1e-5, atol=1e-6)
-
-        if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x, adj2.t()), out, rtol=1e-5, atol=1e-6)
 
 
 def test_appnp_dropout():

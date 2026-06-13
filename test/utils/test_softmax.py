@@ -23,9 +23,6 @@ def test_softmax():
     assert out.tolist() == [[0.5], [0.5], [1], [1]]
     assert softmax(src, ptr=ptr).tolist() == out.tolist()
 
-    jit = torch.jit.script(softmax)
-    assert torch.allclose(jit(src, index), out)
-
 
 def test_softmax_backward():
     src_sparse = torch.rand(4, 8)

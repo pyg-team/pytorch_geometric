@@ -1,5 +1,4 @@
-import typing
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple, Union, overload
 
 import torch
 import torch.nn.functional as F
@@ -25,11 +24,6 @@ from torch_geometric.utils import (
     softmax,
 )
 from torch_geometric.utils.sparse import set_sparse_value
-
-if typing.TYPE_CHECKING:
-    from typing import overload
-else:
-    from torch.jit import _overload_method as overload
 
 
 class GATConv(MessagePassing):
@@ -374,7 +368,6 @@ class GATConv(MessagePassing):
         if isinstance(return_attention_weights, bool):
             if isinstance(edge_index, Tensor):
                 if is_torch_sparse_tensor(edge_index):
-                    # TODO TorchScript requires to return a tuple
                     adj = set_sparse_value(edge_index, alpha)
                     return out, (adj, alpha)
                 else:

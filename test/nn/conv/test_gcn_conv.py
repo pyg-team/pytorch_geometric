@@ -4,7 +4,6 @@ import torch
 import torch_geometric.typing
 from torch_geometric.nn import GCNConv
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
-from torch_geometric.testing import is_full_test
 from torch_geometric.typing import WITH_PT21, SparseTensor
 from torch_geometric.utils import to_torch_coo_tensor, to_torch_csc_tensor
 
@@ -32,15 +31,6 @@ def test_gcn_conv():
         adj4 = SparseTensor.from_edge_index(edge_index, value, (4, 4))
         assert torch.allclose(conv(x, adj3.t()), out1, atol=1e-6)
         assert torch.allclose(conv(x, adj4.t()), out2, atol=1e-6)
-
-    if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x, edge_index), out1, atol=1e-6)
-        assert torch.allclose(jit(x, edge_index, value), out2, atol=1e-6)
-
-        if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x, adj3.t()), out1, atol=1e-6)
-            assert torch.allclose(jit(x, adj4.t()), out2, atol=1e-6)
 
     conv.cached = True
     conv(x, edge_index)
@@ -70,9 +60,7 @@ def test_gcn_conv_with_decomposed_layers():
     out2 = conv(x, edge_index)
     assert torch.allclose(out1, out2)
 
-    # TorchScript should still work since it relies on class methods
     # (but without decomposition).
-    torch.jit.script(conv)
 
     conv.decomposed_layers = 1
     assert conv.propagate.__module__.endswith('GCNConv_propagate')

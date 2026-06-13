@@ -1,6 +1,5 @@
 import torch
 
-from torch_geometric.testing import is_full_test
 from torch_geometric.utils import normalized_cut
 
 
@@ -13,8 +12,3 @@ def test_normalized_cut():
 
     out = normalized_cut(torch.stack([row, col], dim=0), edge_attr)
     assert torch.allclose(out, expected)
-
-    if is_full_test():
-        jit = torch.jit.script(normalized_cut)
-        out = jit(torch.stack([row, col], dim=0), edge_attr)
-        assert torch.allclose(out, expected)

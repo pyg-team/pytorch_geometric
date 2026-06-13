@@ -2,7 +2,6 @@ from collections import defaultdict
 from typing import Any, List, Optional, Union
 
 import torch
-from torch.jit import ScriptModule
 from torch.nn import Module
 
 from torch_geometric.nn.conv import MessagePassing
@@ -96,9 +95,7 @@ def summary(
             info['#param'] = f'{num_params:,}' if num_params > 0 else '--'
         info_list.append(info)
 
-        if not isinstance(module, ScriptModule):
-            hooks[module_id] = module.register_forward_hook(
-                register_hook(info))
+        hooks[module_id] = module.register_forward_hook(register_hook(info))
 
         if depth >= max_depth:
             continue

@@ -3,7 +3,6 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import HEATConv
-from torch_geometric.testing import is_full_test
 from torch_geometric.typing import SparseTensor
 
 
@@ -27,13 +26,3 @@ def test_heat_conv(concat):
         adj = SparseTensor.from_edge_index(edge_index, edge_attr, (4, 4))
         assert torch.allclose(conv(x, adj.t(), node_type, edge_type), out,
                               atol=1e-5)
-
-    if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(
-            jit(x, edge_index, node_type, edge_type, edge_attr), out,
-            atol=1e-5)
-
-        if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x, adj.t(), node_type, edge_type), out,
-                                  atol=1e-5)

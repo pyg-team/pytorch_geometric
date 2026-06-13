@@ -1,5 +1,4 @@
 import os.path as osp
-import warnings
 from abc import abstractmethod
 from inspect import Parameter
 from typing import (
@@ -167,8 +166,8 @@ class MessagePassing(torch.nn.Module):
         self._edge_update_forward_pre_hooks: HookDict = OrderedDict()
         self._edge_update_forward_hooks: HookDict = OrderedDict()
 
-        # Set jittable `propagate` and `edge_updater` function templates:
-        self._set_jittable_templates()
+        # Set optimized `propagate` and `edge_updater` function templates:
+        self._set_templates()
 
         # Explainability:
         self._explain: Optional[bool] = None
@@ -188,7 +187,7 @@ class MessagePassing(torch.nn.Module):
     def __setstate__(self, data: Dict[str, Any]) -> None:
         self.inspector = data['inspector']
         self.fuse = data['fuse']
-        self._set_jittable_templates()
+        self._set_templates()
         super().__setstate__(data)
 
     def __repr__(self) -> str:
@@ -207,7 +206,7 @@ class MessagePassing(torch.nn.Module):
         size: Optional[Tuple[Optional[int], Optional[int]]],
     ) -> List[Optional[int]]:
 
-        if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        if isinstance(edge_index, EdgeIndex):
             return [edge_index.num_rows, edge_index.num_cols]
 
         if is_sparse(edge_index):
@@ -234,7 +233,7 @@ class MessagePassing(torch.nn.Module):
             if edge_index.dim() != 2:
                 raise ValueError(f"Expected 'edge_index' to be two-dimensional"
                                  f" (got {edge_index.dim()} dimensions)")
-            if not torch.jit.is_tracing() and edge_index.size(0) != 2:
+            if edge_index.size(0) != 2:
                 raise ValueError(f"Expected 'edge_index' to have size '2' in "
                                  f"the first dimension (got "
                                  f"'{edge_index.size(0)}')")
@@ -261,7 +260,7 @@ class MessagePassing(torch.nn.Module):
                 f'dimension {self.node_dim}, but expected size {the_size}.')
 
     def _index_select(self, src: Tensor, index) -> Tensor:
-        if torch.jit.is_scripting() or is_compiling():
+        if is_compiling():
             return src.index_select(self.node_dim, index)
         else:
             return self._index_select_safe(src, index)
@@ -295,7 +294,7 @@ class MessagePassing(torch.nn.Module):
         edge_index: Union[Tensor, SparseTensor],
         dim: int,
     ) -> Tensor:
-        if not torch.jit.is_scripting() and is_torch_sparse_tensor(edge_index):
+        if is_torch_sparse_tensor(edge_index):
             assert dim == 0 or dim == 1
             if edge_index.layout == torch.sparse_coo:
                 index = edge_index._indices()[1 - dim]
@@ -315,9 +314,6 @@ class MessagePassing(torch.nn.Module):
             return src.index_select(self.node_dim, index)
 
         elif isinstance(edge_index, Tensor):
-            if torch.jit.is_scripting():  # Try/catch blocks are not supported.
-                index = edge_index[dim]
-                return src.index_select(self.node_dim, index)
             return self._index_select(src, edge_index[dim])
 
         elif isinstance(edge_index, SparseTensor):
@@ -470,8 +466,7 @@ class MessagePassing(torch.nn.Module):
         if self.fuse and not self.explain:
             if is_sparse(edge_index):
                 fuse = True
-            elif (not torch.jit.is_scripting()
-                  and isinstance(edge_index, EdgeIndex)):
+            elif isinstance(edge_index, EdgeIndex):
                 if (self.SUPPORTS_FUSED_EDGE_INDEX
                         and edge_index.is_sorted_by_col):
                     fuse = True
@@ -683,10 +678,6 @@ class MessagePassing(torch.nn.Module):
 
     @decomposed_layers.setter
     def decomposed_layers(self, decomposed_layers: int) -> None:
-        if torch.jit.is_scripting():
-            raise ValueError("Inference decomposition of message passing "
-                             "modules is only supported on the Python module")
-
         if decomposed_layers == self._decomposed_layers:
             return  # Abort early if nothing to do.
 
@@ -710,10 +701,6 @@ class MessagePassing(torch.nn.Module):
 
     @explain.setter
     def explain(self, explain: Optional[bool]) -> None:
-        if torch.jit.is_scripting():
-            raise ValueError("Explainability of message passing modules "
-                             "is only supported on the Python module")
-
         if explain == self._explain:
             return  # Abort early if nothing to do.
 
@@ -921,9 +908,9 @@ class MessagePassing(torch.nn.Module):
         self._edge_update_forward_hooks[handle.id] = hook
         return handle
 
-    # TorchScript Support #####################################################
+    # Template Support ########################################################
 
-    def _set_jittable_templates(self, raise_on_error: bool = False) -> None:
+    def _set_templates(self, raise_on_error: bool = False) -> None:
         root_dir = osp.dirname(osp.realpath(__file__))
         jinja_prefix = f'{self.__module__}_{self.__class__.__name__}'
         # Optimize `propagate()` via `*.jinja` templates:
@@ -1019,17 +1006,3 @@ class MessagePassing(torch.nn.Module):
             return_type=edge_update_signature.return_type,
             return_type_repr=edge_update_signature.return_type_repr,
         )
-
-    def jittable(self, typing: Optional[str] = None) -> 'MessagePassing':
-        r"""Analyzes the :class:`MessagePassing` instance and produces a new
-        jittable module that can be used in combination with
-        :meth:`torch.jit.script`.
-
-        .. note::
-            :meth:`jittable` is deprecated and a no-op from :pyg:`PyG` 2.5
-            onwards.
-        """
-        warnings.warn(
-            f"'{self.__class__.__name__}.jittable' is deprecated "
-            f"and a no-op. Please remove its usage.", stacklevel=2)
-        return self

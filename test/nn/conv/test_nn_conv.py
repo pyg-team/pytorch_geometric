@@ -5,7 +5,7 @@ from torch.nn import Sequential as Seq
 
 import torch_geometric.typing
 from torch_geometric.nn import NNConv
-from torch_geometric.testing import is_full_test, withCUDA
+from torch_geometric.testing import withCUDA
 from torch_geometric.typing import SparseTensor
 from torch_geometric.utils import to_torch_coo_tensor
 
@@ -36,14 +36,6 @@ def test_nn_conv(device):
         adj2 = SparseTensor.from_edge_index(edge_index, value, (4, 4))
         assert torch.allclose(conv(x1, adj2.t()), out)
 
-    if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x1, edge_index, value), out)
-        assert torch.allclose(jit(x1, edge_index, value, size=(4, 4)), out)
-
-        if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x1, adj2.t()), out)
-
     # Test bipartite message passing:
     adj1 = to_torch_coo_tensor(edge_index, value, size=(4, 2))
 
@@ -70,15 +62,3 @@ def test_nn_conv(device):
         adj2 = SparseTensor.from_edge_index(edge_index, value, (4, 2))
         assert torch.allclose(conv((x1, x2), adj2.t()), out1)
         assert torch.allclose(conv((x1, None), adj2.t()), out2)
-
-    if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit((x1, x2), edge_index, value), out1)
-        assert torch.allclose(jit((x1, x2), edge_index, value, size=(4, 2)),
-                              out1)
-        assert torch.allclose(jit((x1, None), edge_index, value, size=(4, 2)),
-                              out2)
-
-        if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit((x1, x2), adj2.t()), out1)
-            assert torch.allclose(jit((x1, None), adj2.t()), out2)

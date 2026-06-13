@@ -5,7 +5,7 @@ import torch_geometric.typing
 from torch_geometric.data import Data
 from torch_geometric.loader import DataLoader, NeighborLoader
 from torch_geometric.nn import PNAConv
-from torch_geometric.testing import is_full_test, onlyNeighborSampler
+from torch_geometric.testing import onlyNeighborSampler
 from torch_geometric.typing import SparseTensor
 
 aggregators = ['sum', 'mean', 'min', 'max', 'var', 'std']
@@ -31,13 +31,6 @@ def test_pna_conv(divide_input):
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj = SparseTensor.from_edge_index(edge_index, value, (4, 4))
         assert torch.allclose(conv(x, adj.t()), out, atol=1e-6)
-
-    if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x, edge_index, value), out, atol=1e-6)
-
-        if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
 
 
 @onlyNeighborSampler

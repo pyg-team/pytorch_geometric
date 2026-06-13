@@ -222,9 +222,6 @@ class MLP(torch.nn.Module):
                 additionally return the embeddings before execution of the
                 final output layer. (default: :obj:`False`)
         """
-        # `return_emb` is annotated here as `NoneType` to be compatible with
-        # TorchScript, which does not support different return types based on
-        # the value of an input argument.
         emb: Optional[Tensor] = None
 
         # If `plain_last=True`, then `len(norms) = len(lins) -1, thus skipping

@@ -1,4 +1,3 @@
-import typing
 from typing import Union
 
 import torch
@@ -36,7 +35,7 @@ def edge_updater(
     )
 
     # Begin Edge Update Forward Pre Hook #######################################
-    if not torch.jit.is_scripting() and not is_compiling():
+    if not is_compiling():
         for hook in self._edge_update_forward_pre_hooks.values():
             hook_kwargs = dict(
 {%- for name in collect_param_dict %}
@@ -60,7 +59,7 @@ def edge_updater(
     )
 
     # Begin Edge Update Forward Hook ###########################################
-    if not torch.jit.is_scripting() and not is_compiling():
+    if not is_compiling():
         for hook in self._edge_update_forward_hooks.values():
             hook_kwargs = dict(
 {%- for name in collect_param_dict %}
