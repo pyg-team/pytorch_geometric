@@ -74,13 +74,7 @@ runs:
     - name: Install faiss-cpu
       if: ${{ inputs.full_install == 'true' && inputs.cuda-version == 'cpu' && runner.os == 'Linux' }}
       run: |
-        if [ "${{ inputs.python-version }}" = '3.14' ]; then
-          # faiss-cpu 1.7.2 has no Python 3.14 wheel; use a current wheel.
-          uv pip install faiss-cpu 'numpy<3'
-        else
-          # Keep stable CI rows on the existing known-good FAISS wheel.
-          uv pip install faiss-cpu==1.7.2
-        fi
+        uv pip install faiss-cpu
       shell: bash
 
     - name: Install faiss-gpu
