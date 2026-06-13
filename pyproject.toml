@@ -95,6 +95,7 @@ full = [
     "h5py",
     "matplotlib",
     "networkx",
+    # Python 3.13+ cannot use the legacy Numba<0.60 full-test baseline.
     "numba<0.60.0; python_version < '3.13'",
     "numba>=0.65.0; python_version >= '3.13'",
     "opt_einsum",

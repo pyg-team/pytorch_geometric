@@ -31,8 +31,8 @@ runs:
 
     - name: Install numpy
       run: |
-        if [ "${{ inputs.python-version }}" = '3.14' ]; then
-          # Python 3.14 full tests need NumPy 2; keep a major-version guard.
+        if python -c 'import sys; raise SystemExit(sys.version_info < (3, 13))'; then
+          # Python 3.13+ full-test deps need NumPy 2-compatible wheels.
           uv pip install "numpy<3"
         else
           # Keep stable CI rows on the existing NumPy 1.x baseline.
