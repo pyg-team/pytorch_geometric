@@ -80,8 +80,7 @@ runs:
     - name: Install faiss-gpu
       if: ${{ inputs.full_install == 'true' && inputs.cuda-version != 'cpu' && runner.os == 'Linux' }}
       run: |
-        # Keep GPU CI rows on the existing known-good FAISS wheel.
-        uv pip install faiss-gpu==1.7.2
+        uv pip install faiss-gpu
       shell: bash
 
     - name: Install torchvision
