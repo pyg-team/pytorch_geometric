@@ -84,7 +84,6 @@ dev=[
     "ipython",
     "matplotlib-inline",
     "pre-commit",
-    "rdkit-stubs>=2024.3.1",
     "torch_geometric[test]",
 ]
 full = [
@@ -157,6 +156,8 @@ module = [
     "torch_geometric.graphgym.*",
     "torch_geometric.distributed.*",
     "torch_geometric.llm.*",
+    "rdkit",
+    "rdkit.*"
 ]
 
 [tool.isort]
