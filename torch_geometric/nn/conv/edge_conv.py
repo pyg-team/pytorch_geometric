@@ -130,8 +130,13 @@ class DynamicEdgeConv(MessagePassing):
             assert batch is not None
             b = (batch[0], batch[1])
 
-        ptr_l = None if b[0] is None else index2ptr(b[0])
-        ptr_r = None if b[1] is None else index2ptr(b[1])
+        batch_l, batch_r = b
+        ptr_l: OptTensor = None
+        if batch_l is not None:
+            ptr_l = index2ptr(batch_l)
+        ptr_r: OptTensor = None
+        if batch_r is not None:
+            ptr_r = index2ptr(batch_r)
         edge_index = torch.ops.pyg.knn(x[0], x[1], ptr_l, ptr_r, self.k, False,
                                        1).flip([0])
 

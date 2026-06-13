@@ -667,7 +667,7 @@ _old_index_select = torch.index_select
 
 def _new_index_select(
     input: Tensor,
-    dim: Union[int, str],
+    dim: int,
     index: Tensor,
     out: Optional[Tensor] = None,
 ) -> Tensor:
@@ -725,7 +725,7 @@ _old_select = torch.select
 
 def _new_select(
     input: Tensor,
-    dim: Union[int, str],
+    dim: int,
     index: int,
 ) -> Tensor:
 
