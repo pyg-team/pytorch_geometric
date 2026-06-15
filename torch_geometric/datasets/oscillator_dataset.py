@@ -1,7 +1,6 @@
 import os
 import tempfile
 
-import h5py
 import numpy as np
 import torch
 
@@ -190,12 +189,12 @@ class OscillatorDataset(InMemoryDataset):
                           and tmp_fs.isdir(top_level[0]) else tmpdir)
 
             for item in tmp_fs.ls(source_dir, detail=False):
-                item_name = item.split('/')[-1]
+                item_name = os.path.basename(item)
                 if self.single_grid:
                     is_file = tmp_fs.isfile(item)
                     is_valid = is_file and item_name in self.raw_file_names
                     if is_valid:
-                        src_path = f"{tmpdir}/{item}"
+                        src_path = item
                         dst_path = f"{extract_to}/{item_name}"
                         self._copy_file(src_path, dst_path, tmp_fs, extract_fs)
                 else:
@@ -204,10 +203,11 @@ class OscillatorDataset(InMemoryDataset):
                         extract_fs.makedirs(f"{extract_to}/{item_name}",
                                             exist_ok=True)
                         for subitem in tmp_fs.ls(item, detail=False):
-                            subitem_name = subitem.split('/')[-1]
+                            subitem_name = os.path.basename(subitem)
                             if subitem_name in self.raw_file_names:
-                                src_path = f"{tmpdir}/{item}/{subitem}"
-                                dst_path = f"{extract_to}/{subitem_name}"
+                                src_path = subitem
+                                comb_name = f"{item_name}/{subitem_name}"
+                                dst_path = f"{extract_to}/{comb_name}"
                                 self._copy_file(src_path, dst_path, tmp_fs,
                                                 extract_fs)
 
@@ -235,6 +235,7 @@ class OscillatorDataset(InMemoryDataset):
 
     def open_h5(self, file_path, mode='r'):
         """Open h5py file, handling both local and memory filesystems."""
+        import h5py
         fs_obj = fs.get_fs(file_path)
         f = fs_obj.open(file_path, 'rb')
         return h5py.File(f, mode)
