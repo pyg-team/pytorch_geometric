@@ -1,4 +1,5 @@
-from typing import Optional, Tuple, List, Union
+from typing import List, Optional, Tuple, Union
+
 import torch
 import torch.nn.functional as F
 from torch import Tensor
@@ -83,11 +84,8 @@ class Attri2Vec(torch.nn.Module):
         else:
             self.lin = Linear(num_features, embedding_dim, bias=False)
 
-        self.embedding = Embedding(
-            self.num_nodes,
-            embedding_dim,
-            sparse=sparse
-        )
+        self.embedding = Embedding(self.num_nodes, embedding_dim,
+                                   sparse=sparse)
 
         self.reset_parameters()
 
@@ -115,16 +113,14 @@ class Attri2Vec(torch.nn.Module):
             return torch.sigmoid(self.lin(x))
         elif self.mapping == 'kernel':
             z = self.lin(x)
-            scale = (self.embedding_dim / 2) ** -0.5
+            scale = (self.embedding_dim / 2)**-0.5
             return scale * torch.cat([torch.cos(z), torch.sin(z)], dim=-1)
         else:
             raise ValueError(f"Unknown mapping: {self.mapping!r}")
 
     def loader(self, **kwargs) -> DataLoader:
-        return DataLoader(range(self.num_nodes),
-                          collate_fn=self.sample,
-                          **kwargs
-                          )
+        return DataLoader(range(self.num_nodes), collate_fn=self.sample,
+                          **kwargs)
 
     @torch.jit.export
     def pos_sample(self, batch: Tensor) -> Tensor:
@@ -165,11 +161,9 @@ class Attri2Vec(torch.nn.Module):
         r"""Computes the loss given positive and negative random walks."""
         start, rest = pos_rw[:, 0], pos_rw[:, 1:].contiguous()
 
-        h_start = self._transform(self.x[start]).view(pos_rw.size(0),
-                                                      1,
+        h_start = self._transform(self.x[start]).view(pos_rw.size(0), 1,
                                                       self.embedding_dim)
-        h_rest = self.embedding(rest.view(-1)).view(pos_rw.size(0),
-                                                    -1,
+        h_rest = self.embedding(rest.view(-1)).view(pos_rw.size(0), -1,
                                                     self.embedding_dim)
 
         out = (h_start * h_rest).sum(dim=-1).view(-1)
@@ -178,11 +172,9 @@ class Attri2Vec(torch.nn.Module):
         # Negative loss.
         start, rest = neg_rw[:, 0], neg_rw[:, 1:].contiguous()
 
-        h_start = self._transform(self.x[start]).view(neg_rw.size(0),
-                                                      1,
+        h_start = self._transform(self.x[start]).view(neg_rw.size(0), 1,
                                                       self.embedding_dim)
-        h_rest = self.embedding(rest.view(-1)).view(neg_rw.size(0),
-                                                    -1,
+        h_rest = self.embedding(rest.view(-1)).view(neg_rw.size(0), -1,
                                                     self.embedding_dim)
 
         out = (h_start * h_rest).sum(dim=-1).view(-1)

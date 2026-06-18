@@ -14,15 +14,15 @@ data = dataset[0]
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 model = Attri2Vec(
-        data.edge_index,
-        data.x,
-        embedding_dim=128,
-        walk_length=20,
-        context_size=10,
-        walks_per_node=10,
-        num_negative_samples=1,
-        mapping='linear',
-        sparse=False,
+    data.edge_index,
+    data.x,
+    embedding_dim=128,
+    walk_length=20,
+    context_size=10,
+    walks_per_node=10,
+    num_negative_samples=1,
+    mapping='linear',
+    sparse=False,
 ).to(device)
 
 num_workers = 4 if sys.platform == 'linux' else 0

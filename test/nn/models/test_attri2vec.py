@@ -16,19 +16,14 @@ from torch_geometric.testing import (
 def test_attri2vec(device, mapping):
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]], device=device)
     x = torch.randn(3, 16, device=device)
-    model = Attri2Vec(edge_index,
-                      x,
-                      embedding_dim=32,
-                      walk_length=5,
-                      context_size=3,
-                      mapping=mapping).to(device)
+    model = Attri2Vec(edge_index, x, embedding_dim=32, walk_length=5,
+                      context_size=3, mapping=mapping).to(device)
     assert str(model) == 'Attri2Vec(3, 32)'
     assert model(torch.arange(3, device=device)).size() == (3, 32)
 
     pos_rw, neg_rw = model.sample(torch.arange(3))
-    assert float(
-        model.loss(pos_rw.to(device), neg_rw.to(device)).detach()
-    ) >= 0
+    assert float(model.loss(pos_rw.to(device),
+                            neg_rw.to(device)).detach()) >= 0
 
     if has_package('sklearn'):
         acc = model.test(torch.ones(20, 32), torch.randint(10, (20, )),
@@ -39,9 +34,8 @@ def test_attri2vec(device, mapping):
         jit = torch.jit.script(model)
         assert jit(torch.arange(3, device=device)).size() == (3, 32)
         pos_rw, neg_rw = jit.sample(torch.arange(3))
-        assert float(
-            jit.loss(pos_rw.to(device), neg_rw.to(device)).detach()
-        ) >= 0
+        assert float(jit.loss(pos_rw.to(device),
+                              neg_rw.to(device)).detach()) >= 0
 
 
 @withPackage('pyg_lib')
