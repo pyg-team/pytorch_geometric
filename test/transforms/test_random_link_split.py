@@ -2,11 +2,7 @@ import pytest
 import torch
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.testing import (
-    get_random_edge_index,
-    onlyFullTest,
-    onlyOnline,
-)
+from torch_geometric.testing import get_random_edge_index, onlyFullTest
 from torch_geometric.transforms import RandomLinkSplit, ToSparseTensor
 from torch_geometric.utils import is_undirected, to_undirected
 
@@ -308,7 +304,7 @@ def test_random_link_split_non_contiguous():
     assert train_data['p', 'p'].edge_index.is_contiguous()
 
 
-@onlyOnline
+@pytest.mark.dataset
 @onlyFullTest
 def test_random_link_split_on_dataset(get_dataset):
     dataset = get_dataset(name='MUTAG')
