@@ -104,6 +104,7 @@ full = [
     "pytorch-memlab",
     "rdflib",
     "rdkit",
+    "rdkit-stubs>=2024.09.1",
     "scikit-image",
     "statsmodels",
     "sympy",
