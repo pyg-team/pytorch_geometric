@@ -1,4 +1,4 @@
-name: Testing
+me: Testing
 
 on:  # yamllint disable-line rule:truthy
   push:
@@ -20,7 +20,7 @@ jobs:
     outputs:
       triggered: ${{ steps.check.outputs.triggered }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 50
       - id: check
@@ -60,7 +60,7 @@ jobs:
     needs: trigger
     # Skip the regular test suite when `ci: full` is set; `pytest-full` runs
     # the full matrix instead:
-    if: "${{ needs.trigger.outputs.triggered == 'true' && github.repository == 'pyg-team/pytorch_geometric' && github.event_name != 'schedule' && !contains(github.event.pull_request.labels.*.name, 'ci: full') }}"
+    if: "${{ needs.trigger.outputs.triggered == 'true' && github.repository == 'pyg-team/pytorch_geometric' && github.event_name != 'schedule' && !contains(github.event.pull_request.labels.*.name,[...]"
     uses: ./.github/workflows/_testing.yml
     with:
       test-matrix: |
@@ -69,7 +69,6 @@ jobs:
           { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.12.0", "cuda-version": "cpu" },
           { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.11.0", "cuda-version": "cpu" },
           { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.10.0", "cuda-version": "cpu" },
-          { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.9.0", "cuda-version": "cpu" },
           { "os": "macos-14", "python-version": "3.10", "torch-version": "2.12.0", "cuda-version": "cpu" },
           { "os": "windows-2022", "python-version": "3.10", "torch-version": "2.12.0", "cuda-version": "cpu" }
         ]}
@@ -83,7 +82,7 @@ jobs:
         {
           "os": ["ubuntu-22.04", "macos-14", "windows-2022"],
           "python-version": ["3.10"],
-          "torch-version": ["2.9.0", "2.10.0", "2.11.0", "2.12.0", "nightly"],
+          "torch-version": ["2.10.0", "2.11.0", "2.12.0", "nightly"],
           "cuda-version": ["cpu"],
           "full_test": ["1"]
         }

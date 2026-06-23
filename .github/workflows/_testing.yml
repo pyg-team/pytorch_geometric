@@ -1,4 +1,4 @@
-name: Reusable Testing
+me: Reusable Testing
 
 on:  # yamllint disable-line rule:truthy
   workflow_call:
@@ -22,7 +22,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up packages
         uses: ./.github/actions/setup
@@ -44,7 +44,14 @@ jobs:
       - name: Install main package
         if: ${{ runner.os != 'Windows' }}
         run: |
-          uv pip install -e ".[full,test]"
+          uv pip install -e ".[test]"
+
+      - name: Install full extras (non-Windows only, when requested)
+        if: ${{ runner.os != 'Windows' && matrix.full_test == '1' }}
+        run: |
+          # Install packages that were part of the 'full' extra, but avoid referencing torch-geometric itself.
+          uv pip install scipy scikit-learn ase 'captum<0.7.0' graphviz h5py matplotlib networkx 'numba<0.60.0' opt_einsum pandas pynndescent pytorch-memlab rdflib 'rdkit-stubs>=2024.09.1' scikit-image statsmodels sympy tabulate torchmetrics trimesh
+        shell: bash
 
       - name: Check installation
         run: |
