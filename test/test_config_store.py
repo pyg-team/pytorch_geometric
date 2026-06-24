@@ -1,3 +1,4 @@
+import dataclasses
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from torch_geometric.config_store import (
@@ -16,6 +17,68 @@ from torch_geometric.transforms import AddSelfLoops
 
 def teardown_function():
     clear_config_store()
+
+
+def test_to_dataclass_for_dataclass():
+    # Dataclasses must enumerate their real fields rather than the
+    # `__init__` signature. This matters for dataclass implementations whose
+    # `__init__` is a generic validator that hides the fields (*e.g.*,
+    # `pydantic.dataclasses.dataclass`). We simulate that here by replacing
+    # `__init__` with a generic one after class creation:
+    @dataclasses.dataclass
+    class MyConfig:
+        x: int = 3
+        name: str = 'pyg'
+        tags: List[str] = dataclasses.field(default_factory=lambda: ['a'])
+
+    def generic_init(self, *args, **kwargs):  # Hide the real fields.
+        pass
+
+    MyConfig.__init__ = generic_init
+
+    Config = to_dataclass(MyConfig, with_target=True)
+    fields = Config.__dataclass_fields__
+
+    # The real fields are recovered (the generic `__init__` would otherwise
+    # only expose `args`/`kwargs`, all of which are excluded):
+    assert set(fields) == {'x', 'name', 'tags', '_target_'}
+
+    assert fields['x'].type == int
+    assert fields['x'].default == 3
+    assert fields['name'].type == str
+    assert fields['name'].default == 'pyg'
+    # `default_factory` fields are materialized and re-wrapped so that the
+    # default is shared safely rather than left as a raw factory sentinel:
+    assert fields['tags'].default_factory() == ['a']
+
+    cfg = Config()
+    assert cfg.x == 3
+    assert cfg.name == 'pyg'
+    assert cfg.tags == ['a']
+
+
+@withPackage('pydantic')
+def test_to_dataclass_for_pydantic_dataclass():
+    # `pydantic.dataclasses.dataclass` replaces `__init__` with a generic
+    # validating `__init__(self, *args, **kwargs)`, so field discovery must
+    # not rely on the `__init__` signature:
+    from pydantic.dataclasses import dataclass as pydantic_dataclass
+
+    @pydantic_dataclass
+    class PydanticConfig:
+        x: int = 3
+        name: str = 'pyg'
+
+    Config = to_dataclass(PydanticConfig, with_target=True)
+    fields = Config.__dataclass_fields__
+
+    assert set(fields) == {'x', 'name', '_target_'}
+    assert fields['x'].default == 3
+    assert fields['name'].default == 'pyg'
+
+    cfg = Config()
+    assert cfg.x == 3
+    assert cfg.name == 'pyg'
 
 
 def test_to_dataclass():

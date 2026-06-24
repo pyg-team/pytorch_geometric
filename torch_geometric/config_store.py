@@ -1,3 +1,4 @@
+import dataclasses
 import inspect
 import typing
 from collections import defaultdict
@@ -193,6 +194,46 @@ def map_annotation(
     return annotation
 
 
+def _get_init_args(cls: Any) -> Dict[str, Tuple[Any, Any]]:
+    r"""Returns the constructor arguments of :obj:`cls` as a mapping from
+    argument name to a :obj:`(annotation, default)` tuple.
+
+    For regular callables, arguments are read from the signature of
+    :meth:`cls.__init__`. For :obj:`dataclasses`, arguments are read from
+    :func:`dataclasses.fields` instead. This is required because some
+    dataclass implementations (*e.g.*, ``pydantic.dataclasses.dataclass``)
+    replace ``__init__`` with a generic ``__init__(self, *args, **kwargs)``
+    validator that does not expose the real fields via its signature.
+
+    Annotations and defaults use :obj:`inspect.Parameter.empty` as the
+    "missing" sentinel so that both code paths feed the same downstream
+    handling in :func:`to_dataclass`.
+    """
+    if dataclasses.is_dataclass(cls):
+        out: Dict[str, Tuple[Any, Any]] = {}
+        for f in dataclasses.fields(cls):
+            if not f.init:  # Skip fields excluded from the constructor.
+                continue
+            empty = inspect.Parameter.empty
+            annotation = f.type if f.type is not None else empty
+            if f.default is not dataclasses.MISSING:
+                default = f.default
+            elif f.default_factory is not dataclasses.MISSING:
+                # Materialize the factory value so that the (list/dict)
+                # default receives the same late-binding-safe wrapping as the
+                # signature-based path below:
+                default = f.default_factory()
+            else:
+                default = inspect.Parameter.empty
+            out[f.name] = (annotation, default)
+        return out
+
+    return {
+        name: (param.annotation, param.default)
+        for name, param in inspect.signature(cls.__init__).parameters.items()
+    }
+
+
 def to_dataclass(
     cls: Any,
     base_cls: Optional[Any] = None,
@@ -239,7 +280,11 @@ def to_dataclass(
     """
     fields = []
 
-    params = inspect.signature(cls.__init__).parameters
+    # Discover the constructor arguments of `cls`. For dataclasses (including
+    # `pydantic.dataclasses.dataclass`, whose `__init__` is a generic
+    # validator that hides the real fields), this reads `dataclasses.fields`;
+    # otherwise it falls back to the `__init__` signature:
+    params = _get_init_args(cls)
 
     if strict:  # Check that keys in map_args or exclude_args are present.
         keys = set() if map_args is None else set(map_args.keys())
@@ -250,7 +295,7 @@ def to_dataclass(
             raise ValueError(f"Expected input argument(s) {diff} in "
                              f"'{cls.__name__}'")
 
-    for i, (name, arg) in enumerate(params.items()):
+    for i, (name, (annotation, default)) in enumerate(params.items()):
         if name in EXCLUDE:
             continue
         if exclude_args is not None:
@@ -264,7 +309,6 @@ def to_dataclass(
             fields.append((name, ) + map_args[name])
             continue
 
-        annotation, default = arg.annotation, arg.default
         annotation = map_annotation(annotation, mapping=MAPPING)
 
         if annotation != inspect.Parameter.empty:
