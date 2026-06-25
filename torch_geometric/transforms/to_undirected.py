@@ -61,6 +61,18 @@ class ToUndirected(BaseTransform):
                         inv_store[key] = value
 
             else:
+                # Link-prediction supervision attributes are not per-edge
+                # features and must not be passed through `to_undirected()` /
+                # `coalesce()`, which would index them with a `2 * E`
+                # permutation. Detach them before the call and reattach them on
+                # the forward store afterwards -- supervision semantics never
+                # apply to the added reverse edges.
+                supervision_keys = ('edge_label_index', 'edge_label')
+                detached = {
+                    key: store.pop(key)
+                    for key in supervision_keys if key in store
+                }
+
                 keys, values = [], []
                 for key, value in store.items():
                     if key == 'edge_index':
@@ -74,6 +86,9 @@ class ToUndirected(BaseTransform):
                     store.edge_index, values, reduce=self.reduce)
 
                 for key, value in zip(keys, values):
+                    store[key] = value
+
+                for key, value in detached.items():
                     store[key] = value
 
         return data
