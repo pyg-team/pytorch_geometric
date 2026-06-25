@@ -50,11 +50,11 @@ class MeshOpener(IterDataPipe):
     def __init__(self, dp: IterDataPipe) -> None:
         try:
             import meshio  # noqa: F401
-            import torch_cluster  # noqa: F401
+            import pyg_lib  # noqa: F401
         except ImportError as e:
             raise ImportError(
                 "To run this example, please install required packages:\n"
-                "pip install meshio torch-cluster") from e
+                "pip install meshio pyg-lib") from e
 
         super().__init__()
         self.dp = dp

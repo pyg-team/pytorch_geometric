@@ -9,11 +9,11 @@ import torch_geometric.transforms as T
 from torch_geometric.datasets import ShapeNet
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import MLP, knn_interpolate
-from torch_geometric.typing import WITH_TORCH_CLUSTER
+from torch_geometric.typing import WITH_PYG_LIB
 from torch_geometric.utils import scatter
 
-if not WITH_TORCH_CLUSTER:
-    quit("This example requires 'torch-cluster'")
+if not WITH_PYG_LIB:
+    quit("This example requires 'pyg-lib>=0.6.0'")
 
 category = 'Airplane'  # Pass in `None` to train on all categories.
 path = osp.join(osp.dirname(osp.realpath(__file__)), '..', 'data', 'ShapeNet')
