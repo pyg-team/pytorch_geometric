@@ -197,7 +197,7 @@ class RBGVDataset(InMemoryDataset):
         if strategy == 'all':
             # Dense: connect to every node in the pool.
             return pool
-        if self.topology == 'erdos_renyi':
+        elif self.topology == 'erdos_renyi':
             # Bernoulli(edge_prob) draw per target node.
             mask = torch.rand(num_pool) < self.edge_prob
             return pool[mask]
