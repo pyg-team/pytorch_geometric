@@ -53,8 +53,8 @@ class RBGVDataset(InMemoryDataset):
     outnumber red nodes), plus exactly two spurious nodes (one green and one
     violet) that carry no causal information about the label.
 
-    Despite the simplicity of the task, the paper above has been shown 
-    that some explainability algorithm may provide *only* the green 
+    Despite the simplicity of the task, the paper above has been shown
+    that some explainability algorithm may provide *only* the green
     and the violet node as explanations, despite being uncorrelated
     with the task.
 
@@ -74,10 +74,10 @@ class RBGVDataset(InMemoryDataset):
 
         from torch_geometric.datasets import RBGVDataset
 
-        # Original dataset: both spurious nodes densely connect to every red node.
+        # Original dataset: green and violet nodes are isolated
         dataset = RBGVDataset(
             num_graphs=5000,
-            topology=barabasi_albert
+            topology='barabasi_albert',
         )
 
         # Symmetric: both spurious nodes densely connect to every red node.
@@ -209,6 +209,7 @@ class RBGVDataset(InMemoryDataset):
             # Dense: connect to every node in the pool.
             return pool
         elif self.topology == 'erdos_renyi':
+            # 'erdos_renyi': pick edges based on Bernoulli sampling.
             # Bernoulli(edge_prob) draw per target node.
             mask = torch.rand(num_pool) < self.edge_prob
             return pool[mask]
