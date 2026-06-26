@@ -44,7 +44,7 @@ def _as_spurious_dict(
 
 class RBGVDataset(InMemoryDataset):
     r"""The synthetic RBGV (Red, Blue, Green, Violet) graph classification
-    dataset, based on the construction from the
+    dataset for evaluating explainability algorithms, as described in the
     `"GNN Explanations that do not Explain and How to find Them"
     <https://arxiv.org/abs/2601.20815>`_ paper.
 
@@ -52,6 +52,11 @@ class RBGVDataset(InMemoryDataset):
     *fully* determined by their ratio (class :obj:`1` iff blue nodes strictly
     outnumber red nodes), plus exactly two spurious nodes (one green and one
     violet) that carry no causal information about the label.
+
+    Despite the simplicity of the task, the paper above has been shown 
+    that some explainability algorithm may provide *only* the green 
+    and the violet node as explanations, despite being uncorrelated
+    with the task.
 
     On top of the original construction, this implementation exposes a
     **spurious connection** mechanism: the spurious nodes can be wired into the
@@ -69,9 +74,15 @@ class RBGVDataset(InMemoryDataset):
 
         from torch_geometric.datasets import RBGVDataset
 
+        # Original dataset: both spurious nodes densely connect to every red node.
+        dataset = RBGVDataset(
+            num_graphs=5000,
+            topology=barabasi_albert
+        )
+
         # Symmetric: both spurious nodes densely connect to every red node.
         dataset = RBGVDataset(
-            num_graphs=1000,
+            num_graphs=5000,
             spurious_target='red',
             spurious_strategy='all',
         )
@@ -79,7 +90,7 @@ class RBGVDataset(InMemoryDataset):
         # Asymmetric: green densely connects to red nodes, while violet
         # stochastically connects to blue nodes.
         dataset = RBGVDataset(
-            num_graphs=1000,
+            num_graphs=5000,
             topology='barabasi_albert',
             spurious_target={'green': 'red', 'violet': 'blue'},
             spurious_strategy={'green': 'all', 'violet': 'normal'},
@@ -87,11 +98,11 @@ class RBGVDataset(InMemoryDataset):
 
     Args:
         num_graphs (int, optional): The number of graphs to generate.
-            (default: :obj:`1000`)
+            (default: :obj:`5000`)
         min_nodes (int, optional): Lower bound (inclusive) for the number of
-            red/blue nodes in the main subgraph. (default: :obj:`5`)
+            red/blue nodes in the main subgraph. (default: :obj:`1`)
         max_nodes (int, optional): Upper bound (inclusive) for the number of
-            red/blue nodes in the main subgraph. (default: :obj:`15`)
+            red/blue nodes in the main subgraph. (default: :obj:`100`)
         topology (str, optional): Topology of the main subgraph, either
             :obj:`"erdos_renyi"` or :obj:`"barabasi_albert"`.
             (default: :obj:`"erdos_renyi"`)
@@ -136,9 +147,9 @@ class RBGVDataset(InMemoryDataset):
     """
     def __init__(
         self,
-        num_graphs: int = 1000,
-        min_nodes: int = 5,
-        max_nodes: int = 15,
+        num_graphs: int = 5000,
+        min_nodes: int = 1,
+        max_nodes: int = 100,
         topology: str = 'erdos_renyi',
         edge_prob: float = 0.3,
         num_edges_per_node: int = 2,
