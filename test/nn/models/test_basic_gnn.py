@@ -16,7 +16,6 @@ from torch_geometric.testing import (
     onlyFullTest,
     onlyLinux,
     onlyNeighborSampler,
-    onlyOnline,
     withDevice,
     withPackage,
 )
@@ -179,7 +178,7 @@ def test_batch(norm):
             model(x, edge_index, batch=batch, batch_size=1)
 
 
-@onlyOnline
+@pytest.mark.dataset
 @onlyNeighborSampler
 @pytest.mark.parametrize('jk', [None, 'last'])
 def test_basic_gnn_inference(get_dataset, jk):
