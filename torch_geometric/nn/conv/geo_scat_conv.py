@@ -51,7 +51,7 @@ def _is_sparse_diffusion_op(diffusion_op: Union[Tensor, SparseTensor]) -> bool:
         return True
     if isinstance(diffusion_op, Tensor):
         return is_torch_sparse_tensor(diffusion_op)
-    raise TypeError("Expected torch.Tensor or SparseTensor, got "
+    raise TypeError(f"Expected torch.Tensor or SparseTensor, got "
                     f"type {type(diffusion_op)}.")
 
 
@@ -540,7 +540,7 @@ class GeoScatConv(Module):
     general form
 
     .. math::
-        \mathbf{W}_j \mathbf{x} = (\mathbf{P}^{t_j} -
+        \mathbf{W}_j \, \mathbf{x} = (\mathbf{P}^{t_j} -
         \mathbf{P}^{t_{j+1}}) \mathbf{x},
 
     where :math:`\mathbf{P}` is a lazy random walk operator
@@ -557,16 +557,16 @@ class GeoScatConv(Module):
     :math:`P^{t_{\max}} \mathbf{x}` is included by default, and may
     be excluded by setting :obj:`include_lowpass` to :obj:`False`.
 
-    This layer returns concatenated 0th and 1st-order scattering
-    coefficients by default. The 0th-order scattering coefficient is
-    the unfiltered input feature vector, and may be excluded by
+    This layer returns concatenated zeroeth and first-order scattering
+    coefficients by default. The zeroeth-order scattering coefficient
+    is the unfiltered input feature vector, and can be excluded by
     setting :obj:`scattering_orders` to :obj:`(1,)`. Second-order
     scattering coefficients can be included by including :obj:`2` in
     the :obj:`scattering_orders` tuple. These are defined as:
 
     .. math::
-        \mathbf{W}_{j^{\prime}} \sigma (\mathbf{W}_j \mathbf{x}),
-        j^{\prime} > j,
+        \mathbf{W}_{j^{\,\prime}} \, \sigma (\mathbf{W}_j \,
+        \mathbf{x}), \quad j^{\, \prime} > j,
 
     where :math:`\sigma` is an optional activation (e.g. the modulus
     operator via :obj:`torch.abs`), disabled by default.
@@ -575,10 +575,10 @@ class GeoScatConv(Module):
     as the number of output channels is deterministic via the
     parameterization of the scattering transform. Including 0th-order
     scattering coefficients increases the number of output channels by
-    1; including 1st-order scattering coefficients increases the number
-     of output channels by the number of wavelets :math:`w`; including
-    2nd-order scattering coefficients increases the number of output
-    channels by :math:`w \cdot (w - 1) // 2`.
+    1; including first-order scattering coefficients increases the number
+    of output channels by the number of wavelets :math:`w`; including
+    second-order scattering coefficients increases the number of output
+    channels by :math:`w \cdot (w - 1) / 2`.
 
     For graph-level tasks, scattering coefficients can be pooled across
     nodes within each graph and feature channel, changing the output shape
@@ -639,7 +639,7 @@ class GeoScatConv(Module):
             low-pass filter :math:`P^{t_{\max}} \mathbf{x}`.
             (default: :obj:`True`)
         activation (torch.nn.Module or Callable, optional): Activation
-            applied to 1st- and 2nd-order scattering coefficients, e.g.
+            applied to first- and second-order scattering coefficients, e.g.
             :obj:`torch.abs` for the modulus. (default: :obj:`None`)
         normalization (str, optional): Normalization scheme for the adjacency
             matrix before building the lazy random walk operator
