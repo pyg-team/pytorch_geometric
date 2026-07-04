@@ -17,7 +17,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
-- Fixed `MeshCNNConv` ignoring the device and dtype of its input, and added a `reset_parameters` method
+- Fixed `MeshCNNConv` ignoring the device and dtype of its input, and added a `reset_parameters` method ([#10741](https://github.com/pyg-team/pytorch_geometric/pull/10741))
 - Fixed `config_store` on Python 3.14, where `typing.Union`/`typing.Optional` annotations could no longer be remapped in-place via the now read-only `__args__` attribute
 
 ### Security
