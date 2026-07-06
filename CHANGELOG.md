@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Added the `BLISConv` bi-Lipschitz geometric-scattering operator from the ["BLIS-Net: Classifying and Analyzing Signals on Graphs"](https://proceedings.mlr.press/v238/xu24c.html) paper, plus an example ([#10742](https://github.com/pyg-team/pytorch_geometric/pull/10742))
 - Added `torch_geometric.contrib.nn.models.MGNAN` (M-GNAN, an extension of `GNAN` to multivariate shape functions) model plus an example ([#10371](https://github.com/pyg-team/pytorch_geometric/pull/10371))
 
 ### Changed

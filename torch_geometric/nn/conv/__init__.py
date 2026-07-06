@@ -15,6 +15,7 @@ from .gatv2_conv import GATv2Conv
 from .transformer_conv import TransformerConv
 from .agnn_conv import AGNNConv
 from .tag_conv import TAGConv
+from .blis_conv import BLISConv
 from .gin_conv import GINConv, GINEConv
 from .arma_conv import ARMAConv
 from .sg_conv import SGConv
@@ -83,6 +84,7 @@ __all__ = [
     'TransformerConv',
     'AGNNConv',
     'TAGConv',
+    'BLISConv',
     'GINConv',
     'GINEConv',
     'ARMAConv',
