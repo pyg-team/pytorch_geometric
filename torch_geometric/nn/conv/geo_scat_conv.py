@@ -536,26 +536,29 @@ class GeoScatConv(Module):
 
     In particular, this layer computes diffusion wavelet scattering
     coefficients on graph node features. A diffusion wavelet
-    convolution of a feature vector :math:`\mathbf{x}` has the
+    convolution of a graph signal :math:`\mathbf{x}` has the
     general form
 
     .. math::
-        \mathbf{W}_j \, \mathbf{x} = (\mathbf{P}^{t_j} -
-        \mathbf{P}^{t_{j+1}}) \mathbf{x},
+        \mathbf{W}_j \, \mathbf{x} = (\mathbf{P}^{t_{j-1}} -
+        \mathbf{P}^{t_{j}}) \mathbf{x}, \quad j = 1, \ldots, J,
 
     where :math:`\mathbf{P}` is a lazy random walk operator
-    (typically row-normalized), and :math:`t_j` and
-    :math:`t_{j+1} > t_j` are the diffusion scales, set to
-    consecutive powers of 2 (dyadic scale, up to 16) by default.
-    However, one can use custom diffusion scales by setting
-    :obj:`diffusion_scales` to a custom tuple of increasing integers
-    (or tuple of tuples, for different diffusion scales per feature
-    channel). Here, `InfoGain Wavelets
-    <https://arxiv.org/abs/2504.08802>`_ provide a principled,
-    data-driven way to select (potentially non-dyadic) wavelet
-    diffusion scales. A simple low-pass filter
-    :math:`P^{t_{\max}} \mathbf{x}` is included by default, and may
-    be excluded by setting :obj:`include_lowpass` to :obj:`False`.
+    (row-normalized by default), and :math:`t_j` are the diffusion
+    scales.
+    A low-pass filter :math:`A_J = \mathbf{P}^{t_J} \mathbf{x}`
+    is also included by default, such that the full filter bank is
+    :math:`\{\mathbf{W}_j\}_{j=0}^{J} \cup \{A_J\}`. The low-pass
+    filter can be excluded by setting :obj:`include_lowpass`
+    to :obj:`False`.
+
+    By default, the :math:`t_j` are set to be dyadic integers
+    :math:`0, 1, 2, \ldots, 16`. However, one may also specify a
+    custom set of scales using the :obj:`diffusion_scales`
+    argument (pass a tuple of integers, or a tuple of tuples,
+    for different diffusion scales for each feature channel).
+    One option for generating custom scales is `InfoGain Wavelets
+    <https://arxiv.org/abs/2504.08802>`_.
 
     This layer returns concatenated zeroeth and first-order scattering
     coefficients by default. The zeroeth-order scattering coefficient
@@ -565,8 +568,8 @@ class GeoScatConv(Module):
     the :obj:`scattering_orders` tuple. These are defined as:
 
     .. math::
-        \mathbf{W}_{j^{\,\prime}} \, \sigma (\mathbf{W}_j \,
-        \mathbf{x}), \quad j^{\, \prime} > j,
+        \sigma(\mathbf{W}_{j^{\,\prime}} \, \sigma (\mathbf{W}_j \,
+        \mathbf{x})), \quad j^{\, \prime} > j,
 
     where :math:`\sigma` is an optional activation (e.g. the modulus
     operator via :obj:`torch.abs`), disabled by default.
@@ -632,18 +635,20 @@ class GeoScatConv(Module):
             (second-order). Pass :obj:`(1,)` for a diffusion wavelet
             transform only. (default: :obj:`(0, 1)`)
         diffusion_scales (Tuple[int, ...], optional): Monotonically increasing
-            diffusion powers at which to save :math:`P^t \mathbf{x}`.
+            diffusion powers, i.e., :math:`t_j` in each `:math:`P^{t_j}`.
             Wavelet filters are consecutive differences between adjacent
-            saved powers. (default: :obj:`(0, 1, 2, 4, 8, 16)`)
+            :math:`t_{j-1}` and :math:`t_j`.
+            (default: :obj:`(0, 1, 2, 4, 8, 16)`)
         include_lowpass (bool, optional): If set to :obj:`True`, append the
-            low-pass filter :math:`P^{t_{\max}} \mathbf{x}`.
+            low-pass filter :math:`P^{t_J} \mathbf{x}`.
             (default: :obj:`True`)
         activation (torch.nn.Module or Callable, optional): Activation
             applied to first- and second-order scattering coefficients, e.g.
             :obj:`torch.abs` for the modulus. (default: :obj:`None`)
         normalization (str, optional): Normalization scheme for the adjacency
             matrix before building the lazy random walk operator
-            :math:`P`. Ignored when :obj:`diffusion_op` is provided.
+            :math:`P`. Ignored when :obj:`diffusion_op` is provided. Options:
+            :obj:`"row"`, :obj:`"column"`, :obj:`"symmetric"`.
             (default: :obj:`"row"`)
         is_vector_feature (bool, optional): If set to :obj:`True`, treat each
             node feature as a vector signal of dimension :obj:`in_channels`
@@ -651,9 +656,11 @@ class GeoScatConv(Module):
             :math:`(n \cdot d, n \cdot d)`.
             (default: :obj:`False`)
         pool (Tuple[str, ...], optional): Graph-level pooling operations to
-            apply across nodes. Each entry must be one of :obj:`"mean"`,
-            :obj:`"max"`, :obj:`"min"`, :obj:`"median"`, or :obj:`"var"`.
-            If :obj:`None`, node-level scattering coefficients are returned.
+            apply across nodes. Multiple pooling operations can be applied by
+            passing a tuple of strings, the results of which are concatenated.
+            Each entry must be one of :obj:`"mean"`, :obj:`"max"`,
+            :obj:`"min"`, :obj:`"median"`, or  :obj:`"var"`. If :obj:`None`,
+            node-level scattering coefficients are returned.
             (default: :obj:`None`)
         check_nonfinite (bool, optional): If set to :obj:`True`, raise an
             error when non-finite values are detected in inputs or
