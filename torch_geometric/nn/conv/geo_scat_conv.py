@@ -1,9 +1,9 @@
 import warnings
-from typing import Callable, List, Literal, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Literal, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
-from torch.nn import Module
+from torch.nn import Module, Parameter
 
 import torch_geometric.typing
 from torch_geometric.nn.aggr.basic import MinAggregation, VarAggregation
@@ -22,6 +22,10 @@ DEFAULT_DIFFUSION_SCALES = (0, 1, 2, 4, 8, 16)
 
 VALID_POOL_OPS = frozenset({'mean', 'max', 'min', 'median', 'var'})
 VALID_SCATTERING_ORDERS = frozenset({0, 1, 2})
+VALID_LEGS_KWARGS = frozenset({'legs_J'})
+DEFAULT_LEGS_KWARGS: Dict[str, Any] = {'legs_J': 4}
+
+DiffusionScalesArg = Union[Tuple[int, ...], Literal['legs', 'LEGS']]
 
 _BATCHING_DOC_URL = (
     'https://pytorch-geometric.readthedocs.io/en/latest/advanced/batching.html'
@@ -266,11 +270,126 @@ def get_sparse_lrw_diffusion_operator(
         return _as_adj(P_sparse.coalesce())
 
 
+def _is_legs_diffusion_scales(diffusion_scales: DiffusionScalesArg, ) -> bool:
+    return isinstance(diffusion_scales, str) \
+        and diffusion_scales.lower() == 'legs'
+
+
+def _validate_legs_kwargs(
+    legs_kwargs: Optional[Dict[str, Any]],
+    scattering_orders: Tuple[int, ...],
+) -> Dict[str, Any]:
+    if legs_kwargs is None:
+        legs_kwargs = dict(DEFAULT_LEGS_KWARGS)
+    else:
+        legs_kwargs = dict(legs_kwargs)
+
+    unknown = set(legs_kwargs) - VALID_LEGS_KWARGS
+    if unknown:
+        raise ValueError(
+            f"Unknown legs_kwargs keys {sorted(unknown)}. "
+            f"Valid options are {sorted(VALID_LEGS_KWARGS)}.", )
+
+    if 'legs_J' not in legs_kwargs:
+        raise ValueError("legs_kwargs must contain 'legs_J'.")
+
+    legs_J = legs_kwargs['legs_J']
+    if not isinstance(legs_J, int) or isinstance(legs_J, bool):
+        raise ValueError(
+            f"legs_J must be an integer (got {type(legs_J).__name__}).", )
+    if legs_J < 1:
+        raise ValueError('legs_J must be at least 1.')
+    if 2 in scattering_orders and legs_J < 2:
+        raise ValueError(
+            'Second-order scattering with LEGS requires legs_J >= 2.', )
+
+    return legs_kwargs
+
+
+def _prepare_diffusion_op(
+    P: Union[Tensor, SparseTensor],
+    x: Tensor,
+) -> Union[Tensor, SparseTensor]:
+    if isinstance(P, SparseTensor):
+        if P.dtype() != x.dtype:
+            return P.to(dtype=x.dtype)
+        return P
+    if _is_sparse_diffusion_op(P):
+        if P.dtype != x.dtype:
+            return P.to(dtype=x.dtype)
+        return P
+    if P.dtype != x.dtype:
+        return P.to(dtype=x.dtype)
+    return P
+
+
+def _check_diffusion_inputs_nonfinite(
+    P: Union[Tensor, SparseTensor],
+    x: Tensor,
+    *,
+    check_nonfinite: bool,
+) -> None:
+    if not check_nonfinite:
+        return
+    if isinstance(P, SparseTensor):
+        _raise_if_nonfinite(
+            P.storage.value(),
+            name='GeoScatConv: P values',
+        )
+    elif isinstance(P, Tensor):
+        if _is_sparse_diffusion_op(P):
+            _raise_if_nonfinite(
+                P.values(),
+                name='GeoScatConv: P values',
+            )
+        else:
+            _raise_if_nonfinite(P, name='GeoScatConv: P')
+    _raise_if_nonfinite(x, name='GeoScatConv: x')
+
+
+def _compute_pt_xs(
+    x: Tensor,
+    P: Union[Tensor, SparseTensor],
+    max_power: int,
+    *,
+    check_nonfinite: bool = False,
+) -> Tensor:
+    """Stack diffusion powers ``P^t x`` for ``t = 0, ..., max_power``.
+
+    Returns a tensor of shape ``(max_power + 1, num_nodes, num_features)``,
+    where row ``t`` holds ``P^t x``.
+    """
+    if x.ndim == 1:
+        x = x.unsqueeze(1)
+
+    P = _prepare_diffusion_op(P, x)
+    _check_diffusion_inputs_nonfinite(P, x, check_nonfinite=check_nonfinite)
+
+    device = x.device
+    pt_xs = [x.to(device)]
+    pt_x = x.to(device)
+
+    for t in range(1, max_power + 1):
+        pt_x = _diffusion_matmul(P, pt_x)
+        if check_nonfinite:
+            _raise_if_nonfinite(pt_x, name=f'GeoScatConv: P^t x (t={t})')
+        pt_xs.append(pt_x.to(device))
+
+    return torch.stack(pt_xs, dim=0)
+
+
 def _subset_second_order_wavelets(
     W2raw: Tensor,
     *,
     feature_type: Literal['scalar', 'vector'],
 ) -> Tensor:
+    """Keep only second-order terms where the outer filter is higher-pass.
+
+    ``W2raw`` holds all pairs ``(W_prev, W_next)`` of first- and second-order
+    wavelet indices. Scattering theory requires ``W_next`` to be applied to
+    the output of a lower-pass ``W_prev``, i.e. ``j' > j``. The upper-
+    triangular mask (excluding the diagonal) enforces that ordering.
+    """
     if feature_type not in ('scalar', 'vector'):
         raise ValueError(
             f"feature_type must be 'scalar' or 'vector', got {feature_type}.",
@@ -285,7 +404,7 @@ def _subset_second_order_wavelets(
 
     mask = torch.triu(
         torch.ones(n_prev, n_next, dtype=torch.bool, device=W2raw.device),
-        diagonal=1,
+        diagonal=1,  # keep pairs with second index > first index
     )
 
     if feature_type == 'scalar':
@@ -310,35 +429,12 @@ def diffusion_wavelet_transform(
     filter_stack_dim: int = -1,
     check_nonfinite: bool = False,
 ) -> Tensor:
-    if x.ndim == 1:
-        x = x.unsqueeze(1)
+    """Fixed-scale wavelet transform via consecutive diffusion differences.
 
-    if isinstance(P, SparseTensor):
-        if P.dtype() != x.dtype:
-            P = P.to(dtype=x.dtype)
-    elif isinstance(P, Tensor):
-        if _is_sparse_diffusion_op(P):
-            if P.dtype != x.dtype:
-                P = P.to(dtype=x.dtype)
-        elif P.dtype != x.dtype:
-            P = P.to(dtype=x.dtype)
-
-    if check_nonfinite:
-        if isinstance(P, SparseTensor):
-            _raise_if_nonfinite(
-                P.storage.value(),
-                name='GeoScatConv: P values',
-            )
-        elif isinstance(P, Tensor):
-            if _is_sparse_diffusion_op(P):
-                _raise_if_nonfinite(
-                    P.values(),
-                    name='GeoScatConv: P values',
-                )
-            else:
-                _raise_if_nonfinite(P, name='GeoScatConv: P')
-        _raise_if_nonfinite(x, name='GeoScatConv: x')
-
+    For scales ``(t_0, t_1, ..., t_J)``, filter ``j`` is
+    ``P^{t_{j-1}} x - P^{t_j} x``. Optionally appends the lowpass
+    ``P^{t_J} x`` (non-learnable).
+    """
     if not isinstance(diffusion_scales, Tensor):
         diffusion_scales = torch.as_tensor(
             diffusion_scales,
@@ -346,65 +442,228 @@ def diffusion_wavelet_transform(
             device=x.device,
         )
     else:
-        diffusion_scales = diffusion_scales.to(device=x.device,
-                                               dtype=torch.long)
+        diffusion_scales = diffusion_scales.to(
+            device=x.device,
+            dtype=torch.long,
+        )
 
     if diffusion_scales.dim() != 1:
         raise ValueError(
             f"diffusion_scales must be one-dimensional "
             f"(got {diffusion_scales.dim()} dimensions).", )
 
-    device = x.device
-    powers_to_save = diffusion_scales
-    range_upper_lim = int(diffusion_scales.numel())
+    max_power = int(diffusion_scales[-1].item())
+    pt_xs = _compute_pt_xs(
+        x,
+        P,
+        max_power,
+        check_nonfinite=check_nonfinite,
+    )
+    pt_at_scales = pt_xs[diffusion_scales]
+    num_scales = int(diffusion_scales.numel())
 
-    Ptxs = [x.to(device)]
-    Ptx = x.to(device)
-    max_power = int(powers_to_save[-1].item())
-
-    for j in range(1, max_power + 1):
-        Ptx = _diffusion_matmul(P, Ptx)
-        if check_nonfinite:
-            _raise_if_nonfinite(Ptx, name=f'GeoScatConv: P^t x (t={j})')
-        if j in powers_to_save:
-            j_ct = int((powers_to_save == j).sum().item())
-            for _ in range(j_ct):
-                Ptxs.append(Ptx.to(device))
-
-    Wjxs = [Ptxs[j - 1] - Ptxs[j] for j in range(1, range_upper_lim)]
+    # Wavelet j approximates (P^{t_{j-1}} - P^{t_j}) x via stored powers.
+    wjxs = [
+        pt_at_scales[j - 1] - pt_at_scales[j] for j in range(1, num_scales)
+    ]
     if include_lowpass:
-        Wjxs.append(Ptxs[-1])
-    return torch.stack(Wjxs, dim=filter_stack_dim).to(device)
+        wjxs.append(pt_at_scales[-1])  # append P^{t_J} x before activation
+    return torch.stack(wjxs, dim=filter_stack_dim).to(x.device)
+
+
+def _initialize_legs_parameters(J: int = 4) -> Tensor:
+    r"""Initialize the LEGS selector matrix :math:`F` with dyadic scales.
+
+    For ``J = 4``, the matrix has shape ``(4, 17)`` since powers
+    :math:`t = 0, \ldots, 2^J` are indexed along the last dimension.
+    """
+    m = torch.zeros((J, 2**J + 1))
+    # We want to subtract greater powers of P when adding rows of
+    # the selector matrix, so -1s are at greater indices than +1s
+    # cf. Eq 4 in LEGS paper
+    m[0, 0] = 1.0
+    m[0, 1] = -1.0
+    for j in range(1, J):
+        m[j, 2**j] = 1.0
+        m[j, 2**(j + 1)] = -1.0
+    return m.to(torch.float)
+
+
+def legs_wavelet_transform(
+    x: Tensor,
+    P: Union[Tensor, SparseTensor],
+    F: Tensor,
+    *,
+    include_lowpass: bool,
+    filter_stack_dim: int = -1,
+    check_nonfinite: bool = False,
+) -> Tensor:
+    """LEGS first-order transform: learnable linear combos of diffusion powers.
+
+    Row ``j`` of ``F`` selects which ``P^t x`` terms form wavelet ``j``.
+    At initialization, each row is a dyadic difference; during training ``F``
+    can learn a continuous approximation to discrete wavelet scales.
+    """
+    J = int(F.size(0))
+    T = 2**J
+    pt_xs = _compute_pt_xs(
+        x,
+        P,
+        T,
+        check_nonfinite=check_nonfinite,
+    )
+    # F[j, t] weights P^t x; sum over t gives the j-th first-order coefficient.
+    w1 = torch.einsum('jt,tnf->nfj', F, pt_xs)
+    if include_lowpass:
+        # Lowpass P^T x is fixed (not a row of F); concat before activation.
+        w1 = torch.cat([w1, pt_xs[T].unsqueeze(-1)], dim=-1)
+    if filter_stack_dim != -1:
+        w1 = w1.movedim(-1, filter_stack_dim)
+    return w1
+
+
+def _apply_legs_filters(
+    x: Tensor,
+    P: Union[Tensor, SparseTensor],
+    F: Tensor,
+    max_power: int,
+    *,
+    check_nonfinite: bool = False,
+) -> Tensor:
+    """Apply all LEGS wavelet rows of ``F`` to a single graph signal ``x``.
+
+    Returns shape ``(num_nodes, num_features, J)`` where entry ``[..., k]`` is
+    the k-th LEGS filter applied to ``x``.
+    """
+    pt_xs = _compute_pt_xs(
+        x,
+        P,
+        max_power,
+        check_nonfinite=check_nonfinite,
+    )
+    # Same einsum as first order, but over output filter index k.
+    return torch.einsum('kt,tnf->nfk', F, pt_xs)
+
+
+def _prepare_scatter_inputs(
+    x: Tensor,
+    is_vector_feature: bool,
+) -> Tuple[Tensor, int, int, Literal['scalar', 'vector']]:
+    if is_vector_feature:
+        num_nodes, vector_dim = x.shape
+        flat = x.reshape(num_nodes * vector_dim, 1)
+        return flat, num_nodes, vector_dim, 'vector'
+
+    num_nodes = x.shape[0]
+    return x, num_nodes, x.size(-1), 'scalar'
+
+
+def _compute_second_order_scattering(
+    W1: Tensor,
+    diffusion_op: Union[Tensor, SparseTensor],
+    *,
+    diffusion_scales: Optional[Tensor],
+    F: Optional[Tensor],
+    include_lowpass: bool,
+    is_vector_feature: bool,
+    num_nodes: int,
+    feature_type: Literal['scalar', 'vector'],
+    check_nonfinite: bool = False,
+) -> Tensor:
+    """Compute ``W_{j'}(W_j x)`` and retain only pairs with ``j' > j``.
+
+    ``W1`` must already include any activation from first order. The raw
+    second-order tensor ``W2raw[..., j, k]`` holds filter ``k`` applied to
+    first-order coefficient ``j``; ``_subset_second_order_wavelets`` then
+    drops invalid (lower-on-lower) pairs.
+    """
+    num_wavelets = int(W1.shape[-1])
+    if num_wavelets <= 1:
+        raise ValueError(
+            'Second-order scattering requires at least two first-order '
+            'wavelet filters.', )
+
+    if F is not None:
+        J = int(F.size(0))
+        T = 2**J
+        # Apply every LEGS filter (k) to each learnable first-order coeff (j).
+        # Only the J learnable rows of W1 participate; lowpass is excluded.
+        w2_parts = [
+            _apply_legs_filters(
+                W1[..., j],
+                diffusion_op,
+                F,
+                T,
+                check_nonfinite=check_nonfinite,
+            ).unsqueeze(-2) for j in range(J)
+        ]
+        W2raw = torch.cat(w2_parts, dim=-2)  # (..., J, K) before masking
+        if is_vector_feature:
+            W2raw = W2raw.view(W1.shape[0], J, J)
+        else:
+            num_channels = int(W1.shape[1])
+            W2raw = W2raw.view(num_nodes, num_channels, J, J)
+    else:
+        # Fixed scales: batch all first-order channels through the wavelet
+        # transform again, producing (W_prev, W_next) pairs for every channel.
+        scatter_kwargs = {
+            'diffusion_scales': diffusion_scales,
+            'include_lowpass': include_lowpass,
+            'check_nonfinite': check_nonfinite,
+        }
+        if is_vector_feature:
+            x_second = W1.squeeze(1)
+            W2raw = diffusion_wavelet_transform(
+                x=x_second,
+                P=diffusion_op,
+                **scatter_kwargs,
+            )
+            W2raw = W2raw.view(x_second.shape[0], num_wavelets, -1)
+        else:
+            num_channels = int(W1.shape[1])
+            x_second = W1.reshape(num_nodes, num_channels * num_wavelets)
+            W2raw = diffusion_wavelet_transform(
+                x=x_second,
+                P=diffusion_op,
+                **scatter_kwargs,
+            )
+            W2raw = W2raw.view(num_nodes, num_channels, num_wavelets, -1)
+
+    return _subset_second_order_wavelets(
+        W2raw,
+        feature_type=feature_type,
+    )
 
 
 def multiorder_scatter(
     x: Tensor,
     diffusion_op: Union[Tensor, SparseTensor],
     *,
-    diffusion_scales: Tensor,
     include_lowpass: bool,
     scattering_orders: Tuple[int, ...],
+    diffusion_scales: Optional[Tensor] = None,
+    F: Optional[Tensor] = None,
     is_vector_feature: bool = False,
     activation: Optional[Union[Module, Callable[[Tensor], Tensor]]] = None,
     check_nonfinite: bool = False,
 ) -> Tensor:
+    """Build scattering coefficients from zeroth, first, and second order.
+
+    Pass ``diffusion_scales`` for fixed dyadic/custom scales, or ``F`` for
+    LEGS learnable scales (exactly one must be set). First-order lowpass is
+    concatenated before activation; second order uses the activated ``W1``.
+    """
+    if (F is None) == (diffusion_scales is None):
+        raise ValueError(
+            'Exactly one of diffusion_scales or F must be provided.', )
+
     if x.dim() == 1:
         x = x.unsqueeze(1)
 
-    if is_vector_feature:
-        num_nodes, vector_dim = x.shape
-        flat = x.reshape(num_nodes * vector_dim, 1)
-        feature_type: Literal['scalar', 'vector'] = 'vector'
-    else:
-        num_nodes = x.shape[0]
-        flat = x
-        feature_type = 'scalar'
-
-    scatter_kwargs = {
-        'diffusion_scales': diffusion_scales,
-        'include_lowpass': include_lowpass,
-        'check_nonfinite': check_nonfinite,
-    }
+    flat, num_nodes, feature_dim, feature_type = _prepare_scatter_inputs(
+        x,
+        is_vector_feature,
+    )
 
     need_first_order = 1 in scattering_orders or 2 in scattering_orders
     coeffs: List[Tensor] = []
@@ -414,39 +673,38 @@ def multiorder_scatter(
 
     W1: Optional[Tensor] = None
     if need_first_order:
-        W1 = diffusion_wavelet_transform(
-            x=flat,
-            P=diffusion_op,
-            **scatter_kwargs,
-        )
+        if F is not None:
+            W1 = legs_wavelet_transform(
+                x=flat,
+                P=diffusion_op,
+                F=F,
+                include_lowpass=include_lowpass,
+                check_nonfinite=check_nonfinite,
+            )
+        else:
+            W1 = diffusion_wavelet_transform(
+                x=flat,
+                P=diffusion_op,
+                diffusion_scales=diffusion_scales,
+                include_lowpass=include_lowpass,
+                check_nonfinite=check_nonfinite,
+            )
         W1 = _apply_activation(W1, activation)
         if 1 in scattering_orders:
             coeffs.append(W1)
 
     if 2 in scattering_orders and W1 is not None:
-        num_wavelets = int(W1.shape[-1])
-        if num_wavelets > 1:
-            if is_vector_feature:
-                x_second = W1.squeeze(1)
-                W2raw = diffusion_wavelet_transform(
-                    x=x_second,
-                    P=diffusion_op,
-                    **scatter_kwargs,
-                )
-                nd = x_second.shape[0]
-                W2raw = W2raw.view(nd, num_wavelets, -1)
-            else:
-                num_channels = int(W1.shape[1])
-                x_second = W1.reshape(num_nodes, num_channels * num_wavelets)
-                W2raw = diffusion_wavelet_transform(
-                    x=x_second,
-                    P=diffusion_op,
-                    **scatter_kwargs,
-                )
-                W2raw = W2raw.view(num_nodes, num_channels, num_wavelets, -1)
-            W2 = _subset_second_order_wavelets(
-                W2raw,
+        if int(W1.shape[-1]) > 1:
+            W2 = _compute_second_order_scattering(
+                W1,
+                diffusion_op,
+                diffusion_scales=diffusion_scales,
+                F=F,
+                include_lowpass=include_lowpass,
+                is_vector_feature=is_vector_feature,
+                num_nodes=num_nodes,
                 feature_type=feature_type,
+                check_nonfinite=check_nonfinite,
             )
             W2 = _apply_activation(W2, activation)
             coeffs.append(W2)
@@ -456,7 +714,7 @@ def multiorder_scatter(
 
     W_tot = torch.cat(coeffs, dim=-1)
     if is_vector_feature:
-        return W_tot.view(num_nodes, vector_dim, -1)
+        return W_tot.view(num_nodes, feature_dim, -1)
     return W_tot
 
 
@@ -559,6 +817,14 @@ class GeoScatConv(Module):
     One option for generating custom scales is `InfoGain Wavelets
     <https://arxiv.org/abs/2504.08802>`_.
 
+    Alternatively, set :obj:`diffusion_scales='legs'` to use a learnable
+    LEGS-style selector matrix :math:`F \in \mathbb{R}^{J \times (2^J + 1)}`
+    initialized to dyadic scales. The number of learnable wavelet filters
+    :math:`J` is set via :obj:`legs_kwargs['legs_J']` (default: :obj:`4`).
+    Note that :math:`J` sets the max diffusion scale to :math:`2^J`;
+    given its dyadic initialization, :math:`J=4` or :math:`J=5` is
+    recommended.
+
     This layer returns concatenated zeroeth and first-order scattering
     coefficients by default. The zeroeth-order scattering coefficient
     is the unfiltered input feature vector, and can be excluded by
@@ -633,13 +899,20 @@ class GeoScatConv(Module):
             input), :obj:`1` (first-order wavelets), or :obj:`2`
             (second-order). Pass :obj:`(1,)` for a diffusion wavelet
             transform only. (default: :obj:`(0, 1, 2)`)
-        diffusion_scales (Tuple[int, ...], optional): Monotonically increasing
-            diffusion powers, i.e., :math:`t_j` in each :math:
-            `\mathbf{P}^{t_j}`. Wavelet filters are consecutive differences
-            between adjacent :math:`t_{j-1}` and :math:`t_j`.
-            (default: :obj:`(0, 1, 2, 4, 8, 16)`)
+        diffusion_scales (Tuple[int, ...] or str, optional): Monotonically
+            increasing diffusion powers, i.e., :math:`t_j` in each
+            :math:`\mathbf{P}^{t_j}`. Wavelet filters are consecutive
+            differences between adjacent :math:`t_{j-1}` and :math:`t_j`.
+            Alternatively, pass :obj:`'legs'` or :obj:`'LEGS'` to use a
+            learnable LEGS-style selector matrix :math:`F` initialized to
+            dyadic scales. (default: :obj:`(0, 1, 2, 4, 8, 16)`)
+        legs_kwargs (Dict[str, Any], optional): Keyword arguments for LEGS
+            mode. Currently supports :obj:`'legs_J'`, the number of learnable
+            wavelet filters (default: :obj:`4`). Ignored unless
+            :obj:`diffusion_scales='legs'`.
         include_lowpass (bool, optional): If set to :obj:`True`, append the
-            low-pass filter :math:`\mathbf{P}^{t_J} \mathbf{x}`.
+            low-pass filter :math:`\mathbf{P}^{t_J} \mathbf{x}` before the
+            optional activation at first order.
             (default: :obj:`True`)
         activation (torch.nn.Module or Callable, optional): Activation
             applied to first- and second-order scattering coefficients, e.g.
@@ -686,7 +959,15 @@ class GeoScatConv(Module):
         self,
         in_channels: int,
         scattering_orders: Optional[Tuple[int, ...]] = (0, 1, 2),
-        diffusion_scales: Optional[Tuple[int, ...]] = (0, 1, 2, 4, 8, 16),
+        diffusion_scales: Optional[DiffusionScalesArg] = (
+            0,
+            1,
+            2,
+            4,
+            8,
+            16,
+        ),
+        legs_kwargs: Optional[Dict[str, Any]] = None,
         include_lowpass: bool = True,
         activation: Optional[Union[Module, Callable[[Tensor], Tensor]]] = None,
         normalization: Literal['row', 'column', 'symmetric'] = 'row',
@@ -707,16 +988,52 @@ class GeoScatConv(Module):
                 "normalization must be one of {'row', 'column', 'symmetric'}, "
                 f"got '{normalization}'.", )
 
-        if diffusion_scales is None:
-            diffusion_scales = DEFAULT_DIFFUSION_SCALES
+        use_legs = (diffusion_scales is not None
+                    and _is_legs_diffusion_scales(diffusion_scales))
+
+        if use_legs:
+            if legs_kwargs is not None and not isinstance(legs_kwargs, dict):
+                raise ValueError('legs_kwargs must be a dict or None.')
+            self.legs_kwargs = _validate_legs_kwargs(
+                legs_kwargs,
+                scattering_orders,
+            )
+            legs_J = self.legs_kwargs['legs_J']
+            self.use_legs = True
+            self.diffusion_scales = 'legs'
+            self.max_diffusion_power = 2**legs_J
+            self.register_parameter(
+                'F',
+                Parameter(_initialize_legs_parameters(legs_J)),
+            )
         else:
-            diffusion_scales = tuple(diffusion_scales)
-        if len(diffusion_scales) < 2:
-            raise ValueError(
-                'diffusion_scales must contain at least two entries.', )
-        if any(diffusion_scales[i] >= diffusion_scales[i + 1]
-               for i in range(len(diffusion_scales) - 1)):
-            raise ValueError('diffusion_scales must be strictly increasing.')
+            if legs_kwargs is not None:
+                warnings.warn(
+                    'legs_kwargs was provided but diffusion_scales is not '
+                    "'legs'; ignoring legs_kwargs.",
+                    stacklevel=2,
+                )
+            self.use_legs = False
+            self.legs_kwargs = None
+            self.max_diffusion_power = None
+            self.F = None
+
+            if diffusion_scales is None:
+                diffusion_scales = DEFAULT_DIFFUSION_SCALES
+            elif isinstance(diffusion_scales, str):
+                raise ValueError(
+                    "diffusion_scales must be a tuple of integers or 'legs' "
+                    f"(got '{diffusion_scales}').", )
+            else:
+                diffusion_scales = tuple(diffusion_scales)
+            if len(diffusion_scales) < 2:
+                raise ValueError(
+                    'diffusion_scales must contain at least two entries.', )
+            if any(diffusion_scales[i] >= diffusion_scales[i + 1]
+                   for i in range(len(diffusion_scales) - 1)):
+                raise ValueError(
+                    'diffusion_scales must be strictly increasing.', )
+            self.diffusion_scales = diffusion_scales
 
         if pool is not None:
             pool = tuple(pool)
@@ -730,7 +1047,6 @@ class GeoScatConv(Module):
 
         self.in_channels = in_channels
         self.scattering_orders = scattering_orders
-        self.diffusion_scales = diffusion_scales
         self.include_lowpass = include_lowpass
         self.activation = activation
         self.normalization = normalization
@@ -740,6 +1056,8 @@ class GeoScatConv(Module):
 
     @property
     def num_wavelet_filters(self) -> int:
+        if self.use_legs:
+            return self.legs_kwargs['legs_J'] + int(self.include_lowpass)
         return _compute_num_wavelet_filters(
             self.diffusion_scales,
             self.include_lowpass,
@@ -747,6 +1065,16 @@ class GeoScatConv(Module):
 
     @property
     def num_scattering_filters(self) -> int:
+        if self.use_legs:
+            legs_J = self.legs_kwargs['legs_J']
+            total = 0
+            if 0 in self.scattering_orders:
+                total += 1
+            if 1 in self.scattering_orders:
+                total += legs_J + int(self.include_lowpass)
+            if 2 in self.scattering_orders:
+                total += legs_J * (legs_J - 1) // 2
+            return total
         return _compute_num_scattering_filters(
             self.num_wavelet_filters,
             self.scattering_orders,
@@ -760,10 +1088,15 @@ class GeoScatConv(Module):
         return num_filters * len(self.pool)
 
     def reset_parameters(self) -> None:
-        """This layer does not have any learnable parameters to reset.
-        It is intended as a multiscale feature extractor layer for graph
-        data, whose coefficients can be fed into learnable layers downstream.
+        r"""Resets learnable parameters.
+
+        In LEGS mode, reinitializes :obj:`F` to dyadic scales via
+        :func:`_initialize_legs_parameters`.
         """
+        if self.use_legs:
+            with torch.no_grad():
+                self.F.copy_(
+                    _initialize_legs_parameters(self.legs_kwargs['legs_J']), )
 
     def forward(
         self,
@@ -844,22 +1177,31 @@ class GeoScatConv(Module):
                 x.device,
             )
 
-        diffusion_scales = torch.as_tensor(
-            self.diffusion_scales,
-            dtype=torch.long,
-            device=x.device,
-        )
-
-        coeffs = multiorder_scatter(
-            x,
-            op,
-            diffusion_scales=diffusion_scales,
-            include_lowpass=self.include_lowpass,
-            scattering_orders=self.scattering_orders,
-            is_vector_feature=self.is_vector_feature,
-            activation=self.activation,
-            check_nonfinite=self.check_nonfinite,
-        )
+        scatter_kwargs = {
+            'include_lowpass': self.include_lowpass,
+            'scattering_orders': self.scattering_orders,
+            'is_vector_feature': self.is_vector_feature,
+            'activation': self.activation,
+            'check_nonfinite': self.check_nonfinite,
+        }
+        if self.use_legs:
+            coeffs = multiorder_scatter(
+                x,
+                op,
+                F=self.F,
+                **scatter_kwargs,
+            )
+        else:
+            coeffs = multiorder_scatter(
+                x,
+                op,
+                diffusion_scales=torch.as_tensor(
+                    self.diffusion_scales,
+                    dtype=torch.long,
+                    device=x.device,
+                ),
+                **scatter_kwargs,
+            )
 
         if self.pool is None:
             return coeffs
@@ -867,6 +1209,15 @@ class GeoScatConv(Module):
         return _pool_scattering_coefficients(coeffs, batch, self.pool)
 
     def __repr__(self) -> str:
+        if self.use_legs:
+            return (f'{self.__class__.__name__}('
+                    f'in_channels={self.in_channels}, '
+                    f'scattering_orders={self.scattering_orders}, '
+                    f"diffusion_scales='legs', "
+                    f'legs_kwargs={self.legs_kwargs}, '
+                    f'num_scattering_filters={self.num_scattering_filters}, '
+                    f'normalization={self.normalization}, '
+                    f'pool={self.pool})')
         return (f'{self.__class__.__name__}('
                 f'in_channels={self.in_channels}, '
                 f'scattering_orders={self.scattering_orders}, '
