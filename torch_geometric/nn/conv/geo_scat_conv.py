@@ -800,9 +800,10 @@ class GeoScatConv(Module):
     r"""Implements the geometric scattering transform
     introduced in the papers `"Geometric Scattering for Graph Data
     Analysis" <https://arxiv.org/abs/1810.03068>`_ and `"Diffusion
-    Scattering Transforms on Graphs"
-    <https://arxiv.org/abs/1806.08829>`_. It
-    has been utilized and extended further in, for example,
+    Scattering Transforms on Graphs" <https://arxiv.org/abs/1806.08829>`_.
+    It has been utilized and extended further in, for example,
+    `"Learnable Filters for Geometric Scattering Modules"
+    (LEGS) <https://ieeexplore.ieee.org/document/10473218>`_,
     `BLIS-Net <https://proceedings.mlr.press/v238/xu24c.html>`_,
     `HiPoNet <https://arxiv.org/abs/2502.07746>`_, and
     `VDW-GNNs <https://arxiv.org/abs/2510.01022>`_.
@@ -834,12 +835,14 @@ class GeoScatConv(Module):
     <https://arxiv.org/abs/2504.08802>`_.
 
     Alternatively, set :obj:`diffusion_scales='legs'` to use a learnable
-    LEGS selector matrix :math:`F \in \mathbb{R}^{(J+1) \times (2^J + 1)}`
-    initialized to dyadic scales matching the default filter bank. The
-    diffusion depth :math:`J` is set via :obj:`legs_kwargs['legs_J']`
+    diffusion scales selector matrix
+    :math:`F \in \mathbb{R}^{(J+1) \times (2^J + 1)}`, as detailed in
+    the LEGS paper. Learnable
+    scales are initialized to dyadic scales matching the default filter bank.
+    The diffusion depth :math:`J` is set via :obj:`legs_kwargs['legs_J']`
     (default: :obj:`4`, giving ``5`` learnable wavelet rows and ``T = 16``).
     Note that :math:`J` sets the max diffusion scale to :math:`2^J`;
-    given its dyadic initialization, :math:`J=4` or :math:`J=5` is
+    given its dyadic initialization, :math:`J \in {3, 4, 5}` is
     recommended.
 
     This layer returns concatenated zeroeth and first-order scattering
@@ -875,8 +878,8 @@ class GeoScatConv(Module):
     scattering coefficients, and apply other pooling operations downstream
     of this layer.
 
-    Vector-valued graph signals (as explored in the `VDW-GNNs paper
-    <https://arxiv.org/abs/2510.01022>`_) are supported by
+    Vector-valued graph signals (as explored in the `VDW-GNNs
+    <https://arxiv.org/abs/2510.01022>`_ paper) are supported by
     setting :obj:`is_vector_feature` to :obj:`True`. In this mode, node
     features :math:`\mathbf{x} \in \mathbb{R}^{n \times d}` are flattened
     internally and a user-supplied diffusion operator
@@ -1097,8 +1100,7 @@ class GeoScatConv(Module):
     def reset_parameters(self) -> None:
         r"""Resets learnable parameters.
 
-        In LEGS mode, reinitializes :obj:`F` to dyadic scales via
-        :func:`_initialize_legs_parameters`.
+        In LEGS mode, reinitializes :obj:`F` to dyadic scales.
         """
         if self.use_legs:
             with torch.no_grad():
