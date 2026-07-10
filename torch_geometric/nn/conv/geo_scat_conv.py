@@ -523,12 +523,11 @@ def _pool_scattering_coefficients(
 
 
 class GeoScatConv(Module):
-    r"""Implements the geometric scattering transform built from
-    graph diffusion wavelets, introduced in the `"Geometric
-    Scattering for Graph Data Analysis"
-    <https://arxiv.org/abs/1810.03068>`_ and `"Diffusion
+    r"""Implements the geometric scattering transform
+    introduced in the papers `"Geometric Scattering for Graph Data
+    Analysis" <https://arxiv.org/abs/1810.03068>`_ and `"Diffusion
     Scattering Transforms on Graphs"
-    <https://arxiv.org/abs/1806.08829>`_ papers. This technique
+    <https://arxiv.org/abs/1806.08829>`_. It
     has been utilized and extended further in, for example,
     `BLIS-Net <https://proceedings.mlr.press/v238/xu24c.html>`_,
     `HiPoNet <https://arxiv.org/abs/2502.07746>`_, and
@@ -546,9 +545,9 @@ class GeoScatConv(Module):
     where :math:`\mathbf{P}` is a lazy random walk operator
     (row-normalized by default), and :math:`t_j` are the diffusion
     scales.
-    A low-pass filter :math:`A_J = \mathbf{P}^{t_J} \mathbf{x}`
+    A low-pass filter :math:`\mathbf{A}_J = \mathbf{P}^{t_J} \mathbf{x}`
     is also included by default, such that the full filter bank is
-    :math:`\{\mathbf{W}_j\}_{j=0}^{J} \cup \{A_J\}`. The low-pass
+    :math:`\{\mathbf{W}_j\}_{j=0}^{J} \cup \{\mathbf{A}_J\}`. The low-pass
     filter can be excluded by setting :obj:`include_lowpass`
     to :obj:`False`.
 
@@ -563,7 +562,7 @@ class GeoScatConv(Module):
     This layer returns concatenated zeroeth and first-order scattering
     coefficients by default. The zeroeth-order scattering coefficient
     is the unfiltered input feature vector, and can be excluded by
-    setting :obj:`scattering_orders` to :obj:`(1,)`. Second-order
+    excluding :obj:`0` from :obj:`scattering_orders`. Second-order
     scattering coefficients can be included by including :obj:`2` in
     the :obj:`scattering_orders` tuple. These are defined as:
 
@@ -579,14 +578,14 @@ class GeoScatConv(Module):
     parameterization of the scattering transform. Including 0th-order
     scattering coefficients increases the number of output channels by
     1; including first-order scattering coefficients increases the number
-    of output channels by the number of wavelets :math:`w`; including
+    of output channels by the number of filters :math:`w`; including
     second-order scattering coefficients increases the number of output
     channels by :math:`w \cdot (w - 1) / 2`.
 
     For graph-level tasks, scattering coefficients can be pooled across
     nodes within each graph and feature channel, changing the output shape
-    from :math:`(|\mathcal{V}|, F_{\mathrm{in}}, W_{\mathrm{total}})` to
-    :math:`(B, F_{\mathrm{in}}, W_{\mathrm{total}} \cdot |\mathrm{pool}|)`.
+    from :math:`(|\mathcal{V}|, F_{\mathrm{in}}, F_{\mathrm{out}})` to
+    :math:`(B, F_{\mathrm{in}}, F_{\mathrm{out}} \cdot |\mathrm{pool}|)`.
     Currently, the built-in options for pooling are :obj:`"mean"`,
     :obj:`"max"`, :obj:`"min"`, :obj:`"median"`, and :obj:`"var"`.
     Alternatively, leave :obj:`pool` as :obj:`None` to return node-level
@@ -633,22 +632,22 @@ class GeoScatConv(Module):
             include in the output. Each entry must be :obj:`0` (unfiltered
             input), :obj:`1` (first-order wavelets), or :obj:`2`
             (second-order). Pass :obj:`(1,)` for a diffusion wavelet
-            transform only. (default: :obj:`(0, 1)`)
+            transform only. (default: :obj:`(0, 1, 2)`)
         diffusion_scales (Tuple[int, ...], optional): Monotonically increasing
-            diffusion powers, i.e., :math:`t_j` in each `:math:`P^{t_j}`.
-            Wavelet filters are consecutive differences between adjacent
-            :math:`t_{j-1}` and :math:`t_j`.
+            diffusion powers, i.e., :math:`t_j` in each :math:
+            `\mathbf{P}^{t_j}`. Wavelet filters are consecutive differences
+            between adjacent :math:`t_{j-1}` and :math:`t_j`.
             (default: :obj:`(0, 1, 2, 4, 8, 16)`)
         include_lowpass (bool, optional): If set to :obj:`True`, append the
-            low-pass filter :math:`P^{t_J} \mathbf{x}`.
+            low-pass filter :math:`\mathbf{P}^{t_J} \mathbf{x}`.
             (default: :obj:`True`)
         activation (torch.nn.Module or Callable, optional): Activation
             applied to first- and second-order scattering coefficients, e.g.
             :obj:`torch.abs` for the modulus. (default: :obj:`None`)
         normalization (str, optional): Normalization scheme for the adjacency
             matrix before building the lazy random walk operator
-            :math:`P`. Ignored when :obj:`diffusion_op` is provided. Options:
-            :obj:`"row"`, :obj:`"column"`, :obj:`"symmetric"`.
+            :math:`\mathbf{P}`. Ignored when :obj:`diffusion_op` is provided.
+            Options: :obj:`"row"`, :obj:`"column"`, :obj:`"symmetric"`.
             (default: :obj:`"row"`)
         is_vector_feature (bool, optional): If set to :obj:`True`, treat each
             node feature as a vector signal of dimension :obj:`in_channels`
@@ -678,15 +677,15 @@ class GeoScatConv(Module):
           graph-level pooling on batched graphs)*
         - **output (node-level,** :obj:`pool=None` **):**
           scattering coefficients
-          :math:`(|\mathcal{V}|, F_{in}, W_{\mathrm{total}})`
+          :math:`(|\mathcal{V}|, F_{in}, F_{\mathrm{out}})`
         - **output (graph-level,** :obj:`pool` **set):**
           pooled scattering coefficients
-          :math:`(B, F_{in}, W_{\mathrm{total}} \cdot |\texttt{pool}|)`
+          :math:`(B, F_{in}, F_{\mathrm{out}} \cdot |\texttt{pool}|)`
     """
     def __init__(
         self,
         in_channels: int,
-        scattering_orders: Optional[Tuple[int, ...]] = (0, 1),
+        scattering_orders: Optional[Tuple[int, ...]] = (0, 1, 2),
         diffusion_scales: Optional[Tuple[int, ...]] = (0, 1, 2, 4, 8, 16),
         include_lowpass: bool = True,
         activation: Optional[Union[Module, Callable[[Tensor], Tensor]]] = None,
@@ -793,8 +792,8 @@ class GeoScatConv(Module):
 
         Returns:
             Scattering coefficients of shape
-            :math:`(|\mathcal{V}|, F_{\mathrm{in}}, W_{\mathrm{total}})`,
-            or :math:`(B, F_{\mathrm{in}}, W_{\mathrm{total}}
+            :math:`(|\mathcal{V}|, F_{\mathrm{in}}, F_{\mathrm{out}})`,
+            or :math:`(B, F_{\mathrm{in}}, F_{\mathrm{out}}
             \cdot |\mathrm{pool}|)` if :obj:`pool` is set.
         """
         if x.size(-1) != self.in_channels:
