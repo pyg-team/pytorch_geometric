@@ -802,8 +802,7 @@ class GeoScatConv(Module):
     Analysis" <https://arxiv.org/abs/1810.03068>`_ and `"Diffusion
     Scattering Transforms on Graphs" <https://arxiv.org/abs/1806.08829>`_.
     It has been utilized and extended further in, for example,
-    `"Learnable Filters for Geometric Scattering Modules"
-    (LEGS) <https://ieeexplore.ieee.org/document/10473218>`_,
+    `LEGS <https://ieeexplore.ieee.org/document/10473218>`_,
     `BLIS-Net <https://proceedings.mlr.press/v238/xu24c.html>`_,
     `HiPoNet <https://arxiv.org/abs/2502.07746>`_, and
     `VDW-GNNs <https://arxiv.org/abs/2510.01022>`_.
@@ -841,9 +840,7 @@ class GeoScatConv(Module):
     scales are initialized to dyadic scales matching the default filter bank.
     The diffusion depth :math:`J` is set via :obj:`legs_kwargs['legs_J']`
     (default: :obj:`4`, giving ``5`` learnable wavelet rows and ``T = 16``).
-    Note that :math:`J` sets the max diffusion scale to :math:`2^J`;
-    given its dyadic initialization, :math:`J \in {3, 4, 5}` is
-    recommended.
+    Note that :math:`J` sets the max diffusion scale to :math:`2^J`.
 
     This layer returns concatenated zeroeth and first-order scattering
     coefficients by default. The zeroeth-order scattering coefficient
