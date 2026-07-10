@@ -475,24 +475,28 @@ def test_geo_scat_conv_legs_construction():
     conv = GeoScatConv(in_channels, diffusion_scales='legs', pool=None)
     assert conv.use_legs is True
     assert conv.legs_kwargs == {'legs_J': 4}
-    assert conv.F.shape == (4, 17)
-    assert conv.num_wavelet_filters == 5
-    assert conv.num_scattering_filters == 12
+    assert conv.F.shape == (5, 17)
+    assert conv.num_wavelet_filters == 6
+    assert conv.num_scattering_filters == 22
     assert "diffusion_scales='legs'" in str(conv)
 
     P = _make_dense_lrw_diffusion_operator(edge_index, num_nodes)
     with warnings.catch_warnings():
         warnings.simplefilter('ignore', UserWarning)
         out = conv(x, diffusion_op=P)
-    assert out.size() == (num_nodes, in_channels, 12)
+    assert out.size() == (num_nodes, in_channels, 22)
 
 
-def test_geo_scat_conv_legs_init_row_zero():
+def test_geo_scat_conv_legs_init_rows():
     conv = GeoScatConv(2, diffusion_scales='legs', pool=None)
     F = conv.F
+    assert F.shape == (5, 17)
     assert F[0, 0].item() == 1.0
     assert F[0, 1].item() == -1.0
-    assert F[0, 2:].abs().sum().item() == 0.0
+    assert F[1, 1].item() == 1.0
+    assert F[1, 2].item() == -1.0
+    assert F[4, 8].item() == 1.0
+    assert F[4, 16].item() == -1.0
 
 
 def test_geo_scat_conv_legs_reset_parameters():
@@ -547,7 +551,7 @@ def test_geo_scat_conv_legs_lowpass_before_activation():
     with warnings.catch_warnings():
         warnings.simplefilter('ignore', UserWarning)
         out = conv(x, diffusion_op=P)
-    assert out.size() == (num_nodes, in_channels, 5)
+    assert out.size() == (num_nodes, in_channels, 6)
     assert (out >= 0).all()
 
 
@@ -581,9 +585,41 @@ def test_geo_scat_conv_legs_partial_equivalence_at_init():
             out_fixed = conv_fixed(x, diffusion_op=P)
 
     assert torch.allclose(out_legs[..., 0], out_fixed[..., 0], atol=1e-6)
-    assert torch.allclose(out_legs[..., 1], out_fixed[..., 2], atol=1e-6)
-    assert torch.allclose(out_legs[..., 2], out_fixed[..., 3], atol=1e-6)
-    assert torch.allclose(out_legs[..., 3], out_fixed[..., 4], atol=1e-6)
+    assert torch.allclose(out_legs[..., 1], out_fixed[..., 1], atol=1e-6)
+    assert torch.allclose(out_legs[..., 2], out_fixed[..., 2], atol=1e-6)
+    assert torch.allclose(out_legs[..., 3], out_fixed[..., 3], atol=1e-6)
+    assert torch.allclose(out_legs[..., 4], out_fixed[..., 4], atol=1e-6)
+
+
+def test_geo_scat_conv_legs_full_equivalence_at_init():
+    in_channels = 2
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    num_nodes = edge_index.max().item() + 1
+    x = torch.randn((num_nodes, in_channels))
+    P = _make_dense_lrw_diffusion_operator(edge_index, num_nodes)
+
+    conv_legs = GeoScatConv(
+        in_channels,
+        diffusion_scales='legs',
+        legs_kwargs={'legs_J': 4},
+        scattering_orders=[0, 1, 2],
+        pool=None,
+    )
+    conv_fixed = GeoScatConv(
+        in_channels,
+        diffusion_scales=(0, 1, 2, 4, 8, 16),
+        scattering_orders=[0, 1, 2],
+        pool=None,
+    )
+
+    with warnings.catch_warnings():
+        warnings.simplefilter('ignore', UserWarning)
+        with torch.no_grad():
+            out_legs = conv_legs(x, diffusion_op=P)
+            out_fixed = conv_fixed(x, diffusion_op=P)
+
+    assert out_legs.shape == out_fixed.shape
+    assert torch.allclose(out_legs, out_fixed, atol=1e-6)
 
 
 def test_geo_scat_conv_legs_second_order():
@@ -600,12 +636,12 @@ def test_geo_scat_conv_legs_second_order():
         scattering_orders=[0, 1, 2],
         pool=None,
     )
-    assert conv.num_scattering_filters == 12
+    assert conv.num_scattering_filters == 22
 
     with warnings.catch_warnings():
         warnings.simplefilter('ignore', UserWarning)
         out = conv(x, diffusion_op=P)
-    assert out.size() == (num_nodes, in_channels, 12)
+    assert out.size() == (num_nodes, in_channels, 22)
 
 
 def test_geo_scat_conv_legs_multiorder_scatter_consistency():

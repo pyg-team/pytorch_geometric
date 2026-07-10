@@ -471,21 +471,26 @@ def diffusion_wavelet_transform(
     return torch.stack(wjxs, dim=filter_stack_dim).to(x.device)
 
 
+def _legs_max_power(F: Tensor) -> int:
+    """Return ``T = 2^J`` from a LEGS matrix with ``J + 1`` filter rows."""
+    return 2**(int(F.size(0)) - 1)
+
+
 def _initialize_legs_parameters(J: int = 4) -> Tensor:
     r"""Initialize the LEGS selector matrix :math:`F` with dyadic scales.
 
-    For ``J = 4``, the matrix has shape ``(4, 17)`` since powers
-    :math:`t = 0, \ldots, 2^J` are indexed along the last dimension.
+    For ``J = 4``, ``F`` has shape ``(5, 17)``: ``J + 1`` learnable wavelet
+    rows matching ``(P^{t_{j-1}} - P^{t_j})`` for scales
+    ``(0, 1, 2, 4, 8, 16)``, and ``2^J + 1`` diffusion-power columns.
     """
-    m = torch.zeros((J, 2**J + 1))
-    # We want to subtract greater powers of P when adding rows of
-    # the selector matrix, so -1s are at greater indices than +1s
-    # cf. Eq 4 in LEGS paper
-    m[0, 0] = 1.0
-    m[0, 1] = -1.0
-    for j in range(1, J):
-        m[j, 2**j] = 1.0
-        m[j, 2**(j + 1)] = -1.0
+    num_rows = J + 1
+    T = 2**J
+    m = torch.zeros((num_rows, T + 1))
+    for r in range(num_rows):
+        lower = 0 if r == 0 else 2**(r - 1)
+        upper = 2**r
+        m[r, lower] = 1.0
+        m[r, upper] = -1.0
     return m.to(torch.float)
 
 
@@ -504,8 +509,7 @@ def legs_wavelet_transform(
     At initialization, each row is a dyadic difference; during training ``F``
     can learn a continuous approximation to discrete wavelet scales.
     """
-    J = int(F.size(0))
-    T = 2**J
+    T = _legs_max_power(F)
     pt_xs = _compute_pt_xs(
         x,
         P,
@@ -520,29 +524,6 @@ def legs_wavelet_transform(
     if filter_stack_dim != -1:
         w1 = w1.movedim(-1, filter_stack_dim)
     return w1
-
-
-def _apply_legs_filters(
-    x: Tensor,
-    P: Union[Tensor, SparseTensor],
-    F: Tensor,
-    max_power: int,
-    *,
-    check_nonfinite: bool = False,
-) -> Tensor:
-    """Apply all LEGS wavelet rows of ``F`` to a single graph signal ``x``.
-
-    Returns shape ``(num_nodes, num_features, J)`` where entry ``[..., k]`` is
-    the k-th LEGS filter applied to ``x``.
-    """
-    pt_xs = _compute_pt_xs(
-        x,
-        P,
-        max_power,
-        check_nonfinite=check_nonfinite,
-    )
-    # Same einsum as first order, but over output filter index k.
-    return torch.einsum('kt,tnf->nfk', F, pt_xs)
 
 
 def _prepare_scatter_inputs(
@@ -584,25 +565,60 @@ def _compute_second_order_scattering(
             'wavelet filters.', )
 
     if F is not None:
-        J = int(F.size(0))
-        T = 2**J
-        # Apply every LEGS filter (k) to each learnable first-order coeff (j).
-        # Only the J learnable rows of W1 participate; lowpass is excluded.
-        w2_parts = [
-            _apply_legs_filters(
+        num_f_rows = int(F.size(0))
+        T = _legs_max_power(F)
+        w2_parts: List[Tensor] = []
+        lowpass_parts: List[Tensor] = []
+        for j in range(num_f_rows):
+            # One power stack per first-order channel;
+            # reuse for einsum and lowpass.
+            pt_xs = _compute_pt_xs(
                 W1[..., j],
                 diffusion_op,
-                F,
                 T,
                 check_nonfinite=check_nonfinite,
-            ).unsqueeze(-2) for j in range(J)
-        ]
-        W2raw = torch.cat(w2_parts, dim=-2)  # (..., J, K) before masking
-        if is_vector_feature:
-            W2raw = W2raw.view(W1.shape[0], J, J)
+            )
+            w2_parts.append(
+                torch.einsum('kt,tnf->nfk', F, pt_xs).unsqueeze(-2))
+            if include_lowpass:
+                lowpass_parts.append(pt_xs[T])
+
+        w2_learnable = torch.cat(w2_parts, dim=-2)
+
+        if include_lowpass:
+            num_wavelets = num_f_rows + 1
+            # Lowpass second-order: P^T applied to W_j x (from pt_xs[T] above).
+            lowpass_on_j = torch.stack(lowpass_parts, dim=-1)
+            if is_vector_feature:
+                nd = W1.shape[0]
+                w2_full = w2_learnable.new_zeros(nd, num_wavelets,
+                                                 num_wavelets)
+                w2_full[:, :num_f_rows, :num_f_rows] = w2_learnable.view(
+                    nd, num_f_rows, num_f_rows)
+                w2_full[:, :num_f_rows, num_f_rows] = lowpass_on_j.squeeze(1)
+                W2raw = w2_full
+            else:
+                num_channels = int(W1.shape[1])
+                w2_full = w2_learnable.new_zeros(
+                    num_nodes,
+                    num_channels,
+                    num_wavelets,
+                    num_wavelets,
+                )
+                w2_full[:, :, :num_f_rows, :num_f_rows] = w2_learnable.view(
+                    num_nodes, num_channels, num_f_rows, num_f_rows)
+                w2_full[:, :, :num_f_rows, num_f_rows] = lowpass_on_j
+                W2raw = w2_full
+        elif is_vector_feature:
+            W2raw = w2_learnable.view(W1.shape[0], num_f_rows, num_f_rows)
         else:
             num_channels = int(W1.shape[1])
-            W2raw = W2raw.view(num_nodes, num_channels, J, J)
+            W2raw = w2_learnable.view(
+                num_nodes,
+                num_channels,
+                num_f_rows,
+                num_f_rows,
+            )
     else:
         # Fixed scales: batch all first-order channels through the wavelet
         # transform again, producing (W_prev, W_next) pairs for every channel.
@@ -818,9 +834,10 @@ class GeoScatConv(Module):
     <https://arxiv.org/abs/2504.08802>`_.
 
     Alternatively, set :obj:`diffusion_scales='legs'` to use a learnable
-    LEGS-style selector matrix :math:`F \in \mathbb{R}^{J \times (2^J + 1)}`
-    initialized to dyadic scales. The number of learnable wavelet filters
-    :math:`J` is set via :obj:`legs_kwargs['legs_J']` (default: :obj:`4`).
+    LEGS selector matrix :math:`F \in \mathbb{R}^{(J+1) \times (2^J + 1)}`
+    initialized to dyadic scales matching the default filter bank. The
+    diffusion depth :math:`J` is set via :obj:`legs_kwargs['legs_J']`
+    (default: :obj:`4`, giving ``5`` learnable wavelet rows and ``T = 16``).
     Note that :math:`J` sets the max diffusion scale to :math:`2^J`;
     given its dyadic initialization, :math:`J=4` or :math:`J=5` is
     recommended.
@@ -908,8 +925,8 @@ class GeoScatConv(Module):
             dyadic scales. (default: :obj:`(0, 1, 2, 4, 8, 16)`)
         legs_kwargs (Dict[str, Any], optional): Keyword arguments for LEGS
             mode. Currently supports :obj:`'legs_J'`, the number of learnable
-            wavelet filters (default: :obj:`4`). Ignored unless
-            :obj:`diffusion_scales='legs'`.
+            wavelet filters (default: :obj:`4`, yielding ``J + 1`` rows in
+            :obj:`F` and maximum diffusion power ``2^J``).
         include_lowpass (bool, optional): If set to :obj:`True`, append the
             low-pass filter :math:`\mathbf{P}^{t_J} \mathbf{x}` before the
             optional activation at first order.
@@ -1057,7 +1074,7 @@ class GeoScatConv(Module):
     @property
     def num_wavelet_filters(self) -> int:
         if self.use_legs:
-            return self.legs_kwargs['legs_J'] + int(self.include_lowpass)
+            return (self.legs_kwargs['legs_J'] + 1) + int(self.include_lowpass)
         return _compute_num_wavelet_filters(
             self.diffusion_scales,
             self.include_lowpass,
@@ -1065,16 +1082,6 @@ class GeoScatConv(Module):
 
     @property
     def num_scattering_filters(self) -> int:
-        if self.use_legs:
-            legs_J = self.legs_kwargs['legs_J']
-            total = 0
-            if 0 in self.scattering_orders:
-                total += 1
-            if 1 in self.scattering_orders:
-                total += legs_J + int(self.include_lowpass)
-            if 2 in self.scattering_orders:
-                total += legs_J * (legs_J - 1) // 2
-            return total
         return _compute_num_scattering_filters(
             self.num_wavelet_filters,
             self.scattering_orders,
