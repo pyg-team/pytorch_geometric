@@ -343,3 +343,24 @@ def test_empty_ground_truth():
     metric.update(pred_index_mat, edge_label_index, edge_label_weight)
     assert metric.compute() == 0
     metric.reset()
+
+
+def test_link_pred_without_torchmetrics(monkeypatch):
+    """Simulates an environment without `torchmetrics` installed and checks
+    that `link_pred` falls back to `torch.nn.Module` gracefully."""
+    import importlib
+    import sys
+    import torch_geometric.metrics.link_pred as link_pred_module
+
+    # Setting a module to `None` in `sys.modules` forces the next
+    # `import torchmetrics` to raise `ImportError`.
+    monkeypatch.setitem(sys.modules, 'torchmetrics', None)
+    importlib.reload(link_pred_module)
+
+    assert link_pred_module.WITH_TORCHMETRICS is False
+    assert link_pred_module.BaseMetric is torch.nn.Module
+
+    # Restore the real module state so later tests aren't affected.
+    monkeypatch.delitem(sys.modules, 'torchmetrics', raising=False)
+    importlib.reload(link_pred_module)
+    assert link_pred_module.WITH_TORCHMETRICS is True

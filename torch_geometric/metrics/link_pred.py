@@ -6,7 +6,7 @@ from torch import Tensor
 
 from torch_geometric.utils import cumsum, scatter
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     try:
         # Provide accurate type to static type checkers when available.
         from torchmetrics import Metric as BaseMetric
