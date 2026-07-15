@@ -12,7 +12,7 @@ try:
     BaseMetric = torchmetrics.Metric
 except Exception:
     WITH_TORCHMETRICS = False
-    BaseMetric = torch.nn.Module
+    BaseMetric = torch.nn.Module    # type: ignore[assignment,misc]
 
 
 @dataclass(repr=False)
@@ -151,7 +151,7 @@ class LinkPredMetricData:
         return pos
 
 
-class _LinkPredMetric(BaseMetric):   # type: ignore[misc]
+class _LinkPredMetric(BaseMetric):
     r"""An abstract class for computing link prediction retrieval metrics.
 
     Args:
