@@ -12,7 +12,7 @@ if TYPE_CHECKING:
         from torchmetrics import Metric as BaseMetric
     except:
         # Fallback for Sphinx / environments where torchmetrics isn't installed.
-        BaseMetric = Any  # type: ignore
+        BaseMetric = Any
 try:
     import torchmetrics  # noqa
     WITH_TORCHMETRICS = True
