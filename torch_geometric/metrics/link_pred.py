@@ -9,7 +9,7 @@ from torch_geometric.utils import cumsum, scatter
 if TYPE_CHECKING:
     # Import Metric only for type-checking so mypy can use it as a base class
     # This import is not executed at runtime
-    from torchmetrics import Metric as BaseMetric  # type: ignore
+    from torchmetrics import Metric as BaseMetric
 try:
     import torchmetrics  # noqa
     WITH_TORCHMETRICS = True
