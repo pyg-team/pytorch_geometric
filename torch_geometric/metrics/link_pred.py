@@ -151,7 +151,7 @@ class LinkPredMetricData:
         return pos
 
 
-class _LinkPredMetric(BaseMetric):   # type: ignore[misc]
+class _LinkPredMetric(BaseMetric):  # type: ignore[misc]
     r"""An abstract class for computing link prediction retrieval metrics.
 
     Args:
