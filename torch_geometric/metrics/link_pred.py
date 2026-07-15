@@ -1,18 +1,22 @@
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union, TYPE_CHECKING
 
 import torch
 from torch import Tensor
 
 from torch_geometric.utils import cumsum, scatter
 
+if TYPE_CHECKING:
+    # Import Metric only for type-checking so mypy can use it as a base class
+    # This import is not executed at runtime
+    from torchmetrics import Metric as BaseMetric  # type: ignore
 try:
     import torchmetrics  # noqa
     WITH_TORCHMETRICS = True
     BaseMetric = torchmetrics.Metric
 except Exception:
     WITH_TORCHMETRICS = False
-    BaseMetric = torch.nn.Module  # type: ignore[assignment,misc]
+    BaseMetric = torch.nn.Module
 
 
 @dataclass(repr=False)
