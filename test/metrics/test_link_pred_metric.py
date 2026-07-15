@@ -347,9 +347,11 @@ def test_empty_ground_truth():
 
 def test_link_pred_without_torchmetrics(monkeypatch):
     """Simulates an environment without `torchmetrics` installed and checks
-    that `link_pred` falls back to `torch.nn.Module` gracefully."""
+    that `link_pred` falls back to `torch.nn.Module` gracefully.
+    """
     import importlib
     import sys
+
     import torch_geometric.metrics.link_pred as link_pred_module
 
     # Setting a module to `None` in `sys.modules` forces the next
