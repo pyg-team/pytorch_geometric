@@ -31,6 +31,24 @@ def test_geo_scat_conv_node_level():
     assert out_weighted.size() == (num_nodes, in_channels, 7)
 
 
+def test_lazy_geo_scat_conv():
+    in_channels = 4
+    num_nodes = 3
+    x = torch.randn((num_nodes, in_channels))
+    diffusion_op = torch.eye(num_nodes)
+
+    conv = GeoScatConv(pool=None)
+    assert conv.in_channels == -1
+
+    out = conv(x, diffusion_op=diffusion_op)
+    assert conv.in_channels == in_channels
+    assert out.size() == (num_nodes, in_channels, conv.num_scattering_filters)
+
+    with pytest.raises(ValueError, match='Expected input with 4 channels'):
+        conv(torch.randn(num_nodes, in_channels + 1),
+             diffusion_op=diffusion_op)
+
+
 def test_geo_scat_conv_second_order():
     in_channels = 3
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])

@@ -807,9 +807,9 @@ class GeoScatConv(Module):
     `HiPoNet <https://arxiv.org/abs/2502.07746>`_, and
     `VDW-GNNs <https://arxiv.org/abs/2510.01022>`_.
 
-    In particular, this layer computes diffusion wavelet scattering
-    coefficients on graph node features. A diffusion wavelet
-    convolution of a graph signal :math:`\mathbf{x}` has the
+    In particular, this layer computes diffusion-wavelet scattering
+    coefficients on graph node features. A diffusion wavelet convolution
+    of a graph signal :math:`\mathbf{x} \in \mathbb{R}^n` has the
     general form
 
     .. math::
@@ -819,10 +819,10 @@ class GeoScatConv(Module):
     where :math:`\mathbf{P}` is a lazy random walk operator
     (row-normalized by default), and :math:`t_j` are the diffusion
     scales.
-    A low-pass filter :math:`\mathbf{A}_J = \mathbf{P}^{t_J} \mathbf{x}`
-    is also included by default, such that the full filter bank is
-    :math:`\{\mathbf{W}_j\}_{j=0}^{J} \cup \{\mathbf{A}_J\}`. The low-pass
-    filter can be excluded by setting :obj:`include_lowpass`
+    A low-pass filter :math:`\bar{\mathbf{A}}_J = \mathbf{P}^{t_J} \mathbf{x}`
+    is also included by default, so that the full filter bank is
+    :math:`\{\mathbf{W}_j\}_{j=0}^{J} \cup \{\bar{\mathbf{A}}_J\}`. The
+    low-pass filter can be excluded by setting :obj:`include_lowpass`
     to :obj:`False`.
 
     By default, the :math:`t_j` are set to be dyadic integers
@@ -836,18 +836,18 @@ class GeoScatConv(Module):
     Alternatively, set :obj:`diffusion_scales='legs'` to use a learnable
     diffusion scales selector matrix
     :math:`F \in \mathbb{R}^{(J+1) \times (2^J + 1)}`, as detailed in
-    the LEGS paper. Learnable
-    scales are initialized to dyadic scales matching the default filter bank.
-    The diffusion depth :math:`J` is set via :obj:`legs_kwargs['legs_J']`
-    (default: :obj:`4`, giving ``5`` learnable wavelet rows and ``T = 16``).
-    Note that :math:`J` sets the max diffusion scale to :math:`2^J`.
+    the `LEGS <https://ieeexplore.ieee.org/document/10473218>`_ paper.
+    Learnable scales are initialized to dyadic scales matching the default
+    filter bank. The diffusion depth :math:`J` is set via
+    :obj:`legs_kwargs['legs_J']` (default: :obj:`4`, which gives
+    :math:`t_J = 2^J = 16`).
 
-    This layer returns concatenated zeroeth and first-order scattering
-    coefficients by default. The zeroeth-order scattering coefficient
-    is the unfiltered input feature vector, and can be excluded by
+    This layer returns concatenated zeroth and first-order scattering
+    coefficients by default. The zeroth-order scattering coefficient
+    is the unfiltered input feature vector and can be excluded by
     excluding :obj:`0` from :obj:`scattering_orders`. Second-order
     scattering coefficients can be included by including :obj:`2` in
-    the :obj:`scattering_orders` tuple. These are defined as:
+    the :obj:`scattering_orders` tuple. These are defined as
 
     .. math::
         \sigma(\mathbf{W}_{j^{\,\prime}} \, \sigma (\mathbf{W}_j \,
@@ -856,11 +856,11 @@ class GeoScatConv(Module):
     where :math:`\sigma` is an optional activation (e.g. the modulus
     operator via :obj:`torch.abs`), disabled by default.
 
-    Note there is not an :obj:`out_channels` property for this layer,
+    Note there is not an :obj:`out_channels` parameter for this layer,
     as the number of output channels is deterministic via the
-    parameterization of the scattering transform. Including 0th-order
+    parameterization of the scattering transform. Including zeroth-order
     scattering coefficients increases the number of output channels by
-    1; including first-order scattering coefficients increases the number
+    one; including first-order scattering coefficients increases the number
     of output channels by the number of filters :math:`w`; including
     second-order scattering coefficients increases the number of output
     channels by :math:`w \cdot (w - 1) / 2`.
@@ -883,7 +883,7 @@ class GeoScatConv(Module):
     :math:`\mathbf{P} \in \mathbb{R}^{nd \times nd}` must be passed via
     :obj:`diffusion_op` (for example, stored on
     :class:`~torch_geometric.data.Data` under an attribute such as
-    :obj:`diffusion_adj`). Lazy random walk operators built from
+    :obj:`P_adj`). Lazy random walk operators built from
     :obj:`edge_index` are not supported for vector features.
 
     .. note::
@@ -909,13 +909,16 @@ class GeoScatConv(Module):
         <https://pytorch-geometric.readthedocs.io/en/latest/advanced/batching.html>`_.
 
     Args:
-        in_channels (int): Size of each input sample. For vector features,
-            this is the vector dimension :math:`d`.
+        in_channels (int, optional): Size of each input sample, or :obj:`-1`
+            to derive the size from the first input(s) to the forward method.
+            For vector features, this is the vector dimension :math:`d`.
+            Multiple vector features are not currently supported.
+            (default: :obj:`-1`)
         scattering_orders (Tuple[int, ...], optional): Scattering orders to
-            include in the output. Each entry must be :obj:`0` (unfiltered
-            input), :obj:`1` (first-order wavelets), or :obj:`2`
-            (second-order). Pass :obj:`(1,)` for a diffusion wavelet
-            transform only. (default: :obj:`(0, 1, 2)`)
+            include in the output. Each entry must be :obj:`0` (zeroth-order,
+            i.e., unfiltered input), :obj:`1` (first-order wavelets),
+            or :obj:`2` (second-order). Pass :obj:`(1,)` for a diffusion
+            wavelet transform only. (default: :obj:`(0, 1, 2)`)
         diffusion_scales (Tuple[int, ...] or str, optional): Monotonically
             increasing diffusion powers, i.e., :math:`t_j` in each
             :math:`\mathbf{P}^{t_j}`. Wavelet filters are consecutive
@@ -925,11 +928,11 @@ class GeoScatConv(Module):
             dyadic scales. (default: :obj:`(0, 1, 2, 4, 8, 16)`)
         legs_kwargs (Dict[str, Any], optional): Keyword arguments for LEGS
             mode. Currently supports :obj:`'legs_J'`, the number of learnable
-            wavelet filters (default: :obj:`4`, yielding ``J + 1`` rows in
-            :obj:`F` and maximum diffusion power ``2^J``).
+            wavelet filters (default: :obj:`4`, yielding :math:`J + 1` rows in
+            :obj:`F` and maximum diffusion power :math:`2^J`).
         include_lowpass (bool, optional): If set to :obj:`True`, append the
-            low-pass filter :math:`\mathbf{P}^{t_J} \mathbf{x}` before the
-            optional activation at first order.
+            low-pass filter :math:`\bar{\mathbf{A}}_J = \mathbf{P}^{t_J}`
+            before the optional activation at first order.
             (default: :obj:`True`)
         activation (torch.nn.Module or Callable, optional): Activation
             applied to first- and second-order scattering coefficients, e.g.
@@ -937,13 +940,18 @@ class GeoScatConv(Module):
         normalization (str, optional): Normalization scheme for the adjacency
             matrix before building the lazy random walk operator
             :math:`\mathbf{P}`. Ignored when :obj:`diffusion_op` is provided.
-            Options: :obj:`"row"`, :obj:`"column"`, :obj:`"symmetric"`.
+            Options: :obj:`"row"` (:math:`\mathbf{P} = \frac{1}{2}(\mathbf{I}
+            + \mathbf{D}^{-1} \mathbf{A})`; rows of :math:`\mathbf{P}` sum to
+            one), :obj:`"column"` (:math:`\mathbf{P} = \frac{1}{2}(\mathbf{I}
+            + \mathbf{A} \mathbf{D}^{-1})`; columns of :math:`\mathbf{P}` sum
+            to one), :obj:`"symmetric"` (:math:`\mathbf{P} = \frac{1}{2}
+            (\mathbf{I} + \mathbf{D}^{-1/2} \mathbf{A} \mathbf{D}^{-1/2})`).
             (default: :obj:`"row"`)
         is_vector_feature (bool, optional): If set to :obj:`True`, treat each
             node feature as a vector signal of dimension :obj:`in_channels`
             and require a precomputed :obj:`diffusion_op` of shape
-            :math:`(n \cdot d, n \cdot d)`.
-            (default: :obj:`False`)
+            :math:`(n \cdot d, n \cdot d)`. Note that multiple vector features
+            are not currently supported. (default: :obj:`False`)
         pool (Tuple[str, ...], optional): Graph-level pooling operations to
             apply across nodes. Multiple pooling operations can be applied by
             passing a tuple of strings, the results of which are concatenated.
@@ -974,7 +982,7 @@ class GeoScatConv(Module):
     """
     def __init__(
         self,
-        in_channels: int,
+        in_channels: int = -1,
         scattering_orders: Optional[Tuple[int, ...]] = (0, 1, 2),
         diffusion_scales: Optional[DiffusionScalesArg] = (
             0,
@@ -1135,7 +1143,9 @@ class GeoScatConv(Module):
             or :math:`(B, F_{\mathrm{in}}, F_{\mathrm{out}}
             \cdot |\mathrm{pool}|)` if :obj:`pool` is set.
         """
-        if x.size(-1) != self.in_channels:
+        if self.in_channels == -1:
+            self.in_channels = x.size(-1)
+        elif x.size(-1) != self.in_channels:
             raise ValueError(
                 f"Expected input with {self.in_channels} channels "
                 f"(got {x.size(-1)}).", )
