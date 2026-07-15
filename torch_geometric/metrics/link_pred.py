@@ -10,8 +10,7 @@ if TYPE_CHECKING:
     try:
         # Provide accurate type to static type checkers when available.
         from torchmetrics import Metric as BaseMetric
-    except:
-        # Fallback for Sphinx / environments where torchmetrics isn't installed.
+    except Exception:
         BaseMetric = Any
 try:
     import torchmetrics  # noqa
