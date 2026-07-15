@@ -346,6 +346,8 @@ def test_empty_ground_truth():
 
 
 def test_link_pred_without_torchmetrics(monkeypatch):
+    import builtins
+    import importlib
     import torch_geometric.metrics.link_pred as link_pred_module
 
     real_import = builtins.__import__
