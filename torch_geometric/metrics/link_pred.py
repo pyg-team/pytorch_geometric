@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Dict, List, Optional, Tuple, Union, Any
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
         from torchmetrics import Metric as BaseMetric
     except:
         # Fallback for Sphinx / environments where torchmetrics isn't installed.
-        BaseMetric = Any   # type: ignore
+        BaseMetric = Any  # type: ignore
 try:
     import torchmetrics  # noqa
     WITH_TORCHMETRICS = True
