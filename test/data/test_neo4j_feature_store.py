@@ -6,8 +6,8 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pytest
 import torch
-from neo4j_feature_store import Neo4jFeatureStore
 
+from examples.neo4j.data.neo4j_feature_store import Neo4jFeatureStore
 from torch_geometric.data.feature_store import TensorAttr
 from torch_geometric.testing import withPackage
 
