@@ -5,6 +5,7 @@ import torch_geometric.typing
 
 from .feature_store import FeatureStore, TensorAttr
 from .graph_store import GraphStore, EdgeAttr, EdgeLayout
+from .database_graph_store import DatabaseGraphStore
 from .data import Data
 from .hetero_data import HeteroData
 from .batch import Batch
@@ -34,6 +35,10 @@ remote_backend_classes = [
     'GraphStore',
     'TensorAttr',
     'EdgeAttr',
+    'DatabaseFeatureStore',
+    'DatabaseGraphStore',
+    'FeatureCache',
+    'LRUFeatureCache',
 ]
 
 database_classes = [
