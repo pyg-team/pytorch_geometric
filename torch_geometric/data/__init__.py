@@ -5,6 +5,8 @@ import torch_geometric.typing
 
 from .feature_store import FeatureStore, TensorAttr
 from .graph_store import GraphStore, EdgeAttr, EdgeLayout
+from .database_feature_store import (DatabaseFeatureStore, FeatureCache,
+                                     LRUFeatureCache)
 from .database_graph_store import DatabaseGraphStore
 from .data import Data
 from .hetero_data import HeteroData
