@@ -84,6 +84,7 @@ dev=[
     "ipython",
     "matplotlib-inline",
     "pre-commit",
+    "rdkit-stubs>=2024.01.0"
     "torch_geometric[test]",
 ]
 full = [
