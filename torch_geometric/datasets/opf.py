@@ -7,12 +7,8 @@ import torch
 import tqdm
 from torch import Tensor
 
-from torch_geometric.data import (
-    HeteroData,
-    InMemoryDataset,
-    download_url,
-    extract_tar,
-)
+from torch_geometric.data import (HeteroData, InMemoryDataset, download_url,
+                                  extract_tar)
 
 
 class OPFDataset(InMemoryDataset):

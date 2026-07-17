@@ -3,20 +3,12 @@ from typing import List
 import pytest
 import torch
 
-from torch_geometric.metrics import (
-    LinkPredAveragePopularity,
-    LinkPredCoverage,
-    LinkPredDiversity,
-    LinkPredF1,
-    LinkPredHitRatio,
-    LinkPredMAP,
-    LinkPredMetricCollection,
-    LinkPredMRR,
-    LinkPredNDCG,
-    LinkPredPersonalization,
-    LinkPredPrecision,
-    LinkPredRecall,
-)
+from torch_geometric.metrics import (LinkPredAveragePopularity,
+                                     LinkPredCoverage, LinkPredDiversity,
+                                     LinkPredF1, LinkPredHitRatio, LinkPredMAP,
+                                     LinkPredMetricCollection, LinkPredMRR,
+                                     LinkPredNDCG, LinkPredPersonalization,
+                                     LinkPredPrecision, LinkPredRecall)
 from torch_geometric.testing import withCUDA
 
 

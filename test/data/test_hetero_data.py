@@ -6,11 +6,8 @@ import torch
 
 from torch_geometric.data import HeteroData
 from torch_geometric.data.storage import EdgeStorage
-from torch_geometric.testing import (
-    get_random_edge_index,
-    get_random_tensor_frame,
-    withPackage,
-)
+from torch_geometric.testing import (get_random_edge_index,
+                                     get_random_tensor_frame, withPackage)
 from torch_geometric.typing import TensorFrame
 
 x_paper = torch.randn(10, 16)

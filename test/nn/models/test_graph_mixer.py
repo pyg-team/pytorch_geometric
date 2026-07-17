@@ -1,10 +1,7 @@
 import torch
 
-from torch_geometric.nn.models.graph_mixer import (
-    LinkEncoder,
-    NodeEncoder,
-    get_latest_k_edge_attr,
-)
+from torch_geometric.nn.models.graph_mixer import (LinkEncoder, NodeEncoder,
+                                                   get_latest_k_edge_attr)
 
 
 def test_node_encoder():

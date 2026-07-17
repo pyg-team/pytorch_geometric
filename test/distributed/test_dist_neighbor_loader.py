@@ -7,14 +7,10 @@ import torch.multiprocessing as mp
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
-from torch_geometric.distributed import (
-    DistContext,
-    DistNeighborLoader,
-    DistNeighborSampler,
-    LocalFeatureStore,
-    LocalGraphStore,
-    Partitioner,
-)
+from torch_geometric.distributed import (DistContext, DistNeighborLoader,
+                                         DistNeighborSampler,
+                                         LocalFeatureStore, LocalGraphStore,
+                                         Partitioner)
 from torch_geometric.testing import onlyDistributedTest, withMETIS
 from torch_geometric.testing.distributed import ProcArgs, assert_run_mproc
 

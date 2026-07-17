@@ -15,12 +15,8 @@ from tqdm import trange
 import torch_geometric.transforms as T
 from torch_geometric.data import Data, Dataset, download_url
 from torch_geometric.loader import DataLoader, NeighborLoader
-from torch_geometric.nn import (
-    ResGatedGraphConv,
-    global_add_pool,
-    global_max_pool,
-    global_mean_pool,
-)
+from torch_geometric.nn import (ResGatedGraphConv, global_add_pool,
+                                global_max_pool, global_mean_pool)
 from torch_geometric.nn.resolver import activation_resolver
 from torch_geometric.utils import to_dense_batch
 

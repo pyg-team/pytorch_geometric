@@ -4,12 +4,8 @@ from typing import Callable, Optional
 import numpy as np
 import torch
 
-from torch_geometric.data import (
-    HeteroData,
-    InMemoryDataset,
-    download_url,
-    extract_zip,
-)
+from torch_geometric.data import (HeteroData, InMemoryDataset, download_url,
+                                  extract_zip)
 
 
 class Taobao(InMemoryDataset):

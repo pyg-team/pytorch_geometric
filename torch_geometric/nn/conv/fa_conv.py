@@ -8,13 +8,8 @@ from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.conv.gcn_conv import gcn_norm
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.typing import PairTensor  # noqa
-from torch_geometric.typing import (
-    Adj,
-    NoneType,
-    OptPairTensor,
-    OptTensor,
-    SparseTensor,
-)
+from torch_geometric.typing import (Adj, NoneType, OptPairTensor, OptTensor,
+                                    SparseTensor)
 from torch_geometric.utils import is_torch_sparse_tensor
 from torch_geometric.utils.sparse import set_sparse_value
 

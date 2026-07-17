@@ -19,33 +19,20 @@ except ImportError:
     wandb_available = False
 
 import torch
-from g_retriever import (
-    adjust_learning_rate,
-    get_loss,
-    inference_step,
-    load_params_dict,
-    save_params_dict,
-)
+from g_retriever import (adjust_learning_rate, get_loss, inference_step,
+                         load_params_dict, save_params_dict)
 from huggingface_hub import hf_hub_download
 from torch.nn.utils import clip_grad_norm_
 from tqdm import tqdm
 
 from torch_geometric import seed_everything
 from torch_geometric.llm import RAGQueryLoader
-from torch_geometric.llm.models import (
-    LLM,
-    TXT2KG,
-    GRetriever,
-    LLMJudge,
-    SentenceTransformer,
-)
+from torch_geometric.llm.models import (LLM, TXT2KG, GRetriever, LLMJudge,
+                                        SentenceTransformer)
 from torch_geometric.llm.models.txt2kg import _chunk_text
 from torch_geometric.llm.utils.backend_utils import (
-    create_graph_from_triples,
-    create_remote_backend_from_graph_data,
-    make_pcst_filter,
-    preprocess_triplet,
-)
+    create_graph_from_triples, create_remote_backend_from_graph_data,
+    make_pcst_filter, preprocess_triplet)
 from torch_geometric.llm.utils.feature_store import KNNRAGFeatureStore
 from torch_geometric.llm.utils.graph_store import NeighborSamplingRAGGraphStore
 from torch_geometric.llm.utils.vectorrag import DocumentRetriever

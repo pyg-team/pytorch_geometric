@@ -92,12 +92,8 @@ class GLEM(torch.nn.Module):
         )
 
         if lm_use_lora:
-            from peft import (
-                LoraConfig,
-                TaskType,
-                get_peft_model,
-                prepare_model_for_kbit_training,
-            )
+            from peft import (LoraConfig, TaskType, get_peft_model,
+                              prepare_model_for_kbit_training)
             print("Training LM with LORA!")
             self.lm = prepare_model_for_kbit_training(self.lm)
             config = LoraConfig(task_type=TaskType.SEQ_CLS, r=16,

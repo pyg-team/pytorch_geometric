@@ -2,12 +2,8 @@ import json
 import os
 from typing import Callable, List, Optional
 
-from torch_geometric.data import (
-    Data,
-    InMemoryDataset,
-    download_url,
-    extract_zip,
-)
+from torch_geometric.data import (Data, InMemoryDataset, download_url,
+                                  extract_zip)
 from torch_geometric.io import fs
 
 

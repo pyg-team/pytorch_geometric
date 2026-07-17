@@ -9,16 +9,11 @@ from tqdm import tqdm
 
 from torch_geometric.data import InMemoryDataset
 from torch_geometric.llm.large_graph_indexer import (
-    EDGE_RELATION,
-    LargeGraphIndexer,
-    TripletLike,
-    get_features_for_triplets_groups,
-)
+    EDGE_RELATION, LargeGraphIndexer, TripletLike,
+    get_features_for_triplets_groups)
 from torch_geometric.llm.models import SentenceTransformer
-from torch_geometric.llm.utils.backend_utils import (
-    preprocess_triplet,
-    retrieval_via_pcst,
-)
+from torch_geometric.llm.utils.backend_utils import (preprocess_triplet,
+                                                     retrieval_via_pcst)
 
 
 class KGQABaseDataset(InMemoryDataset):

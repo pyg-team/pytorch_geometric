@@ -4,16 +4,10 @@ import torch
 from torch import Tensor
 
 from torch_geometric import EdgeIndex
-from torch_geometric.typing import (
-    Adj,
-    EdgeType,
-    MaybeHeteroAdjTensor,
-    MaybeHeteroEdgeTensor,
-    MaybeHeteroNodeTensor,
-    NodeType,
-    SparseStorage,
-    SparseTensor,
-)
+from torch_geometric.typing import (Adj, EdgeType, MaybeHeteroAdjTensor,
+                                    MaybeHeteroEdgeTensor,
+                                    MaybeHeteroNodeTensor, NodeType,
+                                    SparseStorage, SparseTensor)
 
 
 @overload

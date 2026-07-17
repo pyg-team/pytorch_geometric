@@ -5,10 +5,8 @@ from torch import Tensor
 
 from torch_geometric.experimental import disable_dynamic_shapes
 from torch_geometric.nn.aggr import Aggregation
-from torch_geometric.nn.aggr.utils import (
-    PoolingByMultiheadAttention,
-    SetAttentionBlock,
-)
+from torch_geometric.nn.aggr.utils import (PoolingByMultiheadAttention,
+                                           SetAttentionBlock)
 
 
 class SetTransformerAggregation(Aggregation):

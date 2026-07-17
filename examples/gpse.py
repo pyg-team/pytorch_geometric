@@ -9,15 +9,8 @@ from torch_geometric.datasets import ZINC
 from torch_geometric.graphgym.models.encoder import AtomEncoder
 from torch_geometric.loader import DataLoader
 from torch_geometric.logging import log
-from torch_geometric.nn import (
-    GPSE,
-    MLP,
-    GCNConv,
-    GINConv,
-    GPSENodeEncoder,
-    Linear,
-    global_mean_pool,
-)
+from torch_geometric.nn import (GPSE, MLP, GCNConv, GINConv, GPSENodeEncoder,
+                                Linear, global_mean_pool)
 from torch_geometric.nn.models.gpse import precompute_GPSE
 from torch_geometric.transforms import AddGPSE
 

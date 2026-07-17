@@ -1,9 +1,9 @@
 import warnings
 
-import torch_geometric.contrib.transforms  # noqa
 import torch_geometric.contrib.datasets  # noqa
-import torch_geometric.contrib.nn  # noqa
 import torch_geometric.contrib.explain  # noqa
+import torch_geometric.contrib.nn  # noqa
+import torch_geometric.contrib.transforms  # noqa
 import torch_geometric.contrib.utils  # noqa
 
 warnings.warn(

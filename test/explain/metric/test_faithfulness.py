@@ -1,12 +1,8 @@
 import pytest
 import torch
 
-from torch_geometric.explain import (
-    DummyExplainer,
-    Explainer,
-    ModelConfig,
-    unfaithfulness,
-)
+from torch_geometric.explain import (DummyExplainer, Explainer, ModelConfig,
+                                     unfaithfulness)
 
 
 class DummyModel(torch.nn.Module):
