@@ -6,8 +6,12 @@ from typing import Callable, Optional
 import numpy as np
 import torch
 
-from torch_geometric.data import (Data, InMemoryDataset, download_url,
-                                  extract_zip)
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 from torch_geometric.transforms import ToUndirected
 from torch_geometric.utils import subgraph
 
@@ -304,8 +308,12 @@ class GraphLandDataset(InMemoryDataset):
         self._to_undirected = to_undirected
 
         from sklearn.impute import SimpleImputer
-        from sklearn.preprocessing import (MinMaxScaler, OneHotEncoder,
-                                           QuantileTransformer, StandardScaler)
+        from sklearn.preprocessing import (
+            MinMaxScaler,
+            OneHotEncoder,
+            QuantileTransformer,
+            StandardScaler,
+        )
         self._transforms = {
             'standard_scaler':
             partial(StandardScaler, copy=False),

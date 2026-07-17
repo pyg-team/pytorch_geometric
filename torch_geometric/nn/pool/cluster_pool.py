@@ -4,8 +4,12 @@ import torch
 import torch.nn.functional as F
 from torch import Tensor
 
-from torch_geometric.utils import (dense_to_sparse, one_hot, to_dense_adj,
-                                   to_scipy_sparse_matrix)
+from torch_geometric.utils import (
+    dense_to_sparse,
+    one_hot,
+    to_dense_adj,
+    to_scipy_sparse_matrix,
+)
 
 
 class UnpoolInfo(NamedTuple):

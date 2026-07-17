@@ -1,8 +1,11 @@
 import pytest
 import torch
 
-from torch_geometric.sampler.base import (HeteroSamplerOutput, NumNeighbors,
-                                          SamplerOutput)
+from torch_geometric.sampler.base import (
+    HeteroSamplerOutput,
+    NumNeighbors,
+    SamplerOutput,
+)
 from torch_geometric.sampler.utils import global_to_local_node_idx
 from torch_geometric.testing import get_random_edge_index
 from torch_geometric.utils import is_undirected

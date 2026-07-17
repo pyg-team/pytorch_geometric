@@ -6,8 +6,13 @@ from typing import Callable, List, Optional
 
 import torch
 
-from torch_geometric.data import (Data, InMemoryDataset, download_google_url,
-                                  extract_tar, extract_zip)
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_google_url,
+    extract_tar,
+    extract_zip,
+)
 from torch_geometric.io import fs
 from torch_geometric.utils import one_hot, to_undirected
 

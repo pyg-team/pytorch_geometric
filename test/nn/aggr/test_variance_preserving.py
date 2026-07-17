@@ -2,8 +2,11 @@ import pytest
 import torch
 
 import torch_geometric.typing
-from torch_geometric.nn import (MeanAggregation, SumAggregation,
-                                VariancePreservingAggregation)
+from torch_geometric.nn import (
+    MeanAggregation,
+    SumAggregation,
+    VariancePreservingAggregation,
+)
 
 
 def test_variance_preserving():

@@ -2,8 +2,13 @@ import pytest
 import torch
 
 from torch_geometric.explain import Explainer, Explanation, GraphMaskExplainer
-from torch_geometric.explain.config import (MaskType, ModelConfig, ModelMode,
-                                            ModelReturnType, ModelTaskLevel)
+from torch_geometric.explain.config import (
+    MaskType,
+    ModelConfig,
+    ModelMode,
+    ModelReturnType,
+    ModelTaskLevel,
+)
 from torch_geometric.nn import GCNConv, global_add_pool
 
 

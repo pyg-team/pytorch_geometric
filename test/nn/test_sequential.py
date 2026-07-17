@@ -5,9 +5,15 @@ import torch.fx
 from torch.nn import Dropout, Linear, ReLU
 
 import torch_geometric.typing
-from torch_geometric.nn import (GCNConv, JumpingKnowledge, MessagePassing,
-                                SAGEConv, Sequential, global_mean_pool,
-                                to_hetero)
+from torch_geometric.nn import (
+    GCNConv,
+    JumpingKnowledge,
+    MessagePassing,
+    SAGEConv,
+    Sequential,
+    global_mean_pool,
+    to_hetero,
+)
 from torch_geometric.typing import SparseTensor
 
 

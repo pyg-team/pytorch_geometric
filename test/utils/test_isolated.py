@@ -1,8 +1,10 @@
 import torch
 
 from torch_geometric.testing import is_full_test
-from torch_geometric.utils import (contains_isolated_nodes,
-                                   remove_isolated_nodes)
+from torch_geometric.utils import (
+    contains_isolated_nodes,
+    remove_isolated_nodes,
+)
 
 
 def test_contains_isolated_nodes():

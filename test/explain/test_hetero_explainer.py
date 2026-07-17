@@ -1,8 +1,11 @@
 import pytest
 import torch
 
-from torch_geometric.explain import (DummyExplainer, Explainer,
-                                     HeteroExplanation)
+from torch_geometric.explain import (
+    DummyExplainer,
+    Explainer,
+    HeteroExplanation,
+)
 from torch_geometric.explain.config import ExplanationType
 
 

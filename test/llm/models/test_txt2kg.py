@@ -5,8 +5,12 @@ import pytest
 
 import torch_geometric.llm.models.txt2kg as txt2kg
 from torch_geometric.llm.models.txt2kg import (
-    TXT2KG, _chunk_text, _merge_triples_deterministically, _multiproc_helper,
-    _parse_n_check_triples)
+    TXT2KG,
+    _chunk_text,
+    _merge_triples_deterministically,
+    _multiproc_helper,
+    _parse_n_check_triples,
+)
 
 
 def test_init_local_lm_flag():

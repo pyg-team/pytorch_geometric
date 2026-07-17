@@ -2,8 +2,12 @@ import pytest
 import torch
 
 from torch_geometric.nn import Node2Vec
-from torch_geometric.testing import (has_package, is_full_test, withDevice,
-                                     withPackage)
+from torch_geometric.testing import (
+    has_package,
+    is_full_test,
+    withDevice,
+    withPackage,
+)
 
 
 @withDevice

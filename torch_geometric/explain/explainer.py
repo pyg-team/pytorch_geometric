@@ -4,14 +4,25 @@ from typing import Any, Dict, Optional, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.explain import (ExplainerAlgorithm, Explanation,
-                                     HeteroExplanation)
-from torch_geometric.explain.algorithm.utils import (clear_masks,
-                                                     set_hetero_masks,
-                                                     set_masks)
-from torch_geometric.explain.config import (ExplainerConfig, ExplanationType,
-                                            MaskType, ModelConfig, ModelMode,
-                                            ModelReturnType, ThresholdConfig)
+from torch_geometric.explain import (
+    ExplainerAlgorithm,
+    Explanation,
+    HeteroExplanation,
+)
+from torch_geometric.explain.algorithm.utils import (
+    clear_masks,
+    set_hetero_masks,
+    set_masks,
+)
+from torch_geometric.explain.config import (
+    ExplainerConfig,
+    ExplanationType,
+    MaskType,
+    ModelConfig,
+    ModelMode,
+    ModelReturnType,
+    ThresholdConfig,
+)
 from torch_geometric.typing import EdgeType, NodeType
 
 

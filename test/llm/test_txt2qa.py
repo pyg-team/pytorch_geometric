@@ -94,9 +94,12 @@ class TestTxt2QAPureFunctions:
 )
 def test_generate_single_query_nim(tmp_path):
     """End-to-end smoke test: generate one QA pair via NIM."""
-    from torch_geometric.llm.models.qa_gen import (LLMClient, TaskStatus,
-                                                   generate_qa_pairs,
-                                                   load_input)
+    from torch_geometric.llm.models.qa_gen import (
+        LLMClient,
+        TaskStatus,
+        generate_qa_pairs,
+        load_input,
+    )
 
     txt = tmp_path / "sample.txt"
     txt.write_text(

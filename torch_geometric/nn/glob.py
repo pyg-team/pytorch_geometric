@@ -1,6 +1,9 @@
 from torch_geometric.deprecation import deprecated
-from torch_geometric.nn import (global_add_pool, global_max_pool,
-                                global_mean_pool)
+from torch_geometric.nn import (
+    global_add_pool,
+    global_max_pool,
+    global_mean_pool,
+)
 from torch_geometric.nn.aggr import AttentionalAggregation, SortAggregation
 
 

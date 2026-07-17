@@ -8,8 +8,10 @@ from torch_geometric.data.data import Data, warn_or_raise
 from torch_geometric.data.hetero_data import HeteroData
 from torch_geometric.explain.config import ThresholdConfig, ThresholdType
 from torch_geometric.typing import EdgeType, NodeType
-from torch_geometric.visualization import (visualize_graph,
-                                           visualize_hetero_graph)
+from torch_geometric.visualization import (
+    visualize_graph,
+    visualize_hetero_graph,
+)
 
 
 class ExplanationMixin:

@@ -4,11 +4,16 @@ from typing import Dict, Optional, Tuple, Union
 import torch
 from torch import Tensor
 
-from torch_geometric.explain.algorithm.utils import (clear_masks,
-                                                     set_hetero_masks,
-                                                     set_masks)
-from torch_geometric.explain.config import (ModelConfig, ModelMode,
-                                            ModelReturnType)
+from torch_geometric.explain.algorithm.utils import (
+    clear_masks,
+    set_hetero_masks,
+    set_masks,
+)
+from torch_geometric.explain.config import (
+    ModelConfig,
+    ModelMode,
+    ModelReturnType,
+)
 from torch_geometric.typing import EdgeType, Metadata, NodeType
 
 

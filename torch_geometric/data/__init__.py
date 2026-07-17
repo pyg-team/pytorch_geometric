@@ -58,13 +58,10 @@ lightning = LazyLoader('lightning', globals(),
                        'torch_geometric.data.lightning')
 
 from torch_geometric.deprecation import deprecated
-from torch_geometric.loader import (ClusterData, ClusterLoader, DataListLoader,
-                                    DataLoader, DenseDataLoader,
-                                    GraphSAINTEdgeSampler,
-                                    GraphSAINTNodeSampler,
-                                    GraphSAINTRandomWalkSampler,
-                                    GraphSAINTSampler, NeighborSampler,
-                                    RandomNodeLoader, ShaDowKHopSampler)
+from torch_geometric.loader import (
+    ClusterData, ClusterLoader, DataListLoader, DataLoader, DenseDataLoader,
+    GraphSAINTEdgeSampler, GraphSAINTNodeSampler, GraphSAINTRandomWalkSampler,
+    GraphSAINTSampler, NeighborSampler, RandomNodeLoader, ShaDowKHopSampler)
 
 # Serialization ###############################################################
 

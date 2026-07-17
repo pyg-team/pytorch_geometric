@@ -8,12 +8,25 @@ import torch
 from torch import Tensor
 
 import torch_geometric.typing
-from torch_geometric.data import (Data, FeatureStore, GraphStore, HeteroData,
-                                  TensorAttr, remote_backend_utils)
+from torch_geometric.data import (
+    Data,
+    FeatureStore,
+    GraphStore,
+    HeteroData,
+    TensorAttr,
+    remote_backend_utils,
+)
 from torch_geometric.data.storage import EdgeStorage, NodeStorage
-from torch_geometric.typing import (EdgeType, FeatureTensorType, InputEdges,
-                                    InputNodes, NodeType, OptTensor,
-                                    SparseTensor, TensorFrame)
+from torch_geometric.typing import (
+    EdgeType,
+    FeatureTensorType,
+    InputEdges,
+    InputNodes,
+    NodeType,
+    OptTensor,
+    SparseTensor,
+    TensorFrame,
+)
 
 
 def index_select(

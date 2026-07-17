@@ -1,8 +1,10 @@
 import torch
 
 from torch_geometric.utils import to_torch_coo_tensor
-from torch_geometric.utils.num_nodes import (maybe_num_nodes,
-                                             maybe_num_nodes_dict)
+from torch_geometric.utils.num_nodes import (
+    maybe_num_nodes,
+    maybe_num_nodes_dict,
+)
 
 
 def test_maybe_num_nodes():

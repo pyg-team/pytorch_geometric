@@ -9,13 +9,22 @@ from tqdm import tqdm
 
 from torch_geometric.data import Data
 from torch_geometric.loader import CachedLoader, NeighborLoader
-from torch_geometric.nn.conv import (EdgeConv, GATConv, GATv2Conv, GCNConv,
-                                     GINConv, MessagePassing, PNAConv,
-                                     SAGEConv)
+from torch_geometric.nn.conv import (
+    EdgeConv,
+    GATConv,
+    GATv2Conv,
+    GCNConv,
+    GINConv,
+    MessagePassing,
+    PNAConv,
+    SAGEConv,
+)
 from torch_geometric.nn.models import MLP
 from torch_geometric.nn.models.jumping_knowledge import JumpingKnowledge
-from torch_geometric.nn.resolver import (activation_resolver,
-                                         normalization_resolver)
+from torch_geometric.nn.resolver import (
+    activation_resolver,
+    normalization_resolver,
+)
 from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.utils._trim_to_layer import TrimToLayer
 
