@@ -4,15 +4,10 @@ from typing import Dict, List, Optional, Tuple, Union
 from torch import Tensor
 
 from torch_geometric.nn.aggr.base import Aggregation
-from torch_geometric.nn.aggr.basic import (
-    MaxAggregation,
-    MeanAggregation,
-    MinAggregation,
-    MulAggregation,
-    StdAggregation,
-    SumAggregation,
-    VarAggregation,
-)
+from torch_geometric.nn.aggr.basic import (MaxAggregation, MeanAggregation,
+                                           MinAggregation, MulAggregation,
+                                           StdAggregation, SumAggregation,
+                                           VarAggregation)
 from torch_geometric.nn.resolver import aggregation_resolver
 from torch_geometric.utils import scatter
 

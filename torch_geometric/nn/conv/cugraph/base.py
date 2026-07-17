@@ -12,12 +12,8 @@ try:  # pragma: no cover
 except ImportError:
     HAS_PYLIBCUGRAPHOPS = False
     try:  # pragma: no cover
-        from pylibcugraphops import (
-            make_fg_csr,
-            make_fg_csr_hg,
-            make_mfg_csr,
-            make_mfg_csr_hg,
-        )
+        from pylibcugraphops import (make_fg_csr, make_fg_csr_hg, make_mfg_csr,
+                                     make_mfg_csr_hg)
         LEGACY_MODE = True
     except ImportError:
         pass

@@ -11,12 +11,9 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, FeatureStore, GraphStore, HeteroData
-from torch_geometric.sampler.utils import (
-    global_to_local_node_idx,
-    local_to_global_node_idx,
-    to_bidirectional,
-    unique_unsorted,
-)
+from torch_geometric.sampler.utils import (global_to_local_node_idx,
+                                           local_to_global_node_idx,
+                                           to_bidirectional, unique_unsorted)
 from torch_geometric.typing import EdgeType, EdgeTypeStr, NodeType, OptTensor
 from torch_geometric.utils.mixin import CastMixin
 

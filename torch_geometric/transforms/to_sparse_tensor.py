@@ -8,11 +8,8 @@ from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
 from torch_geometric.typing import SparseTensor
-from torch_geometric.utils import (
-    sort_edge_index,
-    to_torch_coo_tensor,
-    to_torch_csr_tensor,
-)
+from torch_geometric.utils import (sort_edge_index, to_torch_coo_tensor,
+                                   to_torch_csr_tensor)
 
 
 @functional_transform('to_sparse_tensor')

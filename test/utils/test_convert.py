@@ -3,22 +3,12 @@ import torch
 
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.testing import get_random_edge_index, withPackage
-from torch_geometric.utils import (
-    from_cugraph,
-    from_dgl,
-    from_networkit,
-    from_networkx,
-    from_scipy_sparse_matrix,
-    from_trimesh,
-    sort_edge_index,
-    subgraph,
-    to_cugraph,
-    to_dgl,
-    to_networkit,
-    to_networkx,
-    to_scipy_sparse_matrix,
-    to_trimesh,
-)
+from torch_geometric.utils import (from_cugraph, from_dgl, from_networkit,
+                                   from_networkx, from_scipy_sparse_matrix,
+                                   from_trimesh, sort_edge_index, subgraph,
+                                   to_cugraph, to_dgl, to_networkit,
+                                   to_networkx, to_scipy_sparse_matrix,
+                                   to_trimesh)
 
 
 @withPackage('scipy')

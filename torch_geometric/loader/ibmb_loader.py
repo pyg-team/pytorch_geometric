@@ -1,15 +1,7 @@
 import logging
 import math
-from typing import (
-    Any,
-    Callable,
-    Iterator,
-    List,
-    NamedTuple,
-    Optional,
-    Tuple,
-    Union,
-)
+from typing import (Any, Callable, Iterator, List, NamedTuple, Optional, Tuple,
+                    Union)
 
 import numpy as np
 import torch

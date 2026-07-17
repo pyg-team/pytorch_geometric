@@ -1,15 +1,10 @@
 import torch
 
 from torch_geometric import EdgeIndex
-from torch_geometric.utils import (
-    add_remaining_self_loops,
-    add_self_loops,
-    contains_self_loops,
-    get_self_loop_attr,
-    remove_self_loops,
-    segregate_self_loops,
-    to_torch_coo_tensor,
-)
+from torch_geometric.utils import (add_remaining_self_loops, add_self_loops,
+                                   contains_self_loops, get_self_loop_attr,
+                                   remove_self_loops, segregate_self_loops,
+                                   to_torch_coo_tensor)
 
 
 def test_contains_self_loops():

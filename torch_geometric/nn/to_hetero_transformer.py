@@ -9,10 +9,8 @@ from torch.nn import Module
 from torch_geometric.nn.dense.linear import is_uninitialized_parameter
 from torch_geometric.nn.fx import Transformer, get_submodule
 from torch_geometric.typing import EdgeType, Metadata, NodeType
-from torch_geometric.utils.hetero import (
-    check_add_self_loops,
-    get_unused_node_types,
-)
+from torch_geometric.utils.hetero import (check_add_self_loops,
+                                          get_unused_node_types)
 
 try:
     from torch.fx import Graph, GraphModule, Node

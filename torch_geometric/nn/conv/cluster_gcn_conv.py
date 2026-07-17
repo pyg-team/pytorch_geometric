@@ -4,14 +4,9 @@ from torch import Tensor
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.typing import Adj, OptTensor, SparseTensor, torch_sparse
-from torch_geometric.utils import (
-    add_self_loops,
-    degree,
-    is_torch_sparse_tensor,
-    remove_self_loops,
-    spmm,
-    to_edge_index,
-)
+from torch_geometric.utils import (add_self_loops, degree,
+                                   is_torch_sparse_tensor, remove_self_loops,
+                                   spmm, to_edge_index)
 from torch_geometric.utils.sparse import set_sparse_value
 
 

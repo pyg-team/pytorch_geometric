@@ -3,14 +3,8 @@ from torch.nn import Linear as Lin
 from torch.nn import ReLU
 from torch.nn import Sequential as Seq
 
-from torch_geometric.nn.inits import (
-    glorot,
-    glorot_orthogonal,
-    ones,
-    reset,
-    uniform,
-    zeros,
-)
+from torch_geometric.nn.inits import (glorot, glorot_orthogonal, ones, reset,
+                                      uniform, zeros)
 
 
 def test_inits():

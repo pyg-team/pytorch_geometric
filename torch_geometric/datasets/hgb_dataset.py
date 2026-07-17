@@ -6,12 +6,8 @@ from typing import Callable, Dict, List, Optional
 
 import torch
 
-from torch_geometric.data import (
-    HeteroData,
-    InMemoryDataset,
-    download_google_url,
-    extract_zip,
-)
+from torch_geometric.data import (HeteroData, InMemoryDataset,
+                                  download_google_url, extract_zip)
 
 
 class HGBDataset(InMemoryDataset):
