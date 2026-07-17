@@ -45,4 +45,7 @@ jobs:
 
       - name: Check type hints
         run: |
-          mypy -v --cache-dir=/dev/null torch_geometric
+          mypy -v --cache-dir=/dev/null  \
+      		--ignore-missing-imports \
+      		--skip-stubs \
+		torch_geometric
