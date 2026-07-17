@@ -132,7 +132,7 @@ class DynamicEdgeConv(MessagePassing):
 
         batch_l = b[0]
         batch_r = b[1]
-  
+
         ptr_l = None if batch_l is None else index2ptr(batch_l)
         ptr_r = None if batch_r is None else index2ptr(batch_r)
         edge_index = torch.ops.pyg.knn(x[0], x[1], ptr_l, ptr_r, self.k, False,
