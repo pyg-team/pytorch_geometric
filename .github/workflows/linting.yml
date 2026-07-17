@@ -45,4 +45,4 @@ jobs:
 
       - name: Check type hints
         run: |
-          mypy -v --cache-dir=/dev/null
+          mypy -v --cache-dir=/dev/null torch_geometric
