@@ -143,6 +143,7 @@ warn_unused_configs = true
 warn_unused_ignores = true
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
+cache_dir = "/dev/null"
 
 [[tool.mypy.overrides]]
 ignore_errors = true
@@ -157,6 +158,7 @@ module = [
     "torch_geometric.graphgym.*",
     "torch_geometric.distributed.*",
     "torch_geometric.llm.*",
+    "rdkit.*",
 ]
 
 [tool.isort]
