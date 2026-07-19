@@ -107,8 +107,8 @@ class GravNetConv(MessagePassing):
         s_l: Tensor = self.lin_s(x[0])
         s_r: Tensor = self.lin_s(x[1]) if is_bipartite else s_l
 
-        batch_l = b[0]
-        batch_r = b[1]
+        batch_l: OptTensor = b[0]
+        batch_r: OptTensor = b[1]
 
         ptr_l = None if batch_l is None else index2ptr(batch_l)
         ptr_r = None if batch_r is None else index2ptr(batch_r)
