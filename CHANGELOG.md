@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [2.8.0.post1] - 2026-07-20
+
+### Fixed
+
+- Added the missing source distribution to the PyPI release.
+
 ## [2.8.0] - 2026-06-05
 
 ### Added
