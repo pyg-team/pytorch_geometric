@@ -5,7 +5,6 @@ from unittest.mock import MagicMock, patch
 
 import torch
 
-from examples.neo4j.data.neo4j_graph_store import Neo4jGraphStore
 from torch_geometric.data.graph_store import EdgeAttr, EdgeLayout
 from torch_geometric.testing import withPackage
 
