@@ -1,7 +1,7 @@
 """Minimal in-memory fakes for DatabaseFeatureStore, DatabaseGraphStore, and
 DatabaseSampler.  Used in unit tests that must run without a real database.
 """
-from typing import Dict, List, Optional, Tuple, Any
+from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 from torch import Tensor
@@ -34,7 +34,8 @@ class FakeDatabaseFeatureStore(DatabaseFeatureStore):
         if isinstance(attr.index, Tensor | np.ndarray):
             nids = attr.index.tolist()
         elif isinstance(attr.index, slice):
-            nids = list(range(attr.index.start, attr.index.stop, attr.index.step))
+            nids = list(
+                range(attr.index.start, attr.index.stop, attr.index.step))
         else:
             nids = [attr.index]
         key = attr.attr_name
@@ -63,10 +64,12 @@ class FakeDatabaseFeatureStore(DatabaseFeatureStore):
         if isinstance(attr.index, Tensor | np.ndarray):
             nids = attr.index.tolist()
         elif isinstance(attr.index, slice):
-            nids = list(range(attr.index.start, attr.index.stop, attr.index.step))
+            nids = list(
+                range(attr.index.start, attr.index.stop, attr.index.step))
         else:
             nids = [attr.index]
-        arr = tensor.detach().cpu().numpy() if isinstance(tensor, Tensor) else tensor
+        arr = tensor.detach().cpu().numpy() if isinstance(tensor,
+                                                          Tensor) else tensor
         for i, nid in enumerate(nids):
             self._data[(attr.group_name, attr.attr_name, int(nid))] = arr[i]
         return True
