@@ -45,6 +45,7 @@ def _mock_session(records: list):
     with _patch_driver(mock_session):
         yield mock_session
 
+
 @withPackage('neo4j')
 def test_attr_map_flat_wrapped_under_default_label():
     store = _make_store({"x": {
