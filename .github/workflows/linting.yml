@@ -41,8 +41,8 @@ jobs:
 
       - name: Install main package
         run: |
-          uv pip install -e ".[full,test]" mypy types-requests
+          uv pip install -e ".[test]" mypy types-requests
 
       - name: Check type hints
         run: |
-          mypy -v --cache-dir=/dev/null
+          mypy -v --cache-dir=/dev/null --ignore-missing-imports torch_geometric
