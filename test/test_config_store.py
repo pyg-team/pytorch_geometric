@@ -52,11 +52,13 @@ def test_map_annotation():
     assert map_annotation(List[str], mapping) == List[str]
     assert map_annotation(List[int], mapping) == List[Any]
     assert map_annotation(Tuple[int], mapping) == Tuple[Any]
+    assert map_annotation(Union[int, str], mapping) == Union[Any, str]
     assert map_annotation(dict[str, int], mapping) == dict[str, Any]
     assert map_annotation(dict[str, float], mapping) == dict[str, float]
     assert map_annotation(list[str], mapping) == list[str]
     assert map_annotation(list[int], mapping) == list[Any]
     assert map_annotation(tuple[int], mapping) == tuple[Any]
+    assert map_annotation(int | str, mapping) == Any | str
 
     # `typing.Union`/`typing.Optional` must be rebuilt without mutating
     # `__args__`, which is read-only on Python >= 3.14:

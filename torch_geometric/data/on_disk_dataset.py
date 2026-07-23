@@ -165,5 +165,10 @@ class OnDiskDataset(Dataset):
             self._numel = len(self.db)
         return self._numel
 
+    def __getstate__(self) -> Any:
+        out = self.__dict__.copy()
+        out['_db'] = None
+        return out
+
     def __repr__(self) -> str:
         return f'{self.__class__.__name__}({len(self)})'

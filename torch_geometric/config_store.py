@@ -1,4 +1,5 @@
 import inspect
+import types
 import typing
 from collections import defaultdict
 from dataclasses import dataclass, field, make_dataclass
@@ -163,18 +164,17 @@ def map_annotation(
 ) -> Any:
     origin = getattr(annotation, '__origin__', None)
     args: Tuple[Any, ...] = getattr(annotation, '__args__', tuple())
-    if origin in {Union, list, dict, tuple}:
+
+    if origin is Union or isinstance(annotation, types.UnionType):
+        args = tuple(map_annotation(a, mapping) for a in args)
+        return Union[args]
+
+    if origin in {list, dict, tuple}:
         assert origin is not None
         args = tuple(map_annotation(a, mapping) for a in args)
         if type(annotation).__name__ == 'GenericAlias':
             # If annotated with `list[...]` or `dict[...]`:
             annotation = origin[args]
-        elif origin is Union:
-            # If annotated with `typing.Union[...]` or `typing.Optional[...]`.
-            # Rebuild instead of mutating `__args__`, which is read-only on
-            # Python >= 3.14 (`typing.Union` instances no longer allow
-            # in-place attribute assignment).
-            annotation = Union[args]
         else:
             # If annotated with `typing.List[...]` or `typing.Dict[...]`.
             # Rebuild via `copy_with` rather than mutating `__args__`, which is

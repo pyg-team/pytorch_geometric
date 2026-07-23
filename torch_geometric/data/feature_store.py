@@ -42,7 +42,7 @@ class _FieldStatus(Enum):
     UNSET = None
 
 
-@dataclass
+@dataclass(eq=False)
 class TensorAttr(CastMixin):
     r"""Defines the attributes of a :class:`FeatureStore` tensor.
     It holds all the parameters necessary to uniquely identify a tensor from
@@ -82,6 +82,28 @@ class TensorAttr(CastMixin):
             if attr.is_set(key):
                 setattr(self, key, getattr(attr, key))
         return self
+
+    def __eq__(self, other: object) -> bool:
+        if self.__class__ != other.__class__:
+            return False
+
+        for key in self.__dataclass_fields__:
+            if not self._field_equal(getattr(self, key), getattr(other, key)):
+                return False
+        return True
+
+    @staticmethod
+    def _field_equal(left: Any, right: Any) -> bool:
+        if isinstance(left, Tensor) or isinstance(right, Tensor):
+            return (isinstance(left, Tensor) and isinstance(right, Tensor)
+                    and torch.equal(left, right))
+
+        if isinstance(left, np.ndarray) or isinstance(right, np.ndarray):
+            return (isinstance(left, np.ndarray)
+                    and isinstance(right, np.ndarray)
+                    and bool(np.array_equal(left, right)))
+
+        return bool(left == right)
 
 
 class AttrView(CastMixin):

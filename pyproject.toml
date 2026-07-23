@@ -95,7 +95,9 @@ full = [
     "h5py",
     "matplotlib",
     "networkx",
-    "numba<0.60.0",
+    # Python 3.13+ cannot use the legacy Numba<0.60 full-test baseline.
+    "numba<0.60.0; python_version < '3.13'",
+    "numba>=0.65.0; python_version >= '3.13'",
     "opt_einsum",
     "pandas",
     # See https://github.com/pgmpy/pgmpy/issues/2360.

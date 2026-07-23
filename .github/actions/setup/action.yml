@@ -31,7 +31,13 @@ runs:
 
     - name: Install numpy
       run: |
-        uv pip install "numpy<2"
+        if python -c 'import sys; raise SystemExit(sys.version_info < (3, 13))'; then
+          # Python 3.13+ full-test deps need NumPy 2-compatible wheels.
+          uv pip install "numpy<3"
+        else
+          # Keep stable CI rows on the existing NumPy 1.x baseline.
+          uv pip install "numpy<2"
+        fi
       shell: bash
 
     - name: Install PyTorch ${{ inputs.torch-version }}+${{ inputs.cuda-version }}
@@ -68,13 +74,13 @@ runs:
     - name: Install faiss-cpu
       if: ${{ inputs.full_install == 'true' && inputs.cuda-version == 'cpu' && runner.os == 'Linux' }}
       run: |
-        uv pip install faiss-cpu==1.7.2
+        uv pip install faiss-cpu
       shell: bash
 
     - name: Install faiss-gpu
       if: ${{ inputs.full_install == 'true' && inputs.cuda-version != 'cpu' && runner.os == 'Linux' }}
       run: |
-        uv pip install faiss-gpu==1.7.2
+        uv pip install faiss-gpu
       shell: bash
 
     - name: Install torchvision

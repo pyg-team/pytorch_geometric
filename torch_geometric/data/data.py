@@ -443,7 +443,7 @@ class BaseData:
 ###############################################################################
 
 
-@dataclass
+@dataclass(eq=False)
 class DataTensorAttr(TensorAttr):
     r"""Tensor attribute for `Data` without group name."""
     def __init__(

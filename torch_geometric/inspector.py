@@ -1,6 +1,7 @@
 import inspect
 import re
 import sys
+import types
 import typing
 from typing import Any, Callable, Dict, List, NamedTuple, Optional, Type, Union
 
@@ -446,6 +447,18 @@ def type_repr(obj: Any, _globals: Dict[str, Any]) -> str:
 
     if obj is ...:
         return '...'
+
+    origin = getattr(obj, '__origin__', None)
+    args = getattr(obj, '__args__', None)
+    if args is not None and (origin is Union
+                             or isinstance(obj, types.UnionType)):
+        name = 'Union'
+        if len(args) == 2 and any(arg is type(None) for arg in args):
+            name = 'Optional'
+            args = tuple(arg for arg in args if arg is not type(None))
+
+        args_repr = ', '.join([type_repr(arg, _globals) for arg in args])
+        return f'{_get_name(name, "typing")}[{args_repr}]'
 
     if obj.__module__ == 'typing':  # Special logic for `typing.*` types:
 

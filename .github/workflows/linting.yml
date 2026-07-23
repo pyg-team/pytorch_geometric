@@ -41,7 +41,8 @@ jobs:
 
       - name: Install main package
         run: |
-          uv pip install -e ".[full,test]" mypy types-requests
+          # rdkit==2026.3.3 bundles rdkit-stubs with invalid syntax for mypy.
+          uv pip install -e ".[full,test]" "rdkit<2026.3.3" mypy types-requests
 
       - name: Check type hints
         run: |
