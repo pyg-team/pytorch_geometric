@@ -21,7 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Security
 
-- `download_url` now verifies TLS certificates instead of always using an unverified SSL context. Set `PYG_INSECURE_DOWNLOADS=1` to restore the previous behavior ([#10754](https://github.com/pyg-team/pytorch_geometric/pull/10754))
+- `download_url` now verifies TLS certificates instead of always using an unverified SSL context. Set `PYG_INSECURE_DOWNLOADS=1` to restore the previous behavior ([#10756](https://github.com/pyg-team/pytorch_geometric/pull/10756))
 
 ## [2.8.0] - 2026-06-05
 
