@@ -59,6 +59,24 @@ def test_hgt_conv_same_dimensions():
     # allows indexing `ParameterDict` mappings :(
 
 
+def test_hgt_conv_with_custom_aggr():
+    x_dict = {
+        'author': torch.randn(4, 16),
+        'paper': torch.randn(6, 16),
+    }
+    edge_index_dict = {
+        ('author', 'writes', 'paper'): get_random_edge_index(4, 6, 20),
+    }
+    metadata = (list(x_dict.keys()), list(edge_index_dict.keys()))
+
+    conv = HGTConv(16, 16, metadata, heads=2, aggr='sum')
+    assert conv.aggr == 'sum'
+
+    out_dict = conv(x_dict, edge_index_dict)
+    assert len(out_dict) == 1
+    assert out_dict['paper'].size() == (6, 16)
+
+
 def test_hgt_conv_different_dimensions():
     x_dict = {
         'author': torch.randn(4, 16),
