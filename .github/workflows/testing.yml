@@ -20,7 +20,7 @@ jobs:
     outputs:
       triggered: ${{ steps.check.outputs.triggered }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 2
       - id: check
