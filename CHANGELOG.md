@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
-- Added `Shapes` sections to the `TransformerConv` and `SplineConv` docstrings
+- Added `Shapes` sections to the `TransformerConv` and `SplineConv` docstrings ([#10761](https://github.com/pyg-team/pytorch_geometric/pull/10761))
 
 ### Deprecated
 
