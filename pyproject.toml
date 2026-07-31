@@ -158,11 +158,6 @@ module = [
     "torch_geometric.llm.*",
 ]
 
-[[tool.mypy.overrides]]
-module = "rdkit.*"
-ignore_errors = true
-follow_imports = "skip"
-
 [tool.isort]
 multi_line_output = 3
 include_trailing_comma = true
