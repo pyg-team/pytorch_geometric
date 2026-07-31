@@ -1,17 +1,11 @@
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 
 from torch_geometric.utils import cumsum, scatter
 
-if TYPE_CHECKING:  # pragma: no cover
-    try:
-        # Provide accurate type to static type checkers when available.
-        from torchmetrics import Metric as BaseMetric
-    except Exception:
-        BaseMetric = Any
 try:
     import torchmetrics  # noqa
     WITH_TORCHMETRICS = True

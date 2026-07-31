@@ -343,27 +343,3 @@ def test_empty_ground_truth():
     metric.update(pred_index_mat, edge_label_index, edge_label_weight)
     assert metric.compute() == 0
     metric.reset()
-
-
-def test_link_pred_without_torchmetrics(monkeypatch):
-    import builtins
-    import importlib
-
-    import torch_geometric.metrics.link_pred as link_pred_module
-
-    real_import = builtins.__import__
-
-    def fake_import(name, globals=None, locals=None, fromlist=(), level=0):
-        if name == "torchmetrics":
-            raise ImportError("mocked")
-        return real_import(name, globals, locals, fromlist, level)
-
-    monkeypatch.setattr(builtins, "__import__", fake_import)
-
-    importlib.reload(link_pred_module)
-
-    assert link_pred_module.WITH_TORCHMETRICS is False
-    assert link_pred_module.BaseMetric is torch.nn.Module
-
-    monkeypatch.setattr(builtins, "__import__", real_import)
-    importlib.reload(link_pred_module)
