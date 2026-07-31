@@ -41,10 +41,7 @@ jobs:
 
       - name: Install main package
         run: |
-          python -m pip install --upgrade pip
-          # Install only the test extras in CI for linting/mypy to avoid resolving the
-          # self-referential "full" extras which can trigger resolver errors.
-          python -m pip install -e ".[test]" mypy types-requests
+          uv pip install -e ".[full,test]" mypy types-requests
 
       - name: Check type hints
         run: |
