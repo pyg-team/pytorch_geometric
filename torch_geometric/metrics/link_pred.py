@@ -12,7 +12,7 @@ try:
     BaseMetric = torchmetrics.Metric
 except Exception:
     WITH_TORCHMETRICS = False
-    BaseMetric = torch.nn.Module
+    BaseMetric = torch.nn.Module  # type: ignore
 
 
 @dataclass(repr=False)

@@ -361,7 +361,7 @@ def _visualize_hetero_graph_via_networkx(
     node_alphas = []
 
     # Use matplotlib tab20 colormap for consistent coloring
-    tab10_cmap = plt.cm.tab10
+    tab10_cmap = plt.cm.tab10  # type: ignore[attr-defined]
     node_type_colors: Dict[str, Any] = {}  # Store color for each node type
     for node in g.nodes():
         node_type = g.nodes[node]['type']
