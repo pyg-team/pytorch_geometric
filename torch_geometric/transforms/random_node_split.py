@@ -74,7 +74,8 @@ class RandomNodeSplit(BaseTransform):
         data: Union[Data, HeteroData],
     ) -> Union[Data, HeteroData]:
         for store in data.node_stores:
-            if self.key is not None and not hasattr(store, self.key):
+            if (self.split != 'train_rest' and self.key is not None
+                    and not hasattr(store, self.key)):
                 continue
 
             train_masks, val_masks, test_masks = zip(
