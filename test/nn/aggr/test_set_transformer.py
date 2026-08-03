@@ -4,7 +4,7 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn.aggr import SetTransformerAggregation
-from torch_geometric.testing import is_full_test
+from torch_geometric.testing import is_full_test, onlyCUDA
 
 
 def test_set_transformer_aggregation():
@@ -29,3 +29,21 @@ def test_set_transformer_aggregation():
     if is_full_test():
         jit = torch.jit.script(aggr)
         assert torch.allclose(jit(x, index), out)
+
+
+@onlyCUDA
+def test_set_transformer_aggregation_eval_cuda():
+    x = torch.randn(6, 16, device='cuda')
+    index = torch.tensor([0, 0, 1, 1, 1, 3], device='cuda')
+
+    aggr = SetTransformerAggregation(16, num_seed_points=2, heads=2).cuda()
+    aggr.eval()
+
+    fastpath_enabled = torch.backends.mha.get_fastpath_enabled()
+    with torch.no_grad():
+        out = aggr(x, index)
+    torch.cuda.synchronize()
+
+    assert out.size() == (4, 2 * 16)
+    assert out.isfinite().all()
+    assert torch.backends.mha.get_fastpath_enabled() == fastpath_enabled
