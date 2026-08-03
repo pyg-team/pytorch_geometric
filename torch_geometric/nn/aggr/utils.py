@@ -64,7 +64,14 @@ class MultiheadAttentionBlock(torch.nn.Module):
         if y_mask is not None:
             y_mask = ~y_mask
 
-        out, _ = self.attn(x, y, y, y_mask, need_weights=False)
+        # Work around CUDA issues in PyTorch's native MHA fastpath for
+        # padded Set Transformer inputs in evaluation mode.
+        if (not torch.jit.is_scripting() and not self.training and x.is_cuda
+                and y_mask is not None
+                and torch.backends.mha.get_fastpath_enabled()):
+            out = self._attn_no_fastpath(x, y, y_mask)
+        else:
+            out, _ = self.attn(x, y, y, y_mask, need_weights=False)
 
         if x_mask is not None:
             out[~x_mask] = 0.
@@ -79,6 +86,21 @@ class MultiheadAttentionBlock(torch.nn.Module):
         if self.layer_norm2 is not None:
             out = self.layer_norm2(out)
 
+        return out
+
+    @torch.jit.unused
+    def _attn_no_fastpath(
+        self,
+        x: Tensor,
+        y: Tensor,
+        y_mask: Optional[Tensor] = None,
+    ) -> Tensor:
+        fastpath_enabled = torch.backends.mha.get_fastpath_enabled()
+        torch.backends.mha.set_fastpath_enabled(False)
+        try:
+            out, _ = self.attn(x, y, y, y_mask, need_weights=False)
+        finally:
+            torch.backends.mha.set_fastpath_enabled(fastpath_enabled)
         return out
 
     def __repr__(self) -> str:
