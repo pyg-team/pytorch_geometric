@@ -36,6 +36,7 @@ from .add_metapaths import AddMetaPaths, AddRandomMetaPaths
 from .rooted_subgraph import RootedEgoNets, RootedRWSubgraph
 from .largest_connected_components import LargestConnectedComponents
 from .virtual_node import VirtualNode
+from .multiple_virtual_nodes import MultipleVirtualNodes
 from .add_positional_encoding import AddLaplacianEigenvectorPE, AddRandomWalkPE
 from .add_gpse import AddGPSE
 from .feature_propagation import FeaturePropagation
@@ -107,6 +108,7 @@ graph_transforms = [
     'RootedRWSubgraph',
     'LargestConnectedComponents',
     'VirtualNode',
+    'MultipleVirtualNodes',
     'AddLaplacianEigenvectorPE',
     'AddRandomWalkPE',
     'AddGPSE',
