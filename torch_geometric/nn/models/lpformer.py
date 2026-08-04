@@ -87,16 +87,21 @@ class LPFormer(nn.Module):
         self.att_layers = nn.ModuleList()
         for il in range(num_transformer_layers):
             if il == 0:
+                in_dim = self.hid_dim
                 node_dim = None
                 self.out_dim = self.hid_dim * 2 if num_transformer_layers > 1 \
                     else self.hid_dim
-            elif il == self.num_layers - 1:
+            elif il == num_transformer_layers - 1:
+                in_dim = self.hid_dim * num_heads
                 node_dim = self.hid_dim
+                self.out_dim = self.hid_dim
             else:
-                self.out_dim = node_dim = self.hid_dim
+                in_dim = self.hid_dim * num_heads
+                node_dim = self.hid_dim
+                self.out_dim = self.hid_dim * 2
 
             self.att_layers.append(
-                LPAttLayer(self.hid_dim, self.out_dim, node_dim, num_heads,
+                LPAttLayer(in_dim, self.out_dim, node_dim, num_heads,
                            self.trans_drop))
 
         self.elementwise_lin = MLP(self.hid_dim, self.hid_dim, self.hid_dim)
@@ -667,7 +672,10 @@ class LPAttLayer(MessagePassing):
         self._alpha = None
 
         self.dropout = dropout
-        self.post_att_norm = nn.LayerNorm(out_channels)
+        if concat:
+            self.post_att_norm = nn.LayerNorm(num_heads * out_channels)
+        else:
+            self.post_att_norm = nn.LayerNorm(out_channels)
 
         self.reset_parameters()
 
