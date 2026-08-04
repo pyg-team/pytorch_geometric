@@ -7,10 +7,16 @@ from torch_geometric.utils import scatter
 
 def knn_interpolate(x: torch.Tensor, pos_x: torch.Tensor, pos_y: torch.Tensor,
                     batch_x: OptTensor = None, batch_y: OptTensor = None,
-                    k: int = 3, num_workers: int = 1):
-    r"""The k-NN interpolation from the `"PointNet++: Deep Hierarchical
-    Feature Learning on Point Sets in a Metric Space"
-    <https://arxiv.org/abs/1706.02413>`_ paper.
+                    k: int = 3, num_workers: int = 1, alpha: float = 2.0):
+    r"""k-NN interpolation.
+
+    When :math:`alpha=1`, this is equivalent to the interpolation from the
+    `"MAgNet: Mesh Agnostic Neural PDE Solver"
+    <http://arxiv.org/abs/2210.05495>`_ paper.
+
+    When :math:`alpha=2`, this is equivalent to the k-NN interpolation from
+    the `"PointNet++: Deep Hierarchical Feature Learning on Point Sets in
+    a Metric Space" <https://arxiv.org/abs/1706.02413>`_ paper.
 
     For each point :math:`y` with position :math:`\mathbf{p}(y)`, its
     interpolated features :math:`\mathbf{f}(y)` are given by
@@ -18,7 +24,7 @@ def knn_interpolate(x: torch.Tensor, pos_x: torch.Tensor, pos_y: torch.Tensor,
     .. math::
         \mathbf{f}(y) = \frac{\sum_{i=1}^k w(x_i) \mathbf{f}(x_i)}{\sum_{i=1}^k
         w(x_i)} \textrm{, where } w(x_i) = \frac{1}{d(\mathbf{p}(y),
-        \mathbf{p}(x_i))^2}
+        \mathbf{p}(x_i))^{\alpha}}
 
     and :math:`\{ x_1, \ldots, x_k \}` denoting the :math:`k` nearest points
     to :math:`y`.
@@ -42,14 +48,19 @@ def knn_interpolate(x: torch.Tensor, pos_x: torch.Tensor, pos_y: torch.Tensor,
         num_workers (int, optional): Number of workers to use for computation.
             Has no effect in case :obj:`batch_x` or :obj:`batch_y` is not
             :obj:`None`, or the input lies on the GPU. (default: :obj:`1`)
+        alpha (float, optional): Power of the distance. (default: :obj:`2.0`)
     """
     with torch.no_grad():
         assign_index = knn(pos_x, pos_y, k, batch_x=batch_x, batch_y=batch_y,
                            num_workers=num_workers)
         y_idx, x_idx = assign_index[0], assign_index[1]
         diff = pos_x[x_idx] - pos_y[y_idx]
-        squared_distance = (diff * diff).sum(dim=-1, keepdim=True)
-        weights = 1.0 / torch.clamp(squared_distance, min=1e-16)
+        distance = (diff * diff).sum(dim=-1, keepdim=True)
+        if alpha != 2.0:
+            distance = distance.sqrt()
+        if (alpha != 2.0) and (alpha != 1.0):
+            distance = distance.pow(alpha)
+        weights = 1.0 / torch.clamp(distance, min=1e-16)
 
     y = scatter(x[x_idx] * weights, y_idx, 0, pos_y.size(0), reduce='sum')
     y = y / scatter(weights, y_idx, 0, pos_y.size(0), reduce='sum')
