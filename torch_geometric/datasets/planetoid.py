@@ -31,6 +31,11 @@ class Planetoid(InMemoryDataset):
             If set to :obj:`"geom-gcn"`, the 10 public fixed splits from the
             `"Geom-GCN: Geometric Graph Convolutional Networks"
             <https://openreview.net/forum?id=S1e2agrFvS>`_ paper are given.
+            If set to :obj:`"temporal"`, the temporal split from the
+            `"Deep Community Detection in Attributed Temporal Graphs:
+            Experimental Evaluation of Current Approaches"
+            <https://doi.org/10.1145/3694811.3697822>`_ paper is given,
+            available for the :obj:`"PubMed"` dataset only.
             If set to :obj:`"random"`, train, validation, and test sets will be
             randomly generated, according to :obj:`num_train_per_class`,
             :obj:`num_val` and :obj:`num_test`. (default: :obj:`"public"`)
@@ -81,6 +86,8 @@ class Planetoid(InMemoryDataset):
     url = 'https://github.com/kimiyoung/planetoid/raw/master/data'
     geom_gcn_url = ('https://raw.githubusercontent.com/graphdml-uiuc-jlu/'
                     'geom-gcn/master')
+    temporal_url = ('https://raw.githubusercontent.com/nelsonaloysio/'
+                    'pubmed-temporal/main')
 
     def __init__(
         self,
@@ -97,7 +104,11 @@ class Planetoid(InMemoryDataset):
         self.name = name
 
         self.split = split.lower()
-        assert self.split in ['public', 'full', 'geom-gcn', 'random']
+        assert self.split in [
+            'public', 'full', 'geom-gcn', 'random', 'temporal'
+        ]
+        assert self.split != 'temporal' or name.lower() == 'pubmed',\
+            'Temporal split is only available for the PubMed dataset.'
 
         super().__init__(root, transform, pre_transform,
                          force_reload=force_reload)
@@ -132,12 +143,16 @@ class Planetoid(InMemoryDataset):
     def raw_dir(self) -> str:
         if self.split == 'geom-gcn':
             return osp.join(self.root, self.name, 'geom-gcn', 'raw')
+        if self.split == 'temporal':
+            return osp.join(self.root, self.name, 'temporal', 'raw')
         return osp.join(self.root, self.name, 'raw')
 
     @property
     def processed_dir(self) -> str:
         if self.split == 'geom-gcn':
             return osp.join(self.root, self.name, 'geom-gcn', 'processed')
+        if self.split == 'temporal':
+            return osp.join(self.root, self.name, 'temporal', 'processed')
         return osp.join(self.root, self.name, 'processed')
 
     @property
@@ -152,10 +167,16 @@ class Planetoid(InMemoryDataset):
     def download(self) -> None:
         for name in self.raw_file_names:
             fs.cp(f'{self.url}/{name}', self.raw_dir)
+
         if self.split == 'geom-gcn':
             for i in range(10):
                 url = f'{self.geom_gcn_url}/splits/{self.name.lower()}'
                 fs.cp(f'{url}_split_0.6_0.2_{i}.npz', self.raw_dir)
+
+        elif self.split == 'temporal':
+            url = f'{self.temporal_url}/pubmed/temporal/raw'
+            fs.cp(f'{url}/temporal_split_0.6_0.2.npz', self.raw_dir)
+            fs.cp(f'{url}/edge_time.npy', self.raw_dir)
 
     def process(self) -> None:
         data = read_planetoid_data(self.raw_dir, self.name)
@@ -171,6 +192,15 @@ class Planetoid(InMemoryDataset):
             data.train_mask = torch.stack(train_masks, dim=1)
             data.val_mask = torch.stack(val_masks, dim=1)
             data.test_mask = torch.stack(test_masks, dim=1)
+
+        elif self.split == 'temporal':
+            splits = np.load(
+                osp.join(self.raw_dir, 'temporal_split_0.6_0.2.npz'))
+            data.train_mask = torch.from_numpy(splits['train_mask'])
+            data.val_mask = torch.from_numpy(splits['val_mask'])
+            data.test_mask = torch.from_numpy(splits['test_mask'])
+            data.time = torch.from_numpy(
+                np.load(osp.join(self.raw_dir, 'edge_time.npy')))
 
         data = data if self.pre_transform is None else self.pre_transform(data)
         self.save([data], self.processed_paths[0])
