@@ -7,27 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Added `torch_geometric.contrib.nn.models.MGNAN` (M-GNAN, an extension of `GNAN` to multivariate shape functions) model plus an example ([#10371](https://github.com/pyg-team/pytorch_geometric/pull/10371))
-
-### Changed
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-- Fixed `config_store` on Python 3.14, where `typing.Union`/`typing.Optional` annotations could no longer be remapped in-place via the now read-only `__args__` attribute
-
-### Security
-
-## [2.8.0] - 2026-06-05
-
-### Added
-
-- Added `from_relbench` to convert RelBench databases into `HeteroData` ([#10628](https://github.com/pyg-team/pytorch_geometric/pull/10628))
-- Added a `ci: full` PR label that triggers the full test suite (`pytest-full`) on demand instead of the regular one ([#10709](https://github.com/pyg-team/pytorch_geometric/pull/10709))
-- Added PyTorch 2.11 and 2.12 support ([#10708](https://github.com/pyg-team/pytorch_geometric/pull/10708))
+- Added the `RBGVDataset` synthetic graph classification dataset with configurable spurious connections ([#10740](https://github.com/pyg-team/pytorch_geometric/pull/10740))
 - Added `txt2qa.py` example for synthetic multi-hop QA generation from text documents, supporting vLLM (local) and NVIDIA NIM (API) backends ([#10559](https://github.com/pyg-team/pytorch_geometric/pull/10559))
 - Added GraphLand benchmark via `GraphLandDataset` ([#10458](https://github.com/pyg-team/pytorch_geometric/pull/10458))
 
