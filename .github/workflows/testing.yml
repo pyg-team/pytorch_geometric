@@ -20,7 +20,7 @@ jobs:
     outputs:
       triggered: ${{ steps.check.outputs.triggered }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 2
       - id: check
@@ -69,9 +69,6 @@ jobs:
           { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.12.0", "cuda-version": "cpu" },
           { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.11.0", "cuda-version": "cpu" },
           { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.10.0", "cuda-version": "cpu" },
-          { "os": "ubuntu-22.04", "python-version": "3.10", "torch-version": "2.9.0", "cuda-version": "cpu" },
-          { "os": "macos-14", "python-version": "3.10", "torch-version": "2.12.0", "cuda-version": "cpu" },
-          { "os": "windows-2022", "python-version": "3.10", "torch-version": "2.12.0", "cuda-version": "cpu" }
         ]}
 
   pytest-full:
@@ -83,7 +80,7 @@ jobs:
         {
           "os": ["ubuntu-22.04", "macos-14", "windows-2022"],
           "python-version": ["3.10"],
-          "torch-version": ["2.9.0", "2.10.0", "2.11.0", "2.12.0", "nightly"],
+          "torch-version": ["2.10.0", "2.11.0", "2.12.0", "nightly"],
           "cuda-version": ["cpu"],
           "full_test": ["1"]
         }
