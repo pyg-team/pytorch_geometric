@@ -33,6 +33,7 @@ from torch_geometric.utils import (
     is_sparse,
     is_undirected,
     mask_select,
+    select,
 )
 
 NodeOrEdgeStorage = Union[NodeStorage, EdgeStorage]
@@ -806,7 +807,8 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                 if key == 'edge_index':
                     data[edge_type].edge_index = edge_index
                 elif self[edge_type].is_edge_attr(key):
-                    data[edge_type][key] = value[edge_mask]
+                    dim = self.__cat_dim__(key, value, self[edge_type])
+                    data[edge_type][key] = select(value, edge_mask, dim=dim)
                 else:
                     data[edge_type][key] = value
 
