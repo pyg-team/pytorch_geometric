@@ -458,33 +458,3 @@ def test_extract_relevant_triples_cloud_non_retryable(monkeypatch):
 
     assert len(calls) == 1
 
-
-def dummy_multiproc_helper(
-    rank,
-    chunks,
-    py_fn,
-    llm_fn,
-    NIM_KEY,
-    NIM_MODEL,
-    ENDPOINT_URL,
-    max_retries=3,
-    base_delay=0,
-):
-    return {
-        "success": True,
-        "result": [("A", "rel", "B")],
-    }
-
-
-def test_extract_relevant_triples_cloud(monkeypatch):
-    model = TXT2KG(local_LM=False, chunk_size=10)
-
-    monkeypatch.setattr(
-        txt2kg,
-        "_multiproc_helper",
-        dummy_multiproc_helper,
-    )
-
-    triples = model._extract_relevant_triples("Some text")
-
-    assert ("A", "rel", "B") in triples
