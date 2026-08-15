@@ -451,8 +451,8 @@ def test_extract_relevant_triples_cloud_non_retryable(monkeypatch):
     )
 
     with pytest.raises(
-        RuntimeError,
-        match="Authorization failed",
+            RuntimeError,
+            match="Authorization failed",
     ):
         model._extract_relevant_triples("Some text")
 
