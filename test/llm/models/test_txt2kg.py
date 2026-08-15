@@ -457,4 +457,3 @@ def test_extract_relevant_triples_cloud_non_retryable(monkeypatch):
         model._extract_relevant_triples("Some text")
 
     assert len(calls) == 1
-
