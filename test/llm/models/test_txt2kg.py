@@ -330,22 +330,12 @@ def test_add_doc_nonempty_text_placeholder(kg_cpu, monkeypatch):
 
 
 def test_is_retryable_exception_status_codes():
-    assert txt2kg._is_retryable_exception(
-        RuntimeError(), 429
-    )
-    assert txt2kg._is_retryable_exception(
-        RuntimeError(), 500
-    )
-    assert txt2kg._is_retryable_exception(
-        RuntimeError(), 503
-    )
+    assert txt2kg._is_retryable_exception(RuntimeError(), 429)
+    assert txt2kg._is_retryable_exception(RuntimeError(), 500)
+    assert txt2kg._is_retryable_exception(RuntimeError(), 503)
 
-    assert not txt2kg._is_retryable_exception(
-        RuntimeError(), 400
-    )
-    assert not txt2kg._is_retryable_exception(
-        RuntimeError(), 403
-    )
+    assert not txt2kg._is_retryable_exception(RuntimeError(), 400)
+    assert not txt2kg._is_retryable_exception(RuntimeError(), 403)
 
 
 def test_is_retryable_exception_network_errors():
@@ -447,8 +437,8 @@ def test_extract_relevant_triples_cloud_non_retryable(monkeypatch):
     )
 
     with pytest.raises(
-        RuntimeError,
-        match="Authorization failed",
+            RuntimeError,
+            match="Authorization failed",
     ):
         model._extract_relevant_triples("Some text")
 
@@ -482,4 +472,3 @@ def test_extract_relevant_triples_cloud(monkeypatch):
     triples = model._extract_relevant_triples("Some text")
 
     assert ("A", "rel", "B") in triples
-
