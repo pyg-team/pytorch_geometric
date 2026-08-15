@@ -1,6 +1,6 @@
 import os
 import time
-from typing import List, Optional, Tuple, Union, TypedDict
+from typing import List, Optional, Tuple, TypedDict, Union
 
 import torch
 import torch.multiprocessing as mp
