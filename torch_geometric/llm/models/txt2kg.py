@@ -194,9 +194,9 @@ class TXT2KG():
 
             # Check whether any worker failed.
             failed_result = next(
-        	    (result for result in worker_results if not result["success"]),
-        	    None,
-    	    )
+                (result for result in worker_results if not result["success"]),
+                None,
+            )
 
             if failed_result is None:
                 # All workers succeeded.
@@ -210,10 +210,8 @@ class TXT2KG():
             if attempt == max_retries - 1:
                 raise RuntimeError(failed_result["error"])
 
-            print(
-                f"[Retry {attempt + 1}/{max_retries}] "
-                f"Multiprocessing failed: {failed_result['error']}"
-            )
+            print(f"[Retry {attempt + 1}/{max_retries}] "
+                  f"Multiprocessing failed: {failed_result['error']}")
 
             time.sleep(retry_delay)
 
@@ -338,13 +336,16 @@ def _multiproc_helper(
         if attempt > 0:
             # exponential backoff with jitter
             from random import uniform
-            sleep_time = base_delay * (2**min(attempt-1, 6)) + uniform(0, 0.1)
+            sleep_time = base_delay * (2**min(attempt - 1, 6)) + uniform(
+                0, 0.1)
             time.sleep(sleep_time)
 
         try:
             return {
-                "success": True,
-                "result": _llm_then_python_parse(
+                "success":
+                True,
+                "result":
+                _llm_then_python_parse(
                     chunks_for_rank,
                     py_fn,
                     llm_fn,
@@ -365,12 +366,11 @@ def _multiproc_helper(
             )
 
             if status_code == FORBIDDEN:
-                print("\n ***** Please, check your NV_NIM_KEY. *****\n"
+                print(
+                    "\n ***** Please, check your NV_NIM_KEY. *****\n"
                     "The key may be expired, invalid or not authorized "
-                    "to access the dataset you are using.\n",
-                    flush=True
-                )
-                
+                    "to access the dataset you are using.\n", flush=True)
+
             if not retryable:
                 return {
                     "success": False,
