@@ -237,10 +237,13 @@ def test_multiproc_helper_success(monkeypatch):
 def test_multiproc_helper_retry(monkeypatch):
     attempts = []
 
+    class RetryableError(RuntimeError):
+        status_code = 500
+
     def failing_parse(chunks, py_fn, llm_fn, **kwargs):
         attempts.append(1)
         if len(attempts) < 3:
-            raise RuntimeError("fail")
+            raise RetryableError("fail")
         return ["SUCCESS"]
 
     monkeypatch.setattr(
