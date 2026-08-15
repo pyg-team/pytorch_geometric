@@ -416,31 +416,47 @@ def test_multiproc_helper_retry_exhausted(monkeypatch):
 
     assert result["success"] is False
     assert result["retryable"] is True
-    assert "Server error" in result["error"]
+    assert result["error"] == "Worker 0: exhausted 3 retries"
     assert len(attempts) == 3
 
 
 def test_extract_relevant_triples_cloud_non_retryable(monkeypatch):
     model = TXT2KG(local_LM=False, chunk_size=10)
 
-    def dummy_helper(*args, **kwargs):
-        return {
-            "success": False,
-            "retryable": False,
-            "error": "Authorization failed",
-        }
+    calls = []
+
+    class DummyPool:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def starmap(self, func, args):
+            calls.append(1)
+            return [{
+                "success": False,
+                "retryable": False,
+                "error": "Authorization failed",
+            }]
+
+    class DummyContext:
+        def Pool(self, num_procs):
+            return DummyPool()
 
     monkeypatch.setattr(
-        txt2kg,
-        "_multiproc_helper",
-        dummy_helper,
+        txt2kg.mp,
+        "get_context",
+        lambda method: DummyContext(),
     )
 
     with pytest.raises(
-            RuntimeError,
-            match="Authorization failed",
+        RuntimeError,
+        match="Authorization failed",
     ):
         model._extract_relevant_triples("Some text")
+
+    assert len(calls) == 1
 
 
 def dummy_multiproc_helper(
