@@ -185,7 +185,10 @@ def dummy_multiproc_helper(
     max_retries=3,
     base_delay=0,
 ):
-    return [("A", "rel", "B")]
+    return {
+        "success": True,
+        "result": [("A", "rel", "B")],
+    }
 
 
 def test_extract_relevant_triples_cloud(monkeypatch):
@@ -227,7 +230,8 @@ def test_multiproc_helper_success(monkeypatch):
         base_delay=0.01  # keep backoff small in tests
     )
 
-    assert result == ["PARSED:['chunk0', 'chunk1']"]
+    assert result["success"] is True
+    assert result["result"] == ["PARSED:['chunk0', 'chunk1']"]
 
 
 def test_multiproc_helper_retry(monkeypatch):
@@ -255,7 +259,8 @@ def test_multiproc_helper_retry(monkeypatch):
         base_delay=0  # instant retries for test
     )
 
-    assert result == ["SUCCESS"]
+    assert result["success"] is True
+    assert result["result"] == ["SUCCESS"]
     assert len(attempts) == 3  # retried twice, succeeded on 3rd
 
 

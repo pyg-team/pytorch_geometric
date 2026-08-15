@@ -1,6 +1,6 @@
 import os
 import time
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, Union, TypedDict
 
 import torch
 import torch.multiprocessing as mp
@@ -322,6 +322,13 @@ def _is_retryable_exception(exc: Exception, status_code) -> bool:
     return isinstance(exc, (APIConnectionError, APITimeoutError))
 
 
+class WorkerResult(TypedDict, total=False):
+    success: bool
+    result: list
+    retryable: bool
+    error: str
+
+
 def _multiproc_helper(
     rank,
     chunks_for_rank,
@@ -332,7 +339,7 @@ def _multiproc_helper(
     ENDPOINT_URL,
     max_retries=MAX_NIM_RETRIES,
     base_delay=BASE_DELAY,
-):
+) -> WorkerResult:
 
     for attempt in range(max_retries):
         if attempt > 0:
