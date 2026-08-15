@@ -327,3 +327,159 @@ def test_add_doc_nonempty_text_placeholder(kg_cpu, monkeypatch):
     # Ensure doc_id_counter incremented and key exists
     key = kg_cpu.doc_id_counter - 1
     assert key in kg_cpu.relevant_triples
+
+
+def test_is_retryable_exception_status_codes():
+    assert txt2kg._is_retryable_exception(
+        RuntimeError(), 429
+    )
+    assert txt2kg._is_retryable_exception(
+        RuntimeError(), 500
+    )
+    assert txt2kg._is_retryable_exception(
+        RuntimeError(), 503
+    )
+
+    assert not txt2kg._is_retryable_exception(
+        RuntimeError(), 400
+    )
+    assert not txt2kg._is_retryable_exception(
+        RuntimeError(), 403
+    )
+
+
+def test_is_retryable_exception_network_errors():
+    from openai import APIConnectionError, APITimeoutError
+
+    assert txt2kg._is_retryable_exception(
+        APIConnectionError(request=None),
+        None,
+    )
+
+    assert txt2kg._is_retryable_exception(
+        APITimeoutError(request=None),
+        None,
+    )
+
+
+def test_multiproc_helper_non_retryable(monkeypatch):
+    attempts = []
+
+    class ForbiddenError(RuntimeError):
+        status_code = 403
+
+    def failing_parse(chunks, py_fn, llm_fn, **kwargs):
+        attempts.append(1)
+        raise ForbiddenError("Authorization failed")
+
+    monkeypatch.setattr(
+        txt2kg,
+        "_llm_then_python_parse",
+        failing_parse,
+    )
+
+    result = _multiproc_helper(
+        rank=0,
+        chunks_for_rank=["chunk"],
+        py_fn=lambda x: x,
+        llm_fn=lambda x: x,
+        NIM_KEY="dummy",
+        NIM_MODEL="dummy",
+        ENDPOINT_URL="dummy",
+        max_retries=5,
+        base_delay=0,
+    )
+
+    assert result["success"] is False
+    assert result["retryable"] is False
+    assert "Authorization failed" in result["error"]
+    assert len(attempts) == 1
+
+
+def test_multiproc_helper_retry_exhausted(monkeypatch):
+    attempts = []
+
+    class RetryableError(RuntimeError):
+        status_code = 500
+
+    def failing_parse(chunks, py_fn, llm_fn, **kwargs):
+        attempts.append(1)
+        raise RetryableError("Server error")
+
+    monkeypatch.setattr(
+        txt2kg,
+        "_llm_then_python_parse",
+        failing_parse,
+    )
+
+    result = _multiproc_helper(
+        rank=0,
+        chunks_for_rank=["chunk"],
+        py_fn=lambda x: x,
+        llm_fn=lambda x: x,
+        NIM_KEY="dummy",
+        NIM_MODEL="dummy",
+        ENDPOINT_URL="dummy",
+        max_retries=3,
+        base_delay=0,
+    )
+
+    assert result["success"] is False
+    assert result["retryable"] is True
+    assert "Server error" in result["error"]
+    assert len(attempts) == 3
+
+
+def test_extract_relevant_triples_cloud_non_retryable(monkeypatch):
+    model = TXT2KG(local_LM=False, chunk_size=10)
+
+    def dummy_helper(*args, **kwargs):
+        return {
+            "success": False,
+            "retryable": False,
+            "error": "Authorization failed",
+        }
+
+    monkeypatch.setattr(
+        txt2kg,
+        "_multiproc_helper",
+        dummy_helper,
+    )
+
+    with pytest.raises(
+        RuntimeError,
+        match="Authorization failed",
+    ):
+        model._extract_relevant_triples("Some text")
+
+
+def dummy_multiproc_helper(
+    rank,
+    chunks,
+    py_fn,
+    llm_fn,
+    NIM_KEY,
+    NIM_MODEL,
+    ENDPOINT_URL,
+    max_retries=3,
+    base_delay=0,
+):
+    return {
+        "success": True,
+        "result": [("A", "rel", "B")],
+    }
+
+
+def test_extract_relevant_triples_cloud(monkeypatch):
+    model = TXT2KG(local_LM=False, chunk_size=10)
+
+    monkeypatch.setattr(
+        txt2kg,
+        "_multiproc_helper",
+        dummy_multiproc_helper,
+    )
+
+    triples = model._extract_relevant_triples("Some text")
+
+    assert ("A", "rel", "B") in triples
+
