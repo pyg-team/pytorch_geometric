@@ -75,13 +75,20 @@ def test():
         accs.append(int((pred[mask] == data.y[mask]).sum()) / int(mask.sum()))
     return accs
 
+# Warm-up
+for i in range(0, 10):
+    train()
+    test()
+    torch.cuda.synchronize()
 
 times = []
 for epoch in range(1, 201):
     start = time.time()
     loss = train()
-    train_acc, val_acc, test_acc = test()
+    torch.cuda.synchronize()
     times.append(time.time() - start)
+    train_acc, val_acc, test_acc = test()
+    torch.cuda.synchronize()
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
           f'Val: {val_acc:.4f}, Test: {test_acc:.4f}')
 print(f'Median time per epoch: {torch.tensor(times).median():.4f}s')

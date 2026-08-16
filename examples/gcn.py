@@ -95,15 +95,23 @@ def test():
     return accs
 
 
+# Warm-up
+for i in range(0, 10):
+    train()
+    test()
+    torch.cuda.synchronize()
+
 best_val_acc = test_acc = 0
 times = []
 for epoch in range(1, args.epochs + 1):
     start = time.time()
     loss = train()
+    torch.cuda.synchronize()
+    times.append(time.time() - start)
     train_acc, val_acc, tmp_test_acc = test()
+    torch.cuda.synchronize()
     if val_acc > best_val_acc:
         best_val_acc = val_acc
         test_acc = tmp_test_acc
     log(Epoch=epoch, Loss=loss, Train=train_acc, Val=val_acc, Test=test_acc)
-    times.append(time.time() - start)
 print(f'Median time per epoch: {torch.tensor(times).median():.4f}s')
