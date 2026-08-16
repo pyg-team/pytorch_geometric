@@ -75,6 +75,7 @@ def test():
         accs.append(int((pred[mask] == data.y[mask]).sum()) / int(mask.sum()))
     return accs
 
+
 # Warm-up
 for i in range(0, 10):
     train()
