@@ -5,7 +5,6 @@ import numpy as np
 import torch
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
-from torch_geometric.utils import from_networkx
 
 
 class SynthFinDataset(InMemoryDataset):
@@ -74,8 +73,8 @@ class SynthFinDataset(InMemoryDataset):
         os.remove(path)
 
     def process(self) -> None:
-        import pandas as pd
         import networkx as nx
+        import pandas as pd
 
         nodes_df = pd.read_csv(self.raw_paths[0])
         edges_df = pd.read_csv(self.raw_paths[1])
@@ -85,31 +84,36 @@ class SynthFinDataset(InMemoryDataset):
         id_ = edges_df.groupby('target_id').size().rename('in_degree')
         ov = edges_df.groupby('source_id')['amount'].sum().rename('out_volume')
         iv = edges_df.groupby('target_id')['amount'].sum().rename('in_volume')
-        om = edges_df.groupby('source_id')['amount'].max().rename('out_max_amt')
+        om = edges_df.groupby('source_id')['amount'].max().rename(
+            'out_max_amt')
         im = edges_df.groupby('target_id')['amount'].max().rename('in_max_amt')
 
-        ev = edges_df.merge(iv, left_on='target_id', right_index=True, how='left')
+        ev = edges_df.merge(iv, left_on='target_id', right_index=True,
+                            how='left')
         ev = ev.merge(ov, left_on='source_id', right_index=True, how='left')
-        ni = ev.groupby('source_id')['in_volume'].mean().rename('nbr_in_volume')
-        no_ = ev.groupby('target_id')['out_volume'].mean().rename('nbr_out_volume')
+        ni = ev.groupby('source_id')['in_volume'].mean().rename(
+            'nbr_in_volume')
+        no_ = ev.groupby('target_id')['out_volume'].mean().rename(
+            'nbr_out_volume')
 
-        G = nx.from_pandas_edgelist(
-            edges_df, 'source_id', 'target_id',
-            edge_attr='amount', create_using=nx.DiGraph()
-        )
+        G = nx.from_pandas_edgelist(edges_df, 'source_id', 'target_id',
+                                    edge_attr='amount',
+                                    create_using=nx.DiGraph())
         pr = pd.Series(nx.pagerank(G, weight='amount'), name='pagerank')
 
         feat = nodes_df.set_index('agent_id').copy()
         feat = feat.join([od, id_, ov, iv, om, im, ni, no_, pr]).fillna(0)
 
-        for c in ['initial_balance', 'out_volume', 'in_volume', 'out_max_amt',
-                  'in_max_amt', 'nbr_in_volume', 'nbr_out_volume', 'pagerank']:
+        for c in [
+                'initial_balance', 'out_volume', 'in_volume', 'out_max_amt',
+                'in_max_amt', 'nbr_in_volume', 'nbr_out_volume', 'pagerank'
+        ]:
             feat[c] = np.log1p(feat[c])
-            
+
         y_val = feat['is_fraud'].values
         X_df = feat.drop(columns=['profile', 'is_fraud'])
         X_val = X_df.values
-        
+
         # Standardize features
         mu, sd = X_val.mean(0), X_val.std(0)
         X_s = (X_val - mu) / (sd + 1e-5)
@@ -119,27 +123,29 @@ class SynthFinDataset(InMemoryDataset):
         src = edges_df['source_id'].map(a2i).dropna().astype(int).values
         dst = edges_df['target_id'].map(a2i).dropna().astype(int).values
         ml = min(len(src), len(dst))
-        
-        edge_index = torch.tensor(np.vstack([src[:ml], dst[:ml]]), dtype=torch.long)
-        edge_attr = torch.tensor(np.log1p(edges_df['amount'].values[:ml]), dtype=torch.float32)
+
+        edge_index = torch.tensor(np.vstack([src[:ml], dst[:ml]]),
+                                  dtype=torch.long)
+        edge_attr = torch.tensor(np.log1p(edges_df['amount'].values[:ml]),
+                                 dtype=torch.float32)
 
         x = torch.tensor(X_s, dtype=torch.float32)
         y = torch.tensor(y_val, dtype=torch.long)
-        
+
         # Create standard transductive masks (80% train / 20% test, stratified)
         np.random.seed(42)
         fraud_idx = np.where(y_val == 1)[0]
         clean_idx = np.where(y_val == 0)[0]
-        
+
         np.random.shuffle(fraud_idx)
         np.random.shuffle(clean_idx)
-        
+
         f_split = int(0.8 * len(fraud_idx))
         c_split = int(0.8 * len(clean_idx))
-        
+
         train_idx = np.concatenate([fraud_idx[:f_split], clean_idx[:c_split]])
         test_idx = np.concatenate([fraud_idx[f_split:], clean_idx[c_split:]])
-        
+
         train_mask = torch.zeros(len(y), dtype=torch.bool)
         test_mask = torch.zeros(len(y), dtype=torch.bool)
         train_mask[train_idx] = True
