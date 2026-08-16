@@ -8,9 +8,10 @@ from torch_geometric.data import Data, InMemoryDataset, download_url
 
 
 class SynthFinDataset(InMemoryDataset):
-    r"""The SynthFin-AML dataset, an anti-money laundering (AML) benchmark graph.
-    It contains 100k nodes and 1.27M edges, representing a 10-day snapshot of
-    financial transactions with injected laundering topologies (e.g., Structuring).
+    r"""The SynthFin-AML dataset, an anti-money laundering (AML) benchmark
+    graph. It contains 100k nodes and 1.27M edges, representing a 10-day
+    snapshot of financial transactions with injected laundering topologies
+    (e.g., Structuring).
 
     Nodes represent bank accounts and edges represent transactions.
     The task is transductive node classification, where the goal is to classify
@@ -44,7 +45,8 @@ class SynthFinDataset(InMemoryDataset):
           - 10
           - 2
     """
-    url = 'https://huggingface.co/datasets/ovvaliyev/synthfin-aml/resolve/main/raw.zip'
+    url = ('https://huggingface.co/datasets/ovvaliyev/'
+           'synthfin-aml/resolve/main/raw.zip')
 
     def __init__(
         self,
