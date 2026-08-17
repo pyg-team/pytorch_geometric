@@ -94,6 +94,7 @@ def test():
         accs.append(int((pred[mask] == data.y[mask]).sum()) / int(mask.sum()))
     return accs
 
+
 best_val_acc = test_acc = 0
 times = []
 for epoch in range(1, args.epochs + 1):

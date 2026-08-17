@@ -80,7 +80,7 @@ times = []
 for epoch in range(1, 201):
     start = time.time()
     loss = train()
-    torch.cuda.synchronize() 
+    torch.cuda.synchronize()
     if epoch >= 10:  # We treat the first 10 iterations as a warm-up
         times.append(time.time() - start)
     train_acc, val_acc, test_acc = test()
