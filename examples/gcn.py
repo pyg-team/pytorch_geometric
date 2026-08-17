@@ -94,22 +94,15 @@ def test():
         accs.append(int((pred[mask] == data.y[mask]).sum()) / int(mask.sum()))
     return accs
 
-
-# Warm-up
-for _i in range(0, 10):
-    train()
-    test()
-    torch.cuda.synchronize()
-
 best_val_acc = test_acc = 0
 times = []
 for epoch in range(1, args.epochs + 1):
     start = time.time()
     loss = train()
-    torch.cuda.synchronize()
-    times.append(time.time() - start)
+    if epoch >= 10:  # We treat the first 10 iterations as a warm-up
+        times.append(time.time() - start)
+
     train_acc, val_acc, tmp_test_acc = test()
-    torch.cuda.synchronize()
     if val_acc > best_val_acc:
         best_val_acc = val_acc
         test_acc = tmp_test_acc

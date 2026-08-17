@@ -76,20 +76,14 @@ def test():
     return accs
 
 
-# Warm-up
-for _i in range(0, 10):
-    train()
-    test()
-    torch.cuda.synchronize()
-
 times = []
 for epoch in range(1, 201):
     start = time.time()
     loss = train()
-    torch.cuda.synchronize()
-    times.append(time.time() - start)
+    torch.cuda.synchronize() 
+    if epoch >= 10:  # We treat the first 10 iterations as a warm-up
+        times.append(time.time() - start)
     train_acc, val_acc, test_acc = test()
-    torch.cuda.synchronize()
     print(f'Epoch: {epoch:03d}, Loss: {loss:.4f}, Train: {train_acc:.4f}, '
           f'Val: {val_acc:.4f}, Test: {test_acc:.4f}')
 print(f'Median time per epoch: {torch.tensor(times).median():.4f}s')
