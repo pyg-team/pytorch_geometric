@@ -96,7 +96,7 @@ def test():
 
 
 # Warm-up
-for i in range(0, 10):
+for _i in range(0, 10):
     train()
     test()
     torch.cuda.synchronize()
