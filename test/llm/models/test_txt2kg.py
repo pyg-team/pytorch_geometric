@@ -185,7 +185,10 @@ def dummy_multiproc_helper(
     max_retries=3,
     base_delay=0,
 ):
-    return [("A", "rel", "B")]
+    return {
+        "success": True,
+        "result": [("A", "rel", "B")],
+    }
 
 
 def test_extract_relevant_triples_cloud(monkeypatch):
@@ -227,16 +230,20 @@ def test_multiproc_helper_success(monkeypatch):
         base_delay=0.01  # keep backoff small in tests
     )
 
-    assert result == ["PARSED:['chunk0', 'chunk1']"]
+    assert result["success"] is True
+    assert result["result"] == ["PARSED:['chunk0', 'chunk1']"]
 
 
 def test_multiproc_helper_retry(monkeypatch):
     attempts = []
 
+    class RetryableError(RuntimeError):
+        status_code = 500
+
     def failing_parse(chunks, py_fn, llm_fn, **kwargs):
         attempts.append(1)
         if len(attempts) < 3:
-            raise RuntimeError("fail")
+            raise RetryableError("fail")
         return ["SUCCESS"]
 
     monkeypatch.setattr(
@@ -255,7 +262,8 @@ def test_multiproc_helper_retry(monkeypatch):
         base_delay=0  # instant retries for test
     )
 
-    assert result == ["SUCCESS"]
+    assert result["success"] is True
+    assert result["result"] == ["SUCCESS"]
     assert len(attempts) == 3  # retried twice, succeeded on 3rd
 
 
@@ -319,3 +327,133 @@ def test_add_doc_nonempty_text_placeholder(kg_cpu, monkeypatch):
     # Ensure doc_id_counter incremented and key exists
     key = kg_cpu.doc_id_counter - 1
     assert key in kg_cpu.relevant_triples
+
+
+def test_is_retryable_exception_status_codes():
+    assert txt2kg._is_retryable_exception(RuntimeError(), 429)
+    assert txt2kg._is_retryable_exception(RuntimeError(), 500)
+    assert txt2kg._is_retryable_exception(RuntimeError(), 503)
+
+    assert not txt2kg._is_retryable_exception(RuntimeError(), 400)
+    assert not txt2kg._is_retryable_exception(RuntimeError(), 403)
+
+
+def test_is_retryable_exception_network_errors():
+    from openai import APIConnectionError, APITimeoutError
+
+    assert txt2kg._is_retryable_exception(
+        APIConnectionError(request=None),
+        None,
+    )
+
+    assert txt2kg._is_retryable_exception(
+        APITimeoutError(request=None),
+        None,
+    )
+
+
+def test_multiproc_helper_non_retryable(monkeypatch):
+    attempts = []
+
+    class ForbiddenError(RuntimeError):
+        status_code = 403
+
+    def failing_parse(chunks, py_fn, llm_fn, **kwargs):
+        attempts.append(1)
+        raise ForbiddenError("Authorization failed")
+
+    monkeypatch.setattr(
+        txt2kg,
+        "_llm_then_python_parse",
+        failing_parse,
+    )
+
+    result = _multiproc_helper(
+        rank=0,
+        chunks_for_rank=["chunk"],
+        py_fn=lambda x: x,
+        llm_fn=lambda x: x,
+        NIM_KEY="dummy",
+        NIM_MODEL="dummy",
+        ENDPOINT_URL="dummy",
+        max_retries=5,
+        base_delay=0,
+    )
+
+    assert result["success"] is False
+    assert result["retryable"] is False
+    assert "Authorization failed" in result["error"]
+    assert len(attempts) == 1
+
+
+def test_multiproc_helper_retry_exhausted(monkeypatch):
+    attempts = []
+
+    class RetryableError(RuntimeError):
+        status_code = 500
+
+    def failing_parse(chunks, py_fn, llm_fn, **kwargs):
+        attempts.append(1)
+        raise RetryableError("Server error")
+
+    monkeypatch.setattr(
+        txt2kg,
+        "_llm_then_python_parse",
+        failing_parse,
+    )
+
+    result = _multiproc_helper(
+        rank=0,
+        chunks_for_rank=["chunk"],
+        py_fn=lambda x: x,
+        llm_fn=lambda x: x,
+        NIM_KEY="dummy",
+        NIM_MODEL="dummy",
+        ENDPOINT_URL="dummy",
+        max_retries=3,
+        base_delay=0,
+    )
+
+    assert result["success"] is False
+    assert result["retryable"] is True
+    assert result["error"] == "Worker 0: exhausted 3 retries"
+    assert len(attempts) == 3
+
+
+def test_extract_relevant_triples_cloud_non_retryable(monkeypatch):
+    model = TXT2KG(local_LM=False, chunk_size=10)
+
+    calls = []
+
+    class DummyPool:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def starmap(self, func, args):
+            calls.append(1)
+            return [{
+                "success": False,
+                "retryable": False,
+                "error": "Authorization failed",
+            }]
+
+    class DummyContext:
+        def Pool(self, num_procs):
+            return DummyPool()
+
+    monkeypatch.setattr(
+        txt2kg.mp,
+        "get_context",
+        lambda method: DummyContext(),
+    )
+
+    with pytest.raises(
+            RuntimeError,
+            match="Authorization failed",
+    ):
+        model._extract_relevant_triples("Some text")
+
+    assert len(calls) == 1
