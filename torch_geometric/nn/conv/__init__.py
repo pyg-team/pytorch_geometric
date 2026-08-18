@@ -2,6 +2,7 @@ from .message_passing import MessagePassing
 from .simple_conv import SimpleConv
 from .gcn_conv import GCNConv
 from .cheb_conv import ChebConv
+from .stable_cheb_conv import StableChebConv
 from .sage_conv import SAGEConv
 from .cugraph.sage_conv import CuGraphSAGEConv
 from .graph_conv import GraphConv
@@ -70,6 +71,7 @@ __all__ = [
     'SimpleConv',
     'GCNConv',
     'ChebConv',
+    'StableChebConv',
     'SAGEConv',
     'CuGraphSAGEConv',
     'GraphConv',
