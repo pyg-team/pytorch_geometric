@@ -32,6 +32,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Added PyTorch 2.11 and 2.12 support ([#10708](https://github.com/pyg-team/pytorch_geometric/pull/10708))
 - Added `txt2qa.py` example for synthetic multi-hop QA generation from text documents, supporting vLLM (local) and NVIDIA NIM (API) backends ([#10559](https://github.com/pyg-team/pytorch_geometric/pull/10559))
 - Added GraphLand benchmark via `GraphLandDataset` ([#10458](https://github.com/pyg-team/pytorch_geometric/pull/10458))
+- Added `OscillatorDataset` for stability assessment ([#10730](https://github.com/pyg-team/pytorch_geometric/pull/10730))
 
 ### Changed
 
