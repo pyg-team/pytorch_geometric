@@ -353,6 +353,25 @@ def test_hetero_data_empty_subgraph():
     assert torch.equal(out['paper', 'author'].edge_weight, torch.arange(5))
 
 
+def test_hetero_data_subgraph_with_nonzero_cat_dim():
+    data = HeteroData()
+    data['paper'].num_nodes = 3
+    data['paper', 'cites', 'paper'].edge_index = torch.tensor([
+        [0, 1, 2],
+        [1, 2, 0],
+    ])
+    data['paper', 'cites', 'paper'].pair_index = torch.tensor([
+        [10, 11, 12],
+        [20, 21, 22],
+    ])
+    assert data['paper', 'cites', 'paper'].is_edge_attr('pair_index')
+
+    out = data.subgraph({'paper': torch.tensor([0, 1])})
+
+    assert out['paper', 'cites', 'paper'].edge_index.tolist() == [[0], [1]]
+    assert out['paper', 'cites', 'paper'].pair_index.tolist() == [[10], [20]]
+
+
 def test_copy_hetero_data():
     data = HeteroData()
     data['paper'].x = x_paper
