@@ -43,14 +43,14 @@ class SignedGCN(torch.nn.Module):
         self.lamb = lamb
 
         self.conv1 = SignedConv(in_channels, hidden_channels // 2,
-                                first_aggr=True)
+                                first_aggr=True, bias=bias)
         self.convs = torch.nn.ModuleList()
         for _ in range(num_layers - 1):
             self.convs.append(
                 SignedConv(hidden_channels // 2, hidden_channels // 2,
-                           first_aggr=False))
+                           first_aggr=False, bias=bias))
 
-        self.lin = torch.nn.Linear(2 * hidden_channels, 3)
+        self.lin = torch.nn.Linear(2 * hidden_channels, 3, bias=bias)
 
         self.reset_parameters()
 
