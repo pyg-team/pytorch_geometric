@@ -19,6 +19,7 @@ import xxhash
 from torch import Tensor
 
 import torch_geometric.typing
+from torch_geometric._jit import is_scripting
 from torch_geometric.typing import CPUHashMap, CUDAHashMap
 
 aten = torch.ops.aten
@@ -679,7 +680,7 @@ def _new_index_select(
     # We convert any index tensor in the first dimension into a tensor. This
     # means that downstream handling (i.e. in `aten.index_select.default`)
     # needs to take this pre-conversion into account.
-    if (not torch.jit.is_scripting() and isinstance(input, HashTensor)
+    if (not is_scripting() and isinstance(input, HashTensor)
             and isinstance(dim, int) and (dim == 0 or dim == -input.dim())):
         index = as_key_tensor(index, device=input.device)
 
@@ -736,7 +737,7 @@ def _new_select(
     # We convert any index in the first dimension into an integer. This means
     # that downstream handling (i.e. in `aten.select.int`) needs to take this
     # pre-conversion into account.
-    if (not torch.jit.is_scripting() and isinstance(input, HashTensor)
+    if (not is_scripting() and isinstance(input, HashTensor)
             and isinstance(dim, int) and (dim == 0 or dim == -input.dim())):
         index = int(as_key_tensor([index]))
 

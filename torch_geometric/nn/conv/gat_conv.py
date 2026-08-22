@@ -1,4 +1,3 @@
-import typing
 from typing import Optional, Tuple, Union
 
 import torch
@@ -6,6 +5,7 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 
+from torch_geometric._jit import overload_method as overload
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot, zeros
@@ -25,11 +25,6 @@ from torch_geometric.utils import (
     softmax,
 )
 from torch_geometric.utils.sparse import set_sparse_value
-
-if typing.TYPE_CHECKING:
-    from typing import overload
-else:
-    from torch.jit import _overload_method as overload
 
 
 class GATConv(MessagePassing):

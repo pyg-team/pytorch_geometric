@@ -40,6 +40,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Deprecated
 
+- Deprecated torch.jit.script and switch to `torch.compile` or `torch.export` ([#10711](https://github.com/pyg-team/pytorch_geometric/pull/10711))
 - Deprecated support for `torch-cluster` in favor of `pyg-lib>=0.6.0` ([#10682](https://github.com/pyg-team/pytorch_geometric/pull/10682))
 - Deprecated support for `torch-spline-conv` in favor of `pyg-lib>=0.6.0` ([#10622](https://github.com/pyg-team/pytorch_geometric/pull/10622))
 

@@ -4,6 +4,8 @@ from typing import Optional
 import torch
 from torch import Tensor
 
+from torch_geometric._jit import script
+
 
 @dataclass(init=False)
 class SelectOutput:
@@ -62,7 +64,7 @@ class SelectOutput:
         self.weight = weight
 
 
-SelectOutput = torch.jit.script(SelectOutput)
+SelectOutput = script(SelectOutput)
 
 
 class Select(torch.nn.Module):
