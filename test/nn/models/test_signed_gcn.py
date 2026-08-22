@@ -44,3 +44,15 @@ def test_signed_gcn():
     if is_full_test():
         jit = torch.jit.export(model)
         assert torch.allclose(jit(x, train_pos_index, train_neg_index), z)
+
+
+def test_signed_gcn_bias():
+    model = SignedGCN(8, 16, num_layers=2, bias=True)
+    assert model.conv1.lin_pos_r.bias is not None
+    assert model.convs[0].lin_pos_r.bias is not None
+    assert model.lin.bias is not None
+
+    model = SignedGCN(8, 16, num_layers=2, bias=False)
+    assert model.conv1.lin_pos_r.bias is None
+    assert model.convs[0].lin_pos_r.bias is None
+    assert model.lin.bias is None
