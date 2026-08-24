@@ -1,4 +1,4 @@
-from torch_geometric.datasets import SynthFinDataset
+from torch_geometric.contrib.datasets import SynthFinDataset
 
 
 def test_synthfin_dataset(tmp_path):
