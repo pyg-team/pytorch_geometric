@@ -245,7 +245,8 @@ class QM9(InMemoryDataset):
         for i, mol in enumerate(tqdm(suppl)):
             if i in skip:
                 continue
-
+            if mol is None:
+                continue
             N = mol.GetNumAtoms()
 
             conf = mol.GetConformer()
