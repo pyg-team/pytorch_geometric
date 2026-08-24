@@ -1,11 +1,7 @@
 import pytest
 import torch
 
-import torch_geometric.typing
 from torch_geometric.nn import RGATConv
-from torch_geometric.testing import is_full_test
-from torch_geometric.typing import SparseTensor
-from torch_geometric.utils import to_torch_coo_tensor
 
 
 @pytest.mark.parametrize('mod', [
