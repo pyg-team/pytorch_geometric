@@ -1,4 +1,4 @@
-me: Reusable Testing
+name: Reusable Testing
 
 on:  # yamllint disable-line rule:truthy
   workflow_call:
