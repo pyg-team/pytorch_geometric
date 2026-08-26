@@ -36,6 +36,12 @@ def implements(torch_function: Callable) -> Callable:
     return decorator
 
 
+def _hash_key(x):
+    if isinstance(x, str):
+        x = x.encode("utf-8")
+    return xxhash.xxh64(x).intdigest() & 0x7FFFFFFFFFFFFFFF
+
+
 def as_key_tensor(
     key: Any,
     *,
@@ -46,7 +52,7 @@ def as_key_tensor(
     except Exception:
         device = device or torch.get_default_device()
         key = torch.tensor(
-            [xxhash.xxh64(x).intdigest() & 0x7FFFFFFFFFFFFFFF for x in key],
+            [_hash_key(x) for x in key],
             dtype=torch.int64, device=device)
 
     if key.element_size() == 1:
