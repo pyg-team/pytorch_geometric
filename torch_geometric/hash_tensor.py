@@ -36,7 +36,7 @@ def implements(torch_function: Callable) -> Callable:
     return decorator
 
 
-def _hash_key(x):
+def _hash_key(x: Union[str, bytes]) -> int:
     if isinstance(x, str):
         x = x.encode("utf-8")
     return xxhash.xxh64(x).intdigest() & 0x7FFFFFFFFFFFFFFF
