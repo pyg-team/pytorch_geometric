@@ -51,9 +51,8 @@ def as_key_tensor(
         key = torch.as_tensor(key, device=device)
     except Exception:
         device = device or torch.get_default_device()
-        key = torch.tensor(
-            [_hash_key(x) for x in key],
-            dtype=torch.int64, device=device)
+        key = torch.tensor([_hash_key(x) for x in key], dtype=torch.int64,
+                           device=device)
 
     if key.element_size() == 1:
         key = key.view(torch.uint8)
