@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Dropout, Linear, Sequential
 
-from torch_geometric.nn.attention import PerformerAttention
+from torch_geometric.nn.attention import BigBirdAttention, PerformerAttention
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import reset
 from torch_geometric.nn.resolver import (
@@ -94,8 +94,13 @@ class GPSConv(torch.nn.Module):
                 heads=heads,
                 **attn_kwargs,
             )
+        elif attn_type == 'bigbird':
+            self.attn = BigBirdAttention(
+                channels=channels,
+                n_heads=heads,
+                **attn_kwargs,
+            )
         else:
-            # TODO: Support BigBird
             raise ValueError(f'{attn_type} is not supported')
 
         self.mlp = Sequential(
@@ -156,6 +161,8 @@ class GPSConv(torch.nn.Module):
             h, _ = self.attn(h, h, h, key_padding_mask=~mask,
                              need_weights=False)
         elif isinstance(self.attn, PerformerAttention):
+            h = self.attn(h, mask=mask)
+        elif isinstance(self.attn, BigBirdAttention):
             h = self.attn(h, mask=mask)
 
         h = h[mask]
