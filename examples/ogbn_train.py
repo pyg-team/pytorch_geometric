@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 from torch_geometric import seed_everything
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn.models import GAT, GraphSAGE, Polynormer, SGFormer
+from torch_geometric.nn.models import EGT, GAT, GraphSAGE, Polynormer, SGFormer
 from torch_geometric.utils import (
     add_self_loops,
     remove_self_loops,
@@ -37,7 +37,7 @@ parser.add_argument(
     "--model",
     type=str.lower,
     default='SGFormer',
-    choices=['sage', 'gat', 'sgformer', 'polynormer'],
+    choices=['sage', 'gat', 'sgformer', 'polynormer', 'egt'],
     help="Model used for training",
 )
 
@@ -103,6 +103,13 @@ if args.add_self_loop:
     data.edge_index, _ = add_self_loops(data.edge_index,
                                         num_nodes=data.num_nodes)
 
+if args.model == 'egt':
+    print("EGT model requires edge features, using node features"
+          "to initialize edge features.")
+    row, col = data.edge_index
+    data.edge_attr = torch.stack([data.x[row].mean(-1), data.x[col].mean(-1)],
+                                 dim=1)
+
 data.to(device, 'x', 'y')
 
 
@@ -132,16 +139,18 @@ def train(epoch: int) -> tuple[Tensor, float]:
 
     total_loss = total_correct = 0
     for batch in train_loader:
+        batch = batch.to(device)
         optimizer.zero_grad()
         if args.model in ['sgformer', 'polynormer']:
             if args.model == 'polynormer' and epoch == args.local_epochs:
                 print('start global attention')
                 model._global = True
-            out = model(batch.x, batch.edge_index.to(device),
-                        batch.batch.to(device))[:batch.batch_size]
+            out = model(batch.x, batch.edge_index, batch.batch)
+        elif args.model in ['egt']:
+            out = model(batch.x, batch.edge_index, batch.edge_attr)
         else:
-            out = model(batch.x,
-                        batch.edge_index.to(device))[:batch.batch_size]
+            out = model(batch.x, batch.edge_index)
+        out = out[:batch.batch_size]
         y = batch.y[:batch.batch_size].squeeze().to(torch.long)
         loss = F.cross_entropy(out, y)
         loss.backward()
@@ -166,11 +175,12 @@ def test(loader: NeighborLoader) -> float:
         batch = batch.to(device)
         batch_size = batch.num_sampled_nodes[0]
         if args.model in ['sgformer', 'polynormer']:
-            out = model(batch.x, batch.edge_index,
-                        batch.batch)[:batch.batch_size]
+            out = model(batch.x, batch.edge_index, batch.batch)
+        elif args.model in ['egt']:
+            out = model(batch.x, batch.edge_index, batch.edge_attr)
         else:
-            out = model(batch.x, batch.edge_index)[:batch_size]
-        pred = out.argmax(dim=-1)
+            out = model(batch.x, batch.edge_index)
+        pred = out[:batch_size].argmax(dim=-1)
         y = batch.y[:batch_size].view(-1).to(torch.long)
 
         total_correct += int((pred == y).sum())
@@ -213,6 +223,16 @@ def get_model(model_name: str) -> torch.nn.Module:
             hidden_channels=num_hidden_channels,
             out_channels=dataset.num_classes,
             local_layers=num_layers,
+        )
+    elif model_name == 'egt':
+        model = EGT(
+            node_channels=dataset.num_features,
+            edge_channels=2,
+            out_channels=dataset.num_classes,
+            edge_update=False,
+            num_layers=num_layers,
+            num_heads=args.num_heads,
+            dropout=args.dropout,
         )
     else:
         raise ValueError(f'Unsupported model type: {model_name}')
