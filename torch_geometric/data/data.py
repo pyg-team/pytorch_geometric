@@ -293,13 +293,21 @@ class BaseData:
         start_time: Union[float, int],
         end_time: Union[float, int],
         attr: str = 'time',
+        filter_all: bool = False,
     ) -> Self:
         r"""Returns a snapshot of :obj:`data` to only hold events that occurred
         in period :obj:`[start_time, end_time]`.
+
+        Args:
+            start_time (float or int): The start time of the snapshot.
+            end_time (float or int): The end time of the snapshot.
+            attr (str, optional): The attribute to use. (default: :obj:`time`)
+            filter_all (bool, optional): If set to :obj:`True`, filters both
+                node- and edge-level data. (default: :obj:`False`)
         """
         out = copy.copy(self)
         for store in out.stores:
-            store.snapshot(start_time, end_time, attr)
+            store.snapshot(start_time, end_time, attr, filter_all)
         return out
 
     def up_to(self, end_time: Union[float, int]) -> Self:
