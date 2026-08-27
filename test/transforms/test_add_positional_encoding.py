@@ -53,6 +53,34 @@ def test_add_laplacian_eigenvector_pe():
 
 
 @withPackage('scipy')
+def test_add_laplacian_eigenvector_pe_sparse_is_deterministic():
+    # Graphs with more nodes than `SPARSE_THRESHOLD` use ARPACK, whose
+    # starting vector `v0` is initialized randomly unless provided. This
+    # previously made the encoding non-reproducible even when all library
+    # seeds were set. With a deterministic `v0`, seeding now guarantees
+    # reproducible eigenvectors (see GitHub issue #7499).
+    num_nodes = AddLaplacianEigenvectorPE.SPARSE_THRESHOLD + 50
+    torch.manual_seed(0)
+    row = torch.randint(0, num_nodes, (500, ))
+    col = torch.randint(0, num_nodes, (500, ))
+    edge_index = torch.stack([torch.cat([row, col]), torch.cat([col, row])])
+    data = Data(edge_index=edge_index, num_nodes=num_nodes)
+
+    transform = AddLaplacianEigenvectorPE(k=3, attr_name='pe')
+
+    torch.manual_seed(12345)
+    pe1 = transform(data).pe
+    torch.manual_seed(12345)
+    pe2 = transform(data).pe
+    assert torch.allclose(pe1, pe2)
+
+    # The eigenvector magnitudes are reproducible regardless of the random
+    # sign flip, which is what the fixed ARPACK starting vector guarantees:
+    pe3 = transform(data).pe
+    assert torch.allclose(pe1.abs(), pe3.abs())
+
+
+@withPackage('scipy')
 def test_eigenvector_permutation_invariance():
     edge_index = torch.tensor([[0, 1, 0, 4, 1, 4, 2, 3, 3, 5],
                                [1, 0, 4, 0, 4, 1, 3, 2, 5, 3]])
