@@ -97,7 +97,7 @@ class Encoder(MessagePassing):
     def message(self, x_i: torch.Tensor, x_j: torch.Tensor,
                 edge_attr: torch.Tensor) -> torch.Tensor:
         h = torch.cat([x_i, x_j, edge_attr], dim=-1)  # [E, 2*d_v + d_e]
-        h = self.out_e(h)  # [E, d_e]
+        h = self.out_v(h)  # [E, d_v]
         return h
 
 
