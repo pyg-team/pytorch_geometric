@@ -109,20 +109,28 @@ class APPNP(MessagePassing):
                     edge_index = cache
 
         h = x
+        original_edge_weight = edge_weight
+        if isinstance(edge_index, Tensor):
+            if is_torch_sparse_tensor(edge_index):
+                _, original_edge_weight = to_edge_index(edge_index)
+        else:
+            original_edge_weight = edge_index.storage.value()
+
         for _ in range(self.K):
             if self.dropout > 0 and self.training:
                 if isinstance(edge_index, Tensor):
                     if is_torch_sparse_tensor(edge_index):
-                        _, edge_weight = to_edge_index(edge_index)
-                        edge_weight = F.dropout(edge_weight, p=self.dropout)
+                        assert original_edge_weight is not None
+                        edge_weight = F.dropout(original_edge_weight,
+                                                p=self.dropout)
                         edge_index = set_sparse_value(edge_index, edge_weight)
                     else:
-                        assert edge_weight is not None
-                        edge_weight = F.dropout(edge_weight, p=self.dropout)
+                        assert original_edge_weight is not None
+                        edge_weight = F.dropout(original_edge_weight,
+                                                p=self.dropout)
                 else:
-                    value = edge_index.storage.value()
-                    assert value is not None
-                    value = F.dropout(value, p=self.dropout)
+                    assert original_edge_weight is not None
+                    value = F.dropout(original_edge_weight, p=self.dropout)
                     edge_index = edge_index.set_value(value, layout='coo')
 
             # propagate_type: (x: Tensor, edge_weight: OptTensor)
