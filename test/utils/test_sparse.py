@@ -146,6 +146,36 @@ def test_to_torch_coo_tensor():
         assert torch.allclose(adj.values(), edge_attr)
 
 
+@pytest.mark.parametrize('layout', [torch.sparse_coo, torch.sparse_csr,
+                                    torch.sparse_csc])
+def test_to_torch_sparse_tensor_empty_edge_index(layout):
+    edge_index = torch.empty((2, 0), dtype=torch.long)
+
+    adj = to_torch_sparse_tensor(edge_index, layout=layout)
+    assert adj.size() == (0, 0)
+    assert adj._nnz() == 0
+
+    # Explicit sizes preserve isolated nodes even when no edges are present.
+    adj = to_torch_sparse_tensor(edge_index, size=3, layout=layout)
+    assert adj.size() == (3, 3)
+    assert adj._nnz() == 0
+
+    coo = adj.to_sparse_coo().coalesce() if layout != torch.sparse_coo else adj
+    assert coo.indices().size() == (2, 0)
+
+    # Isolated nodes remain part of the explicitly sized graph.
+    edge_index = torch.tensor([[0], [1]])
+    adj = to_torch_sparse_tensor(edge_index, size=3, layout=layout)
+    assert adj.size() == (3, 3)
+    assert adj._nnz() == 1
+
+    # Non-empty graphs retain their inferred dimensions and entries.
+    edge_index = torch.tensor([[0, 1], [1, 0]])
+    adj = to_torch_sparse_tensor(edge_index, layout=layout)
+    assert adj.size() == (2, 2)
+    assert adj._nnz() == 2
+
+
 def test_to_torch_csr_tensor():
     edge_index = torch.tensor([
         [0, 1, 1, 2, 2, 3],
