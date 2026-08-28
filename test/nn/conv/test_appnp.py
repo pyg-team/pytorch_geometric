@@ -78,11 +78,13 @@ def test_appnp_dropout_uses_original_edge_weight(monkeypatch, adjacency_type):
 
     if adjacency_type == 'edge_index':
         adjacency = edge_index
+        expected_edge_weight = edge_weight
         conv = APPNP(K=3, alpha=0.1, dropout=0.5, normalize=False)
         conv(x, adjacency, edge_weight)
     elif adjacency_type == 'torch_sparse':
         adjacency = torch.sparse_coo_tensor(edge_index, edge_weight,
                                             size=(2, 2)).coalesce()
+        expected_edge_weight = adjacency.values()
         conv = APPNP(K=3, alpha=0.1, dropout=0.5, normalize=False)
         conv(x, adjacency)
     else:
@@ -90,8 +92,10 @@ def test_appnp_dropout_uses_original_edge_weight(monkeypatch, adjacency_type):
             pytest.skip('torch_sparse is not installed')
         adjacency = SparseTensor.from_edge_index(edge_index, edge_weight,
                                                  sparse_sizes=(2, 2)).t()
+        expected_edge_weight = adjacency.storage.value()
         conv = APPNP(K=3, alpha=0.1, dropout=0.5, normalize=False)
         conv(x, adjacency)
 
     assert len(dropout_inputs) == 3
-    assert all(torch.equal(input, edge_weight) for input in dropout_inputs)
+    assert all(
+        torch.equal(input, expected_edge_weight) for input in dropout_inputs)
