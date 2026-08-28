@@ -122,6 +122,39 @@ def test_stored_hetero_in_memory_dataset(tmp_path):
     assert dataset[1]['paper'].num_nodes == 4
 
 
+def test_stored_hetero_in_memory_dataset_attribute_less_node_type(tmp_path):
+    # A node type whose only attribute is `num_nodes` (no `x` or other
+    # tensor features) must still be separable after collation.
+    # See: https://github.com/pyg-team/pytorch_geometric/issues/9537
+    data1 = HeteroData()
+    data1['subject'].num_nodes = 2
+    data1['object'].num_nodes = 3
+    data1['subject', 'to', 'object'].edge_index = torch.tensor([
+        [0, 1],
+        [0, 2],
+    ])
+
+    data2 = HeteroData()
+    data2['subject'].num_nodes = 1
+    data2['object'].num_nodes = 2
+    data2['subject', 'to', 'object'].edge_index = torch.tensor([
+        [0, 0],
+        [0, 1],
+    ])
+
+    dataset = MyStoredTestDataset(tmp_path, [data1, data2])
+
+    assert dataset[0]['subject'].num_nodes == 2
+    assert dataset[0]['object'].num_nodes == 3
+    assert torch.equal(dataset[0]['subject', 'to', 'object'].edge_index,
+                       data1['subject', 'to', 'object'].edge_index)
+
+    assert dataset[1]['subject'].num_nodes == 1
+    assert dataset[1]['object'].num_nodes == 2
+    assert torch.equal(dataset[1]['subject', 'to', 'object'].edge_index,
+                       data2['subject', 'to', 'object'].edge_index)
+
+
 def test_index(tmp_path):
     index1 = Index([0, 1, 1, 2], dim_size=3, is_sorted=True)
     index2 = Index([0, 1, 1, 2, 2, 3], dim_size=4, is_sorted=True)
