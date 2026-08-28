@@ -20,13 +20,15 @@ except ImportError:  # pragma: no cover
     PreTrainedTokenizerBase = None
     WITH_TRANSFORMERS = False
 
-try:
-    from pandas import DataFrame, read_csv
-    WITH_PANDAS = True
-except ImportError:
-    WITH_PANDAS = False
-
 IndexType = Union[slice, Tensor, np.ndarray, Sequence]
+
+
+def _import_pandas():
+    try:
+        import pandas as pd
+    except ImportError as e:
+        raise ImportError('`pip install pandas` to use this dataset.') from e
+    return pd
 
 
 def _safe_auto_tokenizer(model_name: str) -> PreTrainedTokenizerBase:
@@ -103,6 +105,7 @@ class TAGDataset(InMemoryDataset):
         text_on_disk: bool = False,
         force_reload: bool = False,
     ) -> None:
+        _import_pandas()
         # list the vars you want to pass in before run download & process
         self.name = dataset.name
         self.text = text
@@ -116,13 +119,6 @@ class TAGDataset(InMemoryDataset):
 
         self.dir_name = '_'.join(dataset.name.split('-'))
         self.root = osp.join(root, self.dir_name)
-        missing_str_list = []
-        if not WITH_PANDAS:
-            missing_str_list.append('pandas')
-        if len(missing_str_list) > 0:
-            missing_str = ' '.join(missing_str_list)
-            error_out = f"`pip install {missing_str}` to use this dataset."
-            raise ImportError(error_out)
         if hasattr(dataset, 'get_idx_split'):
             self.split_idx = dataset.get_idx_split()
         elif split_idx is not None:
@@ -251,26 +247,32 @@ class TAGDataset(InMemoryDataset):
         return self.split_idx
 
     def download(self) -> None:
+        pd = _import_pandas()
+
         print('downloading raw text')
         raw_text_path = download_google_url(id=self.raw_text_id[self.name],
                                             folder=f'{self.root}/raw',
                                             filename='node-text.csv.gz',
                                             log=True)
-        self.text = list(read_csv(raw_text_path)['text'])
+        self.text = list(pd.read_csv(raw_text_path)['text'])
         if self.name in self.llm_explanation_id:
             print('downloading llm explanations')
             llm_explanation_path = download_google_url(
                 id=self.llm_explanation_id[self.name],
                 folder=f'{self.root}/raw', filename='node-gpt-response.csv.gz',
                 log=True)
-            self.llm_explanation = list(read_csv(llm_explanation_path)['text'])
+            self.llm_explanation = list(
+                pd.read_csv(llm_explanation_path)['text'])
             print('downloading llm predictions')
             fs.cp(f'{self.llm_prediction_url}/{self.name}.csv', self.raw_dir)
 
     def process(self) -> None:
+        pd = _import_pandas()
+
         # process Title and Abstraction
         if osp.exists(osp.join(self.root, 'raw', 'node-text.csv.gz')):
-            text_df = read_csv(osp.join(self.root, 'raw', 'node-text.csv.gz'))
+            text_df = pd.read_csv(
+                osp.join(self.root, 'raw', 'node-text.csv.gz'))
             self.text = list(text_df['text'])
         elif self.name in self.raw_text_id:
             self.download()
@@ -289,7 +291,8 @@ class TAGDataset(InMemoryDataset):
         if osp.exists(llm_explanation_path) and osp.exists(
                 llm_prediction_path):
             # load LLM explanation
-            self.llm_explanation = list(read_csv(llm_explanation_path)['text'])
+            self.llm_explanation = list(
+                pd.read_csv(llm_explanation_path)['text'])
             # load LLM prediction
             preds = []
             with open(llm_prediction_path) as file:
@@ -322,13 +325,15 @@ class TAGDataset(InMemoryDataset):
                 'and llm prediction list to `llm_prediction`')
 
     def save_node_text(self, text: List[str]) -> None:
+        pd = _import_pandas()
+
         node_text_path = osp.join(self.root, 'raw', 'node-text.csv.gz')
         if osp.exists(node_text_path):
             print(f'The raw text is existed at {node_text_path}')
         else:
             print(f'Saving raw text file at {node_text_path}')
             os.makedirs(f'{self.root}/raw', exist_ok=True)
-            text_df = DataFrame(text, columns=['text'])
+            text_df = pd.DataFrame(text, columns=['text'])
             text_df.to_csv(osp.join(node_text_path), compression='gzip',
                            index=False)
 

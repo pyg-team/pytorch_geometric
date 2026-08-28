@@ -14,7 +14,6 @@ from tqdm import tqdm
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
 from torch_geometric.io import fs
-from torch_geometric.llm.models import LLM
 from torch_geometric.utils import one_hot
 
 
@@ -340,6 +339,8 @@ class MoleculeGPTDataset(InMemoryDataset):
 
             self.save(data_list, self.processed_paths[0])
             return
+
+        from torch_geometric.llm.models import LLM
 
         # Step 03. Filter out SDF
         step2_folder = f"{self.raw_dir}/step_02_PubChemSTM_SDF"
