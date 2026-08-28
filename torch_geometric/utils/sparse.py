@@ -181,11 +181,11 @@ def to_torch_coo_tensor(
     if isinstance(size, (tuple, list)):
         num_src_nodes, num_dst_nodes = size
         if num_src_nodes is None:
-            num_src_nodes = (int(edge_index[0].max()) + 1
-                             if edge_index[0].numel() > 0 else 0)
+            num_src_nodes = (int(edge_index[0].max()) +
+                             1 if edge_index[0].numel() > 0 else 0)
         if num_dst_nodes is None:
-            num_dst_nodes = (int(edge_index[1].max()) + 1
-                             if edge_index[1].numel() > 0 else 0)
+            num_dst_nodes = (int(edge_index[1].max()) +
+                             1 if edge_index[1].numel() > 0 else 0)
         size = (num_src_nodes, num_dst_nodes)
     else:
         size = (size, size)
@@ -259,11 +259,11 @@ def to_torch_csr_tensor(
     if isinstance(size, (tuple, list)):
         num_src_nodes, num_dst_nodes = size
         if num_src_nodes is None:
-            num_src_nodes = (int(edge_index[0].max()) + 1
-                             if edge_index[0].numel() > 0 else 0)
+            num_src_nodes = (int(edge_index[0].max()) +
+                             1 if edge_index[0].numel() > 0 else 0)
         if num_dst_nodes is None:
-            num_dst_nodes = (int(edge_index[1].max()) + 1
-                             if edge_index[1].numel() > 0 else 0)
+            num_dst_nodes = (int(edge_index[1].max()) +
+                             1 if edge_index[1].numel() > 0 else 0)
         size = (num_src_nodes, num_dst_nodes)
     else:
         size = (size, size)
@@ -329,11 +329,11 @@ def to_torch_csc_tensor(
     if isinstance(size, (tuple, list)):
         num_src_nodes, num_dst_nodes = size
         if num_src_nodes is None:
-            num_src_nodes = (int(edge_index[0].max()) + 1
-                             if edge_index[0].numel() > 0 else 0)
+            num_src_nodes = (int(edge_index[0].max()) +
+                             1 if edge_index[0].numel() > 0 else 0)
         if num_dst_nodes is None:
-            num_dst_nodes = (int(edge_index[1].max()) + 1
-                             if edge_index[1].numel() > 0 else 0)
+            num_dst_nodes = (int(edge_index[1].max()) +
+                             1 if edge_index[1].numel() > 0 else 0)
         size = (num_src_nodes, num_dst_nodes)
     else:
         size = (size, size)

@@ -146,8 +146,8 @@ def test_to_torch_coo_tensor():
         assert torch.allclose(adj.values(), edge_attr)
 
 
-@pytest.mark.parametrize('layout', [torch.sparse_coo, torch.sparse_csr,
-                                    torch.sparse_csc])
+@pytest.mark.parametrize(
+    'layout', [torch.sparse_coo, torch.sparse_csr, torch.sparse_csc])
 def test_to_torch_sparse_tensor_empty_edge_index(layout):
     edge_index = torch.empty((2, 0), dtype=torch.long)
 
