@@ -1,7 +1,8 @@
 import pytest
 
-from torch_geometric.testing import onlyFullTest, onlyOnline
 from torch_geometric.contrib.datasets import SynthFinDataset
+from torch_geometric.testing import onlyFullTest, onlyOnline
+
 
 @pytest.mark.dataset
 @onlyOnline
