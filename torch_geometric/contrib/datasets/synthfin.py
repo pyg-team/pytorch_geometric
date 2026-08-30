@@ -155,15 +155,10 @@ class SynthFinDataset(InMemoryDataset):
         f_val = int(0.9 * len(fraud_idx))
         c_val = int(0.9 * len(clean_idx))
 
-        train_idx = np.concatenate([
-            fraud_idx[:f_train], clean_idx[:c_train]
-        ])
-        val_idx = np.concatenate([
-            fraud_idx[f_train:f_val], clean_idx[c_train:c_val]
-        ])
-        test_idx = np.concatenate([
-            fraud_idx[f_val:], clean_idx[c_val:]
-        ])
+        train_idx = np.concatenate([fraud_idx[:f_train], clean_idx[:c_train]])
+        val_idx = np.concatenate(
+            [fraud_idx[f_train:f_val], clean_idx[c_train:c_val]])
+        test_idx = np.concatenate([fraud_idx[f_val:], clean_idx[c_val:]])
 
         train_mask = torch.zeros(len(y), dtype=torch.bool)
         val_mask = torch.zeros(len(y), dtype=torch.bool)
