@@ -125,12 +125,12 @@ class SynthFinDataset(InMemoryDataset):
 
         # Mapping node IDs to continuous range 0..N-1
         a2i = {a: i for i, a in enumerate(feat.index)}
-        
+
         edges_mapped = edges_df.copy()
         edges_mapped['src'] = edges_mapped['source_id'].map(a2i)
         edges_mapped['dst'] = edges_mapped['target_id'].map(a2i)
         edges_mapped = edges_mapped.dropna(subset=['src', 'dst'])
-        
+
         src = edges_mapped['src'].astype(int).values
         dst = edges_mapped['dst'].astype(int).values
         amounts = edges_mapped['amount'].values
@@ -155,19 +155,21 @@ class SynthFinDataset(InMemoryDataset):
         c_val = int(0.9 * len(clean_idx))
 
         train_idx = np.concatenate([fraud_idx[:f_train], clean_idx[:c_train]])
-        val_idx = np.concatenate([fraud_idx[f_train:f_val], clean_idx[c_train:c_val]])
+        val_idx = np.concatenate(
+            [fraud_idx[f_train:f_val], clean_idx[c_train:c_val]])
         test_idx = np.concatenate([fraud_idx[f_val:], clean_idx[c_val:]])
 
         train_mask = torch.zeros(len(y), dtype=torch.bool)
         val_mask = torch.zeros(len(y), dtype=torch.bool)
         test_mask = torch.zeros(len(y), dtype=torch.bool)
-        
+
         train_mask[train_idx] = True
         val_mask[val_idx] = True
         test_mask[test_idx] = True
 
         data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y,
-                    train_mask=train_mask, val_mask=val_mask, test_mask=test_mask)
+                    train_mask=train_mask, val_mask=val_mask,
+                    test_mask=test_mask)
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
