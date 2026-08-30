@@ -1,10 +1,15 @@
 import os
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 
 import numpy as np
 import torch
 
-from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_zip,
+)
 
 
 class SynthFinDataset(InMemoryDataset):
@@ -60,7 +65,7 @@ class SynthFinDataset(InMemoryDataset):
         self.load(self.processed_paths[0])
 
     @property
-    def raw_file_names(self) -> list[str]:
+    def raw_file_names(self) -> List[str]:
         return ['nodes.csv', 'edges.csv']
 
     @property
@@ -68,11 +73,9 @@ class SynthFinDataset(InMemoryDataset):
         return 'data.pt'
 
     def download(self) -> None:
-        import zipfile
         path = download_url(self.url, self.raw_dir)
-        with zipfile.ZipFile(path, 'r') as zf:
-            zf.extractall(self.raw_dir)
-        os.remove(path)
+        extract_zip(path, self.raw_dir)
+        os.unlink(path)
 
     def process(self) -> None:
         import networkx as nx
@@ -122,39 +125,49 @@ class SynthFinDataset(InMemoryDataset):
 
         # Mapping node IDs to continuous range 0..N-1
         a2i = {a: i for i, a in enumerate(feat.index)}
-        src = edges_df['source_id'].map(a2i).dropna().astype(int).values
-        dst = edges_df['target_id'].map(a2i).dropna().astype(int).values
-        ml = min(len(src), len(dst))
+        
+        edges_mapped = edges_df.copy()
+        edges_mapped['src'] = edges_mapped['source_id'].map(a2i)
+        edges_mapped['dst'] = edges_mapped['target_id'].map(a2i)
+        edges_mapped = edges_mapped.dropna(subset=['src', 'dst'])
+        
+        src = edges_mapped['src'].astype(int).values
+        dst = edges_mapped['dst'].astype(int).values
+        amounts = edges_mapped['amount'].values
 
-        edge_index = torch.tensor(np.vstack([src[:ml], dst[:ml]]),
-                                  dtype=torch.long)
-        edge_attr = torch.tensor(np.log1p(edges_df['amount'].values[:ml]),
-                                 dtype=torch.float32)
+        edge_index = torch.tensor(np.vstack([src, dst]), dtype=torch.long)
+        edge_attr = torch.tensor(np.log1p(amounts), dtype=torch.float32)
 
         x = torch.tensor(X_s, dtype=torch.float32)
         y = torch.tensor(y_val, dtype=torch.long)
 
-        # Create standard transductive masks (80% train / 20% test, stratified)
-        np.random.seed(42)
+        # Create standard transductive masks (80% train / 10% val / 10% test, stratified)
+        rng = np.random.default_rng(42)
         fraud_idx = np.where(y_val == 1)[0]
         clean_idx = np.where(y_val == 0)[0]
 
-        np.random.shuffle(fraud_idx)
-        np.random.shuffle(clean_idx)
+        rng.shuffle(fraud_idx)
+        rng.shuffle(clean_idx)
 
-        f_split = int(0.8 * len(fraud_idx))
-        c_split = int(0.8 * len(clean_idx))
+        f_train = int(0.8 * len(fraud_idx))
+        c_train = int(0.8 * len(clean_idx))
+        f_val = int(0.9 * len(fraud_idx))
+        c_val = int(0.9 * len(clean_idx))
 
-        train_idx = np.concatenate([fraud_idx[:f_split], clean_idx[:c_split]])
-        test_idx = np.concatenate([fraud_idx[f_split:], clean_idx[c_split:]])
+        train_idx = np.concatenate([fraud_idx[:f_train], clean_idx[:c_train]])
+        val_idx = np.concatenate([fraud_idx[f_train:f_val], clean_idx[c_train:c_val]])
+        test_idx = np.concatenate([fraud_idx[f_val:], clean_idx[c_val:]])
 
         train_mask = torch.zeros(len(y), dtype=torch.bool)
+        val_mask = torch.zeros(len(y), dtype=torch.bool)
         test_mask = torch.zeros(len(y), dtype=torch.bool)
+        
         train_mask[train_idx] = True
+        val_mask[val_idx] = True
         test_mask[test_idx] = True
 
         data = Data(x=x, edge_index=edge_index, edge_attr=edge_attr, y=y,
-                    train_mask=train_mask, test_mask=test_mask)
+                    train_mask=train_mask, val_mask=val_mask, test_mask=test_mask)
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
