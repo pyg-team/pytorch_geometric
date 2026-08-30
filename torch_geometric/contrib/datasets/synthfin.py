@@ -141,7 +141,8 @@ class SynthFinDataset(InMemoryDataset):
         x = torch.tensor(X_s, dtype=torch.float32)
         y = torch.tensor(y_val, dtype=torch.long)
 
-        # Create standard transductive masks (80% train / 10% val / 10% test, stratified)
+        # Create standard transductive masks
+        # (80% train / 10% val / 10% test, stratified)
         rng = np.random.default_rng(42)
         fraud_idx = np.where(y_val == 1)[0]
         clean_idx = np.where(y_val == 0)[0]
@@ -154,10 +155,15 @@ class SynthFinDataset(InMemoryDataset):
         f_val = int(0.9 * len(fraud_idx))
         c_val = int(0.9 * len(clean_idx))
 
-        train_idx = np.concatenate([fraud_idx[:f_train], clean_idx[:c_train]])
-        val_idx = np.concatenate(
-            [fraud_idx[f_train:f_val], clean_idx[c_train:c_val]])
-        test_idx = np.concatenate([fraud_idx[f_val:], clean_idx[c_val:]])
+        train_idx = np.concatenate([
+            fraud_idx[:f_train], clean_idx[:c_train]
+        ])
+        val_idx = np.concatenate([
+            fraud_idx[f_train:f_val], clean_idx[c_train:c_val]
+        ])
+        test_idx = np.concatenate([
+            fraud_idx[f_val:], clean_idx[c_val:]
+        ])
 
         train_mask = torch.zeros(len(y), dtype=torch.bool)
         val_mask = torch.zeros(len(y), dtype=torch.bool)
