@@ -119,33 +119,31 @@ class SynthFinDataset(InMemoryDataset):
         test_idx = np.concatenate([fraud_idx[f_val:], clean_idx[c_val:]])
 
         data_list = []
-        for i, (day_limit, mask_idx) in enumerate([
-            (7, train_idx),
-            (8, val_idx),
-            (10, test_idx)
-        ]):
+        for i, (day_limit, mask_idx) in enumerate([(7, train_idx),
+                                                   (8, val_idx),
+                                                   (10, test_idx)]):
             snap_edges = edges_df[edges_df['edge_time'] <= day_limit]
 
             # Compute explicit topological features required for the benchmark
             od = snap_edges.groupby('source_id').size().rename('out_degree')
             id_ = snap_edges.groupby('target_id').size().rename('in_degree')
-            ov = snap_edges.groupby(
-                'source_id')['amount'].sum().rename('out_volume')
-            iv = snap_edges.groupby(
-                'target_id')['amount'].sum().rename('in_volume')
-            om = snap_edges.groupby(
-                'source_id')['amount'].max().rename('out_max_amt')
-            im = snap_edges.groupby(
-                'target_id')['amount'].max().rename('in_max_amt')
+            ov = snap_edges.groupby('source_id')['amount'].sum().rename(
+                'out_volume')
+            iv = snap_edges.groupby('target_id')['amount'].sum().rename(
+                'in_volume')
+            om = snap_edges.groupby('source_id')['amount'].max().rename(
+                'out_max_amt')
+            im = snap_edges.groupby('target_id')['amount'].max().rename(
+                'in_max_amt')
 
             ev = snap_edges.merge(iv, left_on='target_id', right_index=True,
                                   how='left')
             ev = ev.merge(ov, left_on='source_id', right_index=True,
                           how='left')
-            ni = ev.groupby(
-                'source_id')['in_volume'].mean().rename('nbr_in_volume')
-            no_ = ev.groupby(
-                'target_id')['out_volume'].mean().rename('nbr_out_volume')
+            ni = ev.groupby('source_id')['in_volume'].mean().rename(
+                'nbr_in_volume')
+            no_ = ev.groupby('target_id')['out_volume'].mean().rename(
+                'nbr_out_volume')
 
             G = nx.from_pandas_edgelist(snap_edges, 'source_id', 'target_id',
                                         edge_attr='amount',
@@ -157,8 +155,7 @@ class SynthFinDataset(InMemoryDataset):
 
             for c in [
                     'initial_balance', 'out_volume', 'in_volume',
-                    'out_max_amt',
-                    'in_max_amt', 'nbr_in_volume',
+                    'out_max_amt', 'in_max_amt', 'nbr_in_volume',
                     'nbr_out_volume', 'pagerank'
             ]:
                 feat[c] = np.log1p(feat[c])
