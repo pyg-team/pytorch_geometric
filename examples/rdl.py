@@ -17,10 +17,8 @@ import pandas as pd
 import torch
 import torch_frame
 from relbench.base import EntityTask, Table, TaskType
-from relbench.datasets import get_dataset, get_dataset_names
 from relbench.modeling.graph import make_pkey_fkey_graph
 from relbench.modeling.utils import get_stype_proposal
-from relbench.tasks import get_task, get_task_names
 from sentence_transformers import SentenceTransformer
 from torch import Tensor
 from torch_frame.config.text_embedder import TextEmbedderConfig
@@ -39,6 +37,53 @@ from torch_geometric.nn import (
 )
 from torch_geometric.seed import seed_everything
 from torch_geometric.typing import EdgeType, NodeType
+
+try:
+    # RelBench <= 2.x
+    from relbench.datasets import get_dataset
+    from relbench.tasks import get_task, get_task_names
+
+    eval_metrics = None
+
+    def load_relbench_dataset(name):
+        return get_dataset(name, download=True)
+
+    def relbench_task_names(dataset, datasetName):
+        return get_task_names(datasetName)
+
+    def relbench_get_task(dataset, task_name, name):
+        return get_task(dataset_name=name, task_name=task_name, download=True)
+
+except ImportError:
+    # RelBench >= 3.x
+    import sklearn.metrics as skm
+    from numpy.typing import NDArray
+    from relbench import load_dataset
+
+    def mae(true: NDArray[np.float64], pred: NDArray[np.float64]) -> float:
+        return skm.mean_absolute_error(true, pred)
+
+    eval_metrics = [mae]
+
+    def load_relbench_dataset(name):
+        return load_dataset(name)
+
+    def relbench_task_names(dataset, datasetName):
+        return dataset.get_task_names()
+
+    def relbench_get_task(dataset, task_name, name):
+        return dataset.load_task(task_name)
+
+
+REL_BENCH_DATASETS = [
+    "rel-amazon",
+    "rel-avito",
+    "rel-event",
+    "rel-f1",
+    "rel-hm",
+    "rel-stack",
+    "rel-trial",
+]
 
 
 class GloveTextEmbedding:
@@ -442,13 +487,12 @@ def get_task_type_params(
         - tune_metric: Metric to optimize
         - higher_is_better: Whether higher metric values are better
     """
+    out_channels = 1
     if task.task_type == TaskType.REGRESSION:
-        out_channels = 1
         loss_fn = torch.nn.L1Loss()
         tune_metric = "mae"
         higher_is_better = False
     elif task.task_type == TaskType.BINARY_CLASSIFICATION:
-        out_channels = 1
         loss_fn = torch.nn.BCEWithLogitsLoss()
         tune_metric = "roc_auc"
         higher_is_better = True
@@ -575,7 +619,7 @@ def main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--dataset", type=str, default="rel-f1",
-                        choices=get_dataset_names())
+                        choices=REL_BENCH_DATASETS)
     parser.add_argument(
         "--task", type=str, default=None,
         help="See available tasks at https://relbench.stanford.edu/")
@@ -594,15 +638,13 @@ def main():
     print("Using device:", device)
 
     print("Loading dataset and task...")
-    assert args.task in get_task_names(args.dataset), (
+    dataset = load_relbench_dataset(args.dataset)
+    task_names = relbench_task_names(dataset, args.dataset)
+    assert args.task in task_names, (
         f"Invalid --task '{args.task}' for --dataset '{args.dataset}'. "
-        f"Available tasks: {get_task_names(args.dataset)}")
-    dataset = get_dataset(name=args.dataset, download=True)
-    task = get_task(
-        dataset_name=args.dataset,
-        task_name=args.task,
-        download=True,
-    )
+        f"Available tasks: {task_names}")
+
+    task = relbench_get_task(dataset, args.task, args.dataset)
     print(f"Task type: {task.task_type}")
     print(f"Target column: '{task.target_col}'")
     print(f"Entity table: '{task.entity_table}'")
@@ -690,6 +732,8 @@ def main():
 
     print("Training the model...")
     best_val_metric = -math.inf if higher_is_better else math.inf
+    is_better_op = operator.gt if higher_is_better else operator.lt
+    val = task.get_table("val")
     for epoch in range(1, args.epochs + 1):
         train_loss = train(
             model=model,
@@ -705,14 +749,14 @@ def main():
             task=task,
             device=device,
         )
-        val_metrics = task.evaluate(val_pred, task.get_table("val"))
+
+        val_metrics = task.evaluate(val_pred, val, eval_metrics)
         print(
             f"Epoch: {epoch:02d}, "
             f"train_loss: {train_loss:.4f}, "
             f"{', '.join([f'val_{k}: {v:.4f}' for k, v in val_metrics.items()])}"  # noqa: E501
         )
 
-        is_better_op = operator.gt if higher_is_better else operator.lt
         if is_better_op(val_metrics[tune_metric], best_val_metric):
             best_val_metric = val_metrics[tune_metric]
             torch.save(model.state_dict(), "best_model.pt")
