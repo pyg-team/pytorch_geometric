@@ -40,10 +40,11 @@ from torch_geometric.typing import EdgeType, NodeType
 
 try:
     # RelBench <= 2.x
-    from relbench.datasets import get_dataset, get_dataset_names
+    from relbench.datasets import get_dataset
     from relbench.tasks import get_task, get_task_names
 
     eval_metrics = None
+
     def load_relbench_dataset(name):
         return get_dataset(name, download=True)
 
@@ -55,9 +56,9 @@ try:
 
 except ImportError:
     # RelBench >= 3.x
-    from relbench import load_dataset
-    from numpy.typing import NDArray
     import sklearn.metrics as skm
+    from numpy.typing import NDArray
+    from relbench import load_dataset
 
     def mae(true: NDArray[np.float64], pred: NDArray[np.float64]) -> float:
         return skm.mean_absolute_error(true, pred)
@@ -73,6 +74,7 @@ except ImportError:
     def relbench_get_task(dataset, task_name, name):
         return dataset.load_task(task_name)
 
+
 REL_BENCH_DATASETS = [
     "rel-amazon",
     "rel-avito",
@@ -82,6 +84,7 @@ REL_BENCH_DATASETS = [
     "rel-stack",
     "rel-trial",
 ]
+
 
 class GloveTextEmbedding:
     """GloveTextEmbedding based on SentenceTransformer."""
@@ -616,7 +619,7 @@ def main():
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("--dataset", type=str, default="rel-f1",
-        choices=REL_BENCH_DATASETS)
+                        choices=REL_BENCH_DATASETS)
     parser.add_argument(
         "--task", type=str, default=None,
         help="See available tasks at https://relbench.stanford.edu/")
@@ -747,7 +750,8 @@ def main():
             device=device,
         )
 
-        val_metrics = task.evaluate(val_pred, val, eval_metrics) #task.get_table("val"))
+        val_metrics = task.evaluate(val_pred, val,
+                                    eval_metrics)  #task.get_table("val"))
         print(
             f"Epoch: {epoch:02d}, "
             f"train_loss: {train_loss:.4f}, "
