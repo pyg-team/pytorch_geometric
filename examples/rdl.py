@@ -750,8 +750,7 @@ def main():
             device=device,
         )
 
-        val_metrics = task.evaluate(val_pred, val,
-                                    eval_metrics)  #task.get_table("val"))
+        val_metrics = task.evaluate(val_pred, val, eval_metrics)
         print(
             f"Epoch: {epoch:02d}, "
             f"train_loss: {train_loss:.4f}, "
