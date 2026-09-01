@@ -37,6 +37,10 @@ class FakeDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.Data` object and returns a
             transformed version. The data object will be transformed before
             every access. (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            an :obj:`torch_geometric.data.Data` object and returns a
+            transformed version. The data object will be transformed once,
+            when the dataset is generated. (default: :obj:`None`)
         **kwargs (optional): Additional attributes and their shapes
             *e.g.* :obj:`global_features=5`.
     """
@@ -54,7 +58,7 @@ class FakeDataset(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         **kwargs: Union[int, Tuple[int, ...]],
     ) -> None:
-        super().__init__(None, transform)
+        super().__init__(None, transform, pre_transform)
 
         if task == 'auto':
             task = 'graph' if num_graphs > 1 else 'node'
@@ -70,6 +74,10 @@ class FakeDataset(InMemoryDataset):
         self.kwargs = kwargs
 
         data_list = [self.generate_data() for _ in range(max(num_graphs, 1))]
+
+        if self.pre_transform is not None:
+            data_list = [self.pre_transform(data) for data in data_list]
+
         self.data, self.slices = self.collate(data_list)
 
     def generate_data(self) -> Data:
@@ -137,6 +145,10 @@ class FakeHeteroDataset(InMemoryDataset):
             an :obj:`torch_geometric.data.HeteroData` object and returns a
             transformed version. The data object will be transformed before
             every access. (default: :obj:`None`)
+        pre_transform (callable, optional): A function/transform that takes in
+            an :obj:`torch_geometric.data.HeteroData` object and returns a
+            transformed version. The data object will be transformed once,
+            when the dataset is generated. (default: :obj:`None`)
         **kwargs (optional): Additional attributes and their shapes
             *e.g.* :obj:`global_features=5`.
     """
@@ -155,7 +167,7 @@ class FakeHeteroDataset(InMemoryDataset):
         pre_transform: Optional[Callable] = None,
         **kwargs: Union[int, Tuple[int, ...]],
     ) -> None:
-        super().__init__(None, transform)
+        super().__init__(None, transform, pre_transform)
 
         if task == 'auto':
             task = 'graph' if num_graphs > 1 else 'node'
@@ -187,6 +199,10 @@ class FakeHeteroDataset(InMemoryDataset):
         self.kwargs = kwargs
 
         data_list = [self.generate_data() for _ in range(max(num_graphs, 1))]
+
+        if self.pre_transform is not None:
+            data_list = [self.pre_transform(data) for data in data_list]
+
         self.data, self.slices = self.collate(data_list)
 
     def generate_data(self) -> HeteroData:
