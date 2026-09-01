@@ -82,3 +82,27 @@ def test_fake_hetero_dataset(num_graphs, edge_dim, task):
         assert data.y.size() == (1, )
 
     assert data.global_features.size() == (3, )
+
+
+def test_fake_dataset_pre_transform():
+    def add_marker(data):
+        data.marker = True
+        return data
+
+    dataset = FakeDataset(num_graphs=3, pre_transform=add_marker)
+
+    assert dataset.pre_transform is add_marker
+    for data in dataset:
+        assert data.marker
+
+
+def test_fake_hetero_dataset_pre_transform():
+    def add_marker(data):
+        data.marker = True
+        return data
+
+    dataset = FakeHeteroDataset(num_graphs=3, pre_transform=add_marker)
+
+    assert dataset.pre_transform is add_marker
+    for data in dataset:
+        assert data.marker
