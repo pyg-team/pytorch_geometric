@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fixed `FakeDataset` and `FakeHeteroDataset` ignoring the `pre_transform` argument ([#10789](https://github.com/pyg-team/pytorch_geometric/pull/10789))
 - Fixed `config_store` on Python 3.14, where `typing.Union`/`typing.Optional` annotations could no longer be remapped in-place via the now read-only `__args__` attribute
 
 ### Security
