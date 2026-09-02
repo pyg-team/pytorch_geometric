@@ -14,8 +14,10 @@ from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 
 import numpy as np
 import pandas as pd
+import sklearn.metrics as skm
 import torch
 import torch_frame
+from numpy.typing import NDArray
 from relbench import load_dataset
 from relbench.base import EntityTask, Table, TaskType
 from relbench.modeling.graph import make_pkey_fkey_graph
@@ -38,9 +40,6 @@ from torch_geometric.nn import (
 )
 from torch_geometric.seed import seed_everything
 from torch_geometric.typing import EdgeType, NodeType
-
-import sklearn.metrics as skm
-from numpy.typing import NDArray
 
 
 def mae(true: NDArray[np.float64], pred: NDArray[np.float64]) -> float:
