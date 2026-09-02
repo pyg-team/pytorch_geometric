@@ -157,9 +157,9 @@ def test_kgqa_base_dataset(tmp_path, monkeypatch):
     monkeypatch.setattr(datasets, "load_dataset", mock_load_dataset_func)
 
     # Mock the SentenceTransformer
-    import torch_geometric.datasets.web_qsp_dataset
-    monkeypatch.setattr(torch_geometric.datasets.web_qsp_dataset,
-                        "SentenceTransformer", MockSentenceTransformer)
+    import torch_geometric.llm.models
+    monkeypatch.setattr(torch_geometric.llm.models, "SentenceTransformer",
+                        MockSentenceTransformer)
 
     dataset_train = KGQABaseDataset(root=tmp_path, dataset_name="TestDataset",
                                     split="train", use_pcst=False)
