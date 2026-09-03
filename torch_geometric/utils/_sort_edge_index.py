@@ -1,20 +1,14 @@
-import typing
 from typing import List, Optional, Tuple, Union
 
-import torch
 from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric import EdgeIndex
+from torch_geometric._jit import is_scripting, overload
 from torch_geometric.edge_index import SortOrder
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils import index_sort, lexsort
 from torch_geometric.utils.num_nodes import maybe_num_nodes
-
-if typing.TYPE_CHECKING:
-    from typing import overload
-else:
-    from torch.jit import _overload as overload
 
 MISSING = '???'
 
@@ -118,10 +112,10 @@ def sort_edge_index(  # noqa: F811
 
     if isinstance(edge_index, Tensor):
         is_undirected = False
-        if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        if not is_scripting() and isinstance(edge_index, EdgeIndex):
             is_undirected = edge_index.is_undirected
         edge_index = edge_index[:, perm]
-        if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        if not is_scripting() and isinstance(edge_index, EdgeIndex):
             edge_index._sort_order = SortOrder('row' if sort_by_row else 'col')
             edge_index._is_undirected = is_undirected
     elif isinstance(edge_index, tuple):

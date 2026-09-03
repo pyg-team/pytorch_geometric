@@ -3,6 +3,7 @@ from typing import Optional, Tuple
 import torch
 from torch import Tensor
 
+from torch_geometric._jit import is_scripting
 from torch_geometric.nn.pool.connect import Connect, ConnectOutput
 from torch_geometric.nn.pool.select import SelectOutput
 from torch_geometric.utils.num_nodes import maybe_num_nodes
@@ -53,7 +54,7 @@ class FilterEdges(Connect):
         batch: Optional[Tensor] = None,
     ) -> ConnectOutput:
 
-        if (not torch.jit.is_scripting() and select_output.num_clusters
+        if (not is_scripting() and select_output.num_clusters
                 != select_output.cluster_index.size(0)):
             raise ValueError(f"'{self.__class__.__name__}' requires each "
                              f"cluster to contain only one node")

@@ -17,6 +17,7 @@ from typing import (
 import torch
 from torch import Tensor
 
+import torch_geometric.typing
 from torch_geometric.inspector import Parameter, Signature, eval_type, split
 from torch_geometric.template import module_from_template
 
@@ -268,6 +269,8 @@ class Sequential(torch.nn.Module):
 
     def __prepare_scriptable__(self) -> 'Sequential':
         # Prevent type sharing when scripting `Sequential` modules:
+        if torch_geometric.typing.WITH_PT212:
+            return self
         type_store = torch.jit._recursive.concrete_type_store.type_store
         type_store.pop(self.__class__, None)
         return self
