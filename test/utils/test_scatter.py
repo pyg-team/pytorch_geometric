@@ -1,4 +1,5 @@
 from itertools import product
+from unittest.mock import patch
 
 import pytest
 import torch
@@ -70,6 +71,29 @@ def test_scatter_backward(reduce, device):
     assert src.grad is None
     out.mean().backward()
     assert src.grad is not None
+
+
+@pytest.mark.parametrize('reduce,expected', [
+    ('min', [0., 0., 0.]),
+    ('max', [3., 4., 2.]),
+])
+def test_scatter_onnx_export(reduce, expected):
+    src = torch.tensor([1., 4., 3., 2.])
+    index = torch.tensor([0, 1, 0, 2])
+
+    original_full = torch.full
+
+    def full_scalar_only(size, fill_value, *args, **kwargs):
+        if torch.is_tensor(fill_value):
+            raise TypeError('fill_value must be a scalar')
+        return original_full(size, fill_value, *args, **kwargs)
+
+    with patch('torch_geometric.utils._scatter.is_in_onnx_export',
+               return_value=True), patch('torch.full',
+                                         side_effect=full_scalar_only):
+        out = scatter(src, index, dim=0, dim_size=3, reduce=reduce)
+
+    assert torch.equal(out, torch.tensor(expected))
 
 
 @withDevice
