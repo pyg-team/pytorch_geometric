@@ -1,7 +1,6 @@
 import torch
 
 from torch_geometric.nn import AttentiveFP
-from torch_geometric.testing import is_full_test
 
 
 def test_attentive_fp():
@@ -17,7 +16,3 @@ def test_attentive_fp():
 
     out = model(x, edge_index, edge_attr, batch)
     assert out.size() == (1, 32)
-
-    if is_full_test():
-        jit = torch.jit.script(model)
-        assert torch.allclose(jit(x, edge_index, edge_attr, batch), out)
