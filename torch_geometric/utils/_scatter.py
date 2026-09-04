@@ -99,12 +99,8 @@ def scatter(
                     dim, index, src, reduce=f'a{reduce[-3:]}',
                     include_self=False)
 
-            fill = torch.full(  # type: ignore
-                size=(1, ),
-                fill_value=src.min() if 'max' in reduce else src.max(),
-                dtype=src.dtype,
-                device=src.device,
-            ).expand_as(src)
+            fill_value = src.min() if 'max' in reduce else src.max()
+            fill = fill_value.reshape(1).expand_as(src)
             out = src.new_zeros(size).scatter_reduce_(dim, index, fill,
                                                       reduce=f'a{reduce[-3:]}',
                                                       include_self=True)
