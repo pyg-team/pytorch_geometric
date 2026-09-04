@@ -15,8 +15,9 @@ try:
     _pl_is_available = True
 except ImportError:
     try:
-        from pytorch_lightning import \
-            LightningDataModule as _LightningDataModule
+        from pytorch_lightning import (
+            LightningDataModule as _LightningDataModule,
+        )
         _pl_is_available = True
     except ImportError:
         _pl_is_available = False
