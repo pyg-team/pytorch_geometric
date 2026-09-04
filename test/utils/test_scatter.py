@@ -90,7 +90,7 @@ def test_scatter_onnx_export(reduce, expected):
 
     with patch('torch_geometric.utils._scatter.is_in_onnx_export',
                return_value=True), patch('torch.full',
-                                          side_effect=full_scalar_only):
+                                         side_effect=full_scalar_only):
         out = scatter(src, index, dim=0, dim_size=3, reduce=reduce)
 
     assert torch.equal(out, torch.tensor(expected))
