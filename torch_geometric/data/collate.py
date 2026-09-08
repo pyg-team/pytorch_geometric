@@ -87,6 +87,15 @@ def collate(
     for out_store in out.stores:  # type: ignore
         key = out_store._key
         stores = key_to_stores[key]
+
+        if key is not None:  # Heterogeneous:
+            # Ensure every store has a `slice_dict`/`inc_dict` entry, even if
+            # it holds no attribute that goes through the loop below (e.g. a
+            # node store whose only attribute is `num_nodes`). Otherwise,
+            # `separate()` fails with a `KeyError` on such stores.
+            slice_dict.setdefault(key, {})
+            inc_dict.setdefault(key, {})
+
         for attr in stores[0].keys():
 
             if attr in exclude_keys:  # Do not include top-level attribute.
