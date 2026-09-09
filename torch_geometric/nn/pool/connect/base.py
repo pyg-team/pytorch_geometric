@@ -48,6 +48,9 @@ class ConnectOutput:
         self.batch = batch
 
 
+ConnectOutput = torch.jit.script(ConnectOutput)
+
+
 class Connect(torch.nn.Module):
     r"""An abstract base class for implementing custom edge connection
     operators as described in the `"Understanding Pooling in Graph Neural
