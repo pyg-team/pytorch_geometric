@@ -34,6 +34,8 @@ if torch.cuda.is_available():
     device = torch.device('cuda')
 elif torch_geometric.is_xpu_available():
     device = torch.device('xpu')
+elif torch_geometric.is_npu_available():
+    device = torch.device('npu')
 else:
     device = torch.device('cpu')
 model = GraphSAGE(

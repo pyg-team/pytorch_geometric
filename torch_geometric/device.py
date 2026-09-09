@@ -25,6 +25,14 @@ def is_xpu_available() -> bool:
         return False
 
 
+def is_npu_available() -> bool:
+    r"""Returns a bool indicating if NPU is currently available."""
+    if hasattr(torch, 'npu') and torch.npu.is_available():
+        return True
+    else:
+        return False
+
+
 def device(device: Any) -> torch.device:
     r"""Returns a :class:`torch.device`.
 
@@ -39,4 +47,6 @@ def device(device: Any) -> torch.device:
         return torch.device('mps')
     if is_xpu_available():
         return torch.device('xpu')
+    if is_npu_available():
+        return torch.device('npu')
     return torch.device('cpu')
