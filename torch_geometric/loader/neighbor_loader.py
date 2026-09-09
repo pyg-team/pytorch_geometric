@@ -165,6 +165,16 @@ class NeighborLoader(NodeLoader):
             guaranteed to fulfill temporal constraints, *i.e.* neighbors have
             an earlier or equal timestamp than the center node.
             (default: :obj:`None`)
+        time_window (int, optional): The size of the time window to restrict
+            temporal neighbor sampling. If set, only neighbors whose timestamps
+            satisfy :obj:`input_time - time_window <= neighbor_time <=
+            input_time` will be considered for sampling.
+            Requires :obj:`time_attr` to be set to identify the timestamp
+            attribute, and works alongside :obj:`temporal_strategy` to
+            determine how neighbors within the window are selected.
+            :obj:`input_time` (or the node timestamps from :obj:`time_attr`
+            if :obj:`input_time` is not provided) is used as the upper bound.
+            (default: :obj:`None`)
         weight_attr (str, optional): The name of the attribute that denotes
             edge weights in the graph.
             If set, weighted/biased sampling will be used such that neighbors
@@ -211,6 +221,7 @@ class NeighborLoader(NodeLoader):
         disjoint: bool = False,
         temporal_strategy: str = 'uniform',
         time_attr: Optional[str] = None,
+        time_window: Optional[int] = None,
         weight_attr: Optional[str] = None,
         transform: Optional[Callable] = None,
         transform_sampler_output: Optional[Callable] = None,
@@ -225,6 +236,11 @@ class NeighborLoader(NodeLoader):
                              "'time_attr' arguments: 'input_time' is set "
                              "while 'time_attr' is not set.")
 
+        if time_window is not None and time_attr is None:
+            raise ValueError("Received conflicting 'time_window' and "
+                             "'time_attr' arguments: 'time_window' is set "
+                             "while 'time_attr' is not set.")
+
         if neighbor_sampler is None:
             neighbor_sampler = NeighborSampler(
                 data,
@@ -234,6 +250,7 @@ class NeighborLoader(NodeLoader):
                 disjoint=disjoint,
                 temporal_strategy=temporal_strategy,
                 time_attr=time_attr,
+                time_window=time_window,
                 weight_attr=weight_attr,
                 is_sorted=is_sorted,
                 share_memory=kwargs.get('num_workers', 0) > 0,
