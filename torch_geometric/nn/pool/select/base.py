@@ -62,6 +62,9 @@ class SelectOutput:
         self.weight = weight
 
 
+SelectOutput = torch.jit.script(SelectOutput)
+
+
 class Select(torch.nn.Module):
     r"""An abstract base class for implementing custom node selections as
     described in the `"Understanding Pooling in Graph Neural Networks"
