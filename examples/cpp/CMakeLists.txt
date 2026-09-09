@@ -15,8 +15,7 @@ add_executable(hello-world main.cpp)
 # to our executable. We can do that by using the
 # TorchScatter::TorchScatter and TorchSparse::TorchSparse targets,
 # which also adds all the necessary torch dependencies.
-target_compile_features(hello-world PUBLIC cxx_range_for)
 target_link_libraries(hello-world TorchScatter::TorchScatter)
 target_link_libraries(hello-world TorchSparse::TorchSparse)
 target_link_libraries(hello-world ${CUDA_cusparse_LIBRARY})
-set_property(TARGET hello-world PROPERTY CXX_STANDARD 14)
+set_property(TARGET hello-world PROPERTY CXX_STANDARD 17)
