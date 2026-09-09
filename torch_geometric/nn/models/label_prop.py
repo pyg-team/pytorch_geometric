@@ -87,6 +87,8 @@ class LabelPropagation(MessagePassing):
                 out = post_step(out)
             else:
                 out.clamp_(0., 1.)
+                if mask is not None:
+                    out[mask] = y[mask]
 
         return out
 
