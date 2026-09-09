@@ -97,12 +97,22 @@ class AddLaplacianEigenvectorPE(BaseTransform):
             from scipy.sparse.linalg import eigs, eigsh
             eig_fn = eigs if not self.is_undirected else eigsh
 
+            # ARPACK (used by `eigs`/`eigsh`) initializes its starting vector
+            # `v0` randomly when it is not provided, which yields different
+            # eigenvectors across runs even when all library seeds are set.
+            # We default to a deterministic starting vector to make the
+            # positional encoding reproducible (see GitHub issue #7499). A
+            # local copy of `kwargs` is used so that a size-dependent `v0` is
+            # not cached on the (potentially reused) transform instance.
+            kwargs = dict(self.kwargs)
+            kwargs.setdefault('v0', np.ones(num_nodes))
+
             eig_vals, eig_vecs = eig_fn(
                 L,
                 k=self.k + 1,
                 which='SR' if not self.is_undirected else 'SA',
                 return_eigenvectors=True,
-                **self.kwargs,
+                **kwargs,
             )
 
         eig_vecs = np.real(eig_vecs[:, eig_vals.argsort()])
