@@ -56,10 +56,14 @@ def test_homo_link_neighbor_loader_basic(device, subgraph_type,
     assert str(loader) == 'LinkNeighborLoader()'
     assert len(loader) == 1000 / 20
 
-    batch = loader([0])
+    # manually sample from the 0-th and 10-th edges
+    batch = loader([[input_edges[0, 0], input_edges[0, 10]],
+                    [input_edges[1, 0], input_edges[1, 10]]])
     assert isinstance(batch, Data)
     assert int(input_edges[0, 0]) in batch.n_id.tolist()
     assert int(input_edges[1, 0]) in batch.n_id.tolist()
+    assert int(input_edges[0, 10]) in batch.n_id.tolist()
+    assert int(input_edges[1, 10]) in batch.n_id.tolist()
 
     for batch in loader:
         assert isinstance(batch, Data)
