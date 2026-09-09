@@ -7,6 +7,7 @@ import torch
 from torch.nn import Linear, Module, ModuleList
 
 from torch_geometric.nn.conv import MessagePassing
+from torch_geometric.nn.inits import reset
 from torch_geometric.typing import Tensor
 
 
@@ -285,6 +286,17 @@ class MeshCNNConv(MessagePassing):
             self._assert_kernels(kernels)
             self.kernels = kernels
 
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        r"""Resets all learnable parameters of the module, including each
+        of the 5 :obj:`kernels`. Kernels that do not implement
+        :meth:`reset_parameters` (directly or via a child module) are left
+        untouched.
+        """
+        super().reset_parameters()
+        reset(self.kernels)
+
     def forward(self, x: Tensor, edge_index: Tensor):
         r"""Forward pass.
 
@@ -391,7 +403,7 @@ class MeshCNNConv(MessagePassing):
         n_b = x_j[1::4]  # shape: |E| x in_channels
         n_c = x_j[2::4]  # shape: |E| x in_channels
         n_d = x_j[3::4]  # shape: |E| x in_channels
-        m = torch.empty(E4, self.out_channels)
+        m = x_j.new_empty(E4, self.out_channels)
         m[0::4] = self.kernels[1].forward(torch.abs(n_a - n_c))
         m[1::4] = self.kernels[2].forward(n_a + n_c)
         m[2::4] = self.kernels[3].forward(torch.abs(n_b - n_d))
