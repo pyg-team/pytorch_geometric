@@ -6,6 +6,7 @@ from collections.abc import Mapping
 from itertools import chain
 from typing import Any, Dict, List, NamedTuple, Optional, Tuple, Union
 
+import numpy as np
 import torch
 from torch import Tensor
 from typing_extensions import Self
@@ -412,6 +413,31 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
         r"""Validates the correctness of the data."""
         cls_name = self.__class__.__name__
         status = True
+
+        # numpy arrays are silently accepted on assignment, pass through
+        # .to(device) without being moved, and later cause cryptic
+        # AttributeError failures deep in model execution.  Catch them here
+        # so the error points at the data, not at an unrelated call site.
+        for node_type, node_store in self._node_store_dict.items():
+            for key, value in node_store.items():
+                if isinstance(value, np.ndarray):
+                    status = False
+                    warn_or_raise(
+                        f"'{key}' for node type '{node_type}' in "
+                        f"'{cls_name}' is a numpy array, not a "
+                        f"torch.Tensor. Convert it with "
+                        f"torch.from_numpy(data['{node_type}'].{key}).",
+                        raise_on_error)
+
+        for edge_type, edge_store in self._edge_store_dict.items():
+            for key, value in edge_store.items():
+                if isinstance(value, np.ndarray):
+                    status = False
+                    warn_or_raise(
+                        f"'{key}' for edge type {edge_type} in "
+                        f"'{cls_name}' is a numpy array, not a "
+                        f"torch.Tensor. Convert it with torch.from_numpy().",
+                        raise_on_error)
 
         node_types = set(self.node_types)
         num_src_node_types = {src for src, _, _ in self.edge_types}

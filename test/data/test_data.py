@@ -1,5 +1,6 @@
 import copy
 
+import numpy as np
 import pytest
 import torch
 import torch.multiprocessing as mp
@@ -8,6 +9,25 @@ import torch_geometric
 from torch_geometric.data import Data
 from torch_geometric.data.storage import AttrType
 from torch_geometric.testing import get_random_tensor_frame, withPackage
+
+
+def test_validate_rejects_numpy_arrays():
+    """validate() must catch numpy arrays in place of torch tensors.
+
+    numpy arrays are silently accepted on assignment, are not moved by
+    .to(device), and later cause cryptic AttributeError failures deep in
+    model execution (e.g. 'NoneType has no attribute dim').  A clear error
+    at validate() time is far more actionable.
+    """
+    data = Data()
+    data.x = np.random.randn(5, 8).astype(np.float32)
+    data.edge_index = torch.randint(0, 5, (2, 10))
+
+    with pytest.raises(ValueError, match="'x'.*numpy array"):
+        data.validate(raise_on_error=True)
+
+    # raise_on_error=False must return False rather than raising.
+    assert data.validate(raise_on_error=False) is False
 
 
 def test_data():

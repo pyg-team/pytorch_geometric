@@ -675,6 +675,19 @@ class Data(BaseData, FeatureStore, GraphStore):
         cls_name = self.__class__.__name__
         status = True
 
+        # numpy arrays are silently accepted on assignment, pass through
+        # .to(device) without being moved, and later cause cryptic
+        # AttributeError failures deep in model execution.  Catch them here
+        # so the error points at the data, not at an unrelated call site.
+        for key, value in self._store.items():
+            if isinstance(value, np.ndarray):
+                status = False
+                warn_or_raise(
+                    f"'{key}' in '{cls_name}' is a numpy array, not a "
+                    f"torch.Tensor. Convert it with "
+                    f"torch.from_numpy(data.{key}) before using it with PyG.",
+                    raise_on_error)
+
         num_nodes = self.num_nodes
         if num_nodes is None:
             status = False
