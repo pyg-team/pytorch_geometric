@@ -64,8 +64,11 @@ class MultiheadAttentionBlock(torch.nn.Module):
         if y_mask is not None:
             y_mask = ~y_mask
 
-        # Work around CUDA issues in PyTorch's native MHA fastpath for
-        # padded Set Transformer inputs in evaluation mode.
+        # PyTorch's native MHA fastpath (CUDA, eval mode) uses a masked softmax
+        # kernel with 32-bit indexing that reads out-of-bounds for
+        # `batch_size * heads * T * T > 2**31` (CUDA illegal memory access).
+        # Route such calls through the regular path (which uses
+        # `scaled_dot_product_attention`) instead.
         if (not torch.jit.is_scripting() and not self.training and x.is_cuda
                 and y_mask is not None
                 and torch.backends.mha.get_fastpath_enabled()):
