@@ -64,6 +64,37 @@ def test_to_dense_adj():
     assert adj.size() == (4, 3, 3)
 
 
+def test_to_dense_adj_with_unsorted_batch():
+    edge_index = torch.tensor([
+        [0, 1, 2, 3],
+        [3, 2, 1, 0],
+    ])
+    batch = torch.tensor([0, 1, 1, 0])
+
+    adj = to_dense_adj(edge_index, batch)
+    assert adj.size() == (2, 2, 2)
+    assert adj[0].tolist() == [[0, 1], [1, 0]]
+    assert adj[1].tolist() == [[0, 1], [1, 0]]
+
+    if is_full_test():
+        jit = torch.jit.script(to_dense_adj)
+        adj = jit(edge_index, batch)
+        assert adj.size() == (2, 2, 2)
+        assert adj[0].tolist() == [[0, 1], [1, 0]]
+        assert adj[1].tolist() == [[0, 1], [1, 0]]
+
+    edge_attr = torch.tensor([1.0, 3.0, 4.0, 2.0])
+    adj = to_dense_adj(edge_index, batch, edge_attr)
+    assert adj.size() == (2, 2, 2)
+    assert adj[0].tolist() == [[0, 1], [2, 0]]
+    assert adj[1].tolist() == [[0, 3], [4, 0]]
+
+    adj = to_dense_adj(edge_index, batch, edge_attr, max_num_nodes=1)
+    assert adj.size() == (2, 1, 1)
+    assert adj[0].tolist() == [[0]]
+    assert adj[1].tolist() == [[0]]
+
+
 def test_to_dense_adj_with_empty_edge_index():
     edge_index = torch.tensor([[], []], dtype=torch.long)
     batch = torch.tensor([0, 0, 1, 1, 1])

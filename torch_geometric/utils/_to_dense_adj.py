@@ -21,7 +21,9 @@ def to_dense_adj(
         edge_index (LongTensor): The edge indices.
         batch (LongTensor, optional): Batch vector
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
-            node to a specific example. (default: :obj:`None`)
+            node to a specific example. It does not need to be sorted. Nodes
+            are ordered in each dense adjacency matrix by their relative node
+            order in the input :obj:`batch` vector. (default: :obj:`None`)
         edge_attr (Tensor, optional): Edge weights or multi-dimensional edge
             features.
             If :obj:`edge_index` contains duplicated edges, the dense adjacency
@@ -72,8 +74,18 @@ def to_dense_adj(
     cum_nodes = cumsum(num_nodes)
 
     idx0 = batch[edge_index[0]]
-    idx1 = edge_index[0] - cum_nodes[batch][edge_index[0]]
-    idx2 = edge_index[1] - cum_nodes[batch][edge_index[1]]
+    if batch.numel() > 0 and bool((batch[1:] < batch[:-1]).any()):
+        # Compute per-graph local node indices for unsorted `batch` vectors.
+        node_idx = torch.arange(batch.size(0), device=batch.device)
+        perm = torch.argsort(batch * batch.size(0) + node_idx)
+        local_idx = torch.empty_like(batch)
+        local_idx[perm] = node_idx - cum_nodes[batch[perm]]
+
+        idx1 = local_idx[edge_index[0]]
+        idx2 = local_idx[edge_index[1]]
+    else:
+        idx1 = edge_index[0] - cum_nodes[batch][edge_index[0]]
+        idx2 = edge_index[1] - cum_nodes[batch][edge_index[1]]
 
     if max_num_nodes is None:
         max_num_nodes = int(num_nodes.max())
