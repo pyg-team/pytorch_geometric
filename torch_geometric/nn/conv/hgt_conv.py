@@ -37,8 +37,6 @@ class HGTConv(MessagePassing):
             information.
         heads (int, optional): Number of multi-head-attentions.
             (default: :obj:`1`)
-        aggr (str, optional): The aggregation scheme to use for message
-            aggregation. (default: :obj:`"add"`)
         **kwargs (optional): Additional arguments of
             :class:`torch_geometric.nn.conv.MessagePassing`.
     """
@@ -48,10 +46,10 @@ class HGTConv(MessagePassing):
         out_channels: int,
         metadata: Metadata,
         heads: int = 1,
-        aggr: str = 'add',
         **kwargs,
     ):
-        super().__init__(aggr=aggr, node_dim=0, **kwargs)
+        kwargs.setdefault('aggr', 'add')
+        super().__init__(node_dim=0, **kwargs)
 
         if out_channels % heads != 0:
             raise ValueError(f"'out_channels' (got {out_channels}) must be "
