@@ -556,14 +556,10 @@ def test_to_hetero_lazy_cuda():
         def forward(self, x, edge_index, edge_attr):
             return self.conv(x, edge_index, edge_attr)
 
-    data = FakeHeteroDataset(edge_dim=10)[0].to('cuda')
-
-    # Ensure each node type is a destination at least once
-    for node_type in data.node_types:
-        idx = torch.arange(data[node_type].num_nodes, device='cuda')
-        edge_index = torch.stack([idx, idx])
-        data[(node_type, 'self', node_type)].edge_index = edge_index
-
+    # Use all 3x3 edge types so that every node type is a destination.
+    # Otherwise, `to_hetero` returns `None` for node types that never receive
+    # messages, and the test would fail nondeterministically.
+    data = FakeHeteroDataset(num_edge_types=9, edge_dim=10)[0].to('cuda')
     model = to_hetero(Model(), data.metadata())
     out_dict = model(data.x_dict, data.edge_index_dict, data.edge_attr_dict)
     assert len(out_dict) == len(data.node_types)
