@@ -67,3 +67,25 @@ def test_hetero_to_undirected():
     assert data['w', 'v'].edge_index.tolist() == [[3, 1], [2, 0]]
     assert data['w', 'v'].edge_weight.tolist() == edge_weight.tolist()
     assert data['w', 'v'].edge_attr.tolist() == edge_attr.tolist()
+
+
+def test_hetero_to_undirected_self_relation_with_edge_label():
+    edge_index = torch.tensor([[0, 1, 2], [3, 4, 5]])
+    edge_label_index = edge_index.clone()
+    edge_label = torch.tensor([1, 0, 1])
+
+    data = HeteroData()
+    data['v'].num_nodes = 6
+    data['v', 'v'].edge_index = edge_index
+    data['v', 'v'].edge_label_index = edge_label_index
+    data['v', 'v'].edge_label = edge_label
+
+    data = ToUndirected()(data)
+
+    # `edge_index` is made undirected (E -> 2 * E):
+    assert data['v', 'v'].edge_index.size(1) == 6
+    # Link-prediction supervision attributes are preserved unchanged on the
+    # forward relation:
+    assert data['v',
+                'v'].edge_label_index.tolist() == edge_label_index.tolist()
+    assert data['v', 'v'].edge_label.tolist() == edge_label.tolist()
