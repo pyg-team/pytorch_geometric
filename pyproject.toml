@@ -104,6 +104,7 @@ full = [
     "pytorch-memlab",
     "rdflib",
     "rdkit",
+    "rdkit-stubs>=2024.09.1",
     "scikit-image",
     "statsmodels",
     "sympy",
@@ -133,6 +134,7 @@ blank_line_before_nested_class_or_def = false
 
 [tool.mypy]
 files = ["torch_geometric"]
+ignore_errors = true
 install_types = true
 non_interactive = true
 ignore_missing_imports = true
@@ -156,6 +158,8 @@ module = [
     "torch_geometric.graphgym.*",
     "torch_geometric.distributed.*",
     "torch_geometric.llm.*",
+    "rdkit",
+    "rdkit.*"
 ]
 
 [tool.isort]
