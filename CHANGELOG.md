@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Strengthened grouped softmax backward tests with non-zero reference gradients and unequal group sizes
 - Improved error handling in `txt2kg` multi-process execution. ([#10771](https://github.com/pyg-team/pytorch_geometric/pull/10771))
 
 ### Deprecated
