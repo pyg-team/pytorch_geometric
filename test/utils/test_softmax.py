@@ -27,21 +27,29 @@ def test_softmax():
     assert torch.allclose(jit(src, index), out)
 
 
-def test_softmax_backward():
-    src_sparse = torch.rand(4, 8)
-    index = torch.tensor([0, 0, 1, 1])
-    src_dense = src_sparse.clone().view(2, 2, src_sparse.size(-1))
+@pytest.mark.parametrize('sizes', [(2, 2), (3, 1, 2)])
+def test_softmax_backward(sizes):
+    generator = torch.Generator().manual_seed(0)
+    src_sparse = torch.randn(sum(sizes), 8, generator=generator)
+    index = torch.arange(len(sizes)).repeat_interleave(torch.tensor(sizes))
+    src_dense = src_sparse.clone()
+    weight = torch.randn(src_sparse.size(), generator=generator)
 
     src_sparse.requires_grad_(True)
     src_dense.requires_grad_(True)
 
     out_sparse = softmax(src_sparse, index)
-    out_sparse.mean().backward()
-    out_dense = src_dense.softmax(dim=1)
-    out_dense.mean().backward()
+    out_dense = torch.cat([x.softmax(dim=0) for x in src_dense.split(sizes)])
 
-    assert torch.allclose(out_sparse, out_dense.view_as(out_sparse))
-    assert torch.allclose(src_sparse.grad, src_dense.grad.view_as(src_sparse))
+    # A mean over softmax outputs is constant and gives zero gradients.
+    (out_sparse * weight).sum().backward()
+    (out_dense * weight).sum().backward()
+
+    assert torch.allclose(out_sparse, out_dense)
+    assert torch.isfinite(src_sparse.grad).all()
+    assert torch.isfinite(src_dense.grad).all()
+    assert not torch.allclose(src_dense.grad, torch.zeros_like(src_dense.grad))
+    assert torch.allclose(src_sparse.grad, src_dense.grad)
 
 
 def test_softmax_dim():
