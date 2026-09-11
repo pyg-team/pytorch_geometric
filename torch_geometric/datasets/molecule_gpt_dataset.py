@@ -3,9 +3,11 @@ import json
 import multiprocessing
 import os
 import sys
+import time
+import warnings
 from collections import defaultdict
 from multiprocessing import Pool
-from typing import Callable, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 import requests
@@ -16,6 +18,72 @@ from torch_geometric.data import Data, InMemoryDataset, download_url
 from torch_geometric.io import fs
 from torch_geometric.llm.models import LLM
 from torch_geometric.utils import one_hot
+
+
+def _get_pubchem_json(
+    url: str,
+    num_retries: int = 5,
+    delay: float = 5.0,
+    timeout: float = 60.0,
+) -> Dict[str, Any]:
+    r"""Fetches a PubChem PUG-View JSON page.
+
+    PubChem answers with HTTP 503 and a :obj:`{"Fault": {"Code":
+    "PUGVIEW.ServerBusy", ...}}` body (instead of the requested data) whenever
+    it is rate-limited or busy. Such responses, other :obj:`429`/:obj:`5xx`
+    responses, transport errors (connection, timeout, undecodable body) and
+    :obj:`2xx` responses whose body is not a JSON object (a body truncated in
+    transit) are retried with exponential backoff; anything else (or
+    exhausting the retries) raises a descriptive :class:`RuntimeError`.
+    """
+    if num_retries < 0:
+        raise ValueError(f"'num_retries' must be non-negative "
+                         f"(got {num_retries})")
+    transient_errors = (
+        requests.ConnectionError,
+        requests.Timeout,
+        requests.exceptions.ChunkedEncodingError,
+        requests.exceptions.ContentDecodingError,
+    )
+    for attempt in range(num_retries + 1):
+        try:
+            response = requests.get(url, timeout=timeout)
+        except transient_errors as e:
+            error, retryable = f'{type(e).__name__}: {e}', True
+        else:
+            try:
+                data = response.json()
+            except ValueError:
+                data = None
+            # A `2xx` whose body is not a JSON object was cut or garbled in
+            # transit (`urllib3<2` does not enforce `Content-Length`), so it
+            # is treated like a transport error:
+            malformed = not isinstance(data, dict) or not data
+            if malformed:
+                data = {}
+            elif response.ok and 'Fault' not in data:
+                return data
+
+            fault = data.get('Fault')
+            if not isinstance(fault, dict):
+                fault = {}
+            code = fault.get('Code', 'unknown')
+            reason = response.reason
+            if response.ok and malformed:
+                reason = 'malformed body'
+            error = (f"HTTP {response.status_code} ({code}: "
+                     f"{fault.get('Message', reason)})")
+            retryable = (response.status_code == 429
+                         or response.status_code >= 500
+                         or code == 'PUGVIEW.ServerBusy'
+                         or (response.ok and malformed))
+
+        if not retryable or attempt == num_retries:
+            break
+        time.sleep(delay * 2**attempt)
+
+    raise RuntimeError(f"PubChem request to '{url}' failed with {error} "
+                       f"after {attempt + 1} attempt{'s' if attempt else ''}")
 
 
 def clean_up_description(description: str) -> str:
@@ -193,6 +261,7 @@ class MoleculeGPTDataset(InMemoryDataset):
         force_reload (bool, optional): Whether to re-process the dataset.
             (default: :obj:`False`)
         total_page_num (int, optional): The number of pages from PubChem.
+            The download stops early at the last page PubChem serves.
             (default: :obj:`10`)
         total_block_num (int, optional): The blocks of SDF files from PubChem.
             (default: :obj:`1`)
@@ -235,8 +304,15 @@ class MoleculeGPTDataset(InMemoryDataset):
 
     def download(self) -> None:
         # Step 01. Extract description
+        # Key the guard on the final artifact rather than the folder so that
+        # an interrupted or failed run does not get skipped on the next call:
         step1_folder = f"{self.raw_dir}/step_01_PubChemSTM_description"
-        if not os.path.exists(step1_folder):
+        if not os.path.exists(f"{self.raw_dir}/CID2text.json"):
+            # Drop the per-page files of a previous, failed or larger run so
+            # that the folder only holds the pages written alongside the
+            # JSON artifacts below:
+            if os.path.exists(step1_folder):
+                fs.rm(step1_folder)
             os.makedirs(step1_folder)
             valid_CID_set = set()
             CID2name_raw, CID2name_extracted = defaultdict(list), defaultdict(
@@ -244,47 +320,63 @@ class MoleculeGPTDataset(InMemoryDataset):
             CID2text_raw, CID2text_extracted = defaultdict(list), defaultdict(
                 list)
 
-            for page_index in tqdm(range(self.total_page_num)):
-                page_num = page_index + 1
-                f_out = open(
-                    f"{step1_folder}/Compound_description_{page_num}.txt", "w")
-
-                description_data = requests.get(
-                    self.description_url.format(page_num)).json()
+            num_pages = self.total_page_num
+            pbar = tqdm(total=num_pages)
+            for page_num in range(1, num_pages + 1):
+                description_data = _get_pubchem_json(
+                    self.description_url.format(page_num))
 
                 description_data = description_data["Annotations"]
                 assert description_data["Page"] == page_num
 
                 record_list = description_data["Annotation"]
 
-                for record in record_list:
-                    try:
-                        CID = record["LinkedRecords"]["CID"][0]
-                        if "Name" in record:
-                            name_raw = record["Name"]
-                            CID2name_raw[CID].append(name_raw)
-                        else:
-                            name_raw = None
+                # Open the page file only after the request succeeded so a
+                # failed page leaves no empty file behind, and close it on
+                # every path. Descriptions contain characters outside the
+                # Windows locale encoding (e.g. Greek letters), so pin UTF-8:
+                with open(
+                        f"{step1_folder}/Compound_description_{page_num}.txt",
+                        "w", encoding="utf-8") as f_out:
+                    for record in record_list:
+                        try:
+                            CID = record["LinkedRecords"]["CID"][0]
+                            if "Name" in record:
+                                name_raw = record["Name"]
+                                CID2name_raw[CID].append(name_raw)
+                            else:
+                                name_raw = None
 
-                        data_list = record["Data"]
-                        for data in data_list:
-                            description = data["Value"]["StringWithMarkup"][0][
-                                "String"].strip()
+                            data_list = record["Data"]
+                            for data in data_list:
+                                description = data["Value"][
+                                    "StringWithMarkup"][0]["String"].strip()
 
-                            extracted_name, extracted_description, _ = extract_name(  # noqa: E501
-                                name_raw, description)
-                            if extracted_name is not None:
-                                CID2name_extracted[CID].append(extracted_name)
+                                extracted_name, extracted_description, _ = extract_name(  # noqa: E501
+                                    name_raw, description)
+                                if extracted_name is not None:
+                                    CID2name_extracted[CID].append(
+                                        extracted_name)
 
-                            CID2text_raw[CID].append(description)
-                            CID2text_extracted[CID].append(
-                                extracted_description)
+                                CID2text_raw[CID].append(description)
+                                CID2text_extracted[CID].append(
+                                    extracted_description)
 
-                            valid_CID_set.add(CID)
-                            f_out.write(f"{CID}\n")
-                            f_out.write(f"{extracted_description}\n\n")
-                    except Exception:
-                        continue
+                                valid_CID_set.add(CID)
+                                f_out.write(f"{CID}\n")
+                                f_out.write(f"{extracted_description}\n\n")
+                        except Exception:
+                            continue
+                pbar.update()
+
+                # PubChem answers any page past `TotalPages` with a permanent
+                # HTTP 500, which `_get_pubchem_json` would retry for minutes,
+                # so stop after the last page it serves:
+                if page_num == description_data.get("TotalPages"):
+                    num_pages = page_num
+                    pbar.total = num_pages
+                    break
+            pbar.close()
 
             valid_CID_list = sorted(list(valid_CID_set))
             print(f"Total CID (with raw name) {len(CID2name_raw)}")
@@ -300,8 +392,27 @@ class MoleculeGPTDataset(InMemoryDataset):
             with open(f"{self.raw_dir}/CID2text_raw.json", "w") as f:
                 json.dump(CID2text_raw, f)
 
-            with open(f"{self.raw_dir}/CID2text.json", "w") as f:
-                json.dump(CID2text_extracted, f)
+            # `CID2text.json` is the resume key of the guard above, so write
+            # it last and atomically: a run killed while dumping it (Ctrl-C,
+            # disk full) must not leave a truncated file that skips Step 01 on
+            # the next call and then fails `json.load` in Step 03, nor a stray
+            # temporary file:
+            tmp_path = f"{self.raw_dir}/CID2text.json.tmp"
+            try:
+                with open(tmp_path, "w") as f:
+                    json.dump(CID2text_extracted, f)
+                os.replace(tmp_path, f"{self.raw_dir}/CID2text.json")
+            finally:
+                if os.path.exists(tmp_path):
+                    os.remove(tmp_path)
+
+            # Warn only once the artifacts are written so that a
+            # warnings-as-errors filter cannot discard the downloaded pages:
+            if num_pages < self.total_page_num:
+                warnings.warn(
+                    f"'total_page_num={self.total_page_num}' exceeds the "
+                    f"{num_pages} description pages PubChem serves; stopped "
+                    f"early", stacklevel=2)
 
         # Step 02. Download SDF Files
         step2_folder = f"{self.raw_dir}/step_02_PubChemSTM_SDF"

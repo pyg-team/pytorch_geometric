@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fixed `MoleculeGPTDataset.download()` crashing with `KeyError: 'Annotations'` when PubChem is busy: transient PubChem errors are now retried with backoff, Step 01 is redone after a failed run, and the download stops at PubChem's last page ([#10804](https://github.com/pyg-team/pytorch_geometric/pull/10804))
 - Fixed `config_store` on Python 3.14, where `typing.Union`/`typing.Optional` annotations could no longer be remapped in-place via the now read-only `__args__` attribute
 
 ### Security
