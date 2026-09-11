@@ -6,13 +6,16 @@ This example loads the Formula 1 RelBench dataset, converts it into a
 heterogeneous graph using ``from_relbench``, and trains a 2-layer GraphSAGE
 model (via ``to_hetero``) to predict championship standings points from
 the graph structure and node features.
+
+Requirements:
+    ``pip install "relbench>=3.0"``
 """
 
 import argparse
 
 import torch
 import torch.nn.functional as F
-from relbench.datasets import get_dataset
+from relbench import load_dataset
 
 from torch_geometric.contrib.utils import from_relbench
 from torch_geometric.nn import Linear, SAGEConv, to_hetero
@@ -29,7 +32,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 # 1. Load a RelBench dataset and convert to HeteroData:
 print('Loading RelBench rel-f1 dataset...')
-dataset = get_dataset('rel-f1', download=True)
+dataset = load_dataset('rel-f1')
 db = dataset.get_db()
 data = from_relbench(db).to(device)
 print(f'Graph: {len(data.node_types)} node types, '

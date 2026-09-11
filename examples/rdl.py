@@ -3,8 +3,11 @@ using RelBench.
 
 Please refer to:
 1. https://arxiv.org/abs/2407.20060 for RelBench, and
-2. https://github.com/snap-stanford/relbench for reproducing the results
+2. https://github.com/stanford-star/relbench for reproducing the results
    reported on the RelBench paper.
+
+Requirements:
+    ``pip install "relbench>=3.0" pytorch-frame sentence-transformers``
 """
 import argparse
 import math
@@ -16,7 +19,8 @@ import numpy as np
 import pandas as pd
 import torch
 import torch_frame
-from relbench.base import EntityTask, Table, TaskType
+from relbench import load_dataset
+from relbench.base import AutoCompleteTask, EntityTask, Table, TaskType
 from relbench.modeling.graph import make_pkey_fkey_graph
 from relbench.modeling.utils import get_stype_proposal
 from sentence_transformers import SentenceTransformer
@@ -37,53 +41,6 @@ from torch_geometric.nn import (
 )
 from torch_geometric.seed import seed_everything
 from torch_geometric.typing import EdgeType, NodeType
-
-try:
-    # RelBench <= 2.x
-    from relbench.datasets import get_dataset
-    from relbench.tasks import get_task, get_task_names
-
-    eval_metrics = None
-
-    def load_relbench_dataset(name):
-        return get_dataset(name, download=True)
-
-    def relbench_task_names(dataset, datasetName):
-        return get_task_names(datasetName)
-
-    def relbench_get_task(dataset, task_name, name):
-        return get_task(dataset_name=name, task_name=task_name, download=True)
-
-except ImportError:
-    # RelBench >= 3.x
-    import sklearn.metrics as skm
-    from numpy.typing import NDArray
-    from relbench import load_dataset
-
-    def mae(true: NDArray[np.float64], pred: NDArray[np.float64]) -> float:
-        return skm.mean_absolute_error(true, pred)
-
-    eval_metrics = [mae]
-
-    def load_relbench_dataset(name):
-        return load_dataset(name)
-
-    def relbench_task_names(dataset, datasetName):
-        return dataset.get_task_names()
-
-    def relbench_get_task(dataset, task_name, name):
-        return dataset.load_task(task_name)
-
-
-REL_BENCH_DATASETS = [
-    "rel-amazon",
-    "rel-avito",
-    "rel-event",
-    "rel-f1",
-    "rel-hm",
-    "rel-stack",
-    "rel-trial",
-]
 
 
 class GloveTextEmbedding:
@@ -490,14 +447,15 @@ def get_task_type_params(
     out_channels = 1
     if task.task_type == TaskType.REGRESSION:
         loss_fn = torch.nn.L1Loss()
-        tune_metric = "mae"
         higher_is_better = False
     elif task.task_type == TaskType.BINARY_CLASSIFICATION:
         loss_fn = torch.nn.BCEWithLogitsLoss()
-        tune_metric = "roc_auc"
         higher_is_better = True
     else:
         raise ValueError(f"Unsupported task type: {task.task_type}")
+    # Tune on the first of the task's own default metrics (`nmae` for
+    # regression and `roc_auc` for binary classification in RelBench 3.0):
+    tune_metric = task.metrics[0].__name__
 
     return out_channels, loss_fn, tune_metric, higher_is_better
 
@@ -618,11 +576,18 @@ def main():
 
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--dataset", type=str, default="rel-f1",
-                        choices=REL_BENCH_DATASETS)
     parser.add_argument(
-        "--task", type=str, default=None,
-        help="See available tasks at https://relbench.stanford.edu/")
+        "--dataset", type=str, default="rel-f1",
+        help="RelBench dataset name (e.g., 'rel-f1'), Hugging Face Hub "
+        "'org/repo[/subdir]' or local path. See "
+        "https://relbench.stanford.edu/ for available datasets")
+    # `SUPPRESS` hides the "(default: None)" that the help formatter would
+    # otherwise print for this required argument:
+    parser.add_argument(
+        "--task", type=str, required=True, default=argparse.SUPPRESS,
+        help="RelBench task name (e.g., 'driver-position'), Hugging Face Hub "
+        "'org/repo/<dataset>/tasks/<task>' or local task directory. See "
+        "https://relbench.stanford.edu/ for available tasks")
     parser.add_argument("--batch_size", type=int, default=512)
     parser.add_argument("--temporal_strategy", type=str, default="uniform",
                         choices=["uniform", "last"])
@@ -638,16 +603,32 @@ def main():
     print("Using device:", device)
 
     print("Loading dataset and task...")
-    dataset = load_relbench_dataset(args.dataset)
-    task_names = relbench_task_names(dataset, args.dataset)
-    assert args.task in task_names, (
-        f"Invalid --task '{args.task}' for --dataset '{args.dataset}'. "
-        f"Available tasks: {task_names}")
-
-    task = relbench_get_task(dataset, args.task, args.dataset)
+    dataset = load_dataset(args.dataset)
+    task = dataset.load_task(args.task)  # lists the available tasks on error
+    # Recommendation tasks have no entity table, auto-complete tasks need the
+    # database beyond the test timestamp, the temporal sampling below needs a
+    # seed time per label, and external tasks with a custom `evaluator` cannot
+    # be scored by `task.evaluate()`; none of these are in scope here:
+    if (not isinstance(task, EntityTask) or isinstance(task, AutoCompleteTask)
+            or getattr(task, "time_col", None) is None
+            or getattr(task, "evaluator", None)):
+        raise ValueError(
+            f"Task '{args.task}' ({type(task).__name__.lstrip('_')}) is not "
+            f"supported. This example only handles time-stamped entity-level "
+            f"tasks (binary classification or regression) scored with "
+            f"RelBench's own metrics")
     print(f"Task type: {task.task_type}")
     print(f"Target column: '{task.target_col}'")
     print(f"Entity table: '{task.entity_table}'")
+
+    # Reject unsupported task types before the (slow) graph materialization:
+    print("Getting task-specific parameters...")
+    out_channels, loss_fn, tune_metric, higher_is_better = \
+        get_task_type_params(task)
+    print("out_channels: ", out_channels)
+    print("loss_fn: ", loss_fn)
+    print("tune_metric: ", tune_metric)
+    print("higher_is_better: ", higher_is_better)
 
     print("Getting column to stype dictionary...")
     db = dataset.get_db()
@@ -662,7 +643,7 @@ def main():
 
     # Transform the dataset into a HeteroData object with torch_frame features
     # See also:
-    # https://github.com/snap-stanford/relbench/blob/v1.1.0/relbench/modeling/graph.py#L20-L111  # noqa: E501
+    # https://github.com/stanford-star/relbench/blob/v3.0.0/relbench/modeling/graph.py#L49-L150  # noqa: E501
     print("Transforming dataset into HeteroData object...")
     data, col_stats_dict = make_pkey_fkey_graph(
         db,
@@ -699,14 +680,6 @@ def main():
             num_workers=4,
             persistent_workers=True,
         )
-
-    print("Getting task-specific parameters...")
-    out_channels, loss_fn, tune_metric, higher_is_better = \
-        get_task_type_params(task)
-    print("out_channels: ", out_channels)
-    print("loss_fn: ", loss_fn)
-    print("tune_metric: ", tune_metric)
-    print("higher_is_better: ", higher_is_better)
 
     print("Initializing the model...")
     col_names_dict = {
@@ -750,7 +723,7 @@ def main():
             device=device,
         )
 
-        val_metrics = task.evaluate(val_pred, val, eval_metrics)
+        val_metrics = task.evaluate(val_pred, val)
         print(
             f"Epoch: {epoch:02d}, "
             f"train_loss: {train_loss:.4f}, "

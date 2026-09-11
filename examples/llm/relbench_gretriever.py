@@ -8,7 +8,7 @@ The goal is to demonstrate the projection-first pattern required before
 calling ``to_homogeneous()`` on RelBench-derived graphs.
 
 Requirements:
-    ``pip install relbench "transformers>=4.51,<5.0" sentencepiece
+    ``pip install "relbench>=3.0" "transformers>=4.51,<5.0" sentencepiece
     accelerate``
 
 Usage:
@@ -20,7 +20,7 @@ import argparse
 import torch
 import torch.nn as nn
 from packaging.version import Version
-from relbench.datasets import get_dataset
+from relbench import load_dataset
 
 from torch_geometric.contrib.utils import from_relbench
 from torch_geometric.data import HeteroData
@@ -68,7 +68,7 @@ args.torch_dtype = dtype_map[args.dtype]
 
 # Load and sanitize RelBench data
 print(f'Loading RelBench {args.dataset} dataset...')
-dataset = get_dataset(args.dataset)
+dataset = load_dataset(args.dataset)
 db = dataset.get_db()
 data = from_relbench(db)
 
