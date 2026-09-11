@@ -7,7 +7,7 @@ Please refer to:
    reported on the RelBench paper.
 
 Requirements:
-    ``pip install "relbench>=3.0" pytorch-frame sentence-transformers``
+    ``pip install "relbench>=3.0.1" pytorch-frame sentence-transformers``
 """
 import argparse
 import math
@@ -22,7 +22,7 @@ import torch_frame
 from relbench import load_dataset
 from relbench.base import AutoCompleteTask, EntityTask, Table, TaskType
 from relbench.modeling.graph import make_pkey_fkey_graph
-from relbench.modeling.utils import get_stype_proposal
+from relbench.modeling.utils import get_stype_proposal, to_unix_time
 from sentence_transformers import SentenceTransformer
 from torch import Tensor
 from torch_frame.config.text_embedder import TextEmbedderConfig
@@ -460,20 +460,41 @@ def get_task_type_params(
     return out_channels, loss_fn, tune_metric, higher_is_better
 
 
-def to_unix_time(ser: pd.Series) -> np.ndarray:
-    r"""Convert a pandas Timestamp series to UNIX timestamp in seconds.
+def to_ns(ser: pd.Series) -> pd.Series:
+    r"""Put a datetime series on nanosecond resolution.
+
+    :func:`relbench.modeling.utils.to_unix_time` treats every ``datetime64``
+    value as nanoseconds, so the ``datetime64[s|ms|us]`` columns that pandas 2
+    reads from Parquet written by external tools would otherwise be scaled
+    down by up to 1e9. Rescaling both the database tables (node timestamps
+    inside :func:`make_pkey_fkey_graph`) and the task tables (seed
+    timestamps) keeps the temporal sampling consistent. Arrow-backed columns
+    (``timestamp[unit][pyarrow]``, as restored by :func:`pandas.read_parquet`
+    from Parquet written with Arrow types) are converted to numpy first, since
+    pandas 2.3 reads a tz-naive Arrow ``timestamp[ns]`` as local time in
+    ``pd.to_datetime(..., utc=True)``. Non-datetime series (e.g., integer UNIX
+    seconds) are returned unchanged.
+
+    Values must fit into ``datetime64[ns]`` (years 1677 to 2262): far-future
+    placeholder dates such as ``9999-12-31`` raise
+    :class:`pandas.errors.OutOfBoundsDatetime` and need to be replaced in the
+    source data first.
 
     Args:
-        ser: Input pandas Series containing datetime values.
+        ser: Input pandas Series.
 
     Returns:
-        Array of UNIX timestamps in seconds.
+        The series as ``datetime64[ns]`` if it holds datetimes, else as is.
     """
-    assert ser.dtype in [np.dtype("datetime64[s]"), np.dtype("datetime64[ns]")]
-    unix_time = ser.astype("int64").values
-    if ser.dtype == np.dtype("datetime64[ns]"):
-        unix_time //= 10**9
-    return unix_time
+    if pd.api.types.is_datetime64_any_dtype(ser.dtype):
+        if isinstance(ser.dtype, pd.ArrowDtype):
+            # pandas 2.3 reads a tz-naive Arrow `timestamp[ns]` as local
+            # time in `pd.to_datetime(..., utc=True)`; use numpy instead:
+            tz = ser.dtype.pyarrow_dtype.tz
+            ser = ser.astype(
+                pd.DatetimeTZDtype("ns", tz) if tz else "datetime64[ns]")
+        return ser.dt.as_unit("ns")
+    return ser
 
 
 def get_train_table_input(
@@ -505,7 +526,7 @@ def get_train_table_input(
     time: Optional[Tensor] = None
     if split_table.time_col is not None:
         time = torch.from_numpy(
-            to_unix_time(split_table.df[split_table.time_col]))
+            to_unix_time(to_ns(split_table.df[split_table.time_col])))
 
     target: Optional[Tensor] = None
     transform: Optional[AttachTargetTransform] = None
@@ -633,6 +654,11 @@ def main():
 
     print("Getting column to stype dictionary...")
     db = dataset.get_db()
+    # Keep the node timestamps (`make_pkey_fkey_graph`) on the same scale as
+    # the seed timestamps (`get_train_table_input`); see `to_ns`:
+    for table in db.table_dict.values():
+        if table.time_col is not None:
+            table.df[table.time_col] = to_ns(table.df[table.time_col])
     col_to_stype_dict = get_stype_proposal(db)
     print("Column to stype dictionary: ", col_to_stype_dict)
 
@@ -646,14 +672,17 @@ def main():
     # See also:
     # https://github.com/stanford-star/relbench/blob/v3.0.0/relbench/modeling/graph.py#L49-L150  # noqa: E501
     print("Transforming dataset into HeteroData object...")
+    # The columns the task hides (e.g., its label source) are dropped after
+    # materialization, so one cache per dataset serves all of its tasks:
     data, col_stats_dict = make_pkey_fkey_graph(
         db,
         col_to_stype_dict=col_to_stype_dict,  # specified column types
         text_embedder_cfg=text_embedder_cfg,  # our chosen text encoder
         cache_dir=os.path.join(  # store materialized graph for convenience
             "./data",
-            f"{args.dataset}_{args.task}_materialized_cache",
+            f"{dataset.manifest.name}_materialized_cache",
         ),
+        remove_columns=task.hidden_columns(),
     )
 
     print("Preparing data loaders...")
