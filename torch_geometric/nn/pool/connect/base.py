@@ -48,7 +48,7 @@ class ConnectOutput:
         self.batch = batch
 
 
-ConnectOutput = torch.jit.script(ConnectOutput)
+ConnectOutput = torch.compile(ConnectOutput)
 
 
 class Connect(torch.nn.Module):

@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Changed
 
 - Improved error handling in `txt2kg` multi-process execution. ([#10771](https://github.com/pyg-team/pytorch_geometric/pull/10771))
+- Remove deprecated torch.jit.script usage ([#10811](https://github.com/pyg-team/pytorch_geometric/pull/10811))
 
 ### Deprecated
 
