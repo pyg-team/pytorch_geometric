@@ -19,8 +19,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fixed a CUDA illegal memory access in `SetTransformerAggregation` and `GPSConv` in eval mode ([#10766](https://github.com/pyg-team/pytorch_geometric/pull/10766))
 - Fixed `config_store` on Python 3.14, where `typing.Union`/`typing.Optional` annotations could no longer be remapped in-place via the now read-only `__args__` attribute
-- Fixed a CUDA illegal memory access in `SetTransformerAggregation` in eval mode ([#10766](https://github.com/pyg-team/pytorch_geometric/pull/10766))
 
 ### Security
 
