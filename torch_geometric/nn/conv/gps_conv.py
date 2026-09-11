@@ -153,7 +153,16 @@ class GPSConv(torch.nn.Module):
         h, mask = to_dense_batch(x, batch)
 
         if isinstance(self.attn, torch.nn.MultiheadAttention):
-            h, _ = self.attn(h, h, h, key_padding_mask=~mask,
+            key_padding_mask = ~mask
+            if h.is_cuda:
+                # A float mask skips the MHA fastpath (eval mode only),
+                # whose CUDA masked softmax overflows for
+                # `num_graphs * heads * T * T > 2**31`:
+                key_padding_mask = torch.zeros_like(
+                    key_padding_mask,
+                    dtype=h.dtype,
+                ).masked_fill(key_padding_mask, float('-inf'))
+            h, _ = self.attn(h, h, h, key_padding_mask=key_padding_mask,
                              need_weights=False)
         elif isinstance(self.attn, PerformerAttention):
             h = self.attn(h, mask=mask)

@@ -64,17 +64,17 @@ class MultiheadAttentionBlock(torch.nn.Module):
         if y_mask is not None:
             y_mask = ~y_mask
 
-        # PyTorch's native MHA fastpath (CUDA, eval mode) uses a masked softmax
-        # kernel with 32-bit indexing that reads out-of-bounds for
-        # `batch_size * heads * T * T > 2**31` (CUDA illegal memory access).
-        # Route such calls through the regular path (which uses
-        # `scaled_dot_product_attention`) instead.
-        if (not torch.jit.is_scripting() and not self.training and x.is_cuda
-                and y_mask is not None
-                and torch.backends.mha.get_fastpath_enabled()):
-            out = self._attn_no_fastpath(x, y, y_mask)
-        else:
-            out, _ = self.attn(x, y, y, y_mask, need_weights=False)
+        # A float key padding mask opts out of PyTorch's native MHA fastpath
+        # (which rejects floating-point masks and is only taken in eval mode),
+        # whose CUDA masked softmax kernel indexes with 32 bits and reads
+        # out-of-bounds for `batch_size * heads * T * T > 2**31` with even
+        # `heads` and `T <= 1024`. The regular `scaled_dot_product_attention`
+        # path converts a boolean mask into the same `-inf` mask:
+        if y_mask is not None and x.is_cuda:
+            y_mask = torch.zeros_like(y_mask, dtype=x.dtype).masked_fill(
+                y_mask, float('-inf'))
+
+        out, _ = self.attn(x, y, y, y_mask, need_weights=False)
 
         if x_mask is not None:
             out[~x_mask] = 0.
@@ -89,21 +89,6 @@ class MultiheadAttentionBlock(torch.nn.Module):
         if self.layer_norm2 is not None:
             out = self.layer_norm2(out)
 
-        return out
-
-    @torch.jit.unused
-    def _attn_no_fastpath(
-        self,
-        x: Tensor,
-        y: Tensor,
-        y_mask: Optional[Tensor] = None,
-    ) -> Tensor:
-        fastpath_enabled = torch.backends.mha.get_fastpath_enabled()
-        torch.backends.mha.set_fastpath_enabled(False)
-        try:
-            out, _ = self.attn(x, y, y, y_mask, need_weights=False)
-        finally:
-            torch.backends.mha.set_fastpath_enabled(fastpath_enabled)
         return out
 
     def __repr__(self) -> str:
