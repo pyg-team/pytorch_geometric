@@ -3,8 +3,9 @@ import torch
 
 import torch_geometric.typing
 from torch_geometric.nn import GPSConv, SAGEConv
+from torch_geometric.testing import withCUDA
 from torch_geometric.typing import SparseTensor
-from torch_geometric.utils import to_torch_csc_tensor
+from torch_geometric.utils import to_dense_batch, to_torch_csc_tensor
 
 
 @pytest.mark.parametrize('attn_type', ['multihead', 'performer'])
@@ -35,3 +36,43 @@ def test_gps_conv(norm, attn_type):
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         assert torch.allclose(conv(x, adj2.t(), batch), out, atol=1e-6)
+
+
+@withCUDA
+def test_gps_conv_mha_fastpath(device: torch.device, monkeypatch):
+    # `merge_masks` is only called on the native MHA fastpath, so record
+    # whether a padding mask is present whenever the fastpath is taken:
+    calls = []
+    merge_masks = torch.nn.MultiheadAttention.merge_masks
+
+    def spy(self, attn_mask, key_padding_mask, query):
+        calls.append(key_padding_mask is not None)
+        return merge_masks(self, attn_mask, key_padding_mask, query)
+
+    monkeypatch.setattr(torch.nn.MultiheadAttention, 'merge_masks', spy)
+
+    x = torch.randn(6, 16, device=device)
+    edge_index = torch.tensor([[0, 1, 2, 3], [1, 0, 3, 2]], device=device)
+    batch = torch.tensor([0, 0, 1, 1, 1, 1], device=device)
+
+    conv = GPSConv(16, conv=None, heads=2).to(device)
+    conv.eval()
+
+    # Positive control: a boolean key padding mask takes the fastpath, so the
+    # assertions below cannot pass vacuously with the fastpath unavailable:
+    h, mask = to_dense_batch(x, batch)
+    with torch.no_grad():
+        conv.attn(h, h, h, ~mask, need_weights=False)
+    assert calls == [True]
+    calls.clear()
+
+    with torch.no_grad():
+        out = conv(x, edge_index, batch)
+    assert out.size() == (6, 16)
+    assert out.isfinite().all()
+
+    # Masked attention must avoid the fastpath on CUDA:
+    if device.type == 'cuda':
+        assert calls == []
+    else:
+        assert calls == [True]
