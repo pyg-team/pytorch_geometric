@@ -591,7 +591,8 @@ def main():
     parser.add_argument("--batch_size", type=int, default=512)
     parser.add_argument("--temporal_strategy", type=str, default="uniform",
                         choices=["uniform", "last"])
-    parser.add_argument("--num_neighbors", type=list, default=[128, 128])
+    parser.add_argument("--num_neighbors", type=int, nargs="+",
+                        default=[128, 128])
     parser.add_argument("--channels", type=int, default=128)
     parser.add_argument("--aggr", type=str, default="sum")
     parser.add_argument("--norm", type=str, default="batch_norm")

@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Fixed
 
 - Fixed `examples/rdl.py`, `examples/relbench_example.py` and `examples/llm/relbench_gretriever.py` for `relbench>=3.0` ([#10790](https://github.com/pyg-team/pytorch_geometric/pull/10790))
+- Fixed `--num_neighbors` parsing in `examples/rdl.py` ([#10790](https://github.com/pyg-team/pytorch_geometric/pull/10790))
 - Fixed `config_store` on Python 3.14, where `typing.Union`/`typing.Optional` annotations could no longer be remapped in-place via the now read-only `__args__` attribute
 
 ### Security
