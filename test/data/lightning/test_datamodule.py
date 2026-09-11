@@ -239,6 +239,8 @@ def test_lightning_node_data(get_dataset, strategy_type, loader):
     if loader == 'neighbor':
         kwargs['num_neighbors'] = [5]
         kwargs_repr += 'num_neighbors=[5], '
+    if num_workers > 0:
+        kwargs["multiprocessing_context"] = 'spawn'
 
     trainer = pl.Trainer(strategy=strategy, devices=devices, max_epochs=5,
                          log_every_n_steps=1)
