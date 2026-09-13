@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- `collate` now warns when `data_list[0]` does not carry every node/edge type in the list, since the stores it lacks are silently dropped from the batch ([#10804](https://github.com/pyg-team/pytorch_geometric/pull/10804))
 - Improved error handling in `txt2kg` multi-process execution. ([#10771](https://github.com/pyg-team/pytorch_geometric/pull/10771))
 
 ### Deprecated
