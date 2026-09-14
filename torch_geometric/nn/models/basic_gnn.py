@@ -88,9 +88,13 @@ class BasicGNN(torch.nn.Module):
 
         if channel_list is not None:
             if in_channels is not None or hidden_channels is not None or num_layers is not None or out_channels is not None:
-                raise ValueError("Cannot specify 'channel_list' and 'in_channels'/'hidden_channels'/'num_layers'/'out_channels' at the same time.")
+                raise ValueError(
+                    "Cannot specify 'channel_list' and 'in_channels'/'hidden_channels'/'num_layers'/'out_channels' at the same time."
+                )
             if len(channel_list) < 2:
-                raise ValueError("Argument 'channel_list' must contain at least two elements.")
+                raise ValueError(
+                    "Argument 'channel_list' must contain at least two elements."
+                )
             in_channels = channel_list[0]
             out_channels = channel_list[-1]
             num_layers = len(channel_list) - 1
@@ -98,15 +102,24 @@ class BasicGNN(torch.nn.Module):
                 # If using jk, check that all hidden dimensions are equal
                 for i in range(1, len(channel_list) - 1):
                     if channel_list[i] != channel_list[1]:
-                        raise ValueError(f"When using JumpingKnowledge ('jk'='{jk}'), all hidden channels must be equal.")
-            
+                        raise ValueError(
+                            f"When using JumpingKnowledge ('jk'='{jk}'), all hidden channels must be equal."
+                        )
+
         else:
             if in_channels is None or hidden_channels is None or num_layers is None:
-                raise ValueError("Arguments 'in_channels', 'hidden_channels' and 'num_layers' must be provided if 'channel_list' is not given.")
-            channel_list = [in_channels] + [hidden_channels] * (num_layers - 1) + [out_channels if out_channels is not None else hidden_channels]
+                raise ValueError(
+                    "Arguments 'in_channels', 'hidden_channels' and 'num_layers' must be provided if 'channel_list' is not given."
+                )
+            channel_list = [
+                in_channels
+            ] + [hidden_channels] * (num_layers - 1) + [
+                out_channels if out_channels is not None else hidden_channels
+            ]
 
         self.in_channels = in_channels
-        self.hidden_channels = channel_list[1] if num_layers > 1 else out_channels if out_channels is not None else hidden_channels
+        self.hidden_channels = channel_list[
+            1] if num_layers > 1 else out_channels if out_channels is not None else hidden_channels
         self.num_layers = num_layers
 
         self.dropout = torch.nn.Dropout(p=dropout)
@@ -129,9 +142,10 @@ class BasicGNN(torch.nn.Module):
                 out_dim = out_channels
             else:
                 out_dim = channel_list[i + 1]
-                
-            self.convs.append(self.init_conv(in_channels_iter, out_dim, **kwargs))
-            
+
+            self.convs.append(
+                self.init_conv(in_channels_iter, out_dim, **kwargs))
+
             if isinstance(in_channels_iter, (tuple, list)):
                 in_channels_iter = (out_dim, out_dim)
             else:
@@ -139,7 +153,7 @@ class BasicGNN(torch.nn.Module):
 
         self.norms = ModuleList()
         self.supports_norm_batch = False
-        
+
         for i in range(num_layers - 1):
             norm_layer = normalization_resolver(
                 norm,
@@ -148,17 +162,18 @@ class BasicGNN(torch.nn.Module):
             )
             if norm_layer is None:
                 norm_layer = torch.nn.Identity()
-            
+
             if i == 0 and hasattr(norm_layer, 'forward'):
                 norm_params = inspect.signature(norm_layer.forward).parameters
                 self.supports_norm_batch = 'batch' in norm_params
-            
+
             self.norms.append(copy.deepcopy(norm_layer))
 
         if jk is not None:
             norm_layer = normalization_resolver(
                 norm,
-                channel_list[-1] if jk == 'last' else channel_list[-2],  # usually jk requires constant hidden_channels anyway
+                channel_list[-1] if jk == 'last' else channel_list[
+                    -2],  # usually jk requires constant hidden_channels anyway
                 **(norm_kwargs or {}),
             )
             if norm_layer is None:
