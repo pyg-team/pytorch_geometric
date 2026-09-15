@@ -1,1 +1,5 @@
-__all__ = classes = []
+from .synthfin import SynthFinDataset
+
+__all__ = classes = [
+    'SynthFinDataset',
+]

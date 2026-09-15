@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - Added `torch_geometric.contrib.nn.models.MGNAN` (M-GNAN, an extension of `GNAN` to multivariate shape functions) model plus an example ([#10371](https://github.com/pyg-team/pytorch_geometric/pull/10371))
+- Added `torch_geometric.contrib.datasets.SynthFinDataset`, an AML graph benchmark with 100k nodes and 1.27M edges for transductive node classification ([#10774](https://github.com/pyg-team/pytorch_geometric/pull/10774))
 
 ### Changed
 
