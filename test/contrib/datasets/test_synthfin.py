@@ -1,12 +1,13 @@
 import pytest
 
 from torch_geometric.contrib.datasets import SynthFinDataset
-from torch_geometric.testing import onlyFullTest, onlyOnline
+from torch_geometric.testing import onlyFullTest, onlyOnline, withPackage
 
 
 @pytest.mark.dataset
 @onlyOnline
 @onlyFullTest
+@withPackage('pandas', 'networkx')
 def test_synthfin_dataset(tmp_path):
     dataset = SynthFinDataset(root=str(tmp_path))
 
