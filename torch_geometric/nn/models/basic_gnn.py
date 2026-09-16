@@ -69,9 +69,9 @@ class BasicGNN(torch.nn.Module):
 
     def __init__(
         self,
-        in_channels: int,
-        hidden_channels: int,
-        num_layers: int,
+        in_channels: Optional[int] = None,
+        hidden_channels: Optional[int] = None,
+        num_layers: Optional[int] = None,
         out_channels: Optional[int] = None,
         dropout: float = 0.0,
         act: Union[str, Callable, None] = "relu",
@@ -80,12 +80,50 @@ class BasicGNN(torch.nn.Module):
         norm: Union[str, Callable, None] = None,
         norm_kwargs: Optional[Dict[str, Any]] = None,
         jk: Optional[str] = None,
-        **kwargs,
-    ):
+        *,
+        channel_list: Optional[List[int]] = None,
+        **kwargs: Any,
+    ) -> None:
         super().__init__()
 
+        if channel_list is not None:
+            if (in_channels is not None or hidden_channels is not None
+                    or num_layers is not None or out_channels is not None):
+                raise ValueError(
+                    "Cannot specify 'channel_list' and 'in_channels'/"
+                    "'hidden_channels'/'num_layers'/"
+                    "'out_channels' at the same time.")
+            if len(channel_list) < 2:
+                raise ValueError("Argument 'channel_list' must contain "
+                                 "at least two elements.")
+            in_channels = channel_list[0]
+            out_channels = channel_list[-1]
+            num_layers = len(channel_list) - 1
+            if jk is not None:
+                # If using jk, check that all hidden dimensions are equal
+                for i in range(1, len(channel_list) - 1):
+                    if channel_list[i] != channel_list[1]:
+                        raise ValueError(
+                            f"When using JumpingKnowledge ('jk'='{jk}'), "
+                            f"all hidden channels must be equal.")
+
+        else:
+            if (in_channels is None or hidden_channels is None
+                    or num_layers is None):
+                raise ValueError(
+                    "Arguments 'in_channels', 'hidden_channels' "
+                    "and 'num_layers' "
+                    "must be provided if 'channel_list' is not given.")
+            channel_list = [
+                in_channels
+            ] + [hidden_channels] * (num_layers - 1) + [
+                out_channels if out_channels is not None else hidden_channels
+            ]
+
         self.in_channels = in_channels
-        self.hidden_channels = hidden_channels
+        self.hidden_channels = (
+            channel_list[1] if num_layers > 1 else
+            out_channels if out_channels is not None else hidden_channels)
         self.num_layers = num_layers
 
         self.dropout = torch.nn.Dropout(p=dropout)
@@ -101,46 +139,49 @@ class BasicGNN(torch.nn.Module):
             self.out_channels = hidden_channels
 
         self.convs = ModuleList()
-        if num_layers > 1:
-            self.convs.append(
-                self.init_conv(in_channels, hidden_channels, **kwargs))
-            if isinstance(in_channels, (tuple, list)):
-                in_channels = (hidden_channels, hidden_channels)
+        in_channels_iter = in_channels
+        for i in range(num_layers):
+            if i == num_layers - 1 and out_channels is not None and jk is None:
+                self._is_conv_to_out = True
+                out_dim = out_channels
             else:
-                in_channels = hidden_channels
-        for _ in range(num_layers - 2):
+                out_dim = channel_list[i + 1]
+
             self.convs.append(
-                self.init_conv(in_channels, hidden_channels, **kwargs))
-            if isinstance(in_channels, (tuple, list)):
-                in_channels = (hidden_channels, hidden_channels)
+                self.init_conv(in_channels_iter, out_dim, **kwargs))
+
+            if isinstance(in_channels_iter, (tuple, list)):
+                in_channels_iter = (out_dim, out_dim)
             else:
-                in_channels = hidden_channels
-        if out_channels is not None and jk is None:
-            self._is_conv_to_out = True
-            self.convs.append(
-                self.init_conv(in_channels, out_channels, **kwargs))
-        else:
-            self.convs.append(
-                self.init_conv(in_channels, hidden_channels, **kwargs))
+                in_channels_iter = out_dim
 
         self.norms = ModuleList()
-        norm_layer = normalization_resolver(
-            norm,
-            hidden_channels,
-            **(norm_kwargs or {}),
-        )
-        if norm_layer is None:
-            norm_layer = torch.nn.Identity()
-
         self.supports_norm_batch = False
-        if hasattr(norm_layer, 'forward'):
-            norm_params = inspect.signature(norm_layer.forward).parameters
-            self.supports_norm_batch = 'batch' in norm_params
 
-        for _ in range(num_layers - 1):
+        for i in range(num_layers - 1):
+            norm_layer = normalization_resolver(
+                norm,
+                channel_list[i + 1],
+                **(norm_kwargs or {}),
+            )
+            if norm_layer is None:
+                norm_layer = torch.nn.Identity()
+
+            if i == 0 and hasattr(norm_layer, 'forward'):
+                norm_params = inspect.signature(norm_layer.forward).parameters
+                self.supports_norm_batch = 'batch' in norm_params
+
             self.norms.append(copy.deepcopy(norm_layer))
 
         if jk is not None:
+            norm_layer = normalization_resolver(
+                norm,
+                channel_list[-1] if jk == 'last' else channel_list[
+                    -2],  # usually jk requires constant hidden_channels anyway
+                **(norm_kwargs or {}),
+            )
+            if norm_layer is None:
+                norm_layer = torch.nn.Identity()
             self.norms.append(copy.deepcopy(norm_layer))
         else:
             self.norms.append(torch.nn.Identity())
@@ -160,7 +201,7 @@ class BasicGNN(torch.nn.Module):
         self._trim = TrimToLayer()
 
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
-                  out_channels: int, **kwargs) -> MessagePassing:
+                  out_channels: int, **kwargs: Any) -> MessagePassing:
         raise NotImplementedError
 
     def reset_parameters(self):
@@ -427,7 +468,7 @@ class GCN(BasicGNN):
     supports_norm_batch: Final[bool]
 
     def init_conv(self, in_channels: int, out_channels: int,
-                  **kwargs) -> MessagePassing:
+                  **kwargs: Any) -> MessagePassing:
         return GCNConv(in_channels, out_channels, **kwargs)
 
 
@@ -472,7 +513,7 @@ class GraphSAGE(BasicGNN):
     supports_norm_batch: Final[bool]
 
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
-                  out_channels: int, **kwargs) -> MessagePassing:
+                  out_channels: int, **kwargs: Any) -> MessagePassing:
         return SAGEConv(in_channels, out_channels, **kwargs)
 
 
@@ -514,7 +555,7 @@ class GIN(BasicGNN):
     supports_norm_batch: Final[bool]
 
     def init_conv(self, in_channels: int, out_channels: int,
-                  **kwargs) -> MessagePassing:
+                  **kwargs: Any) -> MessagePassing:
         mlp = MLP(
             [in_channels, out_channels, out_channels],
             act=self.act,
@@ -573,7 +614,7 @@ class GAT(BasicGNN):
     supports_norm_batch: Final[bool]
 
     def init_conv(self, in_channels: Union[int, Tuple[int, int]],
-                  out_channels: int, **kwargs) -> MessagePassing:
+                  out_channels: int, **kwargs: Any) -> MessagePassing:
 
         v2 = kwargs.pop('v2', False)
         heads = kwargs.pop('heads', 1)
@@ -636,7 +677,7 @@ class PNA(BasicGNN):
     supports_norm_batch: Final[bool]
 
     def init_conv(self, in_channels: int, out_channels: int,
-                  **kwargs) -> MessagePassing:
+                  **kwargs: Any) -> MessagePassing:
         return PNAConv(in_channels, out_channels, **kwargs)
 
 
@@ -678,7 +719,7 @@ class EdgeCNN(BasicGNN):
     supports_norm_batch: Final[bool]
 
     def init_conv(self, in_channels: int, out_channels: int,
-                  **kwargs) -> MessagePassing:
+                  **kwargs: Any) -> MessagePassing:
         mlp = MLP(
             [2 * in_channels, out_channels, out_channels],
             act=self.act,
