@@ -45,7 +45,17 @@ def activation_resolver(query: Union[Any, str] = 'relu', *args, **kwargs):
 # Normalization Resolver ######################################################
 
 
-def normalization_resolver(query: Union[Any, str], *args, **kwargs):
+def normalization_resolver(
+    query: Union[Any, str],
+    *args,
+    auto_in_channels: Optional[int] = None,
+    **kwargs,
+):
+    """Resolve a normalization layer, optionally supplying its channel count.
+
+    ``auto_in_channels`` is only forwarded to constructors that explicitly
+    accept ``in_channels``. Positional arguments retain their usual meaning.
+    """
     import torch_geometric.nn.norm as norm
     base_cls = torch.nn.Module
     base_cls_repr = 'Norm'
@@ -53,6 +63,15 @@ def normalization_resolver(query: Union[Any, str], *args, **kwargs):
         norm for norm in vars(norm).values()
         if isinstance(norm, type) and issubclass(norm, base_cls)
     ]
+    if isinstance(query, str) and auto_in_channels is not None:
+        query_repr = normalize_string(query)
+        for cls in norms:
+            cls_repr = normalize_string(cls.__name__)
+            if query_repr in [cls_repr, cls_repr.replace('norm', '')]:
+                if 'in_channels' in inspect.signature(cls).parameters:
+                    return cls(*args, in_channels=auto_in_channels, **kwargs)
+                break
+
     norm_dict = {}
     return resolver(norms, norm_dict, query, base_cls, base_cls_repr, *args,
                     **kwargs)
