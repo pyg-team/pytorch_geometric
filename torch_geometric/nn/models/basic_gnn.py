@@ -126,7 +126,7 @@ class BasicGNN(torch.nn.Module):
         self.norms = ModuleList()
         norm_layer = normalization_resolver(
             norm,
-            hidden_channels,
+            auto_in_channels=hidden_channels,
             **(norm_kwargs or {}),
         )
         if norm_layer is None:

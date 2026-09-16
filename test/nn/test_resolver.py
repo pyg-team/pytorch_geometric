@@ -108,3 +108,24 @@ def test_lr_scheduler_resolver(scheduler_args):
         num_training_steps=100,
     )
     assert isinstance(lr_scheduler, scheduler_cls)
+
+
+def test_normalization_resolver_auto_channels():
+    assert normalization_resolver('PairNorm', 2.0).scale == 2.0
+    assert normalization_resolver('pair', 2.0,
+                                  auto_in_channels=16).scale == 2.0
+    assert normalization_resolver('pair', auto_in_channels=16).scale == 1.0
+    norm = torch_geometric.nn.PairNorm(scale=3.0)
+    assert normalization_resolver(norm, auto_in_channels=16) is norm
+    assert normalization_resolver(None, auto_in_channels=16) is None
+    assert normalization_resolver('batch',
+                                  auto_in_channels=16).in_channels == 16
+    assert normalization_resolver('batch', in_channels=16).in_channels == 16
+    with pytest.raises(TypeError):
+        normalization_resolver('pair', auto_in_channels=16, invalid=True)
+    with pytest.raises(TypeError):
+        normalization_resolver('pair', 2.0, auto_in_channels=16, scale=3.0)
+    with pytest.raises(TypeError):
+        normalization_resolver('batch', auto_in_channels=16, in_channels=4)
+    with pytest.raises(ValueError, match='Could not resolve'):
+        normalization_resolver('unknown', auto_in_channels=16)

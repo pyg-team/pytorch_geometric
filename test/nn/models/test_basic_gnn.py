@@ -9,7 +9,16 @@ import torch.nn.functional as F
 
 from torch_geometric.data import Data
 from torch_geometric.loader import NeighborLoader
-from torch_geometric.nn import SAGEConv
+from torch_geometric.nn import (
+    BatchNorm,
+    GraphNorm,
+    GraphSizeNorm,
+    InstanceNorm,
+    LayerNorm,
+    MeanSubtractionNorm,
+    PairNorm,
+    SAGEConv,
+)
 from torch_geometric.nn.models import GAT, GCN, GIN, PNA, EdgeCNN, GraphSAGE
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import (
@@ -394,6 +403,38 @@ def test_basic_gnn_cache():
     out2 = model.inference(loader, cache=True)
 
     assert torch.allclose(out1, out2)
+
+
+@pytest.mark.parametrize('width', [4, 16])
+@pytest.mark.parametrize('norm_cls, norm_name, kwargs', [
+    (PairNorm, 'pair_norm', {}),
+    (PairNorm, 'PairNorm', {
+        'scale': 2.0
+    }),
+    (MeanSubtractionNorm, 'mean_subtraction', {}),
+    (GraphSizeNorm, 'graph_size_norm', {}),
+    (BatchNorm, 'batch', {}),
+    (InstanceNorm, 'instance_norm', {}),
+    (LayerNorm, 'layer_norm', {}),
+    (GraphNorm, 'graph_norm', {}),
+])
+def test_gcn_normalization_matches_module(width, norm_cls, norm_name, kwargs):
+    if norm_cls in (BatchNorm, InstanceNorm, LayerNorm, GraphNorm):
+        norm = norm_cls(width, **kwargs)
+    else:
+        norm = norm_cls(**kwargs)
+    model = GCN(2, width, 2, norm=norm_name, norm_kwargs=kwargs)
+    reference = GCN(2, width, 2, norm=norm)
+    reference.load_state_dict(model.state_dict())
+    model.eval()
+    reference.eval()
+
+    x = torch.arange(12, dtype=torch.float).view(6, 2)
+    edge_index = torch.tensor([[0, 1, 1, 2, 3, 4, 4, 5],
+                               [1, 0, 2, 1, 4, 3, 5, 4]])
+    batch = torch.tensor([0, 0, 0, 1, 1, 1])
+    torch.testing.assert_close(model(x, edge_index, batch=batch),
+                               reference(x, edge_index, batch=batch))
 
 
 if __name__ == '__main__':
