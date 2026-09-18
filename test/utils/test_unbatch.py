@@ -23,3 +23,25 @@ def test_unbatch_edge_index():
     edge_indices = unbatch_edge_index(edge_index, batch)
     assert edge_indices[0].tolist() == [[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]]
     assert edge_indices[1].tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
+
+
+def test_unbatch_edge_index_trailing_edgeless_graphs():
+    edge_index = torch.tensor([[0, 1], [1, 0]])
+    batch = torch.tensor([0, 0, 1])
+
+    edge_indices = unbatch_edge_index(edge_index, batch)
+    assert len(edge_indices) == 2
+    assert edge_indices[0].tolist() == [[0, 1], [1, 0]]
+    assert edge_indices[1].numel() == 0
+    assert edge_indices[1].shape == (2, 0)
+
+
+def test_unbatch_edge_index_all_edgeless():
+    edge_index = torch.empty((2, 0), dtype=torch.long)
+    batch = torch.tensor([0, 1])
+
+    edge_indices = unbatch_edge_index(edge_index, batch)
+    assert len(edge_indices) == 2
+    for e in edge_indices:
+        assert e.numel() == 0
+        assert e.shape == (2, 0)
