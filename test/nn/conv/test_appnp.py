@@ -1,4 +1,7 @@
+from unittest.mock import patch
+
 import torch
+import torch.nn.functional as F
 
 import torch_geometric.typing
 from torch_geometric.nn import APPNP
@@ -55,3 +58,28 @@ def test_appnp_dropout():
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
         assert torch.allclose(0.1 * x, conv(x, adj2.t()), rtol=1e-5, atol=1e-6)
+
+
+def test_appnp_dropout_applied_independently():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    edge_weight = torch.ones(4)
+
+    conv = APPNP(K=3, alpha=0.1, dropout=0.5)
+    conv.train()  # Enable dropout.
+
+    real_dropout = F.dropout
+    inputs = []
+
+    def record_dropout(t, p):
+        inputs.append(t.clone())
+        return real_dropout(t, p)
+
+    with patch.object(F, 'dropout', side_effect=record_dropout):
+        conv(x, edge_index, edge_weight)
+
+    # Dropout must be applied to the original (normalized) edge weights at
+    # every step, not to the already-dropped weights of the previous step.
+    assert len(inputs) == 3
+    for t in inputs[1:]:
+        assert torch.equal(t, inputs[0])
