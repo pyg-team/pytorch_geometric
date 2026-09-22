@@ -1,4 +1,5 @@
 import pytest
+import torch
 
 from torch_geometric.datasets import FakeDataset, FakeHeteroDataset
 
@@ -82,3 +83,15 @@ def test_fake_hetero_dataset(num_graphs, edge_dim, task):
         assert data.y.size() == (1, )
 
     assert data.global_features.size() == (3, )
+
+
+@pytest.mark.parametrize('is_undirected', [False, True])
+def test_fake_dataset_avg_degree(is_undirected):
+    # `avg_degree` is the degree per node whether or not the graph is made
+    # undirected, which adds the reverse of every sampled edge (#9988):
+    torch.manual_seed(12345)
+    dataset = FakeDataset(num_graphs=4, avg_num_nodes=1000, avg_degree=10,
+                          is_undirected=is_undirected)
+    for data in dataset:
+        assert 9.5 < data.num_edges / data.num_nodes <= 10.0
+        assert data.is_undirected() == is_undirected
