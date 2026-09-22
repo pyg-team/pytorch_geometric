@@ -115,3 +115,40 @@ def test_add_random_walk_pe():
         [1.0, 1.0, 1.0],
         [0.0, 0.0, 0.0],
     ]
+
+
+def test_add_random_walk_pe_edge_weight():
+    # Node 0 moves to node 1 with probability 1/4 and to node 2 with 3/4, and
+    # both walk straight back, so the return probabilities are exact (#10098):
+    edge_index = torch.tensor([[0, 0, 1, 2], [1, 2, 0, 0]])
+    edge_weight = torch.tensor([1.0, 3.0, 2.0, 2.0])
+    transform = AddRandomWalkPE(walk_length=3, attr_name='pe')
+
+    out = transform(
+        Data(edge_index=edge_index, edge_weight=edge_weight, num_nodes=3))
+    expected = torch.tensor([
+        [0.0, 1.0, 0.0],
+        [0.0, 0.25, 0.0],
+        [0.0, 0.75, 0.0],
+    ])
+    assert torch.allclose(out.pe, expected)
+
+    # Only the relative weights matter, including weights below one:
+    out = transform(
+        Data(edge_index=edge_index, edge_weight=0.1 * edge_weight,
+             num_nodes=3))
+    assert torch.allclose(out.pe, expected)
+
+
+def test_add_random_walk_pe_duplicated_edges():
+    # A duplicated edge counts once per copy, on the dense code path (at most
+    # 2,000 nodes) as on the sparse one, so padding the graph with isolated
+    # nodes past that threshold must not change the encoding:
+    edge_index = torch.tensor([[0, 0, 0, 1, 2], [1, 1, 2, 0, 0]])
+    transform = AddRandomWalkPE(walk_length=4, attr_name='pe')
+
+    dense = transform(Data(edge_index=edge_index, num_nodes=3)).pe
+    sparse = transform(Data(edge_index=edge_index, num_nodes=2_001)).pe[:3]
+    assert torch.allclose(dense, sparse)
+    # Node 0 moves to node 1 with probability 2/3:
+    assert torch.allclose(dense[1, 1], torch.tensor(2.0 / 3.0))
