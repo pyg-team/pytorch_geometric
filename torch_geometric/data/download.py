@@ -10,6 +10,19 @@ import fsspec
 from torch_geometric.io import fs
 
 
+def _get_ssl_context():
+    r"""Return the SSL context used for dataset downloads.
+
+    Certificate verification is enabled by default to prevent
+    man-in-the-middle attacks during dataset downloads. Users behind proxies
+    or mirrors with self-signed certificates can opt out by setting the
+    environment variable ``TORCH_GEOMETRIC_VERIFY_SSL`` to ``"0"``.
+    """
+    if os.environ.get('TORCH_GEOMETRIC_VERIFY_SSL') == '0':
+        return ssl._create_unverified_context()
+    return ssl.create_default_context()
+
+
 def download_url(
     url: str,
     folder: str,
@@ -43,7 +56,7 @@ def download_url(
 
     os.makedirs(folder, exist_ok=True)
 
-    context = ssl._create_unverified_context()
+    context = _get_ssl_context()
     data = urllib.request.urlopen(url, context=context)
 
     with fsspec.open(path, 'wb') as f:
