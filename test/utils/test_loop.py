@@ -217,6 +217,33 @@ def test_add_self_loops_bipartite():
         ]))
 
 
+def test_add_self_loops_bipartite_with_edge_attr():
+    edge_index = torch.tensor([[0, 1, 2, 0, 1], [0, 0, 1, 3, 4]])
+    edge_attr = torch.arange(10.).view(5, 2)
+
+    expected = torch.tensor([
+        [0, 1, 2, 0, 1, 0, 1, 2],
+        [0, 0, 1, 3, 4, 0, 1, 2],
+    ])
+
+    out = add_self_loops(edge_index, edge_attr, fill_value='mean',
+                         num_nodes=(3, 5))
+    assert out[0].equal(expected)
+    assert out[1][:5].equal(edge_attr)
+    assert out[1][5:].equal(torch.tensor([[1., 2.], [4., 5.], [0., 0.]]))
+
+    out = add_self_loops(edge_index, edge_attr, fill_value='max',
+                         num_nodes=(3, 5))
+    assert out[0].equal(expected)
+    assert out[1][5:].equal(torch.tensor([[2., 3.], [4., 5.], [0., 0.]]))
+
+    # Nodes 1 and 2 have no incoming edges:
+    out = add_self_loops(edge_index[:, :2], edge_attr[:2], fill_value='mean',
+                         num_nodes=(3, 5))
+    assert out[0].equal(torch.tensor([[0, 1, 0, 1, 2], [0, 0, 0, 1, 2]]))
+    assert out[1][2:].equal(torch.tensor([[1., 2.], [0., 0.], [0., 0.]]))
+
+
 def test_add_remaining_self_loops():
     edge_index = torch.tensor([[0, 1, 0], [1, 0, 0]])
     edge_weight = torch.tensor([0.5, 0.5, 0.5])
