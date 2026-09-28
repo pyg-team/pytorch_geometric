@@ -138,7 +138,9 @@ def homophily(
         num_graphs = num_nodes.numel()
         batch = num_classes * batch + y
 
-        h = homophily(edge_index, y, batch, method='edge')
+        out = torch.zeros(row.size(0), device=row.device)
+        out[y[row] == y[col]] = 1.
+        h = scatter(out, batch[col], 0, num_classes * num_graphs, 'mean')
         h = h.view(num_graphs, num_classes)
 
         counts = batch.bincount(minlength=num_classes * num_graphs)

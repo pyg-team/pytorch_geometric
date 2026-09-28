@@ -31,3 +31,14 @@ def test_homophily():
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         assert pytest.approx(homophily(adj, y, method=method)) == 0.1999999
     assert homophily(edge_index, y, batch, method).tolist() == [0., 0.]
+
+
+def test_homophily_edge_insensitive_missing_class_in_last_graph():
+    # The last graph does not contain any node of the largest class:
+    edge_index = torch.tensor([[0, 1, 0, 3, 4], [1, 0, 2, 4, 3]])
+    y = torch.tensor([0, 0, 1, 0, 0])
+    batch = torch.tensor([0, 0, 0, 1, 1])
+
+    out = homophily(edge_index, y, batch, method='edge_insensitive')
+    assert out.size() == (2, )
+    assert torch.allclose(out, torch.tensor([1 / 3, 0.]))
