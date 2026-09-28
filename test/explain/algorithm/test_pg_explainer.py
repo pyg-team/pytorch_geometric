@@ -469,3 +469,10 @@ def test_pg_explainer_hetero_conv(device, hetero_data, hetero_model_custom,
     # Run through the standard explanation checker
     check_explanation_hetero(explanation, None, explainer.edge_mask_type,
                              hetero_data)
+
+
+def test_pg_explainer_coeffs_are_per_instance():
+    PGExplainer(epochs=1, edge_size=0.5)
+    explainer = PGExplainer(epochs=1)
+    assert explainer.coeffs['edge_size'] == 0.05
+    assert PGExplainer.coeffs['edge_size'] == 0.05

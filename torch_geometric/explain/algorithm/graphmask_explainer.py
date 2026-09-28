@@ -107,6 +107,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         self.epochs = epochs
         self.lr = lr
         self.log = log
+        self.coeffs = dict(self.coeffs)
         self.coeffs.update(kwargs)
 
     def forward(
