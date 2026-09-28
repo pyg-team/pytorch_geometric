@@ -129,6 +129,7 @@ class PRBCDAttack(torch.nn.Module):
         self.epochs_resampling = epochs_resampling
         self.lr = lr
 
+        self.coeffs = dict(self.coeffs)
         self.coeffs.update(kwargs)
 
     def attack(

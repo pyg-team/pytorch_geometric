@@ -108,3 +108,11 @@ def test_grbcd_attack(model, budget, is_undirected):
         else:
             possible_m = [m - 1, m + 1]
         assert pert_edge_index.size(1) in possible_m
+
+
+def test_prbcd_attack_coeffs_are_per_instance():
+    model = Linear(1, 1)
+    PRBCDAttack(model, block_size=10, eps=0.3)
+    attack = PRBCDAttack(model, block_size=10)
+    assert attack.coeffs['eps'] == 1e-7
+    assert PRBCDAttack.coeffs['eps'] == 1e-7

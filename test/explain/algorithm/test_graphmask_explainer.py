@@ -233,3 +233,10 @@ def test_graph_mask_explainer_regression(
     )
 
     check_explanation(edge_mask_type, node_mask_type, explanation)
+
+
+def test_graphmask_explainer_coeffs_are_per_instance():
+    GraphMaskExplainer(num_layers=2, epochs=1, node_feat_size=9.0)
+    explainer = GraphMaskExplainer(num_layers=2, epochs=1)
+    assert explainer.coeffs['node_feat_size'] == 1.0
+    assert GraphMaskExplainer.coeffs['node_feat_size'] == 1.0

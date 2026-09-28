@@ -78,6 +78,7 @@ class PGExplainer(ExplainerAlgorithm):
         super().__init__()
         self.epochs = epochs
         self.lr = lr
+        self.coeffs = dict(self.coeffs)
         self.coeffs.update(kwargs)
 
         self.mlp = Sequential(
