@@ -80,11 +80,14 @@ def dropout_adj(
     row, col, edge_attr = filter_adj(row, col, edge_attr, mask)
 
     if force_undirected:
-        edge_index = torch.stack(
-            [torch.cat([row, col], dim=0),
-             torch.cat([col, row], dim=0)], dim=0)
+        # Do not duplicate self-loops when adding reverse edges:
+        mask = row != col
+        edge_index = torch.stack([
+            torch.cat([row, col[mask]], dim=0),
+            torch.cat([col, row[mask]], dim=0)
+        ], dim=0)
         if edge_attr is not None:
-            edge_attr = torch.cat([edge_attr, edge_attr], dim=0)
+            edge_attr = torch.cat([edge_attr, edge_attr[mask]], dim=0)
     else:
         edge_index = torch.stack([row, col], dim=0)
 
@@ -212,8 +215,11 @@ def dropout_edge(edge_index: Tensor, p: float = 0.5,
     edge_index = edge_index[:, edge_mask]
 
     if force_undirected:
-        edge_index = torch.cat([edge_index, edge_index.flip(0)], dim=1)
-        edge_mask = edge_mask.nonzero().repeat((2, 1)).squeeze()
+        # Do not duplicate self-loops when adding reverse edges:
+        edge_id = edge_mask.nonzero().view(-1)
+        mask = edge_index[0] != edge_index[1]
+        edge_index = torch.cat([edge_index, edge_index[:, mask].flip(0)], 1)
+        edge_mask = torch.cat([edge_id, edge_id[mask]], dim=0)
 
     return edge_index, edge_mask
 
