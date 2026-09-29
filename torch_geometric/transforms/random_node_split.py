@@ -84,6 +84,13 @@ class RandomNodeSplit(BaseTransform):
             store.val_mask = torch.stack(val_masks, dim=-1).squeeze(-1)
             store.test_mask = torch.stack(test_masks, dim=-1).squeeze(-1)
 
+        if self.split != 'train_rest' and self.key is not None:
+            if not any(hasattr(store, self.key) for store in data.node_stores):
+                raise ValueError(
+                    f"'{self.__class__.__name__}' with split='{self.split}' "
+                    f"requires ground-truth labels, but no node store provides "
+                    f"the '{self.key}' attribute")
+
         return data
 
     def _split(self, store: NodeStorage) -> Tuple[Tensor, Tensor, Tensor]:
