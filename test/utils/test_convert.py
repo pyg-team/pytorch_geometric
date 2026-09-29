@@ -437,6 +437,24 @@ def test_from_networkit(directed, weighted):
             assert edge_weight is None
 
 
+@withPackage('networkit')
+def test_from_networkit_self_loop():
+    import networkit
+
+    undirected = networkit.Graph(2, weighted=True, directed=False)
+    undirected.addEdge(0, 0, 3)
+    undirected.addEdge(0, 1, 1)
+    edge_index, edge_weight = from_networkit(undirected)
+    assert edge_index.tolist() == [[0, 0, 1], [0, 1, 0]]
+    assert edge_weight.tolist() == [3, 1, 1]
+
+    directed = networkit.Graph(1, weighted=True, directed=True)
+    directed.addEdge(0, 0, 3)
+    edge_index, edge_weight = from_networkit(directed)
+    assert edge_index.tolist() == [[0], [0]]
+    assert edge_weight.tolist() == [3]
+
+
 @withPackage('trimesh')
 def test_trimesh_vice_versa():
     pos = torch.tensor([[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0]],
