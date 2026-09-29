@@ -364,7 +364,9 @@ def from_networkit(g: Any) -> Tuple[Tensor, Optional[Tensor]]:
     for u, v, w in g.iterEdgesWeights():
         edge_indices.append([u, v])
         edge_weights.append(w)
-        if not is_directed:
+        # A self-loop has no distinct reverse edge. Copying it again
+        # doubled the loop and its weight.
+        if not is_directed and u != v:
             edge_indices.append([v, u])
             edge_weights.append(w)
 
