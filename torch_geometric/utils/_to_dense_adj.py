@@ -71,9 +71,18 @@ def to_dense_adj(
     num_nodes = scatter(one, batch, dim=0, dim_size=batch_size, reduce='sum')
     cum_nodes = cumsum(num_nodes)
 
+    # Compute the local node index within each batch. Nodes are not guaranteed
+    # to be ordered by their batch assignment, so a plain subtraction of the
+    # batch offset would yield incorrect indices. Instead, rank each node
+    # within its batch using a stable sort (see #10534):
+    order = torch.argsort(batch, stable=True)
+    rank = torch.empty_like(order)
+    rank[order] = torch.arange(batch.numel(), device=batch.device)
+    node_index = rank - cum_nodes[batch]
+
     idx0 = batch[edge_index[0]]
-    idx1 = edge_index[0] - cum_nodes[batch][edge_index[0]]
-    idx2 = edge_index[1] - cum_nodes[batch][edge_index[1]]
+    idx1 = node_index[edge_index[0]]
+    idx2 = node_index[edge_index[1]]
 
     if max_num_nodes is None:
         max_num_nodes = int(num_nodes.max())
