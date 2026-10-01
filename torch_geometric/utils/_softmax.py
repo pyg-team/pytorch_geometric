@@ -1,5 +1,6 @@
 from typing import Optional
 
+import torch
 from torch import Tensor
 
 import torch_geometric.typing
@@ -57,6 +58,11 @@ def softmax(
             and not is_compiling()):  # pragma: no cover
         return pyg_lib.ops.softmax_csr(src, ptr, dim)
 
+    dtype = src.dtype
+    if dtype == torch.float16 or dtype == torch.bfloat16:
+        # Avoid overflow or accumulation stagnation in low-precision sums.
+        src = src.float()
+
     if (ptr is not None and
         (ptr.dim() == 1 or (ptr.dim() > 1 and index is None) or
          (torch_geometric.typing.WITH_TORCH_SCATTER and not is_compiling()))):
@@ -89,4 +95,5 @@ def softmax(
     else:
         raise NotImplementedError("'softmax' requires 'index' to be specified")
 
-    return out / out_sum
+    out = out / out_sum
+    return out.to(dtype) if dtype in (torch.float16, torch.bfloat16) else out

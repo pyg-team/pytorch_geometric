@@ -73,6 +73,64 @@ def test_softmax_dim():
             softmax(src, ptr=ptr, dim=1)
 
 
+@pytest.mark.parametrize(
+    'dtype', [torch.float16, torch.bfloat16, torch.float32, torch.float64])
+@pytest.mark.parametrize('size', [4096, 65536])
+@pytest.mark.parametrize('representation, dim', [('index', 0), ('index', 1),
+                                                 ('index', -1), ('ptr', 0)])
+def test_softmax_large_groups(dtype, size, representation, dim, monkeypatch):
+    monkeypatch.setattr(torch_geometric.typing, 'WITH_SOFTMAX', False)
+    monkeypatch.setattr(torch_geometric.typing, 'WITH_TORCH_SCATTER', False)
+    values = torch.zeros((size + 3, 2), dtype=dtype)
+    values[-3:] = torch.tensor([[1., 2.], [2., -1.], [-1., 0.]], dtype=dtype)
+    src = (values if dim == 0 else values.t()).requires_grad_()
+    reference_src = src.detach().clone().requires_grad_()
+    accumulation_dtype = (torch.float32 if dtype
+                          in (torch.float16, torch.bfloat16) else dtype)
+    expected = torch.cat([
+        torch.softmax(reference_src.narrow(dim, 0, size), dim=dim,
+                      dtype=accumulation_dtype),
+        torch.softmax(reference_src.narrow(dim, size, 3), dim=dim,
+                      dtype=accumulation_dtype),
+    ], dim=dim).to(dtype)
+    if representation == 'ptr':
+        out = softmax(src, ptr=torch.tensor([0, size, size, size + 3]))
+    else:
+        index = torch.cat([torch.zeros(size), torch.full((3, ), 2)]).long()
+        out = softmax(src, index, num_nodes=3, dim=dim)
+    torch.testing.assert_close(out, expected)
+    assert out.dtype == dtype
+    torch.testing.assert_close(
+        out.narrow(dim, 0, size).float().sum(dim=dim), torch.ones(2))
+    grad_output = (torch.arange(out.numel()).reshape_as(out) % 7).to(dtype) / 6
+    actual_grad, = torch.autograd.grad(out, src, grad_outputs=grad_output)
+    expected_grad, = torch.autograd.grad(expected, reference_src,
+                                         grad_outputs=grad_output)
+    torch.testing.assert_close(actual_grad, expected_grad)
+
+
+@pytest.mark.parametrize('dtype', [torch.int32, torch.int64])
+def test_softmax_integer_input(dtype):
+    src = torch.tensor([-1, 0, 1], dtype=dtype)
+    out = softmax(src, torch.zeros(3, dtype=torch.long))
+    torch.testing.assert_close(out, torch.softmax(src.float(), dim=0))
+    assert out.dtype == torch.float32
+
+
+@pytest.mark.parametrize('dtype', [torch.float16, torch.bfloat16])
+@pytest.mark.parametrize('representation', ['index', 'ptr'])
+def test_softmax_empty_low_precision(dtype, representation, monkeypatch):
+    monkeypatch.setattr(torch_geometric.typing, 'WITH_SOFTMAX', False)
+    monkeypatch.setattr(torch_geometric.typing, 'WITH_TORCH_SCATTER', False)
+    src = torch.empty((0, 2), dtype=dtype)
+    if representation == 'ptr':
+        out = softmax(src, ptr=torch.tensor([0, 0, 0]))
+    else:
+        out = softmax(src, torch.empty(0, dtype=torch.long), num_nodes=2)
+    assert out.shape == src.shape
+    assert out.dtype == dtype
+
+
 if __name__ == '__main__':
     import argparse
 
