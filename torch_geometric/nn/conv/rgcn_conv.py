@@ -198,7 +198,7 @@ class RGCNConv(MessagePassing):
         assert edge_type is not None
 
         # propagate_type: (x: Tensor, edge_type_ptr: OptTensor)
-        out = torch.zeros(x_r.size(0), self.out_channels, device=x_r.device)
+        out = self.weight.new_zeros((x_r.size(0), self.out_channels))
 
         weight = self.weight
         if self.num_bases is not None:  # Basis-decomposition =================
