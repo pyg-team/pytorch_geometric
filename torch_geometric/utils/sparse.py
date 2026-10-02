@@ -107,7 +107,10 @@ def dense_to_sparse(
             offset = cumsum(count)[:-1]
             offset = offset.repeat_interleave(count)
 
-        edge_index[1] += offset[edge_index[0]]
+        edge_index = torch.stack([
+            edge_index[0],
+            edge_index[1] + offset[edge_index[0]],
+        ], dim=0)
 
         return edge_index, edge_attr
 
