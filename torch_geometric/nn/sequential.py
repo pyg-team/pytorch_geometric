@@ -99,7 +99,8 @@ class Sequential(torch.nn.Module):
         # emit `from foo import *` in the generated jit template, which
         # re-imports and therefore re-executes the script (see #10393).
         self._caller_module = caller.frame.f_globals.get(
-            '__name__', osp.splitext(osp.basename(caller_path))[0])
+            '__name__',
+            osp.splitext(osp.basename(caller_path))[0])
 
         _globals = copy.copy(globals())
         _globals.update(sys.modules['__main__'].__dict__)
