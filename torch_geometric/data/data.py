@@ -704,6 +704,15 @@ class Data(BaseData, FeatureStore, GraphStore):
                     f"of nodes ({num_nodes}) in '{cls_name}' "
                     f"(found {int(self.edge_index.max())})", raise_on_error)
 
+        for key, value in self._store.items():
+            if isinstance(value, np.ndarray):
+                status = False
+                warn_or_raise(
+                    f"'{key}' in '{cls_name}' is stored as a 'numpy.ndarray' "
+                    f"instead of a 'torch.Tensor'. NumPy arrays are not moved "
+                    f"by '.to()' and will cause errors during model "
+                    f"execution; convert it to a tensor first", raise_on_error)
+
         return status
 
     def debug(self):

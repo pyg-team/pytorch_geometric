@@ -683,3 +683,20 @@ def test_data_inc():
     with pytest.raises(RuntimeError, match="Unable to infer"):
         with pytest.warns(UserWarning, match="Unable to accurately infer"):
             data.__inc__('index', data.edge_index)
+
+
+def test_data_validate_rejects_numpy_array():
+    import numpy as np
+
+    data = Data(x=np.array([[1.0], [2.0]]), edge_index=torch.tensor([[0],
+                                                                     [1]]))
+    with pytest.warns(UserWarning, match="numpy.ndarray"):
+        assert data.validate(raise_on_error=False) is False
+    with pytest.raises(ValueError, match="numpy.ndarray"):
+        data.validate(raise_on_error=True)
+
+
+def test_data_validate_accepts_tensor():
+    data = Data(x=torch.tensor([[1.0], [2.0]]), edge_index=torch.tensor([[0],
+                                                                         [1]]))
+    assert data.validate(raise_on_error=True) is True
