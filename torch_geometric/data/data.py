@@ -711,8 +711,7 @@ class Data(BaseData, FeatureStore, GraphStore):
                     f"'{key}' in '{cls_name}' is stored as a 'numpy.ndarray' "
                     f"instead of a 'torch.Tensor'. NumPy arrays are not moved "
                     f"by '.to()' and will cause errors during model "
-                    f"execution; convert it to a tensor first",
-                    raise_on_error)
+                    f"execution; convert it to a tensor first", raise_on_error)
 
         return status
 
