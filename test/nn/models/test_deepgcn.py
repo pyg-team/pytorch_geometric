@@ -4,8 +4,14 @@ import pytest
 import torch
 from torch.nn import ReLU
 
-from torch_geometric.nn import (DeepGCNLayer, GENConv, GCNConv, GraphNorm,
-                                InstanceNorm, LayerNorm)
+from torch_geometric.nn import (
+    DeepGCNLayer,
+    GCNConv,
+    GENConv,
+    GraphNorm,
+    InstanceNorm,
+    LayerNorm,
+)
 
 
 class BatchAwareNorm(torch.nn.Module):
@@ -76,15 +82,23 @@ def test_deepgcn_norm_batch_graph_independence(block, norm_cls):
     edge_index = torch.tensor([[0, 1, 2, 3], [1, 2, 3, 0]])
     companion_edge_index = torch.tensor([[0, 1, 2, 0], [1, 2, 0, 2]])
 
-    norm = norm_cls(3, **({'track_running_stats': False}
-                          if norm_cls is InstanceNorm else {}))
+    norm = norm_cls(
+        3,
+        **({
+            'track_running_stats': False
+        } if norm_cls is InstanceNorm else {}))
     layer = DeepGCNLayer(
-        GCNConv(3, 3), norm, torch.nn.Identity(), block=block,
+        GCNConv(3, 3),
+        norm,
+        torch.nn.Identity(),
+        block=block,
     )
     layer.eval()
 
     out_solo = layer(
-        x, edge_index, norm_batch=torch.zeros(x.size(0), dtype=torch.long),
+        x,
+        edge_index,
+        norm_batch=torch.zeros(x.size(0), dtype=torch.long),
     )
 
     node_offset = companion.size(0)
@@ -114,7 +128,10 @@ def test_deepgcn_norm_batch_routing():
     layer = DeepGCNLayer(conv, norm, block='plain')
 
     layer(
-        x, edge_index, batch=conv_batch, marker=marker,
+        x,
+        edge_index,
+        batch=conv_batch,
+        marker=marker,
         norm_batch=norm_batch,
     )
 
@@ -135,7 +152,8 @@ def test_deepgcn_norm_batch_compatibility():
     assert aware_norm.batches[-1] is norm_batch
     torch.testing.assert_close(out_without_batch, x)
     torch.testing.assert_close(
-        out_with_batch, x + norm_batch.float().unsqueeze(-1),
+        out_with_batch,
+        x + norm_batch.float().unsqueeze(-1),
     )
 
     layer_norm = torch.nn.LayerNorm(3)
@@ -148,7 +166,8 @@ def test_deepgcn_norm_batch_compatibility():
     no_norm = DeepGCNLayer(RecordingConv(), None, block='plain')
     torch.testing.assert_close(no_norm(x, edge_index), x)
     torch.testing.assert_close(
-        no_norm(x, edge_index, norm_batch=norm_batch), x,
+        no_norm(x, edge_index, norm_batch=norm_batch),
+        x,
     )
 
 
@@ -185,7 +204,11 @@ def test_deepgcn_checkpoint_gradient_parity(block):
     edge_index = torch.tensor([[0, 1, 2, 3], [1, 2, 3, 4]])
     batch = torch.tensor([0, 0, 0, 1, 1])
     base = DeepGCNLayer(
-        LinearConv(4), GraphNorm(4), ReLU(), block=block, dropout=0.0,
+        LinearConv(4),
+        GraphNorm(4),
+        ReLU(),
+        block=block,
+        dropout=0.0,
     )
     checkpointed = copy.deepcopy(base)
     checkpointed.ckpt_grad = True
@@ -194,31 +217,40 @@ def test_deepgcn_checkpoint_gradient_parity(block):
     x_checkpointed = x.clone().requires_grad_()
     out_base = base(x_base, edge_index, norm_batch=batch)
     out_checkpointed = checkpointed(
-        x_checkpointed, edge_index, norm_batch=batch,
+        x_checkpointed,
+        edge_index,
+        norm_batch=batch,
     )
     weights = torch.randn_like(out_base)
     loss_base = (out_base * weights).sum() + 0.1 * out_base.square().sum()
-    loss_checkpointed = (
-        (out_checkpointed * weights).sum()
-        + 0.1 * out_checkpointed.square().sum()
-    )
+    loss_checkpointed = ((out_checkpointed * weights).sum() +
+                         0.1 * out_checkpointed.square().sum())
     loss_base.backward()
     loss_checkpointed.backward()
 
     torch.testing.assert_close(
-        out_base, out_checkpointed, rtol=1e-5, atol=1e-6,
+        out_base,
+        out_checkpointed,
+        rtol=1e-5,
+        atol=1e-6,
     )
     assert x_base.grad is not None
     assert x_checkpointed.grad is not None
     torch.testing.assert_close(
-        x_base.grad, x_checkpointed.grad, rtol=1e-5, atol=1e-6,
+        x_base.grad,
+        x_checkpointed.grad,
+        rtol=1e-5,
+        atol=1e-6,
     )
     for param_base, param_checkpointed in zip(
-        base.parameters(), checkpointed.parameters(),
+            base.parameters(),
+            checkpointed.parameters(),
     ):
         assert param_base.grad is not None
         assert param_checkpointed.grad is not None
         torch.testing.assert_close(
-            param_base.grad, param_checkpointed.grad,
-            rtol=1e-5, atol=1e-6,
+            param_base.grad,
+            param_checkpointed.grad,
+            rtol=1e-5,
+            atol=1e-6,
         )
