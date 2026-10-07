@@ -1,3 +1,4 @@
+import inspect
 from typing import Optional
 
 import torch
@@ -36,6 +37,17 @@ class DeepGCNLayer(torch.nn.Module):
         <https://github.com/pyg-team/pytorch_geometric/blob/master/examples/
         ogbn_proteins_deepgcn.py>`_.
 
+        To apply graph-wise normalization to a batch of disconnected graphs,
+        pass the node-to-graph assignment vector via :obj:`norm_batch`::
+
+            x = layer(x, edge_index, edge_type, norm_batch=batch)
+
+        The vector is passed to normalization layers whose :meth:`forward`
+        method accepts a :obj:`batch` argument. It is not passed to the graph
+        convolution. If omitted, normalization is called as :obj:`norm(x)` as
+        before. Other positional and keyword arguments are passed to the graph
+        convolution.
+
     Args:
         conv (torch.nn.Module, optional): the GCN operator.
             (default: :obj:`None`)
@@ -65,6 +77,10 @@ class DeepGCNLayer(torch.nn.Module):
 
         self.conv = conv
         self.norm = norm
+        self.supports_norm_batch = False
+        if norm is not None and hasattr(norm, 'forward'):
+            norm_params = inspect.signature(norm.forward).parameters
+            self.supports_norm_batch = 'batch' in norm_params
         self.act = act
         self.block = block.lower()
         assert self.block in ['res+', 'res', 'dense', 'plain']
@@ -76,15 +92,34 @@ class DeepGCNLayer(torch.nn.Module):
         self.conv.reset_parameters()
         self.norm.reset_parameters()
 
-    def forward(self, *args, **kwargs) -> Tensor:
-        """"""  # noqa: D419
+    def forward(
+        self,
+        *args,
+        norm_batch: Optional[Tensor] = None,
+        **kwargs,
+    ) -> Tensor:
+        r"""Runs the graph convolution with the configured skip connection.
+
+        Args:
+            *args: The input node features, followed by additional positional
+                arguments passed to the graph convolution.
+            norm_batch (torch.Tensor, optional): The node-to-graph assignment
+                vector used for normalization. Forwarded as :obj:`batch` when
+                the normalization layer's inspectable :meth:`forward` signature
+                explicitly declares a :obj:`batch` parameter. Otherwise,
+                normalization is called without it. (default: :obj:`None`)
+            **kwargs: Keyword arguments passed to :obj:`conv`.
+        """
         args = list(args)
         x = args.pop(0)
 
         if self.block == 'res+':
             h = x
             if self.norm is not None:
-                h = self.norm(h)
+                if norm_batch is not None and self.supports_norm_batch:
+                    h = self.norm(h, batch=norm_batch)
+                else:
+                    h = self.norm(h)
             if self.act is not None:
                 h = self.act(h)
             h = F.dropout(h, p=self.dropout, training=self.training)
@@ -103,7 +138,10 @@ class DeepGCNLayer(torch.nn.Module):
             else:
                 h = self.conv(x, *args, **kwargs)
             if self.norm is not None:
-                h = self.norm(h)
+                if norm_batch is not None and self.supports_norm_batch:
+                    h = self.norm(h, batch=norm_batch)
+                else:
+                    h = self.norm(h)
             if self.act is not None:
                 h = self.act(h)
 
