@@ -1,3 +1,4 @@
+import warnings
 from dataclasses import dataclass
 from typing import Optional
 
@@ -5,6 +6,8 @@ import torch
 from torch import Tensor
 
 from torch_geometric.nn.pool.select import SelectOutput
+
+warnings.filterwarnings('ignore', r'.*`torch\.jit\.script`.*')
 
 
 @dataclass(init=False)
