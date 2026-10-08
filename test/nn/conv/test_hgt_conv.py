@@ -59,7 +59,7 @@ def test_hgt_conv_same_dimensions():
     # allows indexing `ParameterDict` mappings :(
 
 
-def test_hgt_conv_with_custom_aggr():
+def test_hgt_conv_with_custom_aggr() -> None:
     x_dict = {
         'author': torch.randn(4, 16),
         'paper': torch.randn(6, 16),
@@ -75,6 +75,17 @@ def test_hgt_conv_with_custom_aggr():
     out_dict = conv(x_dict, edge_index_dict)
     assert len(out_dict) == 1
     assert out_dict['paper'].size() == (6, 16)
+
+    default_conv = HGTConv(16, 16, metadata, heads=2)
+    default_conv.load_state_dict(conv.state_dict())
+    default_out = default_conv(x_dict, edge_index_dict)
+    assert torch.allclose(out_dict['paper'], default_out['paper'])
+
+    mean_conv = HGTConv(16, 16, metadata, heads=2, aggr='mean')
+    mean_conv.load_state_dict(conv.state_dict())
+    mean_out = mean_conv(x_dict, edge_index_dict)
+    assert mean_out['paper'].isfinite().all()
+    assert not torch.allclose(mean_out['paper'], out_dict['paper'])
 
 
 def test_hgt_conv_different_dimensions():
