@@ -463,5 +463,7 @@ if __name__ == '__main__':
         help='train glem without using additional pseudo labels '
         'for augmenting data only available for ogbn-products')
     args = parser.parse_args()
+    if args.num_workers < 0:
+        parser.error('--num_workers must be non-negative')
     print(args)
     main(args)
