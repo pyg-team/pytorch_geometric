@@ -15,6 +15,7 @@ from peft.
 import argparse
 import os
 import os.path as osp
+import re
 import time
 
 import psutil
@@ -39,7 +40,7 @@ def get_n_params(model):
     return pp
 
 
-def is_html_page(path):
+def is_html_page(path: str) -> bool:
     # What `download_url` leaves behind when Google Drive serves its quota
     # page instead of the file.
     try:
@@ -47,7 +48,67 @@ def is_html_page(path):
             head = f.read(1024)
     except OSError:
         return False
-    return head.lstrip(b'\xef\xbb\xbf \t\r\n').startswith(b'<')
+    head = head.lstrip().removeprefix(b'\xef\xbb\xbf').lstrip().lower()
+    return re.match(br'<(?:!doctype\s+html|html)(?:\s|>)', head) is not None
+
+
+def load_ext_predictions(root: str, device: torch.device) -> torch.Tensor:
+    # Kept outside the OGB dataset folder, which `ogb` deletes and
+    # re-creates when its release file is missing or outdated.
+    ext_pred_path = osp.join(root, 'ext_preds', 'giant_sagn_scr.pt')
+    legacy_path = osp.join(root, 'ogbn_products', 'ext_preds',
+                           'giant_sagn_scr.pt')
+    if is_html_page(legacy_path):
+        # A quota page left behind by earlier versions of this example.
+        # Drop it and the emptied folders so that `ogb` does not find a
+        # dataset folder without its release file and prompt to update it.
+        try:
+            os.remove(legacy_path)
+            os.rmdir(osp.dirname(legacy_path))
+            os.rmdir(osp.dirname(osp.dirname(legacy_path)))
+        except OSError:
+            pass
+    elif osp.isfile(legacy_path) and not osp.exists(ext_pred_path):
+        # Written there by earlier versions of this example. Read it in
+        # place: the user may share or symlink it.
+        ext_pred_path = legacy_path
+    try:
+        if is_html_page(ext_pred_path):
+            # A quota page left behind by an earlier run; `download_url`
+            # would otherwise keep it as the file and skip the download.
+            os.remove(ext_pred_path)
+        download_google_url(id='15sO2m7BeW7C1Upmdw3Cx1JS__6nxTAzY',
+                            folder=osp.dirname(ext_pred_path),
+                            filename=osp.basename(ext_pred_path), log=True)
+        ext_pred = torch.load(ext_pred_path, map_location=device)
+    except Exception as e:
+        hint = 'retry later'
+        if is_html_page(ext_pred_path):
+            # Google Drive serves an HTML quota page instead of the file
+            # once its daily download quota is exhausted, and `torch.load`
+            # then fails on it. Remove the page so the next run downloads
+            # again.
+            try:
+                os.remove(ext_pred_path)
+            except FileNotFoundError:
+                pass  # Another run already removed it.
+            except OSError:
+                hint = 'delete the file and retry later'
+        elif osp.lexists(ext_pred_path) or isinstance(e, PermissionError):
+            # Anything else on disk is left alone: a valid checkpoint that
+            # failed to load for an unrelated reason (CUDA OOM, a bad
+            # `--gpu` index), a file the user placed there, or a download
+            # another run is still writing. A `PermissionError` with
+            # nothing on disk is a local problem (e.g. a read-only
+            # `root`), raised before any request is made.
+            raise
+        raise RuntimeError(
+            f"Could not download or load the external predictions "
+            f"'{ext_pred_path}' for 'ogbn-products' "
+            f"({type(e).__name__}). Google Drive may have hit its daily "
+            f"quota for this file; {hint}, place the file at that path "
+            f"manually, or run with '--train_without_ext_pred'.") from e
+    return ext_pred
 
 
 def main(args):
@@ -82,60 +143,7 @@ def main(args):
     torch.cuda.empty_cache()
 
     if train_with_ext_pred:
-        # Kept outside the OGB dataset folder, which `ogb` deletes and
-        # re-creates when its release file is missing or outdated.
-        ext_pred_path = osp.join(root, 'ext_preds', 'giant_sagn_scr.pt')
-        legacy_path = osp.join(root, 'ogbn_products', 'ext_preds',
-                               'giant_sagn_scr.pt')
-        if is_html_page(legacy_path):
-            # A quota page left behind by earlier versions of this example.
-            # Drop it and the emptied folders so that `ogb` does not find a
-            # dataset folder without its release file and prompt to update it.
-            try:
-                os.remove(legacy_path)
-                os.removedirs(osp.dirname(legacy_path))
-            except OSError:
-                pass
-        elif osp.isfile(legacy_path) and not osp.exists(ext_pred_path):
-            # Written there by earlier versions of this example. Read it in
-            # place: the user may share or symlink it.
-            ext_pred_path = legacy_path
-        try:
-            if is_html_page(ext_pred_path):
-                # A quota page left behind by an earlier run; `download_url`
-                # would otherwise keep it as the file and skip the download.
-                os.remove(ext_pred_path)
-            download_google_url(id='15sO2m7BeW7C1Upmdw3Cx1JS__6nxTAzY',
-                                folder=osp.dirname(ext_pred_path),
-                                filename=osp.basename(ext_pred_path), log=True)
-            ext_pred = torch.load(ext_pred_path, map_location=device)
-        except Exception as e:
-            hint = 'retry later'
-            if is_html_page(ext_pred_path):
-                # Google Drive serves an HTML quota page instead of the file
-                # once its daily download quota is exhausted, and `torch.load`
-                # then fails on it. Remove the page so the next run downloads
-                # again.
-                try:
-                    os.remove(ext_pred_path)
-                except FileNotFoundError:
-                    pass  # Another run already removed it.
-                except OSError:
-                    hint = 'delete the file and retry later'
-            elif osp.lexists(ext_pred_path) or isinstance(e, PermissionError):
-                # Anything else on disk is left alone: a valid checkpoint that
-                # failed to load for an unrelated reason (CUDA OOM, a bad
-                # `--gpu` index), a file the user placed there, or a download
-                # another run is still writing. A `PermissionError` with
-                # nothing on disk is a local problem (e.g. a read-only
-                # `root`), raised before any request is made.
-                raise
-            raise RuntimeError(
-                f"Could not download or load the external predictions "
-                f"'{ext_pred_path}' for 'ogbn-products' "
-                f"({type(e).__name__}). Google Drive may have hit its daily "
-                f"quota for this file; {hint}, place the file at that path "
-                f"manually, or run with '--train_without_ext_pred'.") from e
+        ext_pred = load_ext_predictions(root, device)
         ext_pseudo_labels = ext_pred.argmax(dim=-1)
         pretrain_augmented = True
 
