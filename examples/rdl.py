@@ -7,7 +7,8 @@ Please refer to:
    reported on the RelBench paper.
 
 Requirements:
-    ``pip install "relbench>=3.0.1" pytorch-frame sentence-transformers``
+    ``pip install --upgrade "relbench>=3.0.2" pytorch-frame
+    sentence-transformers``
 """
 import argparse
 import math

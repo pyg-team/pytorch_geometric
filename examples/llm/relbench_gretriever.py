@@ -8,8 +8,8 @@ The goal is to demonstrate the projection-first pattern required before
 calling ``to_homogeneous()`` on RelBench-derived graphs.
 
 Requirements:
-    ``pip install "relbench>=3.0" "transformers>=4.51,<5.0" sentencepiece
-    accelerate``
+    ``pip install --upgrade "relbench>=3.0.2" "transformers>=5.19"
+    sentencepiece "accelerate>=1.15"``
 
 Usage:
     ``python relbench_gretriever.py``
@@ -19,26 +19,12 @@ import argparse
 
 import torch
 import torch.nn as nn
-from packaging.version import Version
 from relbench import load_dataset
 
 from torch_geometric.contrib.utils import from_relbench
 from torch_geometric.data import HeteroData
 from torch_geometric.llm.models import LLM, GRetriever
 from torch_geometric.nn import GAT, HeteroDictLinear
-
-try:
-    import transformers
-except ImportError as exc:
-    raise RuntimeError(
-        'The `transformers` package is required. Install it with: '
-        '`pip install "transformers>=4.51,<5.0"`.') from exc
-
-if Version(transformers.__version__) >= Version('5.0'):
-    raise RuntimeError(
-        f'Unsupported transformers version {transformers.__version__}. '
-        'This example requires transformers 4.x. Install with: '
-        '`pip install "transformers>=4.51,<5.0"`.')
 
 # CLI options
 parser = argparse.ArgumentParser()

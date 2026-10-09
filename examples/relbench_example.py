@@ -8,7 +8,7 @@ model (via ``to_hetero``) to predict championship standings points from
 the graph structure and node features.
 
 Requirements:
-    ``pip install "relbench>=3.0"``
+    ``pip install --upgrade "relbench>=3.0.2"``
 """
 
 import argparse

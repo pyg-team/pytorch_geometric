@@ -2,7 +2,8 @@
 (https://arxiv.org/abs/2402.07630) in PyG.
 
 Requirements:
-`pip install datasets transformers pcst_fast sentencepiece accelerate`
+`pip install --upgrade datasets "transformers>=5.19" pcst_fast sentencepiece
+"accelerate>=1.15" "peft>=0.21.2"`
 
 
 Example blog showing 2x accuracy over agentic graphRAG on real medical data
