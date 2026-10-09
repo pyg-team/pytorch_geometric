@@ -6,7 +6,7 @@ from torch_geometric.nn.aggr.utils import (
     PoolingByMultiheadAttention,
     SetAttentionBlock,
 )
-from torch_geometric.testing import withCUDA
+from torch_geometric.testing import onlyCUDA, onlyFullTest, withCUDA
 
 
 @withCUDA
@@ -129,3 +129,17 @@ def test_pooling_by_multihead_attention():
 
     jit = torch.jit.script(block)
     assert torch.allclose(jit(x, mask), out)
+
+
+@onlyCUDA
+@onlyFullTest
+def test_multihead_attention_block_compile_mask() -> None:
+    block = MultiheadAttentionBlock(16, heads=2, device='cuda').eval()
+    x = torch.randn(4, 16, 16, device='cuda')
+    mask = torch.ones(4, 16, dtype=torch.bool, device='cuda')
+    mask[1, 9:] = False
+
+    with torch.no_grad():
+        expected = block(x, x, mask, mask)
+        out = torch.compile(block, fullgraph=True)(x, x, mask, mask)
+    torch.testing.assert_close(out, expected)

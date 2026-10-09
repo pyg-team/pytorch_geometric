@@ -77,7 +77,7 @@ class MultiheadAttentionBlock(torch.nn.Module):
         out, _ = self.attn(x, y, y, y_mask, need_weights=False)
 
         if x_mask is not None:
-            out[~x_mask] = 0.
+            out = out.masked_fill(~x_mask.unsqueeze(-1), 0.)
 
         out = out + x
 
