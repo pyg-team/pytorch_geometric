@@ -3,8 +3,12 @@ using RelBench.
 
 Please refer to:
 1. https://arxiv.org/abs/2407.20060 for RelBench, and
-2. https://github.com/snap-stanford/relbench for reproducing the results
+2. https://github.com/stanford-star/relbench for reproducing the results
    reported on the RelBench paper.
+
+Requirements:
+    ``pip install --upgrade "relbench>=3.0.2" pytorch-frame
+    sentence-transformers``
 """
 import argparse
 import math
@@ -16,11 +20,10 @@ import numpy as np
 import pandas as pd
 import torch
 import torch_frame
-from relbench.base import EntityTask, Table, TaskType
-from relbench.datasets import get_dataset, get_dataset_names
+from relbench import load_dataset
+from relbench.base import AutoCompleteTask, EntityTask, Table, TaskType
 from relbench.modeling.graph import make_pkey_fkey_graph
-from relbench.modeling.utils import get_stype_proposal
-from relbench.tasks import get_task, get_task_names
+from relbench.modeling.utils import get_stype_proposal, to_unix_time
 from sentence_transformers import SentenceTransformer
 from torch import Tensor
 from torch_frame.config.text_embedder import TextEmbedderConfig
@@ -442,36 +445,57 @@ def get_task_type_params(
         - tune_metric: Metric to optimize
         - higher_is_better: Whether higher metric values are better
     """
+    out_channels = 1
     if task.task_type == TaskType.REGRESSION:
-        out_channels = 1
         loss_fn = torch.nn.L1Loss()
-        tune_metric = "mae"
         higher_is_better = False
     elif task.task_type == TaskType.BINARY_CLASSIFICATION:
-        out_channels = 1
         loss_fn = torch.nn.BCEWithLogitsLoss()
-        tune_metric = "roc_auc"
         higher_is_better = True
     else:
         raise ValueError(f"Unsupported task type: {task.task_type}")
+    # Tune on the first of the task's own default metrics (`nmae` for
+    # regression and `roc_auc` for binary classification in RelBench 3.0):
+    tune_metric = task.metrics[0].__name__
 
     return out_channels, loss_fn, tune_metric, higher_is_better
 
 
-def to_unix_time(ser: pd.Series) -> np.ndarray:
-    r"""Convert a pandas Timestamp series to UNIX timestamp in seconds.
+def to_ns(ser: pd.Series) -> pd.Series:
+    r"""Put a datetime series on nanosecond resolution.
+
+    :func:`relbench.modeling.utils.to_unix_time` treats every ``datetime64``
+    value as nanoseconds, so the ``datetime64[s|ms|us]`` columns that pandas 2
+    reads from Parquet written by external tools would otherwise be scaled
+    down by up to 1e9. Rescaling both the database tables (node timestamps
+    inside :func:`make_pkey_fkey_graph`) and the task tables (seed
+    timestamps) keeps the temporal sampling consistent. Arrow-backed columns
+    (``timestamp[unit][pyarrow]``, as restored by :func:`pandas.read_parquet`
+    from Parquet written with Arrow types) are converted to numpy first, since
+    pandas 2.3 reads a tz-naive Arrow ``timestamp[ns]`` as local time in
+    ``pd.to_datetime(..., utc=True)``. Non-datetime series (e.g., integer UNIX
+    seconds) are returned unchanged.
+
+    Values must fit into ``datetime64[ns]`` (years 1677 to 2262): far-future
+    placeholder dates such as ``9999-12-31`` raise
+    :class:`pandas.errors.OutOfBoundsDatetime` and need to be replaced in the
+    source data first.
 
     Args:
-        ser: Input pandas Series containing datetime values.
+        ser: Input pandas Series.
 
     Returns:
-        Array of UNIX timestamps in seconds.
+        The series as ``datetime64[ns]`` if it holds datetimes, else as is.
     """
-    assert ser.dtype in [np.dtype("datetime64[s]"), np.dtype("datetime64[ns]")]
-    unix_time = ser.astype("int64").values
-    if ser.dtype == np.dtype("datetime64[ns]"):
-        unix_time //= 10**9
-    return unix_time
+    if pd.api.types.is_datetime64_any_dtype(ser.dtype):
+        if isinstance(ser.dtype, pd.ArrowDtype):
+            # pandas 2.3 reads a tz-naive Arrow `timestamp[ns]` as local
+            # time in `pd.to_datetime(..., utc=True)`; use numpy instead:
+            tz = ser.dtype.pyarrow_dtype.tz
+            ser = ser.astype(
+                pd.DatetimeTZDtype("ns", tz) if tz else "datetime64[ns]")
+        return ser.dt.as_unit("ns")
+    return ser
 
 
 def get_train_table_input(
@@ -503,7 +527,7 @@ def get_train_table_input(
     time: Optional[Tensor] = None
     if split_table.time_col is not None:
         time = torch.from_numpy(
-            to_unix_time(split_table.df[split_table.time_col]))
+            to_unix_time(to_ns(split_table.df[split_table.time_col])))
 
     target: Optional[Tensor] = None
     transform: Optional[AttachTargetTransform] = None
@@ -574,15 +598,23 @@ def main():
 
     parser = argparse.ArgumentParser(
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("--dataset", type=str, default="rel-f1",
-                        choices=get_dataset_names())
     parser.add_argument(
-        "--task", type=str, default=None,
-        help="See available tasks at https://relbench.stanford.edu/")
+        "--dataset", type=str, default="rel-f1",
+        help="RelBench dataset name (e.g., 'rel-f1'), Hugging Face Hub "
+        "'org/repo[/subdir]' or local path. See "
+        "https://relbench.stanford.edu/ for available datasets")
+    # `SUPPRESS` hides the "(default: None)" that the help formatter would
+    # otherwise print for this required argument:
+    parser.add_argument(
+        "--task", type=str, required=True, default=argparse.SUPPRESS,
+        help="RelBench task name (e.g., 'driver-position'), Hugging Face Hub "
+        "'org/repo/<dataset>/tasks/<task>' or local task directory. See "
+        "https://relbench.stanford.edu/ for available tasks")
     parser.add_argument("--batch_size", type=int, default=512)
     parser.add_argument("--temporal_strategy", type=str, default="uniform",
                         choices=["uniform", "last"])
-    parser.add_argument("--num_neighbors", type=list, default=[128, 128])
+    parser.add_argument("--num_neighbors", type=int, nargs="+",
+                        default=[128, 128])
     parser.add_argument("--channels", type=int, default=128)
     parser.add_argument("--aggr", type=str, default="sum")
     parser.add_argument("--norm", type=str, default="batch_norm")
@@ -594,21 +626,40 @@ def main():
     print("Using device:", device)
 
     print("Loading dataset and task...")
-    assert args.task in get_task_names(args.dataset), (
-        f"Invalid --task '{args.task}' for --dataset '{args.dataset}'. "
-        f"Available tasks: {get_task_names(args.dataset)}")
-    dataset = get_dataset(name=args.dataset, download=True)
-    task = get_task(
-        dataset_name=args.dataset,
-        task_name=args.task,
-        download=True,
-    )
+    dataset = load_dataset(args.dataset)
+    task = dataset.load_task(args.task)  # lists the available tasks on error
+    # Recommendation tasks have no entity table, auto-complete tasks need the
+    # database beyond the test timestamp, the temporal sampling below needs a
+    # seed time per label, and external tasks with a custom `evaluator` cannot
+    # be scored by `task.evaluate()`; none of these are in scope here:
+    if (not isinstance(task, EntityTask) or isinstance(task, AutoCompleteTask)
+            or getattr(task, "time_col", None) is None
+            or getattr(task, "evaluator", None)):
+        raise ValueError(
+            f"Task '{args.task}' ({type(task).__name__.lstrip('_')}) is not "
+            f"supported. This example only handles time-stamped entity-level "
+            f"tasks (binary classification or regression) scored with "
+            f"RelBench's own metrics")
     print(f"Task type: {task.task_type}")
     print(f"Target column: '{task.target_col}'")
     print(f"Entity table: '{task.entity_table}'")
 
+    # Reject unsupported task types before the (slow) graph materialization:
+    print("Getting task-specific parameters...")
+    out_channels, loss_fn, tune_metric, higher_is_better = \
+        get_task_type_params(task)
+    print("out_channels: ", out_channels)
+    print("loss_fn: ", loss_fn)
+    print("tune_metric: ", tune_metric)
+    print("higher_is_better: ", higher_is_better)
+
     print("Getting column to stype dictionary...")
     db = dataset.get_db()
+    # Keep the node timestamps (`make_pkey_fkey_graph`) on the same scale as
+    # the seed timestamps (`get_train_table_input`); see `to_ns`:
+    for table in db.table_dict.values():
+        if table.time_col is not None:
+            table.df[table.time_col] = to_ns(table.df[table.time_col])
     col_to_stype_dict = get_stype_proposal(db)
     print("Column to stype dictionary: ", col_to_stype_dict)
 
@@ -620,16 +671,19 @@ def main():
 
     # Transform the dataset into a HeteroData object with torch_frame features
     # See also:
-    # https://github.com/snap-stanford/relbench/blob/v1.1.0/relbench/modeling/graph.py#L20-L111  # noqa: E501
+    # https://github.com/stanford-star/relbench/blob/v3.0.0/relbench/modeling/graph.py#L49-L150  # noqa: E501
     print("Transforming dataset into HeteroData object...")
+    # The columns the task hides (e.g., its label source) are dropped after
+    # materialization, so one cache per dataset serves all of its tasks:
     data, col_stats_dict = make_pkey_fkey_graph(
         db,
         col_to_stype_dict=col_to_stype_dict,  # specified column types
         text_embedder_cfg=text_embedder_cfg,  # our chosen text encoder
         cache_dir=os.path.join(  # store materialized graph for convenience
             "./data",
-            f"{args.dataset}_{args.task}_materialized_cache",
+            f"{dataset.manifest.name}_materialized_cache",
         ),
+        remove_columns=task.hidden_columns(),
     )
 
     print("Preparing data loaders...")
@@ -658,14 +712,6 @@ def main():
             persistent_workers=True,
         )
 
-    print("Getting task-specific parameters...")
-    out_channels, loss_fn, tune_metric, higher_is_better = \
-        get_task_type_params(task)
-    print("out_channels: ", out_channels)
-    print("loss_fn: ", loss_fn)
-    print("tune_metric: ", tune_metric)
-    print("higher_is_better: ", higher_is_better)
-
     print("Initializing the model...")
     col_names_dict = {
         node_type: data[node_type].tf.col_names_dict
@@ -690,6 +736,8 @@ def main():
 
     print("Training the model...")
     best_val_metric = -math.inf if higher_is_better else math.inf
+    is_better_op = operator.gt if higher_is_better else operator.lt
+    val = task.get_table("val")
     for epoch in range(1, args.epochs + 1):
         train_loss = train(
             model=model,
@@ -705,14 +753,14 @@ def main():
             task=task,
             device=device,
         )
-        val_metrics = task.evaluate(val_pred, task.get_table("val"))
+
+        val_metrics = task.evaluate(val_pred, val)
         print(
             f"Epoch: {epoch:02d}, "
             f"train_loss: {train_loss:.4f}, "
             f"{', '.join([f'val_{k}: {v:.4f}' for k, v in val_metrics.items()])}"  # noqa: E501
         )
 
-        is_better_op = operator.gt if higher_is_better else operator.lt
         if is_better_op(val_metrics[tune_metric], best_val_metric):
             best_val_metric = val_metrics[tune_metric]
             torch.save(model.state_dict(), "best_model.pt")

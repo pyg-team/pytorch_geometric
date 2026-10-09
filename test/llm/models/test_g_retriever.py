@@ -50,6 +50,19 @@ def test_g_retriever(use_lora: bool) -> None:
     # Test train:
     loss = model(question, x, edge_index, batch, label, edge_attr)
     assert loss >= 0
+    loss.backward()
+    for module in [model.gnn, model.projector]:
+        grads = [p.grad for p in module.parameters() if p.requires_grad]
+        assert all(g is not None and g.isfinite().all() for g in grads)
+        assert sum(g.abs().sum() for g in grads) > 0
+    if use_lora:
+        grads = [
+            p.grad for n, p in model.llm_generator.named_parameters()
+            if 'lora_' in n and p.requires_grad
+        ]
+        assert grads
+        assert all(g is not None and g.isfinite().all() for g in grads)
+        assert sum(g.abs().sum() for g in grads) > 0
 
     # Test inference:
     pred = model.inference(question, x, edge_index, batch, edge_attr)
