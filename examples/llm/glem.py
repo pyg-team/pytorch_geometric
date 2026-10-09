@@ -59,6 +59,7 @@ def main(args):
     lm_use_lora = args.lm_use_lora
     token_on_disk = args.token_on_disk
     num_em_iters = args.num_em_iters
+    num_workers = args.num_workers
     start_time = time.time()
     train_with_ext_pred = not args.train_without_ext_pred and \
         dataset_name == 'products'
@@ -153,8 +154,8 @@ def main(args):
         num_neighbors=[15, 10, 5],
         batch_size=gnn_batch_size,
         shuffle=True,
-        num_workers=12,
-        persistent_workers=True,
+        num_workers=num_workers,
+        persistent_workers=num_workers > 0,
     )
 
     # graph data loader w/ pseudo labels in M-step
@@ -164,8 +165,8 @@ def main(args):
         num_neighbors=[15, 10, 5],
         batch_size=gnn_batch_size,
         shuffle=True,
-        num_workers=12,
-        persistent_workers=True,
+        num_workers=num_workers,
+        persistent_workers=num_workers > 0,
     )
 
     # for gnn inference
@@ -174,8 +175,8 @@ def main(args):
         input_nodes=None,
         num_neighbors=[-1],
         batch_size=gnn_batch_size * 4,
-        num_workers=12,
-        persistent_workers=True,
+        num_workers=num_workers,
+        persistent_workers=num_workers > 0,
     )
     # =========================== internal function ===========================
 
@@ -405,6 +406,11 @@ if __name__ == '__main__':
                         help='number of runs')
     parser.add_argument('--num_em_iters', type=int, default=1,
                         help='number of iterations')
+    parser.add_argument(
+        '--num_workers', type=int, default=12,
+        help='Number of DataLoader workers for each of the '
+        'three GNN NeighborLoaders (36 processes in total '
+        'with the default; lower it on shared machines)')
     parser.add_argument("--dataset", type=str, default='products',
                         help='arxiv or products')
     parser.add_argument(
@@ -457,5 +463,7 @@ if __name__ == '__main__':
         help='train glem without using additional pseudo labels '
         'for augmenting data only available for ogbn-products')
     args = parser.parse_args()
+    if args.num_workers < 0:
+        parser.error('--num_workers must be non-negative')
     print(args)
     main(args)
