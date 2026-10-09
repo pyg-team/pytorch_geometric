@@ -66,12 +66,12 @@ rag=[
     "pcst_fast",
     "PyYAML",
     "datasets",
-    "transformers",
+    "transformers>=5.19",
     "pandas",
     "sentencepiece",
-    "accelerate",
+    "accelerate>=1.15",
     "torchmetrics",
-    "peft",
+    "peft>=0.21.2",
 ]
 test=[
     "onnx",
