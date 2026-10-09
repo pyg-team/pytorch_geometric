@@ -48,7 +48,8 @@ class HGTConv(MessagePassing):
         heads: int = 1,
         **kwargs,
     ):
-        super().__init__(aggr='add', node_dim=0, **kwargs)
+        kwargs.setdefault('aggr', 'add')
+        super().__init__(node_dim=0, **kwargs)
 
         if out_channels % heads != 0:
             raise ValueError(f"'out_channels' (got {out_channels}) must be "
