@@ -1,3 +1,4 @@
+import pytest
 import torch
 
 from torch_geometric.contrib.utils import from_relbench
@@ -98,16 +99,23 @@ def test_from_relbench_dangling_fkeys():
     assert fwd.size() == (2, 2)
 
 
-@withPackage('relbench')
-def test_from_relbench_time_column():
+@withPackage('relbench', 'pyarrow')
+@pytest.mark.parametrize('unit', ['s', 'ms', 'us', 'ns'])
+@pytest.mark.parametrize('timezone', [None, 'US/Pacific'])
+@pytest.mark.parametrize('backend', ['numpy', 'pyarrow'])
+def test_from_relbench_time_column(unit, timezone, backend):
     """Test that time columns are correctly converted."""
     import pandas as pd
+    import pyarrow as pa
     from relbench.base import Database, Table
 
+    ts = pd.Series(pd.to_datetime(['2024-01-01', '2024-01-02', '2024-01-03']))
+    ts = ts.dt.tz_localize(timezone).dt.as_unit(unit)
+    if backend == 'pyarrow':
+        ts = ts.astype(pd.ArrowDtype(pa.timestamp(unit, tz=timezone)))
     df = pd.DataFrame({
         'id': [0, 1, 2],
-        'ts':
-        pd.to_datetime(['2024-01-01', '2024-01-02', '2024-01-03']),
+        'ts': ts,
         'val': [10, 20, 30],
     })
 
@@ -125,7 +133,10 @@ def test_from_relbench_time_column():
     assert data['events'].time is not None
     assert data['events'].time.size() == (3, )
     # Verify Unix timestamps (seconds) for the three dates:
-    assert data['events'].time.tolist() == [1704067200, 1704153600, 1704240000]
+    offset = 8 * 3600 if timezone else 0
+    expected = [1704067200 + offset, 1704153600 + offset, 1704240000 + offset]
+    assert data['events'].time.dtype == torch.int64
+    assert data['events'].time.tolist() == expected
     # Time column should not appear in features:
     assert data['events'].x.size() == (3, 1)  # only 'val'
 

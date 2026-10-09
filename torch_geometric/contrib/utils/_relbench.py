@@ -82,13 +82,11 @@ def from_relbench(db: Any) -> HeteroData:
         # Store time column as Unix timestamp tensor:
         if table.time_col is not None:
             time_ser = df[table.time_col]
-            if time_ser.dtype in [
-                    np.dtype('datetime64[s]'),
-                    np.dtype('datetime64[ns]'),
-            ]:
-                unix_time = time_ser.astype('int64').values
-                if time_ser.dtype == np.dtype('datetime64[ns]'):
-                    unix_time = unix_time // 10**9
+            if time_ser.dtype.kind == 'M':
+                # Normalize the unit explicitly: pandas 3 defaults to
+                # microseconds, and Arrow may preserve other resolutions.
+                unix_time = time_ser.to_numpy(dtype='datetime64[s]').astype(
+                    np.int64)
                 data[table_name].time = torch.from_numpy(unix_time)
             else:
                 data[table_name].time = torch.from_numpy(
