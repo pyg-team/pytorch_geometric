@@ -30,3 +30,10 @@ def test_maybe_num_nodes_dict():
         '1': 3,
         '2': 6,
     }
+
+
+def test_maybe_num_nodes_dict_empty_edge_index():
+    edge_index_dict = {
+        ('a', 'to', 'b'): torch.empty((2, 0), dtype=torch.long),
+    }
+    assert maybe_num_nodes_dict(edge_index_dict) == {'a': 0, 'b': 0}
