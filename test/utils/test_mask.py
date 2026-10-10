@@ -1,3 +1,4 @@
+import pytest
 import torch
 
 from torch_geometric.utils import index_to_mask, mask_select, mask_to_index
@@ -23,6 +24,24 @@ def test_index_to_mask():
 
     mask = index_to_mask(index, size=7)
     assert mask.tolist() == [False, True, False, True, False, True, False]
+
+    jit = torch.jit.script(index_to_mask)
+    assert torch.equal(jit(index), index_to_mask(index))
+    assert torch.equal(jit(index, 7), mask)
+
+
+@pytest.mark.parametrize('dtype', [torch.int32, torch.int64])
+@pytest.mark.parametrize('size', [None, 0, 4])
+@pytest.mark.parametrize('script', [False, True])
+def test_index_to_mask_empty(dtype, size, script):
+    index = torch.empty(0, dtype=dtype)
+    func = torch.jit.script(index_to_mask) if script else index_to_mask
+
+    mask = func(index, size)
+    assert mask.dtype == torch.bool
+    assert mask.device == index.device
+    assert mask.shape == (0 if size is None else size, )
+    assert not mask.any()
 
 
 def test_mask_to_index():
