@@ -6,6 +6,7 @@ representations.
 
 from .linear import Linear, HeteroLinear, HeteroDictLinear
 from .dense_gat_conv import DenseGATConv
+from .dense_egnn_conv import DenseEGNNConv
 from .dense_sage_conv import DenseSAGEConv
 from .dense_gcn_conv import DenseGCNConv
 from .dense_graph_conv import DenseGraphConv
@@ -23,6 +24,7 @@ __all__ = [
     'DenseGraphConv',
     'DenseSAGEConv',
     'DenseGATConv',
+    'DenseEGNNConv',
     'dense_diff_pool',
     'dense_mincut_pool',
     'DMoNPooling',
