@@ -45,17 +45,18 @@ def test_dense_egnn_conv(device, backbone, normalize, edge_dim):
 
 
 @pytest.mark.parametrize('backbone', ['gcn', 'gat'])
-def test_dense_egnn_conv_broadcasting_and_mask(backbone):
-    x = torch.randn(4, 3, 4)
-    adj = torch.rand(3, 3, 2)
-    conv = DenseEGNNConv(4, 3, 2, backbone=backbone)
+@withDevice
+def test_dense_egnn_conv_broadcasting_and_mask(backbone, device):
+    x = torch.randn(4, 3, 4, device=device)
+    adj = torch.rand(3, 3, 2, device=device)
+    conv = DenseEGNNConv(4, 3, 2, backbone=backbone).to(device)
     out = conv(x, adj)
     assert out.shape == (4, 3, 6)
     for i in range(4):
         torch.testing.assert_close(out[i:i + 1], conv(x[i], adj))
     torch.testing.assert_close(conv(x[0], adj.repeat(4, 1, 1, 1)),
                                conv(x[0].repeat(4, 1, 1), adj))
-    mask = torch.tensor([True, False, True])
+    mask = torch.tensor([True, False, True], device=device)
     out, edges = conv(x, adj, mask, return_edge_weights=True)
     assert out[:, 1].abs().sum() == 0
     assert edges[:, 1].abs().sum() == edges[:, :, 1].abs().sum() == 0
@@ -67,27 +68,32 @@ def test_dense_egnn_conv_broadcasting_and_mask(backbone):
 
 @pytest.mark.parametrize('backbone', ['gcn', 'gat'])
 @pytest.mark.parametrize('mask', [None, torch.tensor([[True, False, False]])])
-def test_dense_egnn_conv_empty_channels_and_gradients(backbone, mask):
-    x = torch.randn(1, 3, 2, dtype=torch.double, requires_grad=True)
-    adj = torch.zeros(1, 3, 3, 2, dtype=torch.double, requires_grad=True)
-    conv = DenseEGNNConv(2, 2, 2, backbone=backbone).double()
+@withDevice
+def test_dense_egnn_conv_empty_channels_and_gradients(backbone, mask, device):
+    x = torch.randn(1, 3, 2, dtype=torch.double, device=device,
+                    requires_grad=True)
+    adj = torch.zeros(1, 3, 3, 2, dtype=torch.double, device=device,
+                      requires_grad=True)
+    mask = mask.to(device) if mask is not None else None
+    conv = DenseEGNNConv(2, 2, 2, backbone=backbone).to(device).double()
     out, edges = conv(x, adj, mask, return_edge_weights=True)
     assert torch.isfinite(out).all() and torch.isfinite(edges).all()
     out.square().sum().backward()
     assert torch.isfinite(x.grad).all() and torch.isfinite(adj.grad).all()
     strict = DenseEGNNConv(2, 2, 2, backbone=backbone,
-                           add_self_loops=False).double()
+                           add_self_loops=False).to(device).double()
     with pytest.raises(ValueError, match='positive mass'):
         strict(x, adj, mask)
 
 
 @pytest.mark.parametrize('backbone', ['gcn', 'gat'])
-def test_dense_egnn_conv_partial_zero_loop(backbone):
-    adj = torch.eye(3).unsqueeze(-1).repeat(1, 1, 2)
+@withDevice
+def test_dense_egnn_conv_partial_zero_loop(backbone, device):
+    adj = torch.eye(3, device=device).unsqueeze(-1).repeat(1, 1, 2)
     adj[0, 0, 1] = 0
-    conv = DenseEGNNConv(4, 3, 2, backbone=backbone)
+    conv = DenseEGNNConv(4, 3, 2, backbone=backbone).to(device)
     with pytest.raises(ValueError, match='positive mass'):
-        conv(torch.randn(3, 4), adj)
+        conv(torch.randn(3, 4, device=device), adj)
 
 
 @withDevice
@@ -115,56 +121,69 @@ def test_dense_egnn_conv_zero_loops(device, backbone, layout):
 
 
 @pytest.mark.parametrize('backbone', ['gcn', 'gat'])
-def test_dense_egnn_conv_gradcheck(backbone):
-    x = torch.randn(1, 3, 2, dtype=torch.double, requires_grad=True)
-    adj = torch.rand(1, 3, 3, 2, dtype=torch.double, requires_grad=True)
+@withDevice
+def test_dense_egnn_conv_gradcheck(backbone, device):
+    x = torch.randn(1, 3, 2, dtype=torch.double, device=device,
+                    requires_grad=True)
+    adj = torch.rand(1, 3, 3, 2, dtype=torch.double, device=device,
+                     requires_grad=True)
     conv = DenseEGNNConv(2, 2, 2, backbone=backbone,
-                         add_self_loops=False).double()
+                         add_self_loops=False).to(device).double()
     assert torch.autograd.gradcheck(conv, (x, adj))
 
 
-def test_dense_egnn_conv_dropout():
-    x, adj = torch.randn(2, 3, 4), torch.rand(3, 3, 2)
-    conv = DenseEGNNConv(4, 3, 2, dropout=1., bias=False)
+@withDevice
+def test_dense_egnn_conv_dropout(device):
+    x = torch.randn(2, 3, 4, device=device)
+    adj = torch.rand(3, 3, 2, device=device)
+    conv = DenseEGNNConv(4, 3, 2, dropout=1., bias=False).to(device)
     out, edges = conv(x, adj, return_edge_weights=True)
-    torch.testing.assert_close(out, torch.zeros(2, 3, 6))
-    torch.testing.assert_close(edges.sum(2), torch.ones(2, 3, 2))
+    torch.testing.assert_close(out, torch.zeros(2, 3, 6, device=device))
+    torch.testing.assert_close(edges.sum(2),
+                               torch.ones(2, 3, 2, device=device))
     conv.eval()
     assert conv(x, adj).abs().sum() > 0
 
 
 @pytest.mark.parametrize('value', [-1., float('nan'), float('inf')])
-def test_dense_egnn_conv_invalid_edges(value):
-    conv = DenseEGNNConv(4, 3, 1)
+@withDevice
+def test_dense_egnn_conv_invalid_edges(value, device):
+    conv = DenseEGNNConv(4, 3, 1).to(device)
+    x = torch.randn(2, 4, device=device)
     with pytest.raises(ValueError, match='finite and nonnegative'):
-        conv(torch.randn(2, 4), torch.full((2, 2, 1), value))
+        conv(x, torch.full((2, 2, 1), value, device=device))
     with pytest.raises(ValueError, match='square'):
-        conv(torch.randn(2, 4), torch.ones(2, 3, 1))
+        conv(x, torch.ones(2, 3, 1, device=device))
     with pytest.raises(ValueError, match='shape'):
-        conv(torch.randn(2, 4), torch.ones(2, 2))
+        conv(x, torch.ones(2, 2, device=device))
     with pytest.raises(ValueError, match='boolean'):
-        conv(torch.randn(2, 4), torch.ones(2, 2, 1), torch.ones(2))
+        conv(x, torch.ones(2, 2, 1, device=device),
+             torch.ones(2, device=device))
 
 
 @pytest.mark.parametrize('backbone', ['gcn', 'gat'])
-def test_dense_egnn_conv_empty_graph(backbone):
-    conv = DenseEGNNConv(4, 3, 2, backbone=backbone)
-    out, adj = conv(torch.empty(0, 4), torch.empty(0, 0, 2),
+@withDevice
+def test_dense_egnn_conv_empty_graph(backbone, device):
+    conv = DenseEGNNConv(4, 3, 2, backbone=backbone).to(device)
+    out, adj = conv(torch.empty(0, 4, device=device),
+                    torch.empty(0, 0, 2, device=device),
                     return_edge_weights=True)
     assert out.shape == (1, 0, 6) and adj.shape == (1, 0, 0, 2)
-    out, adj = conv(torch.randn(2, 3, 4), torch.rand(2, 3, 3, 2),
-                    mask=torch.zeros(2, 3, dtype=torch.bool),
-                    return_edge_weights=True)
+    out, adj = conv(torch.randn(2, 3, 4, device=device),
+                    torch.rand(2, 3, 3, 2, device=device),
+                    mask=torch.zeros(2, 3, dtype=torch.bool,
+                                     device=device), return_edge_weights=True)
     assert out.abs().sum() == adj.abs().sum() == 0
 
 
 @pytest.mark.parametrize('backbone', ['gcn', 'gat'])
 @pytest.mark.parametrize('x_batch,adj_batch', [(0, 1), (1, 0), (0, 0)])
-def test_dense_egnn_conv_empty_batch(backbone, x_batch, adj_batch):
-    x = torch.randn(x_batch, 3, 4, requires_grad=True)
-    adj = torch.ones(adj_batch, 3, 3, 2, requires_grad=True)
-    mask = torch.empty(0, 3, dtype=torch.bool)
-    conv = DenseEGNNConv(4, 3, 2, backbone=backbone)
+@withDevice
+def test_dense_egnn_conv_empty_batch(backbone, x_batch, adj_batch, device):
+    x = torch.randn(x_batch, 3, 4, device=device, requires_grad=True)
+    adj = torch.ones(adj_batch, 3, 3, 2, device=device, requires_grad=True)
+    mask = torch.empty(0, 3, dtype=torch.bool, device=device)
+    conv = DenseEGNNConv(4, 3, 2, backbone=backbone).to(device)
     out, weights = conv(x, adj, mask, return_edge_weights=True)
     assert out.shape == (0, 3, 6) and weights.shape == (0, 3, 3, 2)
     out.sum().backward()
@@ -197,17 +216,20 @@ def test_dense_egnn_conv_invalid_config(kwargs, match):
 
 
 @pytest.mark.parametrize('scale', [1e-38, 1e38])
-def test_dense_egnn_conv_scale_invariance(scale):
-    x = torch.randn(3, 4)
-    adj = torch.ones(3, 3, 2)
-    conv = DenseEGNNConv(4, 3, 2, add_self_loops=False)
+@withDevice
+def test_dense_egnn_conv_scale_invariance(scale, device):
+    x = torch.randn(3, 4, device=device)
+    adj = torch.ones(3, 3, 2, device=device)
+    conv = DenseEGNNConv(4, 3, 2, add_self_loops=False).to(device)
     torch.testing.assert_close(conv(x, adj * scale), conv(x, adj))
 
 
 @pytest.mark.parametrize('backbone', ['gcn', 'gat'])
-def test_dense_egnn_conv_lazy_and_bias(backbone):
-    conv = DenseEGNNConv(-1, 3, 2, backbone=backbone, bias=False)
-    x, adj = torch.randn(3, 4), torch.rand(3, 3, 2)
+@withDevice
+def test_dense_egnn_conv_lazy_and_bias(backbone, device):
+    conv = DenseEGNNConv(-1, 3, 2, backbone=backbone, bias=False).to(device)
+    x = torch.randn(3, 4, device=device)
+    adj = torch.rand(3, 3, 2, device=device)
     assert conv(x, adj).shape == (1, 3, 6)
     assert conv.bias is None and conv.lin.weight.shape == (3, 4)
     conv.reset_parameters()
