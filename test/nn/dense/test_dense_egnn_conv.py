@@ -70,12 +70,24 @@ def test_dense_egnn_conv_broadcasting_and_mask(backbone):
 def test_dense_egnn_conv_empty_channels_and_gradients(backbone, mask):
     x = torch.randn(1, 3, 2, dtype=torch.double, requires_grad=True)
     adj = torch.zeros(1, 3, 3, 2, dtype=torch.double, requires_grad=True)
-    conv = DenseEGNNConv(2, 2, 2, backbone=backbone,
-                         add_self_loops=False).double()
+    conv = DenseEGNNConv(2, 2, 2, backbone=backbone).double()
     out, edges = conv(x, adj, mask, return_edge_weights=True)
     assert torch.isfinite(out).all() and torch.isfinite(edges).all()
     out.square().sum().backward()
     assert torch.isfinite(x.grad).all() and torch.isfinite(adj.grad).all()
+    strict = DenseEGNNConv(2, 2, 2, backbone=backbone,
+                           add_self_loops=False).double()
+    with pytest.raises(ValueError, match='positive mass'):
+        strict(x, adj, mask)
+
+
+@pytest.mark.parametrize('backbone', ['gcn', 'gat'])
+def test_dense_egnn_conv_partial_zero_loop(backbone):
+    adj = torch.eye(3).unsqueeze(-1).repeat(1, 1, 2)
+    adj[0, 0, 1] = 0
+    conv = DenseEGNNConv(4, 3, 2, backbone=backbone)
+    with pytest.raises(ValueError, match='positive mass'):
+        conv(torch.randn(3, 4), adj)
 
 
 @pytest.mark.parametrize('backbone', ['gcn', 'gat'])

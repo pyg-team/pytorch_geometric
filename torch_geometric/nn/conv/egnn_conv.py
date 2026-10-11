@@ -25,56 +25,60 @@ def egnn_norm(edge_index: Tensor, edge_attr: Tensor,
     r"""Applies the doubly stochastic normalization from equations (1)-(2)
     of the EGNN paper, returning the resulting graph in COO format.
 
-    Rows correspond to target nodes. Empty rows in an edge channel are given
-    a unit self-loop before normalization. Unlike row normalization, this
-    operation can introduce edges between nodes sharing a source neighbor.
+    Rows correspond to target nodes and must have positive sums in every
+    edge channel. Unlike row normalization, this operation can introduce
+    edges between nodes sharing a source neighbor.
     """
     dtype = edge_attr.dtype
     if dtype in [torch.float16, torch.bfloat16]:
         edge_attr = edge_attr.float()
-    edge_index, edge_attr = coalesce(edge_index, edge_attr, num_nodes)
+    if num_nodes == 0:
+        return edge_index, edge_attr.to(dtype)
     # Scaling rows first avoids overflow/underflow in their sums.
     row_max = scatter(edge_attr.detach(), edge_index[1], dim=0,
                       dim_size=num_nodes, reduce='max')
-    row_max = row_max.masked_fill(row_max == 0, 1.)
+    if (row_max == 0).any():
+        raise ValueError("Every row must have positive mass in every edge "
+                         "channel for EGNN normalization")
     edge_attr = edge_attr / row_max[edge_index[1]]
     row_sum = scatter(edge_attr, edge_index[1], dim=0, dim_size=num_nodes)
-
-    # Complete empty rows independently for every edge channel.
-    loop_attr = (row_sum == 0).to(edge_attr.dtype)
-    nodes = torch.arange(num_nodes, device=edge_index.device)
-    edge_index = torch.cat([edge_index, torch.stack([nodes, nodes])], dim=1)
-    edge_attr = torch.cat([edge_attr, loop_attr], dim=0)
-    edge_index, edge_attr = coalesce(edge_index, edge_attr, num_nodes)
-    row_sum = row_sum + loop_attr
     edge_attr = edge_attr / row_sum[edge_index[1]]
+    # Normalize before summing duplicates to avoid overflow. Target-major
+    # order makes each channel below a coalesced COO matrix.
+    edge_index, edge_attr = coalesce(edge_index, edge_attr, num_nodes,
+                                     sort_by_row=False)
     col_sum = scatter(edge_attr, edge_index[0], dim=0, dim_size=num_nodes)
 
-    indices, values = [], []
-    for p in range(edge_attr.size(-1)):
-        # DS(E) = T diag(T^T 1)^(-1) T^T, where T is row-normalized E.
-        # Sparse products retain the new edges without an N x N allocation.
-        value = edge_attr[:, p]
-        keep = value != 0
+    # DS(E) = T diag(T^T 1)^(-1) T^T, where T is row-normalized E.
+    # Sparse products retain new edges without allocating N x N matrices.
+    num_channels = edge_attr.size(-1)
+    indices, values, channels = [], [], []
+    for p in range(num_channels):
+        keep = edge_attr[:, p] != 0
         index = edge_index[:, keep].flip(0)
-        value = value[keep]
-        adj = torch.sparse_coo_tensor(index, value, (num_nodes, num_nodes))
+        value = edge_attr[keep, p]
+        adj = torch.sparse_coo_tensor(index, value, (num_nodes, num_nodes),
+                                      is_coalesced=True)
         scaled = torch.sparse_coo_tensor(index, value / col_sum[index[1], p],
-                                         (num_nodes, num_nodes))
+                                         (num_nodes, num_nodes),
+                                         is_coalesced=True)
         out = torch.sparse.mm(scaled, adj.transpose(0, 1)).coalesce()
         indices.append(out.indices().flip(0))
         values.append(out.values())
+        channels.append(torch.full_like(out.indices()[0], p))
 
-    edge_index = coalesce(torch.cat(indices, dim=1), num_nodes=num_nodes)
-    keys = edge_index[0] * num_nodes + edge_index[1]
-    # Align each channel with the union of its resulting edges without
-    # expanding every intermediate sparse value into a P-dimensional vector.
-    edge_attr = torch.stack([
-        scatter(value, torch.searchsorted(
-            keys, index[0] * num_nodes + index[1]), dim=0,
-                dim_size=keys.numel())
-        for index, value in zip(indices, values)
-    ], dim=-1)
+    index = torch.cat(indices, dim=1)
+    value, channel = torch.cat(values), torch.cat(channels)
+    # Align channels with their union of edges using a single sort/reduction.
+    keys, inverse = torch.unique(index[0] * num_nodes + index[1], sorted=True,
+                                 return_inverse=True)
+    edge_index = torch.stack([
+        keys.div(num_nodes, rounding_mode='floor'),
+        keys.remainder(num_nodes)
+    ])
+    edge_attr = scatter(value, inverse * num_channels + channel, dim=0,
+                        dim_size=keys.numel() * num_channels)
+    edge_attr = edge_attr.view(-1, num_channels)
     return edge_index, edge_attr.to(dtype)
 
 
@@ -126,8 +130,8 @@ class EGNNConv(MessagePassing):
             (default: :obj:`True`)
         add_self_loops (bool, optional): Whether to add missing self-loops
             with value :obj:`1` before input normalization. Existing loop
-            values are preserved. Empty rows in each channel are completed
-            with unit self-loops whenever normalization is performed.
+            values are preserved. Normalization requires a positive row sum
+            for every node in every channel.
             (default: :obj:`True`)
         negative_slope (float, optional): LeakyReLU slope.
             (default: :obj:`0.2`)

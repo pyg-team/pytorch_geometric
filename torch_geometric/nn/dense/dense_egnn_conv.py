@@ -155,13 +155,13 @@ class DenseEGNNConv(torch.nn.Module):
     @staticmethod
     def _normalize_adj(adj: Tensor, mask: Tensor) -> Tensor:
         r"""Applies equations (1)-(2) independently to each edge channel."""
-        nodes = torch.arange(adj.size(1), device=adj.device)
-        loop = ((adj.sum(dim=2) == 0) & mask.unsqueeze(-1)).to(adj.dtype)
-        adj = adj.clone()
-        adj[:, nodes, nodes] = adj[:, nodes, nodes] + loop
-        if adj.size(1) > 0:
-            row_max = adj.detach().amax(dim=2, keepdim=True)
-            adj = adj / row_max.masked_fill(row_max == 0, 1.)
+        if adj.size(1) == 0:
+            return adj
+        row_max = adj.detach().amax(dim=2, keepdim=True)
+        if ((row_max.squeeze(2) == 0) & mask.unsqueeze(-1)).any():
+            raise ValueError("Every row must have positive mass in every edge "
+                             "channel for EGNN normalization")
+        adj = adj / row_max.masked_fill(row_max == 0, 1.)
         row_sum = adj.sum(dim=2, keepdim=True)
         adj = adj / row_sum.masked_fill(row_sum == 0, 1.)
         col_sum = adj.sum(dim=1, keepdim=True)

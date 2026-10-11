@@ -22,8 +22,6 @@ def to_dense(edge_index, edge_attr, num_nodes):
 
 def reference_norm(adj):
     # Independent dense implementation of equations (1)-(2).
-    adj = adj + torch.diag_embed(
-        (adj.sum(1) == 0).T.to(adj.dtype)).movedim(0, -1)
     row_normalized = adj / adj.sum(1, keepdim=True)
     columns = row_normalized.sum(0, keepdim=True)
     scaled = row_normalized / columns.masked_fill(columns == 0, 1.)
@@ -31,12 +29,14 @@ def reference_norm(adj):
 
 
 @withDevice
-@pytest.mark.parametrize('edge_dim', [1, 3])
+@pytest.mark.parametrize('edge_dim', [1, 3, 16])
 def test_egnn_norm(device, edge_dim):
-    edge_index = torch.tensor([[0, 0, 1, 2, 2, 3], [0, 1, 2, 0, 3, 1]],
+    # An isolated node has an explicitly supplied self-loop.
+    edge_index = torch.tensor([[0, 0, 1, 2, 2, 3, 4], [0, 1, 2, 0, 3, 1, 4]],
                               device=device)
-    edge_attr = torch.rand(6, edge_dim, device=device, dtype=torch.double)
-    index, attr = egnn_norm(edge_index, edge_attr, 5)
+    edge_attr = torch.rand(7, edge_dim, device=device, dtype=torch.double)
+    with torch.sparse.check_sparse_tensor_invariants():
+        index, attr = egnn_norm(edge_index, edge_attr, 5)
     actual = to_dense(index, attr, 5)
     expected = reference_norm(to_dense(edge_index, edge_attr, 5))
     torch.testing.assert_close(actual, expected)
@@ -141,7 +141,7 @@ def test_egnn_conv_empty(backbone, num_nodes):
     x = torch.randn(num_nodes, 4, requires_grad=True)
     edge_index = torch.empty(2, 0, dtype=torch.long)
     edge_attr = torch.empty(0, 2)
-    conv = EGNNConv(4, 3, 2, backbone=backbone, add_self_loops=False)
+    conv = EGNNConv(4, 3, 2, backbone=backbone)
     out, (index, attr) = conv(x, edge_index, edge_attr,
                               return_edge_weights=True)
     expected = conv.lin(x).repeat(1, 2) + conv.bias
@@ -151,6 +151,12 @@ def test_egnn_conv_empty(backbone, num_nodes):
         torch.eye(num_nodes).unsqueeze(-1).repeat(1, 1, 2))
     out.sum().backward()
     assert x.grad is not None and torch.isfinite(x.grad).all()
+    strict = EGNNConv(4, 3, 2, backbone=backbone, add_self_loops=False)
+    if num_nodes > 0:
+        with pytest.raises(ValueError, match='positive mass'):
+            strict(x, edge_index, edge_attr)
+    else:
+        torch.testing.assert_close(strict(x, edge_index, edge_attr), out)
 
 
 @pytest.mark.parametrize('backbone', ['gcn', 'gat'])
@@ -162,6 +168,13 @@ def test_egnn_conv_zero_channels(backbone, normalize):
                              requires_grad=True)
     conv = EGNNConv(4, 3, 2, backbone=backbone, normalize=normalize,
                     add_self_loops=False)
+    if normalize or backbone == 'gat':
+        with pytest.raises(ValueError, match='positive mass'):
+            conv(x, edge_index, edge_attr)
+        # Self-loops are supplied explicitly, outside the normalization.
+        edge_index = torch.cat([edge_index, torch.arange(3).repeat(2, 1)], 1)
+        edge_attr = torch.cat([edge_attr, torch.ones(3, 2)])
+        edge_attr.retain_grad()
     out, (index, attr) = conv(x, edge_index, edge_attr,
                               return_edge_weights=True)
     assert torch.isfinite(out).all() and torch.isfinite(attr).all()
@@ -172,6 +185,63 @@ def test_egnn_conv_zero_channels(backbone, normalize):
         adj = to_dense(index, attr, 3)
         torch.testing.assert_close(adj.sum(0), torch.ones(3, 2))
         torch.testing.assert_close(adj[:, :, 1], torch.eye(3))
+
+
+@pytest.mark.parametrize('edge_dim', [1, 3, 16])
+@withDevice
+def test_egnn_norm_gradients(device, edge_dim):
+    torch.manual_seed(12345)
+    # Duplicate and non-contiguous inputs must preserve all channel gradients.
+    index = torch.tensor([[2, 0, 1, 2, 0, 1], [1, 2, 0, 1, 1, 2]],
+                         device=device)
+    attr = torch.rand(6, edge_dim * 2, dtype=torch.double,
+                      device=device)[:, ::2].requires_grad_()
+    edges, values = egnn_norm(index, attr, 3)
+    actual = to_dense(edges, values, 3)
+    expected = reference_norm(to_dense(index, attr, 3))
+    weight = torch.randn_like(actual)
+    actual_grad, = torch.autograd.grad((actual * weight).sum(), attr)
+    expected_grad, = torch.autograd.grad((expected * weight).sum(), attr)
+    torch.testing.assert_close(actual, expected)
+    torch.testing.assert_close(actual_grad, expected_grad)
+    assert torch.autograd.gradcheck(lambda attr: egnn_norm(index, attr, 3)[1],
+                                    (attr, ))
+
+
+@withDevice
+def test_egnn_norm_distinct_channel_supports(device):
+    index = torch.tensor([[0, 1, 2, 0, 1, 2, 3, 4], [0, 1, 2, 1, 2, 0, 3, 4]],
+                         device=device)
+    attr = torch.tensor(
+        [[1., 2., 3.], [1., 2., 3.], [1., 2., 3.], [4., 0., 0.], [0., 5., 0.],
+         [0., 0., 6.], [1., 2., 3.], [1., 2., 3.]], device=device)
+    edges, values = egnn_norm(index, attr, 5)
+    actual = to_dense(edges, values, 5)
+    torch.testing.assert_close(actual, reference_norm(to_dense(index, attr,
+                                                               5)))
+    assert actual[0, 1, 0] > 0 and actual[0, 1, 1:].sum() == 0
+    assert actual[1, 2, 1] > 0 and actual[1, 2, [0, 2]].sum() == 0
+    assert actual[0, 2, 2] > 0 and actual[0, 2, :2].sum() == 0
+    assert actual[:3, 3:].sum() == actual[3:, :3].sum() == 0
+
+
+@withDevice
+def test_egnn_norm_zero_columns(device):
+    # All rows share one source; unused columns contribute no terms to (2).
+    index = torch.tensor([[0, 0, 0, 0], [0, 1, 2, 3]], device=device)
+    attr = torch.rand(4, 3, dtype=torch.double, device=device)
+    edges, values = egnn_norm(index, attr, 4)
+    expected = torch.full((4, 4, 3), 0.25, dtype=torch.double, device=device)
+    torch.testing.assert_close(to_dense(edges, values, 4), expected)
+
+
+@pytest.mark.parametrize('backbone', ['gcn', 'gat'])
+def test_egnn_conv_partial_zero_loop(backbone):
+    index = torch.arange(3).repeat(2, 1)
+    attr = torch.tensor([[1., 0.], [1., 1.], [1., 1.]])
+    conv = EGNNConv(4, 3, 2, backbone=backbone)
+    with pytest.raises(ValueError, match='positive mass'):
+        conv(torch.randn(3, 4), index, attr)
 
 
 @pytest.mark.parametrize('backbone', ['gcn', 'gat'])
@@ -331,6 +401,14 @@ def test_egnn_norm_scale_invariance(scale):
     attr = torch.ones(9, 2)
     expected = egnn_norm(index, attr, 3)
     torch.testing.assert_close(egnn_norm(index, attr * scale, 3), expected)
+
+
+def test_egnn_norm_duplicate_overflow():
+    index = torch.cartesian_prod(torch.arange(3), torch.arange(3)).T
+    index = index.repeat(1, 8)
+    attr = torch.ones(index.size(1), 2)
+    expected = egnn_norm(index, attr, 3)
+    torch.testing.assert_close(egnn_norm(index, attr * 1e38, 3), expected)
 
 
 @pytest.mark.parametrize('backbone', ['gcn', 'gat'])
