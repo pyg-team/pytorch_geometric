@@ -123,6 +123,23 @@ def test_egnn_conv_sparse_tensor(backbone):
     torch.testing.assert_close(conv(x, adj_t), conv(x, edge_index, edge_attr))
 
 
+@withPackage('torch_sparse')
+@pytest.mark.parametrize('backbone', ['gcn', 'gat'])
+def test_egnn_conv_sparse_tensor_gradients(backbone):
+    x = torch.randn(3, 4, dtype=torch.double, requires_grad=True)
+    index = torch.tensor([[0, 0, 1, 2], [1, 2, 2, 0]])
+    attr = torch.rand(4, 2, dtype=torch.double, requires_grad=True)
+    adj_t = SparseTensor.from_edge_index(index.flip(0), attr,
+                                         sparse_sizes=(3, 3))
+    conv = EGNNConv(4, 3, 2, backbone=backbone).double()
+    actual = conv(x, adj_t)
+    expected = conv(x, index, attr)
+    torch.testing.assert_close(actual, expected)
+    actual_grad = torch.autograd.grad(actual.square().sum(), (x, attr))
+    expected_grad = torch.autograd.grad(expected.square().sum(), (x, attr))
+    torch.testing.assert_close(actual_grad, expected_grad)
+
+
 @pytest.mark.parametrize('backbone', ['gcn', 'gat'])
 def test_egnn_conv_duplicates_and_uncoalesced(backbone):
     x = torch.randn(3, 4)
@@ -412,9 +429,85 @@ def test_egnn_norm_duplicate_overflow():
 
 
 @pytest.mark.parametrize('backbone', ['gcn', 'gat'])
+def test_egnn_conv_duplicate_overflow(backbone):
+    x = torch.randn(3, 4)
+    index = torch.cartesian_prod(torch.arange(3), torch.arange(3)).T
+    index = index.repeat(1, 8)
+    attr = torch.ones(index.size(1), 2)
+    # All loops already exist, so row scaling preserves the exact graph.
+    conv = EGNNConv(4, 3, 2, backbone=backbone)
+    expected = conv(x, index, attr, return_edge_weights=True)
+    actual = conv(x, index, attr * 1e38, return_edge_weights=True)
+    torch.testing.assert_close(actual, expected)
+
+
+@pytest.mark.parametrize('backbone', ['gcn', 'gat'])
 def test_egnn_conv_scalar_sparse_values(backbone):
     x = torch.randn(3, 4)
     index = torch.tensor([[0, 0, 1, 2], [1, 2, 2, 0]])
     conv = EGNNConv(4, 3, 1, backbone=backbone)
     adj_t = to_torch_coo_tensor(index.flip(0), size=(3, 3))
     torch.testing.assert_close(conv(x, adj_t), conv(x, index))
+
+
+if __name__ == '__main__':
+    import argparse
+
+    from torch_geometric.profile import benchmark
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--device', default='cpu')
+    parser.add_argument('--num_nodes', type=int, default=512)
+    parser.add_argument('--degree', type=int, default=4)
+    parser.add_argument('--edge_dim', type=int, default=3)
+    parser.add_argument('--num_steps', type=int, default=20)
+    parser.add_argument('--backward', action='store_true')
+    parser.add_argument('--dense', action='store_true')
+    args = parser.parse_args()
+    if args.num_nodes < 1 or args.edge_dim < 1 or args.degree < 0:
+        parser.error('Expected positive node/channel counts and degree >= 0')
+
+    torch.manual_seed(42)
+    device = torch.device(args.device)
+    if device.type == 'cuda':
+        torch.cuda.set_device(device)
+    nodes = torch.arange(args.num_nodes, device=device)
+    index = torch.stack([
+        torch.randint(args.num_nodes, (args.num_nodes * args.degree, ),
+                      device=device),
+        nodes.repeat_interleave(args.degree)
+    ])
+    index = torch.cat([index, nodes.repeat(2, 1)], dim=1)
+    attr = torch.rand(index.size(1), args.edge_dim, device=device)
+    attr[-args.num_nodes:] = 1  # Explicit loops give every row positive mass.
+
+    def sparse_norm(attr):
+        return egnn_norm(index, attr, args.num_nodes)[1]
+
+    def dense_norm(attr):
+        return reference_norm(to_dense(index, attr, args.num_nodes))
+
+    with torch.no_grad():
+        edges, weights = egnn_norm(index, attr, args.num_nodes)
+        print(f'PyTorch: {torch.__version__}, Device: {device}')
+        print(f'Nodes: {args.num_nodes}, Channels: {args.edge_dim}, '
+              f'Input edges: {index.size(1)}, Output edges: {edges.size(1)}')
+        if args.dense:
+            torch.testing.assert_close(
+                to_dense(edges, weights, args.num_nodes), dense_norm(attr))
+        del edges, weights
+
+    funcs = [('Sparse', sparse_norm)]
+    if args.dense:
+        # Includes COO-to-dense conversion and differentiates the same input
+        # edge features, keeping absent connections fixed in both versions.
+        funcs.append(('Dense reference (including conversion)', dense_norm))
+    for name, func in funcs:
+        if device.type == 'cuda':
+            torch.cuda.reset_peak_memory_stats(device)
+        benchmark([func], (attr, ), num_steps=args.num_steps,
+                  func_names=[name], num_warmups=3, backward=args.backward,
+                  per_step=True)
+        if device.type == 'cuda':
+            peak = torch.cuda.max_memory_allocated(device) / 1024**2
+            print(f'Peak CUDA allocation including inputs: {peak:.2f} MiB')

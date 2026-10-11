@@ -90,6 +90,30 @@ def test_dense_egnn_conv_partial_zero_loop(backbone):
         conv(torch.randn(3, 4), adj)
 
 
+@withDevice
+@pytest.mark.parametrize('backbone', ['gcn', 'gat'])
+@pytest.mark.parametrize('layout', ['coo', 'csr', 'csc'])
+def test_dense_egnn_conv_zero_loops(device, backbone, layout):
+    x = torch.randn(3, 4, device=device, dtype=torch.double)
+    index = torch.tensor([[0, 1, 2, 0, 1, 2], [0, 1, 2, 1, 2, 0]],
+                         device=device)
+    attr = torch.rand(6, 2, device=device, dtype=torch.double)
+    attr[:3] = 0
+    adj = attr.new_zeros(3, 3, 2)
+    adj[index[1], index[0]] = attr
+    adj_t = torch.sparse_coo_tensor(index.flip(0), attr, (3, 3, 2)).coalesce()
+    adj_t = adj_t.to_sparse(layout=getattr(torch, f'sparse_{layout}'))
+    sparse = EGNNConv(4, 3, 2, backbone=backbone).to(device).double()
+    dense = DenseEGNNConv(4, 3, 2, backbone=backbone).to(device).double()
+    dense.load_state_dict(sparse.state_dict())
+    expected, edges = dense(x, adj, return_edge_weights=True)
+    for edge_index, edge_attr in [(index, attr), (adj_t, None)]:
+        out, (indices, values) = sparse(x, edge_index, edge_attr,
+                                        return_edge_weights=True)
+        torch.testing.assert_close(out, expected.squeeze(0))
+        torch.testing.assert_close(values, edges[0, indices[1], indices[0]])
+
+
 @pytest.mark.parametrize('backbone', ['gcn', 'gat'])
 def test_dense_egnn_conv_gradcheck(backbone):
     x = torch.randn(1, 3, 2, dtype=torch.double, requires_grad=True)
@@ -132,6 +156,20 @@ def test_dense_egnn_conv_empty_graph(backbone):
                     mask=torch.zeros(2, 3, dtype=torch.bool),
                     return_edge_weights=True)
     assert out.abs().sum() == adj.abs().sum() == 0
+
+
+@pytest.mark.parametrize('backbone', ['gcn', 'gat'])
+@pytest.mark.parametrize('x_batch,adj_batch', [(0, 1), (1, 0), (0, 0)])
+def test_dense_egnn_conv_empty_batch(backbone, x_batch, adj_batch):
+    x = torch.randn(x_batch, 3, 4, requires_grad=True)
+    adj = torch.ones(adj_batch, 3, 3, 2, requires_grad=True)
+    mask = torch.empty(0, 3, dtype=torch.bool)
+    conv = DenseEGNNConv(4, 3, 2, backbone=backbone)
+    out, weights = conv(x, adj, mask, return_edge_weights=True)
+    assert out.shape == (0, 3, 6) and weights.shape == (0, 3, 3, 2)
+    out.sum().backward()
+    assert x.grad is not None and adj.grad is not None
+    assert x.grad.abs().sum() == adj.grad.abs().sum() == 0
 
 
 @pytest.mark.parametrize('kwargs,match', [

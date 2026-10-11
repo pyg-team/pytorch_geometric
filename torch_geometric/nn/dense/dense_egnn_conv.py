@@ -104,7 +104,7 @@ class DenseEGNNConv(torch.nn.Module):
         if not torch.isfinite(adj).all() or (adj < 0).any():
             raise ValueError("Edge features must be finite and nonnegative")
         adj = adj.to(x.dtype)
-        batch_size = max(x.size(0), adj.size(0))
+        batch_size = torch.broadcast_shapes(x.shape[:1], adj.shape[:1])[0]
         x = x.expand(batch_size, -1, -1)
         adj = adj.expand(batch_size, -1, -1, -1)
         if mask is None:

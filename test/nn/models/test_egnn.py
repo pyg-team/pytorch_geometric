@@ -6,7 +6,8 @@ import torch.nn.functional as F
 
 from torch_geometric.data import Batch, Data
 from torch_geometric.nn import EGNN, global_max_pool
-from torch_geometric.utils import to_torch_coo_tensor
+from torch_geometric.nn.conv.egnn_conv import egnn_norm
+from torch_geometric.utils import add_remaining_self_loops, to_torch_coo_tensor
 
 
 @pytest.mark.parametrize('backbone', ['gcn', 'gat'])
@@ -110,6 +111,30 @@ def test_egnn_dropout_train_eval(backbone):
     torch.testing.assert_close(model(x, index), model(x, index))
 
 
+@pytest.mark.parametrize('backbone', ['gcn', 'gat'])
+def test_egnn_pre_normalized_input(backbone):
+    torch.manual_seed(12345)
+    x = torch.randn(4, 3, dtype=torch.double)
+    index = torch.tensor([[0, 0, 1, 2, 3], [1, 2, 2, 0, 1]])
+    attr = torch.rand(5, 2, dtype=torch.double)
+    loops, loop_attr = add_remaining_self_loops(index, attr, fill_value=1.,
+                                                num_nodes=4)
+    edges, weights = egnn_norm(loops, loop_attr, 4)
+    raw = EGNN(3, 4, 5, 2, 2, backbone=backbone).double()
+    prepared = EGNN(3, 4, 5, 2, 2, backbone=backbone, normalize=False).double()
+    prepared.load_state_dict(raw.state_dict())
+    assert raw.normalize and not prepared.normalize
+    assert all(not conv.normalize and not conv.add_self_loops
+               for conv in prepared.convs)
+    expected = raw(x, index, attr, return_edge_weights=True)
+    actual = prepared(x, edges, weights, return_edge_weights=True)
+    torch.testing.assert_close(actual, expected)
+    actual[0].square().sum().backward()
+    expected[0].square().sum().backward()
+    for param1, param2 in zip(prepared.parameters(), raw.parameters()):
+        torch.testing.assert_close(param1.grad, param2.grad)
+
+
 @pytest.mark.parametrize('kwargs,match', [
     ({
         'num_layers': 0
@@ -118,8 +143,9 @@ def test_egnn_dropout_train_eval(backbone):
         'out_channels': 0
     }, 'out_channels'),
     ({
-        'normalize': False
-    }, 'managed'),
+        'normalize': False,
+        'add_self_loops': True,
+    }, 'self-loops'),
     ({
         'backbone': 'sage'
     }, 'backbone'),

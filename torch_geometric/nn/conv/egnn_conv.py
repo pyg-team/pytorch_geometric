@@ -10,7 +10,6 @@ from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot, zeros
 from torch_geometric.typing import Adj, OptTensor
 from torch_geometric.utils import (
-    add_remaining_self_loops,
     coalesce,
     is_sparse,
     is_torch_sparse_tensor,
@@ -28,6 +27,11 @@ def egnn_norm(edge_index: Tensor, edge_attr: Tensor,
     Rows correspond to target nodes and must have positive sums in every
     edge channel. Unlike row normalization, this operation can introduce
     edges between nodes sharing a source neighbor.
+
+    .. math::
+        T_{ijp} = \frac{E_{ijp}}{\sum_k E_{ikp}}, \qquad
+        \operatorname{DS}(E)_{ijp} =
+        \sum_k \frac{T_{ikp}T_{jkp}}{\sum_v T_{vkp}}.
     """
     dtype = edge_attr.dtype
     if dtype in [torch.float16, torch.bfloat16]:
@@ -115,7 +119,12 @@ class EGNNConv(MessagePassing):
         Sparse inputs follow the :pyg:`PyG` convention of transposed adjacency
         matrices, with edge features stored as their values. Returned edges
         always use COO indices in source-to-target order. Exact normalization
-        can produce a dense graph even from sparse input.
+        can produce a dense graph even from sparse input. Only homogeneous
+        graphs with a square adjacency are supported.
+
+        For an example, see `examples/egnn.py
+        <https://github.com/pyg-team/pytorch_geometric/blob/master/
+        examples/egnn.py>`_.
 
     Args:
         in_channels (int): Size of each input sample, or :obj:`-1` to infer
@@ -129,9 +138,10 @@ class EGNNConv(MessagePassing):
             Attention weights are always doubly stochastic normalized.
             (default: :obj:`True`)
         add_self_loops (bool, optional): Whether to add missing self-loops
-            with value :obj:`1` before input normalization. Existing loop
-            values are preserved. Normalization requires a positive row sum
-            for every node in every channel.
+            with value :obj:`1` in every channel before input normalization.
+            A loop with zero values in all channels is treated as absent.
+            Existing nonzero loop values are preserved. Normalization
+            requires a positive row sum for every node in every channel.
             (default: :obj:`True`)
         negative_slope (float, optional): LeakyReLU slope.
             (default: :obj:`0.2`)
@@ -212,6 +222,20 @@ class EGNNConv(MessagePassing):
 
         Set :obj:`return_edge_weights=True` to pass the resulting edge indices
         and undropped edge weights to another :class:`EGNNConv` layer.
+
+        Args:
+            x (torch.Tensor): Node features with shape :math:`(N, F_{in})`.
+            edge_index (torch.Tensor or SparseTensor): Source-to-target COO
+                indices with shape :math:`(2, M)`, or a transposed sparse
+                adjacency matrix with edge features stored as its values.
+            edge_attr (torch.Tensor, optional): Nonnegative finite edge
+                features with shape :math:`(M, P)` or :math:`(M,)` for a
+                single channel. When omitted for COO indices, defaults to
+                ones in every channel. (default: :obj:`None`)
+            return_edge_weights (bool, optional): Whether to return
+                :obj:`(out, (edge_index, edge_attr))`. Returned edges are
+                undropped COO weights regardless of the input format.
+                (default: :obj:`False`)
         """
         if x.dim() != 2:
             raise ValueError("'x' must be a two-dimensional tensor")
@@ -241,9 +265,18 @@ class EGNNConv(MessagePassing):
         edge_attr = edge_attr.to(x.dtype)
 
         if self.add_self_loops:
-            edge_index, edge_attr = coalesce(edge_index, edge_attr, num_nodes)
-            edge_index, edge_attr = add_remaining_self_loops(
-                edge_index, edge_attr, fill_value=1., num_nodes=num_nodes)
+            # Append missing loops without summing raw duplicate weights,
+            # which can overflow before the stable normalization below.
+            mask = (edge_index[0] == edge_index[1]) & (edge_attr != 0).any(-1)
+            loop = edge_index[0, mask]
+            present = scatter(torch.ones_like(loop), loop, dim=0,
+                              dim_size=num_nodes, reduce='max')
+            loop = torch.arange(num_nodes,
+                                device=edge_index.device)[present == 0]
+            edge_index = torch.cat([edge_index, loop.expand(2, -1)], dim=1)
+            edge_attr = torch.cat(
+                [edge_attr,
+                 edge_attr.new_ones((loop.numel(), self.edge_dim))], dim=0)
         if self.normalize:
             edge_index, edge_attr = egnn_norm(edge_index, edge_attr, num_nodes)
 
