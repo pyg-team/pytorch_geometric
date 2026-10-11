@@ -25,7 +25,8 @@ def supports_sparse_tensor(cls: str) -> bool:
 def supports_edge_weights(cls: str) -> bool:
     cls = importlib.import_module('torch_geometric.nn.conv').__dict__[cls]
     signature = inspect.signature(cls.forward)
-    return 'edge_weight' in str(signature)
+    return any('edge_weight' in name and not name.startswith('return_')
+               for name in signature.parameters)
 
 
 def supports_edge_features(cls: str) -> bool:
@@ -37,7 +38,8 @@ def supports_edge_features(cls: str) -> bool:
 def supports_bipartite_graphs(cls: str) -> bool:
     cls = importlib.import_module('torch_geometric.nn.conv').__dict__[cls]
     signature = inspect.signature(cls.forward)
-    return 'Union[torch.Tensor, Tuple[torch.Tensor' in str(signature)
+    return any('Union[torch.Tensor, Tuple[torch.Tensor' in str(param)
+               for param in signature.parameters.values())
 
 
 def supports_static_graphs(cls: str) -> bool:

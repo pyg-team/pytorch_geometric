@@ -31,5 +31,5 @@ __all__ = [
 ]
 
 lin_classes = __all__[:3]
-conv_classes = __all__[3:8]
-pool_classes = __all__[8:]
+conv_classes = __all__[3:9]
+pool_classes = __all__[9:]

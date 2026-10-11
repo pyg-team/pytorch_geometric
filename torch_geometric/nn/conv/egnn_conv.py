@@ -127,8 +127,8 @@ class EGNNConv(MessagePassing):
         examples/egnn.py>`_.
 
     Args:
-        in_channels (int): Size of each input sample, or :obj:`-1` to infer
-            it from the first input.
+        in_channels (int): Size of each input sample, or :obj:`-1` to derive
+            the size from the first input(s) to the forward method.
         out_channels (int): Output dimensionality **per edge channel**.
         edge_dim (int): Number of edge channels.
         backbone (str, optional): :obj:`"gcn"` or :obj:`"gat"`.
