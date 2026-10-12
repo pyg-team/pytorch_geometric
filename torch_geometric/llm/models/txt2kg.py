@@ -1,6 +1,6 @@
 import os
 import time
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple, TypedDict, Union
 
 import torch
 import torch.multiprocessing as mp
@@ -14,6 +14,8 @@ MAX_OUTER_RETRIES = 5  # Maximum number of times the entire multiprocessing job 
 RETRY_DELAY = 5  # Fixed sleep time (in seconds) between outer retries.
 MAX_NIM_RETRIES = 200  # Maximum number of attempts to call the NIM API inside one worker.  # noqa
 BASE_DELAY = 0.5  # Initial wait time before retrying a failed network call.
+
+FORBIDDEN = 403
 
 
 class TXT2KG():
@@ -187,17 +189,30 @@ class TXT2KG():
         ) for rank in range(num_procs)]
 
         for attempt in range(max_retries):
-            try:
-                with mp.get_context("spawn").Pool(num_procs) as pool:
-                    results = pool.starmap(_multiproc_helper, worker_args)
-                break  # success
+            with mp.get_context("spawn").Pool(num_procs) as pool:
+                worker_results = pool.starmap(_multiproc_helper, worker_args)
 
-            except Exception as e:
-                if attempt == max_retries - 1:
-                    raise  # re-raise on final failure
+            # Check whether any worker failed.
+            failed_result = next(
+                (result for result in worker_results if not result["success"]),
+                None,
+            )
 
-                print(f"[Retry {attempt+1}/{max_retries}] "
-                      f"Multiprocessing failed: {e}")
+            if failed_result is None:
+                # All workers succeeded.
+                results = [result["result"] for result in worker_results]
+                break
+
+            # A worker failed with a non-retryable error.
+            if not failed_result["retryable"]:
+                raise RuntimeError(failed_result["error"])
+
+            if attempt == max_retries - 1:
+                raise RuntimeError(failed_result["error"])
+
+            print(f"[Retry {attempt + 1}/{max_retries}] "
+                  f"Multiprocessing failed: {failed_result['error']}")
+
             time.sleep(retry_delay)
 
         return _merge_triples_deterministically(results)
@@ -291,6 +306,27 @@ def _llm_then_python_parse(chunks, py_fn, llm_fn, **kwargs):
     return relevant_triples
 
 
+def _is_retryable_exception(exc: Exception, status_code) -> bool:
+    """Return True if an exception is likely to succeed when retried."""
+    if status_code is not None:
+        return status_code == 429 or status_code >= 500
+
+    # Network/transport exceptions.
+    try:
+        from openai import APIConnectionError, APITimeoutError
+    except ImportError:
+        return False
+
+    return isinstance(exc, (APIConnectionError, APITimeoutError))
+
+
+class WorkerResult(TypedDict, total=False):
+    success: bool
+    result: list
+    retryable: bool
+    error: str
+
+
 def _multiproc_helper(
     rank,
     chunks_for_rank,
@@ -301,29 +337,59 @@ def _multiproc_helper(
     ENDPOINT_URL,
     max_retries=MAX_NIM_RETRIES,
     base_delay=BASE_DELAY,
-):
+) -> WorkerResult:
 
     for attempt in range(max_retries):
-        try:
-            return _llm_then_python_parse(
-                chunks_for_rank,
-                py_fn,
-                llm_fn,
-                GLOBAL_NIM_KEY=NIM_KEY,
-                NIM_MODEL=NIM_MODEL,
-                ENDPOINT_URL=ENDPOINT_URL,
-            )
-
-        except Exception:
-            # Optional: restrict to network-related exceptions only
-            if attempt == max_retries - 1:
-                raise
-
+        if attempt > 0:
             # exponential backoff with jitter
             from random import uniform
-            sleep_time = base_delay * (2**min(attempt, 6))
-            sleep_time += uniform(0, 0.1)
+            sleep_time = base_delay * (2**min(attempt - 1, 6)) + uniform(
+                0, 0.1)
             time.sleep(sleep_time)
+
+        try:
+            return {
+                "success":
+                True,
+                "result":
+                _llm_then_python_parse(
+                    chunks_for_rank,
+                    py_fn,
+                    llm_fn,
+                    GLOBAL_NIM_KEY=NIM_KEY,
+                    NIM_MODEL=NIM_MODEL,
+                    ENDPOINT_URL=ENDPOINT_URL,
+                )
+            }
+
+        except Exception as e:
+            # OpenAI-compatible API exceptions generally expose `status_code`.
+            status_code = getattr(e, "status_code", None)
+            retryable = _is_retryable_exception(e, status_code)
+            print(
+                f"[Worker {rank}] attempt {attempt + 1}/{max_retries}: "
+                f"{type(e).__name__}: {e}. Retryable={retryable}",
+                flush=True,
+            )
+
+            if status_code == FORBIDDEN:
+                print(
+                    "\n ***** Please, check your NV_NIM_KEY. *****\n"
+                    "The key may be expired, invalid or not authorized "
+                    "to access the dataset you are using.\n", flush=True)
+
+            if not retryable:
+                return {
+                    "success": False,
+                    "retryable": False,
+                    "error": str(e),
+                }
+
+    return {
+        "success": False,
+        "retryable": True,
+        "error": f"Worker {rank}: exhausted {max_retries} retries",
+    }
 
 
 def _get_num_procs():
