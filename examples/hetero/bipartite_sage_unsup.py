@@ -1,7 +1,9 @@
 # An implementation of unsupervised bipartite GraphSAGE using the Alibaba
 # Taobao dataset.
+import gc
 import os.path as osp
 
+import numpy as np
 import torch
 import torch.nn.functional as F
 import tqdm
@@ -14,6 +16,32 @@ from torch_geometric.datasets import Taobao
 from torch_geometric.loader import LinkNeighborLoader
 from torch_geometric.nn import SAGEConv
 from torch_geometric.utils.convert import to_scipy_sparse_matrix
+
+
+def item_relationships(mat, columns_per_block=512):
+    """Return the original CSC-ordered, off-diagonal count>=3 edge indices.
+
+    The final edge arrays still require memory proportional to the retained
+    graph. Only the unthresholded multiplication result is processed in blocks.
+    """
+    if (not isinstance(columns_per_block, int)
+            or isinstance(columns_per_block, bool) or columns_per_block <= 0):
+        raise ValueError('columns_per_block must be a positive integer')
+    left = mat.T.tocsc(copy=False)
+    right = mat.tocsc()
+    rows, columns = [], []
+    for start in range(0, mat.shape[1], columns_per_block):
+        product = left @ right[:, start:start + columns_per_block]
+        # Local column zero corresponds to global column start.
+        product.setdiag(0, k=-start)
+        selected = (product >= 3.).tocoo()
+        rows.append(selected.row.astype(np.int64, copy=False))
+        columns.append(selected.col.astype(np.int64, copy=False) + start)
+        del selected, product
+    if not rows:
+        return np.empty(0, dtype=np.int64), np.empty(0, dtype=np.int64)
+    return np.concatenate(rows), np.concatenate(columns)
+
 
 if torch.cuda.is_available():
     device = torch.device('cuda')
@@ -54,13 +82,12 @@ print('Done!')
 print('Computing item<>item relationships...')
 mat = to_scipy_sparse_matrix(data['user', 'item'].edge_index).tocsr()
 mat = mat[:data['user'].num_nodes, :data['item'].num_nodes]
-comat = mat.T @ mat
-comat.setdiag(0)
-comat = comat >= 3.
-comat = comat.tocoo()
-row = torch.from_numpy(comat.row).to(torch.long)
-col = torch.from_numpy(comat.col).to(torch.long)
+row, col = item_relationships(mat)
+row = torch.from_numpy(row).to(torch.long)
+col = torch.from_numpy(col).to(torch.long)
 item_to_item_edge_index = torch.stack([row, col], dim=0)
+# The stacked graph owns its storage; release the construction buffers.
+del row, col, mat
 
 # Add the generated item<>item relationships for high-order information:
 train_data['item', 'item'].edge_index = item_to_item_edge_index
@@ -68,42 +95,48 @@ val_data['item', 'item'].edge_index = item_to_item_edge_index
 test_data['item', 'item'].edge_index = item_to_item_edge_index
 print('Done!')
 
-train_loader = LinkNeighborLoader(
-    data=train_data,
-    num_neighbors=[8, 4],
-    edge_label_index=('user', 'to', 'item'),
-    neg_sampling='binary',
-    batch_size=2048,
-    shuffle=True,
-    num_workers=16,
-    drop_last=True,
-)
 
-val_loader = LinkNeighborLoader(
-    data=val_data,
-    num_neighbors=[8, 4],
-    edge_label_index=(
-        ('user', 'to', 'item'),
-        val_data[('user', 'to', 'item')].edge_label_index,
-    ),
-    edge_label=val_data[('user', 'to', 'item')].edge_label,
-    batch_size=2048,
-    shuffle=False,
-    num_workers=16,
-)
+def make_train_loader():
+    return LinkNeighborLoader(
+        data=train_data,
+        num_neighbors=[8, 4],
+        edge_label_index=('user', 'to', 'item'),
+        neg_sampling='binary',
+        batch_size=2048,
+        shuffle=True,
+        num_workers=16,
+        drop_last=True,
+    )
 
-test_loader = LinkNeighborLoader(
-    data=test_data,
-    num_neighbors=[8, 4],
-    edge_label_index=(
-        ('user', 'to', 'item'),
-        test_data[('user', 'to', 'item')].edge_label_index,
-    ),
-    edge_label=test_data[('user', 'to', 'item')].edge_label,
-    batch_size=2048,
-    shuffle=False,
-    num_workers=16,
-)
+
+def make_val_loader():
+    return LinkNeighborLoader(
+        data=val_data,
+        num_neighbors=[8, 4],
+        edge_label_index=(
+            ('user', 'to', 'item'),
+            val_data[('user', 'to', 'item')].edge_label_index,
+        ),
+        edge_label=val_data[('user', 'to', 'item')].edge_label,
+        batch_size=2048,
+        shuffle=False,
+        num_workers=16,
+    )
+
+
+def make_test_loader():
+    return LinkNeighborLoader(
+        data=test_data,
+        num_neighbors=[8, 4],
+        edge_label_index=(
+            ('user', 'to', 'item'),
+            test_data[('user', 'to', 'item')].edge_label_index,
+        ),
+        edge_label=test_data[('user', 'to', 'item')].edge_label,
+        batch_size=2048,
+        shuffle=False,
+        num_workers=16,
+    )
 
 
 class ItemGNNEncoder(torch.nn.Module):
@@ -193,57 +226,67 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 
 def train():
-    model.train()
+    train_loader = make_train_loader()
+    try:
+        model.train()
 
-    total_loss = total_examples = 0
-    for batch in tqdm.tqdm(train_loader):
-        batch = batch.to(device)
-        optimizer.zero_grad()
+        total_loss = total_examples = 0
+        for batch in tqdm.tqdm(train_loader):
+            batch = batch.to(device)
+            optimizer.zero_grad()
 
-        pred = model(
-            batch.x_dict,
-            batch.edge_index_dict,
-            batch['user', 'item'].edge_label_index,
-        )
-        loss = F.binary_cross_entropy_with_logits(
-            pred, batch['user', 'item'].edge_label)
+            pred = model(
+                batch.x_dict,
+                batch.edge_index_dict,
+                batch['user', 'item'].edge_label_index,
+            )
+            loss = F.binary_cross_entropy_with_logits(
+                pred, batch['user', 'item'].edge_label)
 
-        loss.backward()
-        optimizer.step()
-        total_loss += float(loss)
-        total_examples += pred.numel()
+            loss.backward()
+            optimizer.step()
+            total_loss += float(loss)
+            total_examples += pred.numel()
 
-    return total_loss / total_examples
+        return total_loss / total_examples
+    finally:
+        del train_loader
+        gc.collect()
 
 
 @torch.no_grad()
-def test(loader):
-    model.eval()
+def test(make_loader):
+    loader = make_loader()
+    try:
+        model.eval()
 
-    preds, targets = [], []
-    for batch in tqdm.tqdm(loader):
-        batch = batch.to(device)
+        preds, targets = [], []
+        for batch in tqdm.tqdm(loader):
+            batch = batch.to(device)
 
-        pred = model(
-            batch.x_dict,
-            batch.edge_index_dict,
-            batch['user', 'item'].edge_label_index,
-        ).sigmoid().view(-1).cpu()
-        target = batch['user', 'item'].edge_label.long().cpu()
+            pred = model(
+                batch.x_dict,
+                batch.edge_index_dict,
+                batch['user', 'item'].edge_label_index,
+            ).sigmoid().view(-1).cpu()
+            target = batch['user', 'item'].edge_label.long().cpu()
 
-        preds.append(pred)
-        targets.append(target)
+            preds.append(pred)
+            targets.append(target)
 
-    pred = torch.cat(preds, dim=0).numpy()
-    target = torch.cat(targets, dim=0).numpy()
+        pred = torch.cat(preds, dim=0).numpy()
+        target = torch.cat(targets, dim=0).numpy()
 
-    return roc_auc_score(target, pred)
+        return roc_auc_score(target, pred)
+    finally:
+        del loader
+        gc.collect()
 
 
 for epoch in range(1, 21):
     loss = train()
-    val_auc = test(val_loader)
-    test_auc = test(test_loader)
+    val_auc = test(make_val_loader)
+    test_auc = test(make_test_loader)
 
     print(f'Epoch: {epoch:02d}, Loss: {loss:4f}, Val: {val_auc:.4f}, '
           f'Test: {test_auc:.4f}')
