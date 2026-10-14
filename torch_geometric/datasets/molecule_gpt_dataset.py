@@ -10,7 +10,9 @@ from typing import Callable, List, Optional, Tuple
 import numpy as np
 import requests
 import torch
+from requests.adapters import HTTPAdapter
 from tqdm import tqdm
+from urllib3.util.retry import Retry
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
 from torch_geometric.io import fs
@@ -236,8 +238,10 @@ class MoleculeGPTDataset(InMemoryDataset):
     def download(self) -> None:
         # Step 01. Extract description
         step1_folder = f"{self.raw_dir}/step_01_PubChemSTM_description"
-        if not os.path.exists(step1_folder):
-            os.makedirs(step1_folder)
+        # The directory may remain after a failed download.
+        description_file = f"{self.raw_dir}/CID2text.json"
+        if not os.path.exists(description_file):
+            os.makedirs(step1_folder, exist_ok=True)
             valid_CID_set = set()
             CID2name_raw, CID2name_extracted = defaultdict(list), defaultdict(
                 list)
@@ -246,16 +250,26 @@ class MoleculeGPTDataset(InMemoryDataset):
 
             for page_index in tqdm(range(self.total_page_num)):
                 page_num = page_index + 1
-                f_out = open(
-                    f"{step1_folder}/Compound_description_{page_num}.txt", "w")
+                with requests.Session() as session:
+                    adapter = HTTPAdapter(max_retries=Retry(
+                        total=2, backoff_factor=1,
+                        status_forcelist=[429, 500, 502, 503, 504]))
+                    session.mount('https://', adapter)
+                    session.mount('http://', adapter)
+                    response = session.get(
+                        self.description_url.format(page_num), timeout=60)
+                    response.raise_for_status()
+                    description_data = response.json()
 
-                description_data = requests.get(
-                    self.description_url.format(page_num)).json()
-
+                if 'Annotations' not in description_data:
+                    raise ValueError(f"Missing PubChem annotations on page "
+                                     f"{page_num}: {description_data}")
                 description_data = description_data["Annotations"]
                 assert description_data["Page"] == page_num
 
                 record_list = description_data["Annotation"]
+                f_out = open(
+                    f"{step1_folder}/Compound_description_{page_num}.txt", "w")
 
                 for record in record_list:
                     try:
@@ -285,6 +299,7 @@ class MoleculeGPTDataset(InMemoryDataset):
                             f_out.write(f"{extracted_description}\n\n")
                     except Exception:
                         continue
+                f_out.close()
 
             valid_CID_list = sorted(list(valid_CID_set))
             print(f"Total CID (with raw name) {len(CID2name_raw)}")
@@ -300,8 +315,9 @@ class MoleculeGPTDataset(InMemoryDataset):
             with open(f"{self.raw_dir}/CID2text_raw.json", "w") as f:
                 json.dump(CID2text_raw, f)
 
-            with open(f"{self.raw_dir}/CID2text.json", "w") as f:
+            with open(f"{description_file}.tmp", "w") as f:
                 json.dump(CID2text_extracted, f)
+            os.replace(f"{description_file}.tmp", description_file)
 
         # Step 02. Download SDF Files
         step2_folder = f"{self.raw_dir}/step_02_PubChemSTM_SDF"
