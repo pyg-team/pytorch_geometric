@@ -1,3 +1,4 @@
+import pytest
 import torch
 
 from torch_geometric.data import Data
@@ -5,6 +6,7 @@ from torch_geometric.datasets import MedShapeNet
 from torch_geometric.testing import withPackage
 
 
+@pytest.mark.dataset
 @withPackage('MedShapeNet')
 def test_medshapenet():
     dataset = MedShapeNet(root="./data/MedShapeNet", size=1)
