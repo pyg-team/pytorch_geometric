@@ -56,6 +56,10 @@ def test_gatv2_conv(residual):
     assert result[1][1].size() == (7, 2)
     assert result[1][1].min() >= 0 and result[1][1].max() <= 1
 
+    result = conv(x1, edge_index, return_attention_weights=False)
+    assert isinstance(result, Tensor)
+    assert torch.allclose(result, out)
+
     result = conv(x1, adj1.t(), return_attention_weights=True)
     assert torch.allclose(result[0], out, atol=1e-6)
     assert result[1][0].size() == torch.Size([4, 4, 2])
