@@ -6,6 +6,7 @@ from torch import Tensor
 
 import torch_geometric
 from torch_geometric import EdgeIndex
+from torch_geometric._jit import is_scripting, is_tracing
 from torch_geometric.typing import EdgeType, NodeType, SparseTensor
 
 
@@ -15,13 +16,13 @@ def maybe_num_nodes(
 ) -> int:
     if num_nodes is not None:
         return num_nodes
-    elif not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+    elif not is_scripting() and isinstance(edge_index, EdgeIndex):
         return max(edge_index.get_sparse_size())
     elif isinstance(edge_index, Tensor):
         if torch_geometric.utils.is_torch_sparse_tensor(edge_index):
             return max(edge_index.size(0), edge_index.size(1))
 
-        if torch.jit.is_tracing():
+        if is_tracing():
             # Avoid non-traceable if-check for empty `edge_index` tensor:
             tmp = torch.concat([
                 edge_index.view(-1),

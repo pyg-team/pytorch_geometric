@@ -254,6 +254,10 @@ def test_my_conv_jit():
         jit.fuse = True
 
 
+@pytest.mark.skipif(
+    torch_geometric.typing.WITH_PT212,
+    reason="torch.jit.save/load deprecated in PyTorch >= 2.12",
+)
 def test_my_conv_jit_save(tmp_path):
     path = osp.join(tmp_path, 'model.pt')
 

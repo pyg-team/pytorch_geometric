@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 from torch.nn import Parameter
 
+from torch_geometric._jit import overload
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import zeros
@@ -26,7 +27,7 @@ from torch_geometric.utils.num_nodes import maybe_num_nodes
 from torch_geometric.utils.sparse import set_sparse_value
 
 
-@torch.jit._overload
+@overload  # noqa: F811
 def gcn_norm(  # noqa: F811
         edge_index, edge_weight, num_nodes, improved, add_self_loops, flow,
         dtype):
@@ -34,7 +35,7 @@ def gcn_norm(  # noqa: F811
     pass
 
 
-@torch.jit._overload
+@overload  # noqa: F811
 def gcn_norm(  # noqa: F811
         edge_index, edge_weight, num_nodes, improved, add_self_loops, flow,
         dtype):

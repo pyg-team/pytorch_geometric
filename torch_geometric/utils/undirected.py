@@ -1,17 +1,12 @@
-import typing
 from typing import List, Optional, Tuple, Union
 
 import torch
 from torch import Tensor
 
+from torch_geometric._jit import overload
 from torch_geometric.typing import OptTensor
 from torch_geometric.utils import coalesce, sort_edge_index
 from torch_geometric.utils.num_nodes import maybe_num_nodes
-
-if typing.TYPE_CHECKING:
-    from typing import overload
-else:
-    from torch.jit import _overload as overload
 
 MISSING = '???'
 

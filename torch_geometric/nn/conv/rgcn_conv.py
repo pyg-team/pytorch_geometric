@@ -7,6 +7,7 @@ from torch.nn import Parameter
 import torch_geometric.backend
 import torch_geometric.typing
 from torch_geometric import is_compiling
+from torch_geometric._jit import Attribute
 from torch_geometric.index import index2ptr
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import glorot, zeros
@@ -120,7 +121,7 @@ class RGCNConv(MessagePassing):
             in_channels = (in_channels, in_channels)
         self.in_channels_l = in_channels[0]
 
-        self._use_segment_matmul_heuristic_output: torch.jit.Attribute(
+        self._use_segment_matmul_heuristic_output: Attribute(
             None, Optional[float])
 
         if num_bases is not None:

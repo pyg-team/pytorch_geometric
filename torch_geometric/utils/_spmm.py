@@ -5,6 +5,7 @@ from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric import EdgeIndex
+from torch_geometric._jit import is_scripting
 from torch_geometric.typing import Adj, SparseTensor, torch_sparse
 from torch_geometric.utils import is_torch_sparse_tensor, scatter
 
@@ -34,7 +35,7 @@ def spmm(
     if reduce not in ['sum', 'mean', 'min', 'max']:
         raise ValueError(f"`reduce` argument '{reduce}' not supported")
 
-    if not torch.jit.is_scripting() and isinstance(src, EdgeIndex):
+    if not is_scripting() and isinstance(src, EdgeIndex):
         return src.matmul(other=other, reduce=reduce)  # type: ignore
 
     if isinstance(src, SparseTensor):

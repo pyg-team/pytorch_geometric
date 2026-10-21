@@ -4,6 +4,7 @@ import torch
 import torch.nn.functional as F
 
 import torch_geometric.transforms as T
+import torch_geometric.typing
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GATConv
 
@@ -31,7 +32,8 @@ class GAT(torch.nn.Module):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model, data = GAT().to(device), dataset[0].to(device)
-model = torch.jit.script(model)
+if not torch_geometric.typing.WITH_PT212:
+    model = torch.jit.script(model)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=5e-4)
 
 
