@@ -56,7 +56,7 @@ class ToDense(BaseTransform):
             data.pos = torch.cat([data.pos, data.pos.new_zeros(_size)], dim=0)
 
         if (data.y is not None and isinstance(data.y, Tensor)
-                and data.y.size(0) == orig_num_nodes):
+                and data.y.dim() > 0 and data.y.size(0) == orig_num_nodes):
             _size = [num_nodes - data.y.size(0)] + list(data.y.size())[1:]
             data.y = torch.cat([data.y, data.y.new_zeros(_size)], dim=0)
 
