@@ -7,7 +7,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Added `--max_test_samples` to the TXT2KG RAG example to limit evaluation for smoke tests
 - Added `torch_geometric.contrib.nn.models.MGNAN` (M-GNAN, an extension of `GNAN` to multivariate shape functions) model plus an example ([#10371](https://github.com/pyg-team/pytorch_geometric/pull/10371))
 
 ### Changed
