@@ -20,6 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fixed bounded Nemotron triple extraction producing reasoning-only output and rejected empty cloud responses
+- Fixed the heterogeneous CSV example with pandas Arrow-backed strings by passing text as a Python list
 - Fixed `config_store` on Python 3.14, where `typing.Union`/`typing.Optional` annotations could no longer be remapped in-place via the now read-only `__args__` attribute
 
 ### Security
