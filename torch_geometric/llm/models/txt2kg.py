@@ -231,6 +231,7 @@ def _chunk_to_triples_str_cloud(
         NIM_MODEL="nvidia/llama-3.1-nemotron-ultra-253b-v1",
         ENDPOINT_URL="https://integrate.api.nvidia.com/v1",
         post_text=SYSTEM_PROMPT) -> str:
+    """Request answer-only triples and reject empty provider responses."""
     global CLIENT_INITD
     if not CLIENT_INITD:
         # We use NIMs since most PyG users may not be able to run a 70B+ model
@@ -251,14 +252,29 @@ def _chunk_to_triples_str_cloud(
             for model_name_str in known_reasoners]):
         messages.append({"role": "system", "content": "detailed thinking on"})
     messages.append({"role": "user", "content": txt_input})
+    request_options = {}
+    if NIM_MODEL.lower().split('/')[-1] == 'nemotron-3.5-lightning-30b-a3b':
+        # This model enables thinking by default. Triple extraction requires
+        # direct answers so the bounded budget produces parseable content.
+        request_options['extra_body'] = {
+            'chat_template_kwargs': {
+                'enable_thinking': False
+            },
+        }
     completion = CLIENT.chat.completions.create(model=NIM_MODEL,
                                                 messages=messages,
                                                 temperature=0, top_p=1,
-                                                max_tokens=1024, stream=True)
+                                                max_tokens=1024, stream=True,
+                                                **request_options)
     out_str = ""
     for chunk in completion:
         if chunk.choices[0].delta.content is not None:
             out_str += chunk.choices[0].delta.content
+    if not out_str.strip():
+        raise RuntimeError(
+            "The extraction model returned no answer content. Check the "
+            "model's reasoning settings and output-token budget before "
+            "building the graph.")
     return out_str
 
 
