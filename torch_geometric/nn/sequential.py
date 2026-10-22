@@ -1,7 +1,6 @@
 import copy
 import inspect
 import os.path as osp
-import random
 import sys
 from typing import (
     Any,
@@ -244,7 +243,8 @@ class Sequential(torch.nn.Module):
                 raise ValueError("Cannot compile custom 'forward' method")
 
             root_dir = osp.dirname(osp.realpath(__file__))
-            uid = '%06x' % random.randrange(16**6)
+            import uuid
+            uid = uuid.uuid4().hex[:6]
             jinja_prefix = f'{self.__module__}_{self.__class__.__name__}_{uid}'
             module = module_from_template(
                 module_name=jinja_prefix,
