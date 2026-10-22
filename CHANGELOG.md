@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Added a `--num_workers` option to `examples/llm/glem.py` ([#10805](https://github.com/pyg-team/pytorch_geometric/pull/10805))
 - Improved error handling in `txt2kg` multi-process execution. ([#10771](https://github.com/pyg-team/pytorch_geometric/pull/10771))
 
 ### Deprecated
@@ -20,6 +21,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Fixed
 
 - Fixed `FakeDataset` generating undirected graphs with twice the requested `avg_degree` ([#10824](https://github.com/pyg-team/pytorch_geometric/pull/10824))
+- Fixed bounded Nemotron triple extraction producing reasoning-only output and rejected empty cloud responses
+- Fixed the heterogeneous CSV example with pandas Arrow-backed strings by passing text as a Python list
 - Fixed `config_store` on Python 3.14, where `typing.Union`/`typing.Optional` annotations could no longer be remapped in-place via the now read-only `__args__` attribute
 
 ### Security
