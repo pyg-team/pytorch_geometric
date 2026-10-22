@@ -39,6 +39,7 @@ class LaplacianLambdaMax(BaseTransform):
         self.is_undirected = is_undirected
 
     def forward(self, data: Data) -> Data:
+        from scipy.linalg import eigvals
         from scipy.sparse.linalg import eigs, eigsh
 
         assert data.edge_index is not None
@@ -61,7 +62,12 @@ class LaplacianLambdaMax(BaseTransform):
         if self.is_undirected and self.normalization != 'rw':
             eig_fn = eigsh
 
-        lambda_max = eig_fn(L, k=1, which='LM', return_eigenvectors=False)
+        if L.shape[0] <= 2:
+            # The sparse eigs solver requires k < N - 1.
+            lambda_max = eigvals(L.toarray())
+            lambda_max = lambda_max[abs(lambda_max).argmax()]
+        else:
+            lambda_max = eig_fn(L, k=1, which='LM', return_eigenvectors=False)
         data.lambda_max = lambda_max.real.item()
 
         return data
