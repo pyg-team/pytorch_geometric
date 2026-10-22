@@ -98,11 +98,13 @@ class InstanceNorm(_InstanceNorm):
             momentum = self.momentum
             if self.running_mean is not None:
                 self.running_mean = (
-                    1 - momentum) * self.running_mean + momentum * mean.mean(0)
+                    1 - momentum
+                ) * self.running_mean + momentum * mean.mean(0).detach()
             if self.running_var is not None:
                 self.running_var = (
                     1 - momentum
-                ) * self.running_var + momentum * unbiased_var.mean(0)
+                ) * self.running_var + momentum * unbiased_var.mean(
+                    0).detach()
         else:
             if self.running_mean is not None:
                 mean = self.running_mean.view(1, -1).expand(batch_size, -1)
