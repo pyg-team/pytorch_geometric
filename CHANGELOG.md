@@ -22,6 +22,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Fixed `HashTensor` string keys with `xxhash>=4.0` ([#10779](https://github.com/pyg-team/pytorch_geometric/pull/10779))
 
+- Fixed `gcn_norm` adding a second self-loop to nodes that already have one when given a `torch.sparse` adjacency matrix, which made `GCNConv` and other `gcn_norm`-based layers return different outputs than for `edge_index` inputs ([#10872](https://github.com/pyg-team/pytorch_geometric/pull/10872))
+
 - Fixed bounded Nemotron triple extraction producing reasoning-only output and rejected empty cloud responses
 
 - Fixed the heterogeneous CSV example with pandas Arrow-backed strings by passing text as a Python list
