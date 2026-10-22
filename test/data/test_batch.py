@@ -1,4 +1,5 @@
 import os.path as osp
+import warnings
 
 import numpy as np
 import pytest
@@ -608,3 +609,69 @@ def test_torch_nested_batch():
         batch.x.to_padded_tensor(0.0),
         expected.to_padded_tensor(0.0),
     )
+
+
+def test_batch_warns_when_first_element_lacks_a_store_type():
+    # The collated object takes its schema from `data_list[0]`, so a store the
+    # first element does not carry is dropped from the batch. That used to
+    # happen in silence, and under `shuffle=True` non-deterministically, since
+    # which types survive depends on which graph lands first in a given
+    # mini-batch.
+    data_1 = HeteroData()
+    data_1['author'].x = torch.randn(2, 3)
+
+    data_2 = HeteroData()
+    data_2['author'].x = torch.randn(1, 3)
+    data_2['venue'].x = torch.randn(4, 3)
+
+    with pytest.warns(UserWarning, match="does not hold"):
+        batch = Batch.from_data_list([data_1, data_2])
+
+    assert batch.node_types == ['author']
+
+
+def test_batch_does_not_warn_when_every_element_holds_the_full_schema():
+    data_list = []
+    for _ in range(3):
+        data = HeteroData()
+        data['author'].x = torch.randn(2, 3)
+        data['paper'].x = torch.randn(3, 3)
+        data['author', 'writes', 'paper'].edge_index = torch.tensor([[0], [1]])
+        data_list.append(data)
+
+    with warnings.catch_warnings():
+        warnings.simplefilter('error')
+        batch = Batch.from_data_list(data_list)
+
+    assert set(batch.node_types) == {'author', 'paper'}
+
+
+def test_batch_does_not_warn_for_homogeneous_data():
+    # `Data` has a single global store keyed `None`, which must not be mistaken
+    # for a missing type.
+    data_list = [
+        Data(x=torch.randn(3, 2), edge_index=torch.tensor([[0, 1], [1, 2]]))
+        for _ in range(3)
+    ]
+
+    with warnings.catch_warnings():
+        warnings.simplefilter('error')
+        batch = Batch.from_data_list(data_list)
+
+    assert batch.num_graphs == 3
+
+
+def test_batch_warns_for_a_missing_edge_type():
+    data_1 = HeteroData()
+    data_1['author'].x = torch.randn(2, 3)
+    data_1['paper'].x = torch.randn(2, 3)
+
+    data_2 = HeteroData()
+    data_2['author'].x = torch.randn(2, 3)
+    data_2['paper'].x = torch.randn(2, 3)
+    data_2['author', 'writes', 'paper'].edge_index = torch.tensor([[0], [1]])
+
+    with pytest.warns(UserWarning, match="does not hold"):
+        batch = Batch.from_data_list([data_1, data_2])
+
+    assert batch.edge_types == []
