@@ -107,7 +107,10 @@ def dense_to_sparse(
             offset = cumsum(count)[:-1]
             offset = offset.repeat_interleave(count)
 
-        edge_index[1] += offset[edge_index[0]]
+        # The indexing above saves `edge_index` for the backward pass, so shift
+        # the column indices out-of-place to leave its version counter alone:
+        row, col = edge_index[0], edge_index[1]
+        edge_index = torch.stack([row, col + offset[row]], dim=0)
 
         return edge_index, edge_attr
 
