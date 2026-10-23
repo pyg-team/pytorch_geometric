@@ -1839,6 +1839,8 @@ class _TorchSPMM(torch.autograd.Function):
             assert input.is_sorted_by_col
             adj = input.to_sparse_csc(value).t()
 
+        # `torch.sparse.mm` only supports reductions on CPU for PyTorch>=2.0.
+        # This will currently throw on error for CUDA tensors.
         if torch_geometric.typing.WITH_PT20 and not other.is_cuda:
             return torch.sparse.mm(adj, other, reduce)
         else:  # pragma: no cover
@@ -1978,13 +1980,23 @@ def matmul(
     reduce: ReduceType = 'sum',
     transpose: bool = False,
 ) -> Union[Tensor, Tuple[EdgeIndex, Tensor]]:
-
     if not isinstance(other, EdgeIndex):
         if other_value is not None:
             raise ValueError("'other_value' not supported for sparse-dense "
                              "matrix multiplication")
         return _spmm(input, other, input_value, reduce, transpose)
 
+    return _spspmm(input, other, input_value, other_value, reduce, transpose)
+
+
+def _spspmm(
+    input: EdgeIndex,
+    other: EdgeIndex,
+    input_value: Optional[Tensor] = None,
+    other_value: Optional[Tensor] = None,
+    reduce: ReduceType = 'sum',
+    transpose: bool = False,
+) -> Tensor:
     if reduce not in ['sum', 'add']:
         raise NotImplementedError(f"`reduce='{reduce}'` not yet supported for "
                                   f"sparse-sparse matrix multiplication")
@@ -2016,11 +2028,9 @@ def matmul(
         col = out.col_indices().to(input.dtype)
         edge_index = torch._convert_indices_from_csr_to_coo(
             rowptr, col, out_int32=rowptr.dtype != torch.int64)
-
     elif out.layout == torch.sparse_coo:  # pragma: no cover
         out = out.coalesce()
         edge_index = out.indices()
-
     else:
         raise NotImplementedError
 
