@@ -335,10 +335,9 @@ class GATConv(MessagePassing):
             if isinstance(edge_index, Tensor):
                 # We only want to add self-loops for nodes that appear both as
                 # source and target nodes:
-                num_nodes = x_src.size(0)
-                if x_dst is not None:
-                    num_nodes = min(num_nodes, x_dst.size(0))
-                num_nodes = min(size) if size is not None else num_nodes
+                num_src = x_src.size(0)
+                num_dst = x_dst.size(0) if x_dst is not None else num_src
+                num_nodes = size if size is not None else (num_src, num_dst)
                 edge_index, edge_attr = remove_self_loops(
                     edge_index, edge_attr)
                 edge_index, edge_attr = add_self_loops(

@@ -307,9 +307,7 @@ class GATv2Conv(MessagePassing):
 
         if self.add_self_loops:
             if isinstance(edge_index, Tensor):
-                num_nodes = x_l.size(0)
-                if x_r is not None:
-                    num_nodes = min(num_nodes, x_r.size(0))
+                num_nodes = (x_l.size(0), x_r.size(0))
                 edge_index, edge_attr = remove_self_loops(
                     edge_index, edge_attr)
                 edge_index, edge_attr = add_self_loops(
