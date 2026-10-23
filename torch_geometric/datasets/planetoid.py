@@ -78,7 +78,7 @@ class Planetoid(InMemoryDataset):
           - 500
           - 3
     """
-    url = 'https://github.com/kimiyoung/planetoid/raw/master/data'
+    url = 'https://raw.githubusercontent.com/kimiyoung/planetoid/master/data'
     geom_gcn_url = ('https://raw.githubusercontent.com/graphdml-uiuc-jlu/'
                     'geom-gcn/master')
 
