@@ -3,11 +3,41 @@ import os.path as osp
 import ssl
 import sys
 import urllib
+import warnings
 from typing import Optional
 
 import fsspec
 
 from torch_geometric.io import fs
+
+INSECURE_ENV_VAR = 'PYG_INSECURE_DOWNLOADS'
+
+
+def get_ssl_context() -> ssl.SSLContext:
+    r"""Returns the :class:`ssl.SSLContext` used to download datasets.
+
+    Server certificates are verified by default. Set the environment variable
+    :obj:`PYG_INSECURE_DOWNLOADS=1` to skip verification, e.g., for a dataset
+    host with a misconfigured certificate chain. Note that doing so leaves
+    downloads open to tampering by anyone able to intercept the connection.
+    """
+    if os.getenv(INSECURE_ENV_VAR, '0') == '1':
+        warnings.warn(
+            f'Downloading with TLS certificate verification disabled '
+            f"('{INSECURE_ENV_VAR}=1'). Downloaded files cannot be trusted to "
+            f'originate from the expected host.',
+            stacklevel=2,
+        )
+        return ssl._create_unverified_context()
+
+    # `certifi` is installed alongside the `requests` dependency, and its CA
+    # bundle is more reliable than the system trust store on some platforms:
+    try:
+        import certifi
+
+        return ssl.create_default_context(cafile=certifi.where())
+    except ImportError:
+        return ssl.create_default_context()
 
 
 def download_url(
@@ -43,8 +73,7 @@ def download_url(
 
     os.makedirs(folder, exist_ok=True)
 
-    context = ssl._create_unverified_context()
-    data = urllib.request.urlopen(url, context=context)
+    data = urllib.request.urlopen(url, context=get_ssl_context())
 
     with fsspec.open(path, 'wb') as f:
         # workaround for https://bugs.python.org/issue42853
