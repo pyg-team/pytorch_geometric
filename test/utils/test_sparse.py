@@ -87,6 +87,15 @@ def test_dense_to_sparse_bipartite():
     assert edge_index[1].max() == 9
 
 
+def test_dense_to_sparse_3d_backward():
+    adj = torch.rand(1, 42, 42, dtype=torch.float32, requires_grad=True)
+    edge_index, edge_attr = dense_to_sparse(adj)
+    assert edge_index.shape[0] == 2
+    assert edge_attr.shape[0] == edge_index.shape[1]
+    edge_attr.sum().backward()
+    assert adj.grad is not None
+
+
 def test_is_torch_sparse_tensor():
     x = torch.randn(5, 5)
 
