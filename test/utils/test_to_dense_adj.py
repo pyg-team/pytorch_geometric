@@ -64,6 +64,23 @@ def test_to_dense_adj():
     assert adj.size() == (4, 3, 3)
 
 
+def test_to_dense_adj_with_unsorted_batch():
+    # Nodes are not ordered by their batch assignment, see #10534.
+    edge_index = torch.tensor([
+        [0, 2, 1, 3],
+        [2, 0, 3, 1],
+    ])
+    batch = torch.tensor([0, 1, 0, 1])
+
+    adj = to_dense_adj(edge_index, batch)
+    assert adj.size() == (2, 2, 2)
+    assert adj[0].tolist() == [[0, 1], [1, 0]]
+    assert adj[1].tolist() == [[0, 1], [1, 0]]
+
+    # No edge should be dropped when the node indices span both batches:
+    assert int(adj.sum()) == 4
+
+
 def test_to_dense_adj_with_empty_edge_index():
     edge_index = torch.tensor([[], []], dtype=torch.long)
     batch = torch.tensor([0, 0, 1, 1, 1])
