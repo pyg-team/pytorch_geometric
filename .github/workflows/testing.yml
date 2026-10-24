@@ -23,7 +23,8 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 2
-      - id: check
+      - name: Decide whether to run tests
+        id: check
         run: |
           if [ "${{ github.event_name }}" = "schedule" ]; then
             echo "triggered=true" >> "$GITHUB_OUTPUT"
