@@ -94,6 +94,20 @@ class SetTransformerAggregation(Aggregation):
         max_num_elements: Optional[int] = None,
     ) -> Tensor:
 
+        if dim_size is None:
+            raise ValueError(
+                "SetTransformerAggregation requires dim_size to be explicitly passed. "
+                "Alternatively, ensure data is preprocessed using to_dense_batch."
+            )
+
+        # GPU-safe validation without device sync
+        if (index >= dim_size).any():
+            raise ValueError(
+                f"SetTransformerAggregation: index contains values >= dim_size ({dim_size}). "
+                "This will cause an indexing error on GPU. "
+                "Ensure data.batch is correctly set or pass dim_size explicitly."
+            )
+
         x, mask = self.to_dense_batch(x, index, ptr, dim_size, dim,
                                       max_num_elements=max_num_elements)
 
