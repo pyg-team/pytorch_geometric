@@ -174,3 +174,31 @@ def test_sequential_to_hetero():
     assert isinstance(out_dict, dict) and len(out_dict) == 2
     assert out_dict['paper'].size() == (100, 64)
     assert out_dict['author'].size() == (100, 64)
+
+
+def test_sequential_no_double_execution():
+    # Test for issue #10393: Sequential should not cause double execution
+    # when initialized from a script with a valid Python identifier name
+    execution_count = [0]
+
+    def increment_counter(x):
+        execution_count[0] += 1
+        return x
+
+    x = torch.randn(4, 16)
+
+    # Create Sequential model - should not execute forward pass
+    model = Sequential('x', [(increment_counter, 'x -> y')])
+
+    # Counter should not be incremented during initialization
+    assert execution_count[0] == 0
+
+    # Execute forward pass
+    output = model(x)
+    assert execution_count[0] == 1
+    assert output.shape == x.shape
+
+    # Execute again to verify it works correctly
+    output = model(x)
+    assert execution_count[0] == 2
+    assert output.shape == x.shape
