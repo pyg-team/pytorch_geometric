@@ -71,6 +71,22 @@ def test_dropout_edge():
     assert out[1].tolist() == [0, 2, 0, 2]
 
 
+def test_dropout_edge_force_undirected_self_loops():
+    edge_index = torch.tensor([[0, 0, 1, 1], [0, 1, 0, 1]])
+    edge_attr = torch.tensor([1.0, 2.0, 3.0, 4.0])
+
+    # Self-loops should be kept at most once, not duplicated:
+    torch.manual_seed(12345)
+    out = dropout_edge(edge_index, p=1e-9, force_undirected=True)
+    assert out[0].tolist() == [[0, 0, 1, 1], [0, 1, 1, 0]]
+    assert out[1].tolist() == [0, 1, 3, 1]
+
+    with pytest.warns(UserWarning, match="'dropout_adj' is deprecated"):
+        out = dropout_adj(edge_index, edge_attr, p=1e-9, force_undirected=True)
+    assert out[0].tolist() == [[0, 0, 1, 1], [0, 1, 1, 0]]
+    assert out[1].tolist() == [1.0, 2.0, 4.0, 2.0]
+
+
 @withPackage('pyg_lib')
 def test_dropout_path():
     edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]])
