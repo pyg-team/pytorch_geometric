@@ -307,7 +307,7 @@ class RGATConv(MessagePassing):
         zeros(self.bias)
         ones(self.l1)
         zeros(self.b1)
-        torch.full(self.l2.size(), 1 / self.out_channels)
+        self.l2 = torch.full(self.l2.size(), 1 / self.out_channels)
         zeros(self.b2)
         if self.lin_edge is not None:
             glorot(self.lin_edge)
