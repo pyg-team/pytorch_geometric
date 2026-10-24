@@ -138,7 +138,7 @@ class GeneralMultiLayer(torch.nn.Module):
     """
     def __init__(self, name, layer_config: LayerConfig, **kwargs):
         super().__init__()
-        if layer_config.dim_inner:
+        if layer_config.dim_inner is None:
             dim_inner = layer_config.dim_out
         else:
             dim_inner = layer_config.dim_inner
