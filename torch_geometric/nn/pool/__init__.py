@@ -17,6 +17,7 @@ from .knn import (KNNIndex, L2KNNIndex, MIPSKNNIndex, ApproxL2KNNIndex,
 from .graclus import graclus
 from .max_pool import max_pool, max_pool_neighbor_x, max_pool_x
 from .topk_pool import TopKPooling
+from .spa_pool import SPAPooling
 from .sag_pool import SAGPooling
 from .edge_pool import EdgePooling
 from .cluster_pool import ClusterPooling
@@ -385,6 +386,7 @@ __all__ = [
     'ApproxL2KNNIndex',
     'ApproxMIPSKNNIndex',
     'TopKPooling',
+    'SPAPooling',
     'SAGPooling',
     'EdgePooling',
     'ClusterPooling',
