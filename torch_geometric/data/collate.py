@@ -233,7 +233,13 @@ def _collate(
         repeats = [[value.size(dim) for dim in cat_dims] for value in values]
         slices = cumsum(torch.tensor(repeats))
         if is_torch_sparse_tensor(elem):
-            value = cat(values, dim=cat_dim)
+            if elem.dim() > 2:
+                # `cat` only supports 2D sparse tensors (adjacency matrices);
+                # fall back to `torch.cat` for higher-dimensional sparse
+                # tensors (e.g., [N, C, F]) which handles COO natively.
+                value = torch.cat(values, dim=cat_dim)
+            else:
+                value = cat(values, dim=cat_dim)
         else:
             value = torch_sparse.cat(values, dim=cat_dim)
         return value, slices, None
