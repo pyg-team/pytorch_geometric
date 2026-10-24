@@ -14,7 +14,6 @@ from tqdm import tqdm
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
 from torch_geometric.io import fs
-from torch_geometric.llm.models import LLM
 from torch_geometric.utils import one_hot
 
 
@@ -430,6 +429,8 @@ class MoleculeGPTDataset(InMemoryDataset):
             CID2text_data = json.load(f)
 
         suppl = Chem.SDMolSupplier(f'{self.raw_dir}/molecules.sdf')
+
+        from torch_geometric.llm.models import LLM
 
         llm = LLM(
             model_name='Qwen/Qwen3-0.6B',
