@@ -17,7 +17,7 @@ from torch_geometric.metrics import (
     LinkPredPrecision,
     LinkPredRecall,
 )
-from torch_geometric.testing import withCUDA
+from torch_geometric.testing import withCUDA, withDevice
 
 
 @pytest.mark.parametrize('num_src_nodes', [100])
@@ -171,6 +171,28 @@ def test_ndcg():
     # Test with `k > pred_index_mat.size(1)`:
     metric.update(pred_index_mat[:, :1], edge_label_index, edge_label_weight)
     metric.compute()
+    metric.reset()
+
+
+@withDevice
+def test_ndcg_device(device):
+    pred_index_mat = torch.tensor([[1, 0], [1, 2], [0, 2]], device=device)
+    edge_label_index = torch.tensor([[0, 0, 0, 2, 2], [0, 1, 2, 2, 1]],
+                                    device=device)
+    edge_label_weight = torch.tensor([1.0, 2.0, 0.1, 3.0, 0.5], device=device)
+
+    metric = LinkPredNDCG(k=2).to(device)
+    metric.update(pred_index_mat, edge_label_index)
+    result = metric.compute()
+    assert result.device == device
+    assert float(result) == pytest.approx(0.6934264)
+    metric.reset()
+
+    metric = LinkPredNDCG(k=2, weighted=True).to(device)
+    metric.update(pred_index_mat, edge_label_index, edge_label_weight)
+    result = metric.compute()
+    assert result.device == device
+    assert float(result) == pytest.approx(0.7854486)
     metric.reset()
 
 
