@@ -30,3 +30,7 @@ __all__ = [
     'TemporalEncoding',
     'summary',
 ]
+from torch_geometric.nn.models.mp_gesn import (
+    MultiPerspectiveGraphESN,
+    MPGESNLoss,
+)
