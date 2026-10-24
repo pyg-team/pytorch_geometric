@@ -40,6 +40,48 @@ NumNeighborsType = Union[NumNeighbors, List[int], Dict[EdgeType, List[int]]]
 class NeighborSampler(BaseSampler):
     r"""An implementation of an in-memory (heterogeneous) neighbor sampler used
     by :class:`~torch_geometric.loader.NeighborLoader`.
+
+    Args:
+        data (Data or HeteroData or Tuple[FeatureStore, GraphStore]): The
+            graph data object.
+        num_neighbors (List[int] or Dict[EdgeType, List[int]]): The number of
+            neighbors to sample per hop.
+        subgraph_type (SubgraphType or str, optional): The type of the
+            returned subgraph. (default: :obj:`"directional"`)
+        replace (bool, optional): If :obj:`True`, sample with replacement.
+            (default: :obj:`False`)
+        disjoint (bool, optional): If :obj:`True`, each seed node produces
+            its own disjoint subgraph. (default: :obj:`False`)
+        temporal_strategy (str, optional): The sampling strategy for temporal
+            sampling (:obj:`"uniform"` or :obj:`"last"`). Only has effect
+            when :obj:`time_attr` is set and :obj:`pyg-lib` is installed.
+            (default: :obj:`"uniform"`)
+        time_attr (str, optional): The name of the node- or edge-level
+            timestamp attribute. When set, enables temporal sampling so that
+            only neighbors with timestamps :obj:`<= seed_time` are considered.
+            (default: :obj:`None`)
+        time_window (int, optional): Restricts temporal sampling to a window
+            :obj:`[seed_time - time_window, seed_time]`. Applied as a
+            Python-side pre-filter before the sampling kernel, so it works
+            regardless of whether native kernel support is available.
+            Requires :obj:`time_attr` to be set. Works in combination with
+            :obj:`temporal_strategy` — after filtering to the window,
+            :obj:`temporal_strategy` governs how :obj:`num_neighbors`
+            neighbors are selected from the remaining candidates.
+            Note that the current implementation uses a conservative
+            batch-level floor (:obj:`min(seed_time) - time_window`), so the
+            effective window may be wider than intended when seed times vary
+            significantly within a batch. A warning is issued when the seed
+            time spread exceeds :obj:`time_window`.
+            (default: :obj:`None`)
+        weight_attr (str, optional): The name of the edge weight attribute
+            for weighted/biased sampling. (default: :obj:`None`)
+        is_sorted (bool, optional): If :obj:`True`, assumes edge indices are
+            sorted by column (and by time within neighborhoods when
+            :obj:`time_attr` is set). (default: :obj:`False`)
+        share_memory (bool, optional): If :obj:`True`, moves tensors to
+            shared memory for use with multiple worker processes.
+            (default: :obj:`False`)
     """
     def __init__(
         self,
@@ -50,6 +92,7 @@ class NeighborSampler(BaseSampler):
         disjoint: bool = False,
         temporal_strategy: str = 'uniform',
         time_attr: Optional[str] = None,
+        time_window: Optional[int] = None,
         weight_attr: Optional[str] = None,
         is_sorted: bool = False,
         share_memory: bool = False,
@@ -335,6 +378,7 @@ class NeighborSampler(BaseSampler):
         self.subgraph_type = SubgraphType(subgraph_type)
         self.disjoint = disjoint
         self.temporal_strategy = temporal_strategy
+        self.time_window = time_window
         self.keep_orig_edges = False
 
     @property
@@ -426,6 +470,95 @@ class NeighborSampler(BaseSampler):
 
     # Helper functions ########################################################
 
+    def _get_time_window_masked_times(
+        self,
+        seed_time: Union[Tensor, Dict[NodeType, Tensor]],
+    ):
+        r"""Returns masked copies of :obj:`node_time` and :obj:`edge_time`
+        where timestamps below the time window floor are replaced with a
+        sentinel value (:obj:`torch.iinfo(torch.int64).max`) so that the
+        kernel's upper-bound temporal filter (:obj:`<= seed_time`) will
+        always exclude them.
+
+        .. warning::
+
+            This is a conservative batch-level approximation. The floor is
+            computed as :obj:`min(seed_time) - time_window` across the entire
+            batch, meaning the effective window for seeds with higher
+            timestamps is wider than :obj:`time_window`. The approximation
+            is exact when all seed times in the batch are equal, and
+            degrades as the spread of seed times grows relative to
+            :obj:`time_window`. For per-seed accuracy, native kernel support
+            in :obj:`pyg-lib` is required (see
+            :obj:`WITH_TIME_WINDOW_NEIGHBOR_SAMPLE`).
+
+        Uses :obj:`seed_time.min() - time_window` as a conservative global
+        floor. Edges within :obj:`[min(seed_time) - time_window, seed_time]`
+        are always included; edges below this floor are always excluded.
+        """
+        import torch_geometric.typing as tgt
+        sentinel = tgt.MAX_INT64
+
+        if isinstance(seed_time, dict):
+            # Heterogeneous: compute global floor across all node types.
+            all_times = [v for v in seed_time.values() if v is not None]
+            if len(all_times) == 0:
+                return self.node_time, self.edge_time
+            global_min = torch.stack([t.min() for t in all_times]).min().item()
+            global_max = torch.stack([t.max() for t in all_times]).max().item()
+            floor = global_min - self.time_window
+            if global_max - global_min > self.time_window:
+                warnings.warn(
+                    f"The seed time spread ({global_max - global_min}) in "
+                    f"this batch exceeds 'time_window' ({self.time_window}). "
+                    f"The time window filter is a batch-level approximation "
+                    f"and will be wider than intended for seeds with higher "
+                    f"timestamps. For per-seed accuracy, native 'pyg-lib' "
+                    f"support is required.", stacklevel=3)
+
+            node_time = None
+            if self.node_time is not None:
+                node_time = {
+                    k: torch.where(v >= floor, v, torch.full_like(v, sentinel))
+                    for k, v in self.node_time.items()
+                }
+            edge_time = None
+            if self.edge_time is not None:
+                edge_time = {
+                    k: torch.where(v >= floor, v, torch.full_like(v, sentinel))
+                    for k, v in self.edge_time.items()
+                }
+        else:
+            # Homogeneous: compute global floor across the batch.
+            seed_min = seed_time.min().item()
+            seed_max = seed_time.max().item()
+            floor = seed_min - self.time_window
+            if seed_max - seed_min > self.time_window:
+                warnings.warn(
+                    f"The seed time spread ({seed_max - seed_min}) in this "
+                    f"batch exceeds 'time_window' ({self.time_window}). "
+                    f"The time window filter is a batch-level approximation "
+                    f"and will be wider than intended for seeds with higher "
+                    f"timestamps. For per-seed accuracy, native 'pyg-lib' "
+                    f"support is required.", stacklevel=3)
+
+            node_time = None
+            if self.node_time is not None:
+                node_time = torch.where(
+                    self.node_time >= floor,
+                    self.node_time,
+                    torch.full_like(self.node_time, sentinel),
+                )
+            edge_time = None
+            if self.edge_time is not None:
+                edge_time = torch.where(
+                    self.edge_time >= floor,
+                    self.edge_time,
+                    torch.full_like(self.edge_time, sentinel),
+                )
+
+        return node_time, edge_time
+
     def _sample(
         self,
         seed: Union[Tensor, Dict[NodeType, Tensor]],
@@ -435,6 +568,13 @@ class NeighborSampler(BaseSampler):
         r"""Implements neighbor sampling by calling either :obj:`pyg-lib` (if
         installed) or :obj:`torch-sparse` (if installed) sampling routines.
         """
+        # Apply time window pre-filtering when requested:
+        if self.time_window is not None and seed_time is not None:
+            node_time, edge_time = self._get_time_window_masked_times(
+                seed_time)
+        else:
+            node_time, edge_time = self.node_time, self.edge_time
+
         if isinstance(seed, dict):  # Heterogeneous sampling:
             # TODO Support induced subgraph sampling in `pyg-lib`.
             if (torch_geometric.typing.WITH_PYG_LIB
@@ -451,10 +591,10 @@ class NeighborSampler(BaseSampler):
                     self.row_dict,
                     seed,
                     self.num_neighbors.get_mapped_values(self.edge_types),
-                    self.node_time,
+                    node_time,
                 )
                 if torch_geometric.typing.WITH_EDGE_TIME_NEIGHBOR_SAMPLE:
-                    args += (self.edge_time, )
+                    args += (edge_time, )
                 args += (seed_time, )
                 if torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE:
                     args += (self.edge_weight, )
@@ -556,10 +696,10 @@ class NeighborSampler(BaseSampler):
                     # TODO (matthias) `seed` should inherit dtype from `colptr`
                     seed.to(self.colptr.dtype),
                     self.num_neighbors.get_mapped_values(),
-                    self.node_time,
+                    node_time,
                 )
                 if torch_geometric.typing.WITH_EDGE_TIME_NEIGHBOR_SAMPLE:
-                    args += (self.edge_time, )
+                    args += (edge_time, )
                 args += (seed_time, )
                 if torch_geometric.typing.WITH_WEIGHTED_NEIGHBOR_SAMPLE:
                     args += (self.edge_weight, )
