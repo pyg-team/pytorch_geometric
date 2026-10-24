@@ -116,6 +116,7 @@ from .infection_dataset import InfectionDataset
 from .ba2motif_dataset import BA2MotifDataset
 from .ba_multi_shapes import BAMultiShapesDataset
 from .ba_shapes import BAShapes
+from .deepnets1m import DeepNets1M
 
 import torch_geometric.datasets.utils
 
@@ -244,6 +245,7 @@ synthetic_datasets = [
     'BA2MotifDataset',
     'BAMultiShapesDataset',
     'BAShapes',
+    'DeepNets1M',
 ]
 
 __all__ = homo_datasets + hetero_datasets + hyper_datasets + synthetic_datasets
