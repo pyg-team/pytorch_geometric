@@ -73,6 +73,23 @@ def test_softmax_dim():
             softmax(src, ptr=ptr, dim=1)
 
 
+@pytest.mark.parametrize('dtype', [torch.float16, torch.bfloat16])
+def test_softmax_low_precision(dtype):
+    # The fallback must not lose normalization in low-precision dtypes.
+    # A single group of 65536 uniform inputs should sum to 1 (see #10839).
+    src = torch.zeros(65536, dtype=dtype)
+    index = torch.zeros(65536, dtype=torch.long)
+
+    out = softmax(src, index)
+    assert out.dtype == dtype
+    assert torch.allclose(out.float().sum(), torch.tensor(1.0), atol=1e-3)
+
+    ptr = torch.tensor([0, 65536])
+    out = softmax(src, ptr=ptr)
+    assert out.dtype == dtype
+    assert torch.allclose(out.float().sum(), torch.tensor(1.0), atol=1e-3)
+
+
 if __name__ == '__main__':
     import argparse
 
