@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - Added `torch_geometric.contrib.nn.models.MGNAN` (M-GNAN, an extension of `GNAN` to multivariate shape functions) model plus an example ([#10371](https://github.com/pyg-team/pytorch_geometric/pull/10371))
+- Added `DatabaseGraphStore`, `DatabaseFeatureStore`, and `DatabaseSampler` abstractions for database-backed graph learning, with a reference Neo4j implementation and Cora notebook under `examples/neo4j` ([#10752](https://github.com/pyg-team/pytorch_geometric/pull/10752))
 
 ### Changed
 

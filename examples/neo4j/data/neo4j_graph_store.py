@@ -1,0 +1,176 @@
+import weakref
+
+import torch
+from neo4j import Driver, GraphDatabase
+
+from torch_geometric.data.database_graph_store import DatabaseGraphStore
+from torch_geometric.data.graph_store import EdgeAttr, EdgeLayout
+from torch_geometric.typing import EdgeTensorType
+
+
+def _close_driver(driver: Driver) -> None:
+    r"""Close *driver*, swallowing errors. Used as a weakref finalizer."""
+    try:
+        driver.close()
+    except Exception:
+        pass
+
+
+class Neo4jGraphStore(DatabaseGraphStore):
+    r"""Neo4j-backed graph store.
+
+    Implements all abstract methods of :class:`DatabaseGraphStore` against a
+    Neo4j database.  The driver is created lazily per process, making this
+    safe to use with multi-process DataLoader workers (``num_workers > 0``).
+
+    .. warning::
+        ``pwd`` is kept in instance state so each DataLoader worker can
+        recreate its own driver after unpickling. It is therefore included
+        in the pickled state. Do not persist pickles of this store to disk
+        or send them over untrusted channels; prefer credentials from the
+        environment for sensitive deployments.
+
+    Args:
+        uri (str): Bolt URI of the Neo4j instance.
+        user (str): Username.
+        pwd (str): Password.
+        database_name (str): Database name.
+        nodeid_property (str): Property holding the integer node ID, shared by
+            every node label.
+    """
+    def __init__(
+        self,
+        uri: str,
+        user: str,
+        pwd: str,
+        nodeid_property: str,
+        database_name: str | None = None,
+    ):
+        super().__init__()
+        self.uri = uri
+        self.user = user
+        self.pwd = pwd
+        self._driver: Driver | None = None
+        self.database_name = database_name
+        self.nodeid_property = nodeid_property
+
+    def _get_driver(self) -> Driver:
+        if self._driver is None:
+            self._driver = GraphDatabase.driver(self.uri,
+                                                auth=(self.user, self.pwd))
+            # weakref.finalize (not atexit) so the handler is dropped when
+            # this store is garbage-collected. atexit.register would stack a
+            # new handler per unpickled copy (DataLoader workers) and never
+            # release it for the life of the process.
+            weakref.finalize(self, _close_driver, self._driver)
+        return self._driver
+
+    def close(self) -> None:
+        if getattr(self, "_driver", None) is not None:
+            try:
+                self._driver.close()
+            finally:
+                self._driver = None
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state["_driver"] = None
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__.update(state)
+        self._driver = None
+
+    def apoc_available(self) -> bool:
+        r"""Return :obj:`True` if the APOC plugin is installed in the target
+        database. Probes via ``RETURN apoc.version()``; any driver error
+        (procedure missing, auth, connectivity) is treated as unavailable.
+        """
+        try:
+            with self._get_driver().session(
+                    database=self.database_name) as session:
+                session.run("RETURN apoc.version() AS v").single()
+            return True
+        except Exception:
+            return False
+
+    def get_all_edge_attrs(self) -> list[EdgeAttr]:
+        return []
+
+    def query_db(self, query: str, params: dict) -> dict | None:
+        r"""Execute *query* against the DB and return the first result record.
+
+        Returns the record dict, or ``None`` if the query produced no rows.
+        """
+        with self._get_driver().session(database=self.database_name,
+                                        fetch_size=-1) as session:
+            result = session.run(query, **params)
+            records = list(result)
+        return records[0] if records else None
+
+    # GraphStore ABC ##########################################################
+    def _get_edge_index(self, edge_attr: EdgeAttr) -> EdgeTensorType | None:
+        r"""Read edges of the given type from Neo4j and return as a COO tensor.
+
+        The returned edge index is ordered according to *edge_attr.layout*.
+        """
+        src_type, rel_type, dst_type = edge_attr.edge_type
+        nid = self.nodeid_property
+
+        query = (f"MATCH (a:{src_type})-[r:{rel_type}]->(b:{dst_type}) "
+                 f"RETURN a.{nid} AS src, b.{nid} AS dst")
+        with self._get_driver().session(
+                database=self.database_name) as session:
+            records = list(session.run(query))
+
+        if not records:
+            empty = torch.zeros(0, dtype=torch.long)
+            return empty, empty
+
+        row = torch.tensor([rec["src"] for rec in records], dtype=torch.long)
+        col = torch.tensor([rec["dst"] for rec in records], dtype=torch.long)
+
+        if edge_attr.layout == EdgeLayout.CSC:
+            col, perm = col.sort()
+            row = row[perm]
+        elif edge_attr.layout == EdgeLayout.CSR:
+            row, perm = row.sort()
+            col = col[perm]
+
+        return row, col
+
+    def _put_edge_index(
+        self,
+        edge_index: EdgeTensorType,
+        edge_attr: EdgeAttr,
+    ) -> bool:
+        r"""Write edges to Neo4j via ``MERGE``.
+
+        Values in *edge_index* must be global node IDs stored under
+        ``nodeid_property``.
+        """
+        src_type, rel_type, dst_type = edge_attr.edge_type
+        if isinstance(edge_index, tuple):
+            rows, cols = edge_index
+        else:
+            rows, cols = edge_index[0], edge_index[1]
+        pairs = list(zip(rows.tolist(), cols.tolist()))
+        nid = self.nodeid_property
+        query = (f"UNWIND $pairs AS p "
+                 f"MATCH (a:{src_type} {{{nid}: p[0]}}) "
+                 f"MATCH (b:{dst_type} {{{nid}: p[1]}}) "
+                 f"MERGE (a)-[:{rel_type}]->(b)")
+        with self._get_driver().session(
+                database=self.database_name) as session:
+            session.run(query, pairs=pairs)
+        return True
+
+    def _remove_edge_index(self, edge_attr: EdgeAttr) -> bool:
+        r"""Delete all relationships of the given edge type from Neo4j."""
+        src_type, rel_type, dst_type = edge_attr.edge_type
+        query = (f"MATCH (:{src_type})-[r:{rel_type}]->(:{dst_type}) "
+                 f"DELETE r")
+        with self._get_driver().session(
+                database=self.database_name) as session:
+            session.run(query)
+        return True
