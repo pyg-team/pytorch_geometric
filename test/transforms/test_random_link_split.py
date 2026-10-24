@@ -283,6 +283,38 @@ def test_random_link_split_insufficient_negative_edges():
     assert test_data.neg_edge_label_index.size() == (2, 2)
 
 
+def test_random_link_split_undirected_negative_overlap():
+    # Regression test for #10706: negative edges sampled for an undirected
+    # graph must not leak between the validation and test splits, i.e. an
+    # edge (a, b) must not appear as (a, b) in one split and (b, a) in
+    # the other.
+    edge_index = to_undirected(torch.tensor([[0, 1, 2], [1, 2, 3]]))
+    data = Data(edge_index=edge_index, num_nodes=4)
+
+    transform = RandomLinkSplit(num_val=0.4, num_test=0.4, is_undirected=True,
+                                add_negative_train_samples=False,
+                                split_labels=True)
+
+    for _ in range(20):
+        train_data, val_data, test_data = transform(data)
+
+        val_neg = val_data.neg_edge_label_index
+        test_neg = test_data.neg_edge_label_index
+
+        val_neg = torch.stack([
+            torch.minimum(val_neg[0], val_neg[1]),
+            torch.maximum(val_neg[0], val_neg[1])
+        ])
+        test_neg = torch.stack([
+            torch.minimum(test_neg[0], test_neg[1]),
+            torch.maximum(test_neg[0], test_neg[1])
+        ])
+
+        val_set = set(map(tuple, val_neg.t().tolist()))
+        test_set = set(map(tuple, test_neg.t().tolist()))
+        assert val_set.isdisjoint(test_set)
+
+
 def test_random_link_split_non_contiguous():
     edge_index = get_random_edge_index(40, 40, num_edges=150)
     edge_index = edge_index[:, :100]
