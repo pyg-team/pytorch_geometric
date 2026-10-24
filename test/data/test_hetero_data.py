@@ -927,3 +927,16 @@ def test_invalid_keys():
     out = data.to_homogeneous()
     assert set(out.node_attrs()) == {'x', 'node_type'}
     assert set(out.edge_attrs()) == {'edge_index', 'edge_type'}
+
+
+def test_hetero_data_validate_rejects_numpy_array():
+    import numpy as np
+
+    data = HeteroData()
+    data['user'].x = np.random.randn(4, 3)
+    data['item'].x = np.random.randn(4, 3)
+    data['user', 'likes', 'item'].edge_index = torch.tensor([[0, 1], [1, 2]])
+    with pytest.warns(UserWarning, match="numpy.ndarray"):
+        assert data.validate(raise_on_error=False) is False
+    with pytest.raises(ValueError, match="numpy.ndarray"):
+        data.validate(raise_on_error=True)
