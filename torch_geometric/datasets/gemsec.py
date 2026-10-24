@@ -1,10 +1,14 @@
 import os.path as osp
-from typing import Callable, Optional
+from typing import Callable, List, Optional
 
-import numpy as np
 import torch
 
-from torch_geometric.data import Data, InMemoryDataset, download_url
+from torch_geometric.data import (
+    Data,
+    InMemoryDataset,
+    download_url,
+    extract_tar,
+)
 
 
 class GemsecDeezer(InMemoryDataset):
@@ -31,7 +35,7 @@ class GemsecDeezer(InMemoryDataset):
             (default: :obj:`False`)
     """
 
-    url = 'https://graphmining.ai/datasets/ptg/gemsec'
+    url = 'https://snap.stanford.edu/data/gemsec_deezer_dataset.tar.gz'
 
     def __init__(
         self,
@@ -56,23 +60,31 @@ class GemsecDeezer(InMemoryDataset):
         return osp.join(self.root, self.name, 'processed')
 
     @property
-    def raw_file_names(self) -> str:
-        return f'{self.name}.npz'
+    def raw_file_names(self) -> List[str]:
+        return [
+            f'deezer_clean_data/{x}' for x in [
+                f'{self.name}_edges.csv',
+                f'{self.name}_genres.json',
+            ]
+        ]
 
     @property
     def processed_file_names(self) -> str:
         return 'data.pt'
 
     def download(self) -> None:
-        download_url(osp.join(self.url, self.name + '.npz'), self.raw_dir)
+        file_path = download_url(self.url, self.raw_dir)
+        extract_tar(file_path, self.raw_dir)
 
     def process(self) -> None:
-        data = np.load(self.raw_paths[0], 'r', allow_pickle=True)
-        y = torch.from_numpy(data['target']).to(torch.long)
-        edge_index = torch.from_numpy(data['edges']).to(torch.long)
+
+        import pandas as pd
+        edges = pd.read_csv(self.raw_paths[0], dtype=int)
+
+        edge_index = torch.from_numpy(edges.values).to(torch.long)
         edge_index = edge_index.t().contiguous()
 
-        data = Data(y=y, edge_index=edge_index)
+        data = Data(edge_index=edge_index)
 
         if self.pre_transform is not None:
             data = self.pre_transform(data)
