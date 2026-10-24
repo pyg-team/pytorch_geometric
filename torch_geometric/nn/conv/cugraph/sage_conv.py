@@ -10,11 +10,13 @@ from torch_geometric.nn.conv.cugraph.base import LEGACY_MODE
 
 try:
     if LEGACY_MODE:
-        from pylibcugraphops.torch.autograd import \
-            agg_concat_n2n as SAGEConvAgg
+        from pylibcugraphops.torch.autograd import (
+            agg_concat_n2n as SAGEConvAgg,
+        )
     else:
-        from pylibcugraphops.pytorch.operators import \
-            agg_concat_n2n as SAGEConvAgg
+        from pylibcugraphops.pytorch.operators import (
+            agg_concat_n2n as SAGEConvAgg,
+        )
 except ImportError:
     pass
 
