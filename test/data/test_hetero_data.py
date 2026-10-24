@@ -1,6 +1,7 @@
 import copy
 import warnings
 
+import numpy as np
 import pytest
 import torch
 
@@ -198,6 +199,26 @@ def test_hetero_data_rename():
     assert data['article'].x.tolist() == x_paper.tolist()
     edge_index = data['article', 'article'].edge_index
     assert edge_index.tolist() == edge_index_paper_paper.tolist()
+
+
+def test_validate_rejects_numpy_arrays():
+    """HeteroData.validate() must catch numpy arrays used as node/edge features.
+
+    numpy arrays are silently accepted on assignment, pass through .to(device)
+    without being moved, and then cause cryptic failures deep in model
+    execution.  Regression test for #10597.
+    """
+    # numpy x on a node type while edge_index is a proper tensor.
+    data = HeteroData()
+    data['user'].x = np.random.randn(10, 8).astype(np.float32)
+    data['item'].x = np.random.randn(10, 8).astype(np.float32)
+    data['user', 'likes', 'item'].edge_index = torch.randint(0, 10, (2, 20))
+
+    with pytest.raises(ValueError, match="'x'.*numpy array"):
+        data.validate(raise_on_error=True)
+
+    # raise_on_error=False must return False rather than raising.
+    assert data.validate(raise_on_error=False) is False
 
 
 def test_dangling_types():
