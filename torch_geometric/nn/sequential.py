@@ -91,8 +91,16 @@ class Sequential(torch.nn.Module):
     ) -> None:
         super().__init__()
 
-        caller_path = inspect.stack()[1].filename
-        self._caller_module = osp.splitext(osp.basename(caller_path))[0]
+        caller = inspect.stack()[1]
+        caller_path = caller.filename
+        # Resolve the *module* name of the caller from its frame globals rather
+        # than from the file basename: for a script run as `python foo.py` the
+        # module is `__main__` (not `foo`), and using the bare basename would
+        # emit `from foo import *` in the generated jit template, which
+        # re-imports and therefore re-executes the script (see #10393).
+        self._caller_module = caller.frame.f_globals.get(
+            '__name__',
+            osp.splitext(osp.basename(caller_path))[0])
 
         _globals = copy.copy(globals())
         _globals.update(sys.modules['__main__'].__dict__)
