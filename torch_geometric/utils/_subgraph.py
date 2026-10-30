@@ -214,7 +214,7 @@ def bipartite_subgraph(
         dst_subset = torch.tensor(dst_subset, dtype=torch.long, device=device)
 
     if src_subset.dtype != torch.bool:
-        src_size = int(edge_index[0].max()) + 1 if size is None else size[0]
+        src_size = maybe_num_nodes(edge_index[0]) if size is None else size[0]
         src_node_mask = index_to_mask(src_subset, size=src_size)
     else:
         src_size = src_subset.size(0)
@@ -222,7 +222,7 @@ def bipartite_subgraph(
         src_subset = src_subset.nonzero().view(-1)
 
     if dst_subset.dtype != torch.bool:
-        dst_size = int(edge_index[1].max()) + 1 if size is None else size[1]
+        dst_size = maybe_num_nodes(edge_index[1]) if size is None else size[1]
         dst_node_mask = index_to_mask(dst_subset, size=dst_size)
     else:
         dst_size = dst_subset.size(0)
