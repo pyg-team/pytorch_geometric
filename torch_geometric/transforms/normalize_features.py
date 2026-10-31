@@ -10,6 +10,11 @@ class NormalizeFeatures(BaseTransform):
     r"""Row-normalizes the attributes given in :obj:`attrs` to sum-up to one
     (functional name: :obj:`normalize_features`).
 
+    .. note::
+        Before normalizing, values are shifted by the minimum of the whole
+        tensor, not of each row. If the tensor contains negative values, this
+        shifts every row, including those without negative values.
+
     Args:
         attrs (List[str]): The names of attributes to normalize.
             (default: :obj:`["x"]`)

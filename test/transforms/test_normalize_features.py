@@ -25,3 +25,9 @@ def test_hetero_normalize_scale():
     data = NormalizeFeatures()(data)
     assert data['v'].x.tolist() == [[0.5, 0, 0.5], [0, 1, 0], [0, 0, 0]]
     assert data['w'].x.tolist() == [[0.5, 0, 0.5], [0, 1, 0], [0, 0, 0]]
+
+
+def test_normalize_features_negative_values():
+    x = torch.tensor([[-1, 1], [0, 0]], dtype=torch.float)
+    data = NormalizeFeatures()(Data(x=x))
+    assert data.x.tolist() == [[0, 1], [0.5, 0.5]]
