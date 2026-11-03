@@ -114,7 +114,7 @@ full = [
 ]
 
 [project.urls]
-homepage="https://pyg.org"
+homepage="https://pytorch-geometric.readthedocs.io"
 documentation="https://pytorch-geometric.readthedocs.io"
 repository="https://github.com/pyg-team/pytorch_geometric.git"
 changelog="https://github.com/pyg-team/pytorch_geometric/blob/master/CHANGELOG.md"
