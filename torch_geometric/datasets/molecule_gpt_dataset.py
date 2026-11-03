@@ -311,8 +311,8 @@ class MoleculeGPTDataset(InMemoryDataset):
             with open(f"{self.raw_dir}/CID2text.json") as f:
                 cached_descriptions = json.load(f)
             complete = isinstance(cached_descriptions, dict) and all(
-                isinstance(values, list) and values
-                and all(isinstance(value, str) for value in values)
+                isinstance(values, list) and values and all(
+                    isinstance(value, str) for value in values)
                 for values in cached_descriptions.values())
         except (FileNotFoundError, ValueError):
             complete = False

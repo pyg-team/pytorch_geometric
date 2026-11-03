@@ -239,7 +239,7 @@ def test_download_stops_at_last_pubchem_page(monkeypatch, tmp_path):
 
 @pytest.mark.parametrize('cached', ['{"1": [', '[]', '{"1": []}'])
 def test_download_recovers_corrupt_description_cache(monkeypatch, tmp_path,
-                                                    cached):
+                                                     cached):
     dataset = MoleculeGPTDataset.__new__(MoleculeGPTDataset)
     dataset.root = str(tmp_path)
     dataset.total_page_num = 1
@@ -253,8 +253,13 @@ def test_download_recovers_corrupt_description_cache(monkeypatch, tmp_path,
     assert json.loads((raw_dir / 'CID2text.json').read_text()) == {}
 
 
-@pytest.mark.parametrize('annotations', [None, {}, {'Page': 2, 'Annotation': []}])
-def test_download_rejects_invalid_annotations(monkeypatch, tmp_path, annotations):
+@pytest.mark.parametrize('annotations',
+                         [None, {}, {
+                             'Page': 2,
+                             'Annotation': []
+                         }])
+def test_download_rejects_invalid_annotations(monkeypatch, tmp_path,
+                                              annotations):
     dataset = MoleculeGPTDataset.__new__(MoleculeGPTDataset)
     dataset.root = str(tmp_path)
     dataset.total_page_num = 1
