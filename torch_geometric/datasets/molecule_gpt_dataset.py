@@ -332,10 +332,10 @@ class MoleculeGPTDataset(InMemoryDataset):
             num_pages = self.total_page_num
             pbar = tqdm(total=num_pages)
             for page_num in range(1, num_pages + 1):
-                description_data = _get_pubchem_json(
+                response_data = _get_pubchem_json(
                     self.description_url.format(page_num))
 
-                description_data = description_data.get("Annotations")
+                description_data = response_data.get("Annotations")
                 if (not isinstance(description_data, dict)
                         or description_data.get("Page") != page_num
                         or not isinstance(description_data.get("Annotation"),
