@@ -476,7 +476,11 @@ class FeatureStore(ABC):
     # Python built-ins ########################################################
 
     def __setitem__(self, key: TensorAttr, value: FeatureTensorType):
-        r"""Supports :obj:`store[tensor_attr] = tensor`."""
+        r"""Supports :obj:`store[tensor_attr] = tensor`.
+
+        Unspecified attributes are set to :obj:`None`, so that
+        :obj:`store[group_name, attr_name] = tensor` writes all rows.
+        """
         # CastMixin will handle the case of key being a tuple or TensorAttr
         # object:
         key = self._tensor_attr_cls.cast(key)

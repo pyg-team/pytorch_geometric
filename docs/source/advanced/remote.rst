@@ -72,13 +72,13 @@ Doing so both enables :pyg:`PyG` to leverage the features stored in the implemen
     paper_features = ...  # [num_papers, num_paper_features]
     author_features = ...  # [num_authors, num_author_features]
 
-    # Add features:
-    feature_store['paper', 'x', None] = paper_features
-    feature_store['author', 'x', None] = author_features
+    # Add features (an omitted index writes all rows):
+    feature_store['paper', 'x'] = paper_features
+    feature_store['author', 'x'] = author_features
 
     # Access features:
-    assert torch.equal(feature_store['paper', 'x'], paper_features)
-    assert torch.equal(feature_store['paper'].x, paper_features)
+    assert torch.equal(feature_store['paper', 'x', None], paper_features)
+    assert torch.equal(feature_store['paper'].x[:], paper_features)
     assert torch.equal(feature_store['author', 'x', 0:20], author_features[0:20])
 
 Common implementations of the :class:`~torch_geometric.data.FeatureStore` abstractions are key-value stores, *e.g.*, backends such as :obj:`memcached`, :obj:`LevelDB`, :obj:`RocksDB` are all viable performant options.

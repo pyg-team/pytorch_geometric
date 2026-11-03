@@ -107,3 +107,31 @@ def test_feature_store_override():
     assert torch.equal(store[attr_name][index], tensor)
     assert torch.equal(store[attr_name][:], tensor)
     assert torch.equal(store[attr_name, :], tensor)
+
+
+@pytest.mark.parametrize('attr_cls', [TensorAttr, MyTensorAttrNoGroupName])
+def test_tensor_attr_fully_specify(attr_cls):
+    attr = attr_cls(attr_name='x')
+    assert attr.fully_specify() is attr
+    assert attr.is_fully_specified()
+    assert attr.group_name is None
+    assert attr.attr_name == 'x'
+    assert attr.index is None
+    assert attr.fully_specify() is attr
+
+    index = torch.tensor([1, 2])
+    attr = attr_cls(attr_name='x', index=index)
+    attr.fully_specify()
+    assert attr.index is index
+
+
+@pytest.mark.parametrize('store_cls', [MyFeatureStore, MyFeatureStoreNoGroupName])
+def test_feature_store_partial_assignment(store_cls):
+    store = store_cls()
+    tensor = torch.arange(6).view(3, 2)
+    key = ('paper', 'x') if store_cls is MyFeatureStore else ('x',)
+    store[key] = tensor
+    assert torch.equal(store[key + (None,)], tensor)
+    assert torch.equal(store[key](), tensor)
+    assert not store[key]._attr.is_set('index')
+    assert torch.equal(store[key + (torch.tensor([2, 0]),)], tensor[[2, 0]])
