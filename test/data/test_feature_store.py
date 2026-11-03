@@ -125,13 +125,14 @@ def test_tensor_attr_fully_specify(attr_cls):
     assert attr.index is index
 
 
-@pytest.mark.parametrize('store_cls', [MyFeatureStore, MyFeatureStoreNoGroupName])
+@pytest.mark.parametrize('store_cls',
+                         [MyFeatureStore, MyFeatureStoreNoGroupName])
 def test_feature_store_partial_assignment(store_cls):
     store = store_cls()
     tensor = torch.arange(6).view(3, 2)
-    key = ('paper', 'x') if store_cls is MyFeatureStore else ('x',)
+    key = ('paper', 'x') if store_cls is MyFeatureStore else ('x', )
     store[key] = tensor
-    assert torch.equal(store[key + (None,)], tensor)
+    assert torch.equal(store[key + (None, )], tensor)
     assert torch.equal(store[key](), tensor)
     assert not store[key]._attr.is_set('index')
-    assert torch.equal(store[key + (torch.tensor([2, 0]),)], tensor[[2, 0]])
+    assert torch.equal(store[key + (torch.tensor([2, 0]), )], tensor[[2, 0]])
