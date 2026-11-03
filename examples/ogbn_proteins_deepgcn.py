@@ -86,7 +86,7 @@ def train(epoch):
         loss.backward()
         optimizer.step()
 
-        total_loss += float(loss) * int(data.train_mask.sum())
+        total_loss += float(loss.detach()) * int(data.train_mask.sum())
         total_examples += int(data.train_mask.sum())
 
         pbar.update(1)
