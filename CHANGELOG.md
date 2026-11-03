@@ -21,7 +21,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Fixed
 
 - Updated the RelBench examples for `relbench>=3.0.2` and G-retriever for `transformers>=5.19` ([#10790](https://github.com/pyg-team/pytorch_geometric/pull/10790))
+
 - Fixed `--num_neighbors` parsing in `examples/rdl.py` ([#10790](https://github.com/pyg-team/pytorch_geometric/pull/10790))
+
 - Fixed timestamp units in `from_relbench` for pandas 3 and Arrow-backed datetime columns ([#10790](https://github.com/pyg-team/pytorch_geometric/pull/10790))
 
 - Fixed `HashTensor` string keys with `xxhash>=4.0` ([#10779](https://github.com/pyg-team/pytorch_geometric/pull/10779))
