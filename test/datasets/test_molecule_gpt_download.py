@@ -7,7 +7,6 @@ from urllib.parse import parse_qs, urlparse
 import pytest
 
 from torch_geometric.datasets import MoleculeGPTDataset
-from torch_geometric.testing import withPackage
 
 
 @pytest.fixture
