@@ -1,8 +1,11 @@
+import warnings
 from dataclasses import dataclass
 from typing import Optional
 
 import torch
 from torch import Tensor
+
+warnings.filterwarnings('ignore', r'.*`torch\.jit\.script`.*')
 
 
 @dataclass(init=False)
