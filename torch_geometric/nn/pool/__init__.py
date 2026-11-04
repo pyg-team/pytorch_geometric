@@ -33,6 +33,12 @@ def _batch_to_ptr(
 ) -> OptTensor:
     if batch is None:
         return None
+    # `ptr` can only describe examples whose nodes are stored contiguously.
+    # An unsorted `batch` vector would otherwise silently be mapped to wrong
+    # example boundaries (and thus produce edges across examples):
+    if batch.numel() > 1 and bool((batch[1:] < batch[:-1]).any()):
+        raise ValueError("The 'batch' vector needs to be sorted in ascending "
+                         "order (e.g., via 'batch.argsort(stable=True)')")
     if batch_size is None:
         batch_size = int(batch.max()) + 1 if batch.numel() > 0 else 0
     return index2ptr(batch, batch_size)
@@ -64,7 +70,8 @@ def fps(
             :math:`\mathbf{X} \in \mathbb{R}^{N \times F}`.
         batch (torch.Tensor, optional): Batch vector
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
-            node to a specific example. (default: :obj:`None`)
+            node to a specific example. :obj:`batch` needs to be
+            sorted. (default: :obj:`None`)
         ratio (float, optional): Sampling ratio. (default: :obj:`0.5`)
         random_start (bool, optional): If set to :obj:`False`, use the first
             node in :math:`\mathbf{X}` as starting node. (default: obj:`True`)
@@ -117,10 +124,12 @@ def knn(
         k (int): The number of neighbors.
         batch_x (torch.Tensor, optional): Batch vector
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
-            node to a specific example. (default: :obj:`None`)
+            node to a specific example. :obj:`batch_x` needs to be
+            sorted. (default: :obj:`None`)
         batch_y (torch.Tensor, optional): Batch vector
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^M`, which assigns each
-            node to a specific example. (default: :obj:`None`)
+            node to a specific example. :obj:`batch_y` needs to be
+            sorted. (default: :obj:`None`)
         cosine (bool, optional): If :obj:`True`, will use the cosine
             distance instead of euclidean distance to find nearest neighbors.
             (default: :obj:`False`)
@@ -167,7 +176,8 @@ def knn_graph(
         k (int): The number of neighbors.
         batch (torch.Tensor, optional): Batch vector
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
-            node to a specific example. (default: :obj:`None`)
+            node to a specific example. :obj:`batch` needs to be
+            sorted. (default: :obj:`None`)
         loop (bool, optional): If :obj:`True`, the graph will contain
             self-loops. (default: :obj:`False`)
         flow (str, optional): The flow direction when using in combination with
@@ -236,10 +246,12 @@ def radius(
         r (float): The radius.
         batch_x (torch.Tensor, optional): Batch vector
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
-            node to a specific example. (default: :obj:`None`)
+            node to a specific example. :obj:`batch_x` needs to be
+            sorted. (default: :obj:`None`)
         batch_y (torch.Tensor, optional): Batch vector
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^M`, which assigns each
-            node to a specific example. (default: :obj:`None`)
+            node to a specific example. :obj:`batch_y` needs to be
+            sorted. (default: :obj:`None`)
         max_num_neighbors (int, optional): The maximum number of neighbors to
             return for each element in :obj:`y`. (default: :obj:`32`)
         num_workers (int, optional): Number of workers to use for computation.
@@ -293,7 +305,8 @@ def radius_graph(
         r (float): The radius.
         batch (torch.Tensor, optional): Batch vector
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
-            node to a specific example. (default: :obj:`None`)
+            node to a specific example. :obj:`batch` needs to be
+            sorted. (default: :obj:`None`)
         loop (bool, optional): If :obj:`True`, the graph will contain
             self-loops. (default: :obj:`False`)
         max_num_neighbors (int, optional): The maximum number of neighbors to
@@ -360,10 +373,12 @@ def nearest(
             :math:`\mathbf{Y} \in \mathbb{R}^{M \times F}`.
         batch_x (torch.Tensor, optional): Batch vector
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^N`, which assigns each
-            node to a specific example. (default: :obj:`None`)
+            node to a specific example. :obj:`batch_x` needs to be
+            sorted. (default: :obj:`None`)
         batch_y (torch.Tensor, optional): Batch vector
             :math:`\mathbf{b} \in {\{ 0, \ldots, B-1\}}^M`, which assigns each
-            node to a specific example. (default: :obj:`None`)
+            node to a specific example. :obj:`batch_y` needs to be
+            sorted. (default: :obj:`None`)
 
     :rtype: :class:`torch.Tensor`
     """
