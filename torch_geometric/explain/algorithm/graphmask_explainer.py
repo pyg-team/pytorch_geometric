@@ -120,6 +120,7 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         **kwargs,
     ) -> Explanation:
 
+        requires_grad = [(p, p.requires_grad) for p in model.parameters()]
         hard_node_mask = None
 
         if self.model_config.task_level == ModelTaskLevel.node:
@@ -131,6 +132,10 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                                             hard_node_mask, apply_sigmoid=True)
         edge_mask = self._explain(model, index=index)
         edge_mask = edge_mask[:edge_index.size(1)]
+
+        self._clean_model(model)
+        for param, value in requires_grad:
+            param.requires_grad = value
 
         return Explanation(node_mask=node_mask, edge_mask=edge_mask)
 
@@ -306,6 +311,15 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 module.explain_message = explain_message.__get__(
                     module, MessagePassing)
                 module.explain = True
+
+    def _clean_model(self, model: torch.nn.Module):
+        r"""Reverts the changes made by :meth:`_set_flags` to the original
+        GNN model.
+        """
+        for module in model.modules():
+            if isinstance(module, MessagePassing):
+                del module.explain_message
+                module.explain = None
 
     def _inject_messages(
         self,
