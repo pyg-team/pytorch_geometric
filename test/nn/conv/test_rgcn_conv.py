@@ -132,3 +132,89 @@ def test_rgcn_conv_basic(cls, conf, device):
                                       atol=1e-3)
                 assert torch.allclose(jit((idx1, idx2), adj.t()), out2,
                                       atol=1e-3)
+
+
+@pytest.mark.parametrize('dtype', [
+    torch.float16,
+    torch.bfloat16,
+    torch.float32,
+    torch.float64,
+])
+@pytest.mark.parametrize('conf, input_kind', [
+    ((None, None), 'features'),
+    ((2, None), 'features'),
+    ((None, 2), 'features'),
+    ((None, None), 'indices'),
+    ((2, None), 'indices'),
+    ((None, None), 'none'),
+    ((2, None), 'none'),
+])
+@pytest.mark.parametrize('aggr', ['sum', 'mean'])
+def test_rgcn_conv_output_dtype(dtype, conf, input_kind, aggr, monkeypatch):
+    monkeypatch.setattr(torch_geometric.backend, 'use_segment_matmul', False)
+    conv = RGCNConv(4, 4, 3, *conf, aggr=aggr).to(dtype)
+    with torch.no_grad():
+        for param in conv.parameters():
+            param.copy_(
+                torch.arange(param.numel()).reshape(
+                    param.shape).remainder(5).to(dtype) / 8)
+    features = torch.tensor([
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1],
+    ], dtype=dtype)
+    if input_kind == 'features':
+        features = torch.tensor([
+            [0.5, 1, -0.25, 0],
+            [0, -0.5, 1, 0.25],
+            [1, 0.25, 0, -0.5],
+            [-0.25, 0, 0.5, 1],
+        ], dtype=dtype, requires_grad=True)
+    x = (features if input_kind == 'features' else
+         torch.arange(4) if input_kind == 'indices' else None)
+    edge_index = torch.tensor([[0, 1, 1, 2, 3], [1, 1, 2, 0, 2]])
+    edge_type = torch.tensor([0, 0, 1, 1, 0])
+    out = conv(x, edge_index, edge_type)
+    assert out.dtype == dtype
+    assert torch.nn.Linear(4, 1).to(dtype)(out).dtype == dtype
+
+    # Dense adjacency multiplication supplies a message-passing-free oracle.
+    expected = features @ conv.root + conv.bias
+    weights = conv.weight
+    if conv.num_bases is not None:
+        weights = (conv.comp @ weights.flatten(1)).reshape(3, 4, 4)
+    for relation in range(3):
+        adjacency = torch.zeros(4, 4, dtype=dtype)
+        for src, dst in edge_index[:, edge_type == relation].t():
+            adjacency[dst, src] += 1
+        if aggr == 'mean':
+            adjacency /= adjacency.sum(1, keepdim=True).clamp(min=1)
+        weight = weights[relation]
+        if conv.num_blocks is not None:
+            weight = torch.block_diag(*weight.unbind())
+        expected = expected + adjacency @ features @ weight
+    torch.testing.assert_close(out, expected)
+    parameters = tuple(conv.parameters())
+    if input_kind == 'features':
+        parameters = parameters + (features, )
+    actual_grad = torch.autograd.grad(out.square().sum(), parameters,
+                                      retain_graph=True)
+    expected_grad = torch.autograd.grad(expected.square().sum(), parameters)
+    for actual, reference in zip(actual_grad, expected_grad):
+        torch.testing.assert_close(actual, reference)
+
+
+def test_rgcn_conv_explicit_dtype_with_different_default(monkeypatch):
+    monkeypatch.setattr(torch_geometric.backend, 'use_segment_matmul', False)
+    original_dtype = torch.get_default_dtype()
+    try:
+        torch.set_default_dtype(torch.float64)
+        conv = RGCNConv(2, 2, 1, root_weight=False, bias=False).float()
+        x = torch.eye(2, dtype=torch.float32)
+        edge_index = torch.tensor([[0, 1], [1, 0]])
+        out = conv(x, edge_index, torch.zeros(2, dtype=torch.long))
+        assert out.dtype == torch.float32
+        torch.testing.assert_close(out, x.flip(0) @ conv.weight[0])
+    finally:
+        torch.set_default_dtype(original_dtype)
