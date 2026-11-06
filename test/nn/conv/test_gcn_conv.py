@@ -78,6 +78,26 @@ def test_gcn_conv_with_decomposed_layers():
     assert conv.propagate.__module__.endswith('GCNConv_propagate')
 
 
+def test_gcn_conv_with_existing_self_loops():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [0, 1, 2, 0, 0, 3]])
+    value = torch.rand(edge_index.size(1))
+
+    conv = GCNConv(16, 32)
+    out1 = conv(x, edge_index)
+    out2 = conv(x, edge_index, value)
+
+    adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
+    adj2 = to_torch_csc_tensor(edge_index, value, size=(4, 4))
+    assert torch.allclose(conv(x, adj1.t()), out1, atol=1e-6)
+    assert torch.allclose(conv(x, adj2.t()), out2, atol=1e-6)
+
+    adj1 = to_torch_coo_tensor(edge_index, size=(4, 4))
+    adj2 = to_torch_coo_tensor(edge_index, value, size=(4, 4))
+    assert torch.allclose(conv(x, adj1.t()), out1, atol=1e-6)
+    assert torch.allclose(conv(x, adj2.t()), out2, atol=1e-6)
+
+
 def test_gcn_conv_with_sparse_input_feature():
     x = torch.sparse_coo_tensor(
         indices=torch.tensor([[0, 0], [0, 1]]),
