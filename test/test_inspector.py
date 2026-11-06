@@ -1,10 +1,18 @@
 import inspect
+import warnings
+from types import SimpleNamespace
 from typing import Any, Dict, Final, List, Optional, Set, Tuple, Union
 
 import torch
 from torch import Tensor
 
-from torch_geometric.inspector import Inspector, Parameter, Signature
+import torch_geometric.inspector
+from torch_geometric.inspector import (
+    Inspector,
+    Parameter,
+    Signature,
+    eval_type,
+)
 from torch_geometric.nn import GATConv, SAGEConv
 from torch_geometric.typing import OptPairTensor
 
@@ -16,6 +24,27 @@ def test_eval_type() -> None:
     assert inspector.eval_type('List[Tensor]') == List[Tensor]
     assert inspector.eval_type('Tuple[Tensor, int]') == Tuple[Tensor, int]
     assert inspector.eval_type('Tuple[int, ...]') == Tuple[int, ...]
+
+
+def test_eval_type_without_deprecation_warning() -> None:
+    # Omitting `type_params` in `typing._eval_type` is deprecated in Python
+    # 3.13 and 3.14, and raises a `TypeError` from Python 3.15 onwards:
+    _globals = {'Optional': Optional, 'Tensor': Tensor}
+    with warnings.catch_warnings():
+        warnings.simplefilter('error', DeprecationWarning)
+        assert eval_type('Optional[Tensor]', _globals) == Optional[Tensor]
+
+
+def test_eval_type_passes_type_params(monkeypatch) -> None:
+    # Emulates Python 3.15, where `type_params` is a required argument:
+    def _eval_type(value, globalns, localns, type_params):
+        assert type_params == ()
+        return Tensor
+
+    module = torch_geometric.inspector
+    monkeypatch.setattr(module, 'sys', SimpleNamespace(version_info=(3, 15)))
+    monkeypatch.setattr(module.typing, '_eval_type', _eval_type)
+    assert eval_type('Tensor', {'Tensor': Tensor}) == Tensor
 
 
 def test_type_repr() -> None:
