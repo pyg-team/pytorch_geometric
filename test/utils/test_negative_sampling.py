@@ -92,28 +92,34 @@ def test_negative_sampling():
     assert neg_edge_index.size(1) == edge_index.size(1) - 1
     assert is_undirected(neg_edge_index)
 
+
 def test_negative_sampling_force_undirected_with_directed_graph():
     # `force_undirected=True` must not resample edges already present in the
     # graph, even when they are stored with row > col (regression test for
     # github issue: force_undirected canonicalization missed row > col edges).
     edge_index = torch.as_tensor([[3, 3, 0, 1, 2], [1, 0, 2, 3, 0]])
-    num_nodes = 4
 
     # Every undirected pair {(i, j)} of the graph must be absent from samples.
-    undirected_pos = {tuple(sorted((int(i), int(j))))
-                      for i, j in edge_index.t().tolist() if i != j}
+    undirected_pos = {
+        tuple(sorted((int(i), int(j))))
+        for i, j in edge_index.t().tolist() if i != j
+    }
 
     neg_edge_index = negative_sampling(edge_index, force_undirected=True)
-    neg_pairs = {tuple(sorted((int(i), int(j))))
-                 for i, j in neg_edge_index.t().tolist()}
+    neg_pairs = {
+        tuple(sorted((int(i), int(j))))
+        for i, j in neg_edge_index.t().tolist()
+    }
     assert neg_edge_index.size(1) == edge_index.size(1) - 1
     assert is_undirected(neg_edge_index)
     assert len(undirected_pos & neg_pairs) == 0
 
     neg_edge_index = negative_sampling(edge_index, force_undirected=True,
                                        method='dense')
-    neg_pairs = {tuple(sorted((int(i), int(j))))
-                 for i, j in neg_edge_index.t().tolist()}
+    neg_pairs = {
+        tuple(sorted((int(i), int(j))))
+        for i, j in neg_edge_index.t().tolist()
+    }
     assert neg_edge_index.size(1) == edge_index.size(1) - 1
     assert is_undirected(neg_edge_index)
     assert len(undirected_pos & neg_pairs) == 0
