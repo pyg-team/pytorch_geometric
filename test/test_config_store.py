@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from torch_geometric.config_store import (
     class_from_dataclass,
@@ -57,6 +57,18 @@ def test_map_annotation():
     assert map_annotation(list[str], mapping) == list[str]
     assert map_annotation(list[int], mapping) == list[Any]
     assert map_annotation(tuple[int], mapping) == tuple[Any]
+
+    # `typing.Union`/`typing.Optional` must be rebuilt without mutating
+    # `__args__`, which is read-only on Python >= 3.14:
+    assert map_annotation(Optional[int], mapping) == Optional[Any]
+    assert map_annotation(Union[int, str], mapping) == Union[Any, str]
+    assert map_annotation(List[Optional[int]], mapping) == List[Optional[Any]]
+    assert map_annotation(Dict[str, Optional[int]],
+                          mapping) == Dict[str, Optional[Any]]
+    # When every Union member maps to the same type, the rebuilt annotation
+    # collapses to canonical `Any` (the old in-place mutation left a
+    # degenerate `Union[Any, Any]`):
+    assert map_annotation(Union[int, str], {int: Any, str: Any}) == Any
 
 
 def test_register():

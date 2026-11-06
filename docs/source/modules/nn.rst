@@ -242,6 +242,14 @@ Encodings
 
 .. currentmodule:: torch_geometric.nn.encoding
 
+.. autosummary::
+   :nosignatures:
+   :toctree: ../generated
+
+   {% for name in torch_geometric.nn.encoding.classes %}
+     {{ name }}
+   {% endfor %}
+
 Functional
 ----------
 
@@ -295,6 +303,9 @@ Model Transformations
 
 DataParallel Layers
 -------------------
+
+.. warning::
+   :class:`~torch_geometric.nn.data_parallel.DataParallel` is deprecated. Please use :class:`torch.nn.parallel.DistributedDataParallel` instead.
 
 .. automodule:: torch_geometric.nn.data_parallel
    :members:

@@ -1,7 +1,9 @@
-from torch_geometric.testing import onlyFullTest, onlyOnline
+import pytest
+
+from torch_geometric.testing import onlyFullTest
 
 
-@onlyOnline
+@pytest.mark.dataset
 @onlyFullTest
 def test_suite_sparse_dataset(get_dataset):
     dataset = get_dataset(group='DIMACS10', name='citationCiteseer')
@@ -10,7 +12,7 @@ def test_suite_sparse_dataset(get_dataset):
     assert len(dataset) == 1
 
 
-@onlyOnline
+@pytest.mark.dataset
 @onlyFullTest
 def test_illc1850_suite_sparse_dataset(get_dataset):
     dataset = get_dataset(group='HB', name='illc1850')

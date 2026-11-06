@@ -163,10 +163,13 @@ class FAConv(MessagePassing):
             edge_index (torch.Tensor or SparseTensor): The edge indices.
             edge_weight (torch.Tensor, optional): The edge weights.
                 (default: :obj:`None`)
-            return_attention_weights (bool, optional): If set to :obj:`True`,
-                will additionally return the tuple
-                :obj:`(edge_index, attention_weights)`, holding the computed
-                attention weights for each edge. (default: :obj:`None`)
+            return_attention_weights (bool, optional):
+                Will additionally return the tuple
+                :obj:`(edge_index, attention_weights)` whenever it is set to
+                a value, regardless of its actual value
+                (might be `True` or `False`), holding the computed attention
+                weights for each edge.
+                (default: :obj:`None`)
         """
         if self.normalize:
             if isinstance(edge_index, Tensor):

@@ -1,7 +1,9 @@
-from torch_geometric.testing import onlyFullTest, onlyOnline
+import pytest
+
+from torch_geometric.testing import onlyFullTest
 
 
-@onlyOnline
+@pytest.mark.dataset
 @onlyFullTest
 def test_bzr(get_dataset):
     dataset = get_dataset(name='BZR')
@@ -14,7 +16,7 @@ def test_bzr(get_dataset):
     assert len(dataset[0]) == 3
 
 
-@onlyOnline
+@pytest.mark.dataset
 @onlyFullTest
 def test_bzr_with_node_attr(get_dataset):
     dataset = get_dataset(name='BZR', use_node_attr=True)

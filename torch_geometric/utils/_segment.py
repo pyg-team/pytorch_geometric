@@ -3,7 +3,9 @@ from torch import Tensor
 
 import torch_geometric.typing
 from torch_geometric import is_compiling
+from torch_geometric.index import ptr2index
 from torch_geometric.typing import torch_scatter
+from torch_geometric.utils import scatter
 
 
 def segment(src: Tensor, ptr: Tensor, reduce: str = 'sum') -> Tensor:
@@ -45,4 +47,34 @@ def _torch_segment(src: Tensor, ptr: Tensor, reduce: str = 'sum') -> Tensor:
     out = torch._segment_reduce(src, reduce, offsets=ptr, initial=initial)
     if reduce == 'amin' or reduce == 'amax':
         out = torch.where(out.isinf(), 0, out)
+    return out
+
+
+def segment_logsumexp(
+    src: Tensor,
+    ptr: Tensor,
+    dim: int,
+) -> Tensor:
+    r"""Returns the log summed exponentials of each row of the :obj:`src`
+    tensor within the ranges specified in the :obj:`ptr`.
+
+    Args:
+        src: The source tensor.
+        ptr (torch.Tensor): A monotonically increasing pointer tensor that
+            refers to the boundaries of segments such that :obj:`ptr[0] = 0`
+            and :obj:`ptr[-1] = src.size(0)`.
+        dim: The dimension to reduce.
+    """
+    src = src.transpose(0, dim)  # Move reduction dimension to first dimension.
+
+    index = ptr2index(ptr, output_size=src.size(0))
+    max_src = scatter(src, index, dim_size=ptr.numel() - 1, reduce='max')
+    src = src - max_src[index]
+
+    out = src.exp()
+    out = segment(out, ptr, reduce='sum')
+    out = out.log().nan_to_num(neginf=0.0) + max_src
+
+    out = out.transpose(0, dim)
+
     return out

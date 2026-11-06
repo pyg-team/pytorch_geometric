@@ -4,7 +4,7 @@ from torch_geometric.nn import knn_interpolate
 from torch_geometric.testing import withPackage
 
 
-@withPackage('torch_cluster')
+@withPackage('pyg_lib')
 def test_knn_interpolate():
     x = torch.tensor([[1.0], [10.0], [100.0], [-1.0], [-10.0], [-100.0]])
     pos_x = torch.tensor([

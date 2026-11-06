@@ -5,7 +5,7 @@ from torch_geometric.testing import withPackage
 from torch_geometric.transforms import GridSampling
 
 
-@withPackage('torch_cluster')
+@withPackage('pyg_lib')
 def test_grid_sampling():
     assert str(GridSampling(5)) == 'GridSampling(size=5)'
 

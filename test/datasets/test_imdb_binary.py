@@ -1,7 +1,9 @@
-from torch_geometric.testing import onlyFullTest, onlyOnline
+import pytest
+
+from torch_geometric.testing import onlyFullTest
 
 
-@onlyOnline
+@pytest.mark.dataset
 @onlyFullTest
 def test_imdb_binary(get_dataset):
     dataset = get_dataset(name='IMDB-BINARY')

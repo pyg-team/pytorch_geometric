@@ -50,7 +50,7 @@ class SequenceEncoder:
 
     @torch.no_grad()
     def __call__(self, df):
-        x = self.model.encode(df.values, show_progress_bar=True,
+        x = self.model.encode(df.tolist(), show_progress_bar=True,
                               convert_to_tensor=True, device=self.device)
         return x.cpu()
 

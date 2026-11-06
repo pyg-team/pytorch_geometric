@@ -14,7 +14,7 @@ def generate_data():
     )
 
 
-@withPackage('torch_cluster')
+@withPackage('pyg_lib')
 @withPackage('ase')
 @pytest.mark.parametrize('use_interaction_graph', [False, True])
 @pytest.mark.parametrize('use_atomref', [False, True])
@@ -49,7 +49,7 @@ def test_schnet(use_interaction_graph, use_atomref):
             assert out.size() == (1, 1)
 
 
-@withPackage('torch_cluster')
+@withPackage('pyg_lib')
 def test_schnet_batch():
     num_graphs = 3
     batch = [generate_data() for _ in range(num_graphs)]

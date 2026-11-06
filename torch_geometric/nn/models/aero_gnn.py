@@ -20,7 +20,7 @@ class AEROGNN(torch.nn.Module):
     1. **Edge attention** :math:`\alpha_{ij}^{(k)}`: Learns adaptive attention
        weights for edges at each propagation iteration, remaining
        edge-adaptive and graph-adaptive even at deep layers.
-    2. **Hop attention** :math:`\gamma_i^{(k)}`: Learns adaptive attention weights
+    2. **Hop attention** :math:`\gamma_i^{(k)}`: Learns attention weights
        for each propagation hop, remaining hop-adaptive, node-adaptive, and
        graph-adaptive at deep layers.
     3. **Exponential decay weights**: Applied across propagation iterations to
@@ -40,7 +40,8 @@ class AEROGNN(torch.nn.Module):
             (default: :obj:`None`)
         iterations (int, optional): Number of propagation iterations
             :math:`K`. (default: :obj:`10`)
-        heads (int, optional): Number of multi-head attentions. (default: :obj:`1`)
+        heads (int, optional): Number of multi-head attentions.
+            (default: :obj:`1`)
         lambd (float, optional): Decay weight parameter :math:`\lambda` for
             exponential decay. (default: :obj:`1.0`)
         dropout (float, optional): Dropout probability. (default: :obj:`0.0`)
@@ -146,7 +147,7 @@ class AEROGNN(torch.nn.Module):
                 :math:`(|\mathcal{V}|, F_{in})`.
             edge_index (torch.Tensor or SparseTensor): The edge indices.
             num_nodes (int, optional): The number of nodes. If not provided,
-                will be inferred from :obj:`edge_index`. (default: :obj:`None`)
+                will be inferred from :obj:`x`. (default: :obj:`None`)
 
         Returns:
             torch.Tensor: The output node features of shape

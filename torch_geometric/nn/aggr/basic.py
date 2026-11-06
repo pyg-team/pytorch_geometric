@@ -240,8 +240,19 @@ class PowerMeanAggregation(Aggregation):
             If set to a value greater than :obj:`1`, :math:`p` will be learned
             per input feature channel. This requires compatible shapes for the
             input to the forward calculation. (default: :obj:`1`)
+        clamp_min (float, optional): Lower-bound of the range to be clamped
+            to. There is no lower bound if set to :obj:`None`.
+        clamp_max (float, optional): Upper-bound of the range to be clamped
+            to. There is no upper bound if set to :obj:`None`.
     """
-    def __init__(self, p: float = 1.0, learn: bool = False, channels: int = 1):
+    def __init__(
+        self,
+        p: float = 1.0,
+        learn: bool = False,
+        channels: int = 1,
+        clamp_min: Optional[float] = 1e-4,
+        clamp_max: Optional[float] = 100.,
+    ) -> None:
         super().__init__()
 
         if not learn and channels != 1:
@@ -254,6 +265,8 @@ class PowerMeanAggregation(Aggregation):
 
         self.p = Parameter(torch.empty(channels)) if learn else p
         self.reset_parameters()
+        self.min_value = clamp_min
+        self.max_value = clamp_max
 
     def reset_parameters(self):
         if isinstance(self.p, Tensor):
@@ -270,12 +283,12 @@ class PowerMeanAggregation(Aggregation):
             p = p.view(-1, self.channels)
 
         if not isinstance(p, (int, float)) or p != 1:
-            x = x.clamp(min=0, max=100).pow(p)
+            x = x.clamp(min=self.min_value, max=self.max_value).pow(p)
 
         out = self.reduce(x, index, ptr, dim_size, dim, reduce='mean')
 
         if not isinstance(p, (int, float)) or p != 1:
-            out = out.clamp(min=0, max=100).pow(1. / p)
+            out = out.clamp(min=self.min_value, max=self.max_value).pow(1. / p)
 
         return out
 

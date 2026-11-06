@@ -1,6 +1,6 @@
 import os
 import time
-from typing import List, Optional, Tuple
+from typing import List, Optional, Tuple, TypedDict, Union
 
 import torch
 import torch.multiprocessing as mp
@@ -10,6 +10,12 @@ CLIENT_INITD = False
 CLIENT = None
 GLOBAL_NIM_KEY = ""
 SYSTEM_PROMPT = "Please convert the above text into a list of knowledge triples with the form ('entity', 'relation', 'entity'). Separate each with a new line. Do not output anything else. Try to focus on key triples that form a connected graph."  # noqa
+MAX_OUTER_RETRIES = 5  # Maximum number of times the entire multiprocessing job is retried. # noqa
+RETRY_DELAY = 5  # Fixed sleep time (in seconds) between outer retries.
+MAX_NIM_RETRIES = 200  # Maximum number of attempts to call the NIM API inside one worker.  # noqa
+BASE_DELAY = 0.5  # Initial wait time before retrying a failed network call.
+
+FORBIDDEN = 403
 
 
 class TXT2KG():
@@ -91,7 +97,7 @@ class TXT2KG():
         # call LLM on text
         chunk_start_time = time.time()
         if not self.initd_LM:
-            from torch_geometric.nn.nlp import LLM
+            from torch_geometric.llm.models import LLM
             LM_name = "VAGOsolutions/SauerkrautLM-v2-14b-DPO"
             self.model = LLM(LM_name).eval()
             self.initd_LM = True
@@ -100,7 +106,8 @@ class TXT2KG():
         # for debug
         self.total_chars_parsed += len(txt)
         self.time_to_parse += round(time.time() - chunk_start_time, 2)
-        self.avg_chars_parsed_per_sec = self.total_chars_parsed / self.time_to_parse  # noqa
+        self.avg_chars_parsed_per_sec = self.total_chars_parsed / (
+            self.time_to_parse + 1e-6)  # noqa
         return out_str
 
     def add_doc_2_KG(
@@ -137,60 +144,78 @@ class TXT2KG():
             # If no QA_pair, use the current doc_id_counter as the key
             key = self.doc_id_counter
 
-        # Handle empty text (context-less QA pairs)
-        if txt == "":
-            self.relevant_triples[key] = []
-        else:
-            # Chunk the text into smaller pieces for processing
-            chunks = _chunk_text(txt, chunk_size=self.chunk_size)
+        self.relevant_triples[key] = self._extract_relevant_triples(txt)
 
-            if self.local_LM:
-                # For debugging purposes...
-                # process chunks sequentially on the local LM
-                self.relevant_triples[key] = _llm_then_python_parse(
-                    chunks, _parse_n_check_triples,
-                    self._chunk_to_triples_str_local)
-            else:
-                # Process chunks in parallel using multiple processes
-                num_procs = min(len(chunks), _get_num_procs())
-                meta_chunk_size = int(len(chunks) / num_procs)
-                in_chunks_per_proc = {
-                    j:
-                    chunks[j *
-                           meta_chunk_size:min((j + 1) *
-                                               meta_chunk_size, len(chunks))]
-                    for j in range(num_procs)
-                }
-                for _retry_j in range(5):
-                    try:
-                        for _retry_i in range(200):
-                            try:
-                                # Spawn multiple processes
-                                # process chunks in parallel
-                                mp.spawn(
-                                    _multiproc_helper,
-                                    args=(in_chunks_per_proc,
-                                          _parse_n_check_triples,
-                                          _chunk_to_triples_str_cloud,
-                                          self.NVIDIA_API_KEY, self.NIM_MODEL,
-                                          self.ENDPOINT_URL), nprocs=num_procs)
-                                break
-                            except:  # noqa
-                                # keep retrying...
-                                # txt2kg is costly -> stoppage is costly
-                                pass
-
-                        # Collect the results from each process
-                        self.relevant_triples[key] = []
-                        for rank in range(num_procs):
-                            self.relevant_triples[key] += torch.load(
-                                "/tmp/outs_for_proc_" + str(rank))
-                            os.remove("/tmp/outs_for_proc_" + str(rank))
-                        break
-                    except:  # noqa
-                        pass
         # Increment the doc_id_counter for the next document
         self.doc_id_counter += 1
+
+    def _extract_relevant_triples(
+        self,
+        txt: str,
+        max_retries: int = MAX_OUTER_RETRIES,
+        retry_delay: float = RETRY_DELAY,
+    ) -> List[Tuple[str, str, str]]:
+        # Handle empty text (context-less QA pairs)
+        if txt == "":
+            return []
+
+        # Chunk the text into smaller pieces for processing
+        chunks = _chunk_text(txt, chunk_size=self.chunk_size)
+
+        if self.local_LM:
+            # For debugging purposes...
+            # process chunks sequentially on the local LM
+            return _llm_then_python_parse(chunks, _parse_n_check_triples,
+                                          self._chunk_to_triples_str_local)
+
+        # Create deterministic chunk assignment
+        import math
+        num_procs = min(len(chunks), _get_num_procs())
+        chunk_size = math.ceil(len(chunks) / num_procs)
+        in_chunks_per_proc = [
+            chunks[j * chunk_size:min((j + 1) * chunk_size, len(chunks))]
+            for j in range(num_procs)
+        ]
+
+        # Run workers via starmap for deterministic ordering
+        worker_args = [(
+            rank,
+            in_chunks_per_proc[rank],
+            _parse_n_check_triples,
+            _chunk_to_triples_str_cloud,
+            self.NVIDIA_API_KEY,
+            self.NIM_MODEL,
+            self.ENDPOINT_URL,
+        ) for rank in range(num_procs)]
+
+        for attempt in range(max_retries):
+            with mp.get_context("spawn").Pool(num_procs) as pool:
+                worker_results = pool.starmap(_multiproc_helper, worker_args)
+
+            # Check whether any worker failed.
+            failed_result = next(
+                (result for result in worker_results if not result["success"]),
+                None,
+            )
+
+            if failed_result is None:
+                # All workers succeeded.
+                results = [result["result"] for result in worker_results]
+                break
+
+            # A worker failed with a non-retryable error.
+            if not failed_result["retryable"]:
+                raise RuntimeError(failed_result["error"])
+
+            if attempt == max_retries - 1:
+                raise RuntimeError(failed_result["error"])
+
+            print(f"[Retry {attempt + 1}/{max_retries}] "
+                  f"Multiprocessing failed: {failed_result['error']}")
+
+            time.sleep(retry_delay)
+
+        return _merge_triples_deterministically(results)
 
 
 known_reasoners = [
@@ -206,6 +231,7 @@ def _chunk_to_triples_str_cloud(
         NIM_MODEL="nvidia/llama-3.1-nemotron-ultra-253b-v1",
         ENDPOINT_URL="https://integrate.api.nvidia.com/v1",
         post_text=SYSTEM_PROMPT) -> str:
+    """Request answer-only triples and reject empty provider responses."""
     global CLIENT_INITD
     if not CLIENT_INITD:
         # We use NIMs since most PyG users may not be able to run a 70B+ model
@@ -226,14 +252,29 @@ def _chunk_to_triples_str_cloud(
             for model_name_str in known_reasoners]):
         messages.append({"role": "system", "content": "detailed thinking on"})
     messages.append({"role": "user", "content": txt_input})
+    request_options = {}
+    if NIM_MODEL.lower().split('/')[-1] == 'nemotron-3.5-lightning-30b-a3b':
+        # This model enables thinking by default. Triple extraction requires
+        # direct answers so the bounded budget produces parseable content.
+        request_options['extra_body'] = {
+            'chat_template_kwargs': {
+                'enable_thinking': False
+            },
+        }
     completion = CLIENT.chat.completions.create(model=NIM_MODEL,
                                                 messages=messages,
                                                 temperature=0, top_p=1,
-                                                max_tokens=1024, stream=True)
+                                                max_tokens=1024, stream=True,
+                                                **request_options)
     out_str = ""
     for chunk in completion:
         if chunk.choices[0].delta.content is not None:
             out_str += chunk.choices[0].delta.content
+    if not out_str.strip():
+        raise RuntimeError(
+            "The extraction model returned no answer content. Check the "
+            "model's reasoning settings and output-token budget before "
+            "building the graph.")
     return out_str
 
 
@@ -281,22 +322,103 @@ def _llm_then_python_parse(chunks, py_fn, llm_fn, **kwargs):
     return relevant_triples
 
 
-def _multiproc_helper(rank, in_chunks_per_proc, py_fn, llm_fn, NIM_KEY,
-                      NIM_MODEL, ENDPOINT_URL):
-    out = _llm_then_python_parse(in_chunks_per_proc[rank], py_fn, llm_fn,
-                                 GLOBAL_NIM_KEY=NIM_KEY, NIM_MODEL=NIM_MODEL,
-                                 ENDPOINT_URL=ENDPOINT_URL)
-    torch.save(out, "/tmp/outs_for_proc_" + str(rank))
+def _is_retryable_exception(exc: Exception, status_code) -> bool:
+    """Return True if an exception is likely to succeed when retried."""
+    if status_code is not None:
+        return status_code == 429 or status_code >= 500
+
+    # Network/transport exceptions.
+    try:
+        from openai import APIConnectionError, APITimeoutError
+    except ImportError:
+        return False
+
+    return isinstance(exc, (APIConnectionError, APITimeoutError))
+
+
+class WorkerResult(TypedDict, total=False):
+    success: bool
+    result: list
+    retryable: bool
+    error: str
+
+
+def _multiproc_helper(
+    rank,
+    chunks_for_rank,
+    py_fn,
+    llm_fn,
+    NIM_KEY,
+    NIM_MODEL,
+    ENDPOINT_URL,
+    max_retries=MAX_NIM_RETRIES,
+    base_delay=BASE_DELAY,
+) -> WorkerResult:
+
+    for attempt in range(max_retries):
+        if attempt > 0:
+            # exponential backoff with jitter
+            from random import uniform
+            sleep_time = base_delay * (2**min(attempt - 1, 6)) + uniform(
+                0, 0.1)
+            time.sleep(sleep_time)
+
+        try:
+            return {
+                "success":
+                True,
+                "result":
+                _llm_then_python_parse(
+                    chunks_for_rank,
+                    py_fn,
+                    llm_fn,
+                    GLOBAL_NIM_KEY=NIM_KEY,
+                    NIM_MODEL=NIM_MODEL,
+                    ENDPOINT_URL=ENDPOINT_URL,
+                )
+            }
+
+        except Exception as e:
+            # OpenAI-compatible API exceptions generally expose `status_code`.
+            status_code = getattr(e, "status_code", None)
+            retryable = _is_retryable_exception(e, status_code)
+            print(
+                f"[Worker {rank}] attempt {attempt + 1}/{max_retries}: "
+                f"{type(e).__name__}: {e}. Retryable={retryable}",
+                flush=True,
+            )
+
+            if status_code == FORBIDDEN:
+                print(
+                    "\n ***** Please, check your NV_NIM_KEY. *****\n"
+                    "The key may be expired, invalid or not authorized "
+                    "to access the dataset you are using.\n", flush=True)
+
+            if not retryable:
+                return {
+                    "success": False,
+                    "retryable": False,
+                    "error": str(e),
+                }
+
+    return {
+        "success": False,
+        "retryable": True,
+        "error": f"Worker {rank}: exhausted {max_retries} retries",
+    }
 
 
 def _get_num_procs():
+    num_proc = None
     if hasattr(os, "sched_getaffinity"):
         try:
             num_proc = len(os.sched_getaffinity(0)) / (2)
         except Exception:
             pass
+
     if num_proc is None:
         num_proc = os.cpu_count() / (2)
+
     return int(num_proc)
 
 
@@ -351,3 +473,32 @@ def _chunk_text(text: str, chunk_size: int = 512) -> list[str]:
         text = text[best_split:].lstrip()
 
     return chunks
+
+
+Triple = Union[List[str], Tuple[str, ...]]
+
+
+def _merge_triples_deterministically(
+        triples: List[List[Triple]]) -> List[Tuple[str, ...]]:
+    """Flatten a list of lists of triples and return a deterministic,
+    reproducible sorted list of tuples.
+
+    Args:
+        triples (List[List[Triple]]): A list of lists of triples, where each
+            triple is a list or tuple of strings or other comparable values.
+            Typically, each inner list comes from a worker.
+
+    Returns:
+        List[Tuple[str, ...]]: A flattened list of triples as tuples, sorted
+            deterministically. Sorting is Unicode-safe and reproducible across
+            Python versions using `str.casefold()`. Tuples are immutable to
+            ensure hashability and stability in dicts/sets.
+    """
+    # Flatten all sublists and convert inner lists to tuples
+    flat_triples = [tuple(t) for sublist in triples for t in sublist]
+
+    # Deterministic sort (Unicode-safe, casefold for strings)
+    flat_triples.sort(key=lambda triple: tuple(
+        s.casefold() if isinstance(s, str) else s for s in triple))
+
+    return flat_triples

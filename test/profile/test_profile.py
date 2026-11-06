@@ -17,7 +17,6 @@ from torch_geometric.profile.profile import torch_profile, xpu_profile
 from torch_geometric.testing import (
     onlyCUDA,
     onlyLinux,
-    onlyOnline,
     onlyXPU,
     withDevice,
     withPackage,
@@ -44,7 +43,7 @@ def test_timeit(device):
 
 
 @onlyCUDA
-@onlyOnline
+@pytest.mark.dataset
 @withPackage('pytorch_memlab')
 def test_profileit_cuda(get_dataset):
     warnings.filterwarnings('ignore', '.*arguments of DataFrame.drop.*')
@@ -131,7 +130,7 @@ def test_profileit_xpu(get_dataset):
 
 
 @withDevice
-@onlyOnline
+@pytest.mark.dataset
 def test_torch_profile(capfd, get_dataset, device):
     dataset = get_dataset(name='karate')
     data = dataset[0].to(device)
@@ -152,7 +151,7 @@ def test_torch_profile(capfd, get_dataset, device):
 
 
 @onlyXPU
-@onlyOnline
+@pytest.mark.dataset
 @pytest.mark.parametrize('export_chrome_trace', [False, True])
 def test_xpu_profile(capfd, get_dataset, export_chrome_trace):
     dataset = get_dataset(name='karate')

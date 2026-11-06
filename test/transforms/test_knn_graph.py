@@ -5,7 +5,7 @@ from torch_geometric.testing import withPackage
 from torch_geometric.transforms import KNNGraph
 
 
-@withPackage('torch_cluster')
+@withPackage('pyg_lib')
 def test_knn_graph():
     assert str(KNNGraph()) == 'KNNGraph(k=6)'
 

@@ -6,7 +6,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric.data import Data, HeteroData
-from torch_geometric.distributed import LocalFeatureStore
+from torch_geometric.distributed.local_feature_store import LocalFeatureStore
 from torch_geometric.llm.utils.backend_utils import batch_knn
 from torch_geometric.sampler import HeteroSamplerOutput, SamplerOutput
 from torch_geometric.typing import InputNodes

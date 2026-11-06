@@ -39,7 +39,7 @@ def test_rooted_ego_nets():
     assert out.n_sub_batch.tolist() == [0, 0, 1, 1, 1, 2, 2]
 
 
-@withPackage('torch_cluster')
+@withPackage('pyg_lib')
 def test_rooted_rw_subgraph():
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
     data = Data(edge_index=edge_index, num_nodes=3)

@@ -6,7 +6,7 @@ from torch_geometric.transforms import RadiusGraph
 from torch_geometric.utils import coalesce
 
 
-@withPackage('torch_cluster')
+@withPackage('pyg_lib')
 def test_radius_graph():
     assert str(RadiusGraph(r=1)) == 'RadiusGraph(r=1)'
 

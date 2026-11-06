@@ -100,10 +100,12 @@ times = []
 for epoch in range(1, args.epochs + 1):
     start = time.time()
     loss = train()
+    if epoch >= 10:  # We treat the first 10 iterations as a warm-up
+        times.append(time.time() - start)
+
     train_acc, val_acc, tmp_test_acc = test()
     if val_acc > best_val_acc:
         best_val_acc = val_acc
         test_acc = tmp_test_acc
     log(Epoch=epoch, Loss=loss, Train=train_acc, Val=val_acc, Test=test_acc)
-    times.append(time.time() - start)
 print(f'Median time per epoch: {torch.tensor(times).median():.4f}s')

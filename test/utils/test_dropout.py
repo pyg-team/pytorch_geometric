@@ -71,7 +71,7 @@ def test_dropout_edge():
     assert out[1].tolist() == [0, 2, 0, 2]
 
 
-@withPackage('torch_cluster')
+@withPackage('pyg_lib')
 def test_dropout_path():
     edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]])
 
@@ -81,16 +81,16 @@ def test_dropout_path():
 
     torch.manual_seed(4)
     out = dropout_path(edge_index, p=0.2)
-    assert out[0].tolist() == [[0, 1], [1, 0]]
-    assert out[1].tolist() == [True, True, False, False, False, False]
+    assert out[0].tolist() == [[], []]
+    assert out[1].tolist() == [False, False, False, False, False, False]
     assert edge_index[:, out[1]].tolist() == out[0].tolist()
 
     # test with unsorted edges
     torch.manual_seed(5)
     edge_index = torch.tensor([[3, 5, 2, 2, 2, 1], [1, 0, 0, 1, 3, 2]])
     out = dropout_path(edge_index, p=0.2)
-    assert out[0].tolist() == [[3, 2, 2, 1], [1, 1, 3, 2]]
-    assert out[1].tolist() == [True, False, False, True, True, True]
+    assert out[0].tolist() == [[3, 2], [1, 3]]
+    assert out[1].tolist() == [True, False, False, False, True, False]
     assert edge_index[:, out[1]].tolist() == out[0].tolist()
 
     # test with isolated nodes

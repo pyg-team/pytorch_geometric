@@ -266,8 +266,8 @@ def dropout_path(edge_index: Tensor, p: float = 0.2, walks_per_node: int = 1,
     if not training or p == 0.0:
         return edge_index, edge_mask
 
-    if not torch_geometric.typing.WITH_TORCH_CLUSTER or is_compiling():
-        raise ImportError('`dropout_path` requires `torch-cluster`.')
+    if not torch_geometric.typing.WITH_PYG_LIB or is_compiling():
+        raise ImportError("'dropout_path' requires 'pyg-lib>=0.6.0'")
 
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
     edge_orders = None
@@ -282,9 +282,13 @@ def dropout_path(edge_index: Tensor, p: float = 0.2, walks_per_node: int = 1,
     start = row[sample_mask].repeat(walks_per_node)
 
     rowptr = cumsum(degree(row, num_nodes=num_nodes, dtype=torch.long))
-    n_id, e_id = torch.ops.torch_cluster.random_walk(rowptr, col, start,
-                                                     walk_length, 1.0, 1.0)
-    e_id = e_id[e_id != -1].view(-1)  # filter illegal edges
+    walk = torch.ops.pyg.random_walk(rowptr, col, start, walk_length, 1.0, 1.0)
+    walk_src = walk[:, :-1].reshape(-1).long()
+    walk_dst = walk[:, 1:].reshape(-1).long()
+    walk_keys = walk_src * num_nodes + walk_dst
+    edge_keys = row.long() * num_nodes + col.long()
+    sorted_edge_mask = torch.isin(edge_keys, walk_keys)
+    e_id = sorted_edge_mask.nonzero(as_tuple=False).view(-1)
 
     if edge_orders is not None:  # Permute edge indices:
         e_id = edge_orders[e_id]

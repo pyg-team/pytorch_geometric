@@ -1,7 +1,9 @@
-from torch_geometric.testing import onlyFullTest, onlyOnline
+import pytest
+
+from torch_geometric.testing import onlyFullTest
 
 
-@onlyOnline
+@pytest.mark.dataset
 @onlyFullTest
 def test_ego_facebook_snap_dataset(get_dataset):
     import warnings
@@ -30,7 +32,7 @@ def test_ego_facebook_snap_dataset(get_dataset):
     assert len(dataset) == 10
 
 
-@onlyOnline
+@pytest.mark.dataset
 @onlyFullTest
 def test_soc_slashdot_snap_dataset(get_dataset):
     dataset = get_dataset(name='soc-Slashdot0811')
@@ -38,7 +40,7 @@ def test_soc_slashdot_snap_dataset(get_dataset):
     assert len(dataset) == 1
 
 
-@onlyOnline
+@pytest.mark.dataset
 @onlyFullTest
 def test_wiki_vote_snap_dataset(get_dataset):
     dataset = get_dataset(name='wiki-vote')

@@ -8,7 +8,7 @@ from torch.nn import Parameter
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.inits import glorot, ones
-from torch_geometric.typing import Adj, SparseTensor
+from torch_geometric.typing import Adj
 from torch_geometric.utils import scatter
 
 
@@ -152,19 +152,14 @@ class AEROConv(MessagePassing):
                 number of heads and :math:`F_{out}` is the output feature size.
             edge_index (torch.Tensor or SparseTensor): The edge indices.
             num_nodes (int, optional): The number of nodes. If not provided,
-                will be inferred from :obj:`edge_index`. (default: :obj:`None`)
+                will be inferred from :obj:`x`. (default: :obj:`None`)
 
         Returns:
             torch.Tensor: The output node features of shape
                 :math:`(|\mathcal{V}|, H * F_{out})`.
         """
         if num_nodes is None:
-            if isinstance(edge_index, Tensor):
-                num_nodes = int(edge_index.max()) + 1
-            elif isinstance(edge_index, SparseTensor):
-                num_nodes = edge_index.size(0)
-            else:
-                raise ValueError("Cannot infer num_nodes from edge_index type")
+            num_nodes = x.size(0)
 
         # Reshape input to (num_nodes, heads, out_channels)
         h = x.view(-1, self.heads, self.out_channels)
@@ -272,7 +267,7 @@ class AEROConv(MessagePassing):
         """
         k = self._current_iteration
 
-        # Compute unnormalized attention: a_ij = softplus(att^T (z_i + z_j)) + eps
+        # Compute unnormalized attention from the scaled node features.
         a_ij = z_scale_i + z_scale_j
         a_ij = F.elu(a_ij)
         a_ij = (self.edge_atts[k - 1] * a_ij).sum(dim=-1)
@@ -307,7 +302,7 @@ class AEROConv(MessagePassing):
         index: Tensor,
         num_nodes: int,
     ) -> Tensor:
-        r"""Constructs messages from source nodes :math:`j` to target nodes :math:`i`.
+        r"""Constructs messages from source :math:`j` to target :math:`i`.
 
         Args:
             x_j (torch.Tensor): Source node features of shape
@@ -321,7 +316,8 @@ class AEROConv(MessagePassing):
             num_nodes (int): Number of nodes.
 
         Returns:
-            torch.Tensor: Messages of shape :math:`(|\mathcal{E}|, H, F_{out})`.
+            torch.Tensor: Messages of shape
+                :math:`(|\mathcal{E}|, H, F_{out})`.
         """
         if self._edge_index is None:
             raise RuntimeError("edge_index not set. This should not happen.")

@@ -3,7 +3,7 @@ import torch
 
 from torch_geometric.data import Data
 from torch_geometric.nn.models import AEROGNN
-from torch_geometric.testing import withDevice
+from torch_geometric.testing import withDevice, withPackage
 
 out_dims = [None, 8]
 dropouts = [0.0, 0.5]
@@ -127,6 +127,7 @@ def test_aero_gnn_multi_head():
     assert model(x, edge_index).size() == (3, 16)
 
 
+@withPackage('torch_sparse')
 def test_aero_gnn_with_sparse_tensor():
     from torch_geometric.typing import SparseTensor
 

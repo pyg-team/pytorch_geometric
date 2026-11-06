@@ -17,7 +17,6 @@ from torch_geometric.testing import (
     get_random_tensor_frame,
     onlyLinux,
     onlyNeighborSampler,
-    onlyOnline,
     withCUDA,
     withPackage,
 )
@@ -310,7 +309,7 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
         assert not batch.has_isolated_nodes()
 
 
-@onlyOnline
+@pytest.mark.dataset
 @onlyNeighborSampler
 @pytest.mark.parametrize('subgraph_type', SUBGRAPH_TYPES)
 def test_homo_neighbor_loader_on_karate(get_dataset, subgraph_type):
@@ -356,7 +355,7 @@ def test_homo_neighbor_loader_on_karate(get_dataset, subgraph_type):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
-@onlyOnline
+@pytest.mark.dataset
 @onlyNeighborSampler
 @pytest.mark.parametrize('subgraph_type', SUBGRAPH_TYPES)
 def test_hetero_neighbor_loader_on_karate(get_dataset, subgraph_type):
@@ -403,7 +402,7 @@ def test_hetero_neighbor_loader_on_karate(get_dataset, subgraph_type):
     assert torch.allclose(out1, out2, atol=1e-6)
 
 
-@onlyOnline
+@pytest.mark.dataset
 @withPackage('pyg_lib')
 def test_temporal_hetero_neighbor_loader_on_karate(get_dataset):
     dataset = get_dataset(name='karate')
@@ -578,7 +577,7 @@ def test_custom_hetero_neighbor_loader_duplicate():
     assert batch['user', 'user'].num_edges == edge_index.size(1)
 
 
-@onlyOnline
+@pytest.mark.dataset
 @withPackage('pyg_lib')
 def test_temporal_custom_neighbor_loader_on_karate(get_dataset):
     dataset = get_dataset(name='karate')

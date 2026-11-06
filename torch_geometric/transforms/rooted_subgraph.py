@@ -157,7 +157,8 @@ class RootedRWSubgraph(RootedSubgraph):
         self,
         data: Data,
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor, Tensor]:
-        from torch_cluster import random_walk
+        from torch_geometric.index import index2ptr
+        from torch_geometric.utils import sort_edge_index
 
         assert data.edge_index is not None
         num_nodes = data.num_nodes
@@ -165,8 +166,10 @@ class RootedRWSubgraph(RootedSubgraph):
 
         start = torch.arange(num_nodes, device=data.edge_index.device)
         start = start.view(-1, 1).repeat(1, self.repeat).view(-1)
-        walk = random_walk(data.edge_index[0], data.edge_index[1], start,
-                           self.walk_length, num_nodes=data.num_nodes)
+        edge_index = sort_edge_index(data.edge_index, num_nodes=num_nodes)
+        rowptr = index2ptr(edge_index[0], num_nodes)
+        walk = torch.ops.pyg.random_walk(rowptr, edge_index[1], start,
+                                         self.walk_length, 1.0, 1.0)
 
         n_mask = torch.zeros((num_nodes, num_nodes), dtype=torch.bool,
                              device=walk.device)

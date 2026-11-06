@@ -1,13 +1,12 @@
 from typing import Optional
 
+import torch
 from torch import Tensor
 
 import torch_geometric.typing
-
-if torch_geometric.typing.WITH_TORCH_CLUSTER:
-    from torch_cluster import graclus_cluster
-else:
-    graclus_cluster = None
+from torch_geometric.index import index2ptr
+from torch_geometric.utils import sort_edge_index
+from torch_geometric.utils.num_nodes import maybe_num_nodes
 
 
 def graclus(edge_index: Tensor, weight: Optional[Tensor] = None,
@@ -30,7 +29,11 @@ def graclus(edge_index: Tensor, weight: Optional[Tensor] = None,
 
     :rtype: :class:`torch.Tensor`
     """
-    if graclus_cluster is None:
-        raise ImportError('`graclus` requires `torch-cluster`.')
+    if not torch_geometric.typing.WITH_GRACLUS:
+        raise ImportError('`graclus` requires `pyg-lib>=0.6.0`.')
 
-    return graclus_cluster(edge_index[0], edge_index[1], weight, num_nodes)
+    num_nodes = maybe_num_nodes(edge_index, num_nodes)
+    edge_index, weight = sort_edge_index(edge_index, weight,
+                                         num_nodes=num_nodes)
+    rowptr = index2ptr(edge_index[0], num_nodes)
+    return torch.ops.pyg.graclus_cluster(rowptr, edge_index[1], weight)

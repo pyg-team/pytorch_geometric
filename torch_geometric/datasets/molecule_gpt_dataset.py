@@ -432,10 +432,10 @@ class MoleculeGPTDataset(InMemoryDataset):
         suppl = Chem.SDMolSupplier(f'{self.raw_dir}/molecules.sdf')
 
         llm = LLM(
-            # model_name='lmsys/vicuna-7b-v1.5',
-            model_name='TinyLlama/TinyLlama-1.1B-Chat-v0.1',
+            model_name='Qwen/Qwen3-0.6B',
             num_params=1,
             dtype=torch.bfloat16,
+            sys_prompt='You are an agent, answer my questions.',
         )
         prompt = ("Propose a question regarding the molecule '∼' "
                   "whose answer is: {}:")

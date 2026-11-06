@@ -1,0 +1,514 @@
+import sys
+import types
+
+import pytest
+
+import torch_geometric.llm.models.txt2kg as txt2kg
+from torch_geometric.llm.models.txt2kg import (
+    TXT2KG,
+    _chunk_text,
+    _merge_triples_deterministically,
+    _multiproc_helper,
+    _parse_n_check_triples,
+)
+
+
+def test_init_local_lm_flag():
+    model = TXT2KG(local_LM=True, chunk_size=20)
+    assert model.local_LM is True
+    assert model.initd_LM is False
+
+
+def test_parse_n_check_triples_formats():
+    s = "(A, rel, B)\n(C, rel2, D)"
+    parsed = _parse_n_check_triples(s)
+    assert ("A", "rel", "B") in parsed
+    assert ("C", "rel2", "D") in parsed
+
+
+def test_chunk_text_simple_sentence():
+    text = "Hello world. Another sentence!"
+    chunks = _chunk_text(text, chunk_size=10)
+    # Only makes chunks at sentence boundaries
+    assert any("Hello" in c for c in chunks)
+
+
+class DummyLLM:
+    def __init__(self):
+        pass
+
+    def inference(self, *args, **kwargs):
+        return ["(X,edge,Y)"]
+
+
+def test_local_lm_integration(monkeypatch):
+    model = TXT2KG(local_LM=True)
+
+    model.model = DummyLLM()
+    model.initd_LM = True
+
+    # Simulate time progression
+    times = iter([100.0, 100.05])  # 0.05 sec elapsed
+    monkeypatch.setattr("time.time", lambda: next(times))
+
+    out = model._chunk_to_triples_str_local("text")
+
+    assert out == "(X,edge,Y)"
+    assert model.time_to_parse > 0
+
+
+def test_add_doc_empty(monkeypatch):
+    model = TXT2KG(local_LM=True)
+    model.add_doc_2_KG("", QA_pair=None)
+    assert model.relevant_triples[0] == []
+
+
+# Mock LLM + parsing on real text:
+def test_add_doc_to_KG(monkeypatch):
+    model = TXT2KG(local_LM=True, chunk_size=10)
+
+    # Mock only the LLM output stage
+    monkeypatch.setattr(model, "_chunk_to_triples_str_local",
+                        lambda *_: "(A,rel,B)\n(C,rel,D)")
+
+    model.add_doc_2_KG("Some text")
+
+    triples = model.relevant_triples[0]
+
+    assert len(triples) == 2
+    assert ("A", "rel", "B") in triples
+    assert model.doc_id_counter == 1
+
+
+def test_merge_triples_deterministically_basic():
+    # Simple case: multiple sublists, strings only
+    results = [
+        [["b", "rel", "c"], ["A", "rel", "d"]],
+        [["a", "rel", "c"]],
+    ]
+
+    merged = _merge_triples_deterministically(results)
+
+    # Expect deterministic, casefolded lexicographic order
+    expected = [
+        ("a", "rel", "c"),
+        ("A", "rel", "d"),
+        ("b", "rel", "c"),
+    ]
+    assert merged == expected
+
+
+def test_merge_triples_deterministically_unicode_and_nonstring():
+    # Include unicode and a numeric element to cover else branch in lambda
+    results = [
+        [["ä", 2, "x"], ["A", 1, "y"]],
+        [["a", 3, "z"]],
+    ]
+
+    merged = _merge_triples_deterministically(results)
+
+    # Ensure tuples, unicode sorted, numeric untouched
+    expected = [
+        ("A", 1, "y"),
+        ("a", 3, "z"),
+        ("ä", 2, "x"),
+    ]
+    assert merged == expected
+
+
+def test_merge_triples_deterministically_empty():
+    # Edge case: empty input
+    results = []
+
+    merged = _merge_triples_deterministically(results)
+    assert merged == []
+
+
+def test_merge_triples_deterministically_singleton():
+    # Edge case: single sublist, single triple
+    results = [[["only", "one", "triple"]]]
+
+    merged = _merge_triples_deterministically(results)
+    assert merged == [("only", "one", "triple")]
+
+
+def test_chunk_to_triples_str_cloud(monkeypatch):
+    # Fake streaming chunk object
+    class DummyChunk:
+        class Choice:
+            class Delta:
+                content = "A"
+
+            delta = Delta()
+
+        choices = [Choice()]
+
+    class DummyCompletion:
+        def __iter__(self):
+            return iter([DummyChunk()])
+
+    class DummyClient:
+        class Chat:
+            class Completions:
+                def create(self, **kwargs):
+                    return DummyCompletion()
+
+            completions = Completions()
+
+        chat = Chat()
+
+    class DummyOpenAI:
+        def __init__(self, *args, **kwargs):
+            pass
+
+        chat = DummyClient.chat
+
+    fake_openai = types.ModuleType("openai")
+    fake_openai.OpenAI = DummyOpenAI
+
+    monkeypatch.setitem(sys.modules, "openai", fake_openai)
+
+    txt2kg.CLIENT_INITD = False
+
+    out = txt2kg._chunk_to_triples_str_cloud("text")
+    assert isinstance(out, str)
+
+
+def dummy_multiproc_helper(
+    rank,
+    chunks,
+    py_fn,
+    llm_fn,
+    NIM_KEY,
+    NIM_MODEL,
+    ENDPOINT_URL,
+    max_retries=3,
+    base_delay=0,
+):
+    return {
+        "success": True,
+        "result": [("A", "rel", "B")],
+    }
+
+
+def test_extract_relevant_triples_cloud(monkeypatch):
+
+    model = TXT2KG(local_LM=False, chunk_size=10)
+
+    # Mock the multiproc helper (module-level)
+    monkeypatch.setattr(txt2kg, "_multiproc_helper", dummy_multiproc_helper)
+
+    triples = model._extract_relevant_triples("Some text")
+    assert ("A", "rel", "B") in triples
+
+
+def test_multiproc_helper_success(monkeypatch):
+    # Dummy LLM/Python parser
+    def dummy_llm_fn(x, **kwargs):
+        return ["llm:" + str(x)]
+
+    def dummy_py_fn(x):
+        return ["py:" + str(i) for i in x]
+
+    # Patch _llm_then_python_parse
+    monkeypatch.setattr(
+        "torch_geometric.llm.models.txt2kg._llm_then_python_parse",
+        lambda chunks, py_fn, llm_fn, **kwargs: ["PARSED:" + str(chunks)])
+
+    # Input chunks for rank 0
+    chunks_for_rank = ["chunk0", "chunk1"]
+
+    result = _multiproc_helper(
+        rank=0,
+        chunks_for_rank=chunks_for_rank,
+        py_fn=dummy_py_fn,
+        llm_fn=dummy_llm_fn,
+        NIM_KEY="dummy",
+        NIM_MODEL="dummy",
+        ENDPOINT_URL="dummy",
+        max_retries=3,
+        base_delay=0.01  # keep backoff small in tests
+    )
+
+    assert result["success"] is True
+    assert result["result"] == ["PARSED:['chunk0', 'chunk1']"]
+
+
+def test_multiproc_helper_retry(monkeypatch):
+    attempts = []
+
+    class RetryableError(RuntimeError):
+        status_code = 500
+
+    def failing_parse(chunks, py_fn, llm_fn, **kwargs):
+        attempts.append(1)
+        if len(attempts) < 3:
+            raise RetryableError("fail")
+        return ["SUCCESS"]
+
+    monkeypatch.setattr(
+        "torch_geometric.llm.models.txt2kg._llm_then_python_parse",
+        failing_parse)
+
+    result = _multiproc_helper(
+        rank=0,
+        chunks_for_rank=["chunk"],
+        py_fn=lambda x: x,
+        llm_fn=lambda x: x,
+        NIM_KEY="dummy",
+        NIM_MODEL="dummy",
+        ENDPOINT_URL="dummy",
+        max_retries=5,
+        base_delay=0  # instant retries for test
+    )
+
+    assert result["success"] is True
+    assert result["result"] == ["SUCCESS"]
+    assert len(attempts) == 3  # retried twice, succeeded on 3rd
+
+
+def test_add_doc_empty_text():
+    kg = TXT2KG(local_LM=True)
+
+    kg.add_doc_2_KG(txt="")
+
+    # first doc uses doc_id_counter=0 as key
+    assert 0 in kg.relevant_triples
+    assert kg.relevant_triples[0] == []
+
+    # doc counter should increment
+    assert kg.doc_id_counter == 1
+
+
+def test_add_doc_empty_text_with_QA_pair():
+    kg = TXT2KG(local_LM=True)
+
+    qa = ("What is PyG?", "Graph ML library")
+
+    kg.add_doc_2_KG(txt="", QA_pair=qa)
+
+    assert qa in kg.relevant_triples
+    assert kg.relevant_triples[qa] == []
+
+
+@pytest.fixture
+def kg_cpu():
+    # TXT2KG instance using CPU local LLM mode
+    return TXT2KG(local_LM=True)
+
+
+def test_add_doc_empty_text_cpu(kg_cpu):
+    """Cover the empty text branch (lines 194-201)."""
+    kg_cpu.add_doc_2_KG(txt="")
+    # doc_id_counter starts at 0
+    assert kg_cpu.relevant_triples[0] == []
+    assert kg_cpu.doc_id_counter == 1
+
+
+def test_add_doc_empty_text_with_QA_pair_cpu(kg_cpu):
+    """Cover QA_pair key path with empty text."""
+    qa = ("What is PyG?", "Graph ML library")
+    kg_cpu.add_doc_2_KG(txt="", QA_pair=qa)
+    assert qa in kg_cpu.relevant_triples
+    assert kg_cpu.relevant_triples[qa] == []
+
+
+def test_add_doc_nonempty_text_placeholder(kg_cpu, monkeypatch):
+    """Minimal coverage for non-empty text branch.
+    Avoids importing the real LLM.
+    """
+    # Patch the module-level function _llm_then_python_parse
+    monkeypatch.setattr(txt2kg, "_llm_then_python_parse",
+                        lambda chunks, *args, **kwargs: [])
+
+    # Call add_doc_2_KG with non-empty text
+    kg_cpu.add_doc_2_KG(txt="some text")
+
+    # Ensure doc_id_counter incremented and key exists
+    key = kg_cpu.doc_id_counter - 1
+    assert key in kg_cpu.relevant_triples
+
+
+def test_is_retryable_exception_status_codes():
+    assert txt2kg._is_retryable_exception(RuntimeError(), 429)
+    assert txt2kg._is_retryable_exception(RuntimeError(), 500)
+    assert txt2kg._is_retryable_exception(RuntimeError(), 503)
+
+    assert not txt2kg._is_retryable_exception(RuntimeError(), 400)
+    assert not txt2kg._is_retryable_exception(RuntimeError(), 403)
+
+
+def test_is_retryable_exception_network_errors():
+    from openai import APIConnectionError, APITimeoutError
+
+    assert txt2kg._is_retryable_exception(
+        APIConnectionError(request=None),
+        None,
+    )
+
+    assert txt2kg._is_retryable_exception(
+        APITimeoutError(request=None),
+        None,
+    )
+
+
+def test_multiproc_helper_non_retryable(monkeypatch):
+    attempts = []
+
+    class ForbiddenError(RuntimeError):
+        status_code = 403
+
+    def failing_parse(chunks, py_fn, llm_fn, **kwargs):
+        attempts.append(1)
+        raise ForbiddenError("Authorization failed")
+
+    monkeypatch.setattr(
+        txt2kg,
+        "_llm_then_python_parse",
+        failing_parse,
+    )
+
+    result = _multiproc_helper(
+        rank=0,
+        chunks_for_rank=["chunk"],
+        py_fn=lambda x: x,
+        llm_fn=lambda x: x,
+        NIM_KEY="dummy",
+        NIM_MODEL="dummy",
+        ENDPOINT_URL="dummy",
+        max_retries=5,
+        base_delay=0,
+    )
+
+    assert result["success"] is False
+    assert result["retryable"] is False
+    assert "Authorization failed" in result["error"]
+    assert len(attempts) == 1
+
+
+def test_multiproc_helper_retry_exhausted(monkeypatch):
+    attempts = []
+
+    class RetryableError(RuntimeError):
+        status_code = 500
+
+    def failing_parse(chunks, py_fn, llm_fn, **kwargs):
+        attempts.append(1)
+        raise RetryableError("Server error")
+
+    monkeypatch.setattr(
+        txt2kg,
+        "_llm_then_python_parse",
+        failing_parse,
+    )
+
+    result = _multiproc_helper(
+        rank=0,
+        chunks_for_rank=["chunk"],
+        py_fn=lambda x: x,
+        llm_fn=lambda x: x,
+        NIM_KEY="dummy",
+        NIM_MODEL="dummy",
+        ENDPOINT_URL="dummy",
+        max_retries=3,
+        base_delay=0,
+    )
+
+    assert result["success"] is False
+    assert result["retryable"] is True
+    assert result["error"] == "Worker 0: exhausted 3 retries"
+    assert len(attempts) == 3
+
+
+def test_extract_relevant_triples_cloud_non_retryable(monkeypatch):
+    model = TXT2KG(local_LM=False, chunk_size=10)
+
+    calls = []
+
+    class DummyPool:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def starmap(self, func, args):
+            calls.append(1)
+            return [{
+                "success": False,
+                "retryable": False,
+                "error": "Authorization failed",
+            }]
+
+    class DummyContext:
+        def Pool(self, num_procs):
+            return DummyPool()
+
+    monkeypatch.setattr(
+        txt2kg.mp,
+        "get_context",
+        lambda method: DummyContext(),
+    )
+
+    with pytest.raises(
+            RuntimeError,
+            match="Authorization failed",
+    ):
+        model._extract_relevant_triples("Some text")
+
+    assert len(calls) == 1
+
+
+@pytest.mark.parametrize('model', [
+    'nvidia/nemotron-3.5-lightning-30b-a3b',
+    'meta/llama-3.1-70b-instruct',
+])
+def test_cloud_extraction_request_mode(monkeypatch, model):
+    """Keep bounded extraction parseable for the default-thinking NIM model."""
+    requests = []
+
+    def create(**kwargs):
+        """Record the provider request and return normal streamed triples."""
+        requests.append(kwargs)
+        return [
+            types.SimpleNamespace(choices=[
+                types.SimpleNamespace(delta=types.SimpleNamespace(
+                    content=part))
+            ]) for part in
+            [None, '(Paris, capital of, France)', '\n(France, in, Europe)']
+        ]
+
+    client = types.SimpleNamespace(chat=types.SimpleNamespace(
+        completions=types.SimpleNamespace(create=create)))
+    monkeypatch.setattr(txt2kg, 'CLIENT', client, raising=False)
+    monkeypatch.setattr(txt2kg, 'CLIENT_INITD', True)
+    response = txt2kg._chunk_to_triples_str_cloud('Paris is in France.',
+                                                  NIM_MODEL=model)
+    assert len(_parse_n_check_triples(response)) == 2
+    assert requests[0]['max_tokens'] == 1024
+    if 'nemotron-3.5-lightning' in model:
+        assert requests[0]['extra_body']['chat_template_kwargs'] == {
+            'enable_thinking': False,
+        }
+    else:
+        assert 'extra_body' not in requests[0]
+
+
+def test_cloud_extraction_empty_answer_fails(monkeypatch):
+    """Reject reasoning-only output before it becomes an empty graph."""
+    def create(**kwargs):
+        """Return a provider stream with no answer tokens."""
+        return [
+            types.SimpleNamespace(choices=[
+                types.SimpleNamespace(delta=types.SimpleNamespace(
+                    content=None))
+            ])
+        ]
+
+    monkeypatch.setattr(
+        txt2kg, 'CLIENT',
+        types.SimpleNamespace(chat=types.SimpleNamespace(
+            completions=types.SimpleNamespace(create=create))), raising=False)
+    monkeypatch.setattr(txt2kg, 'CLIENT_INITD', True)
+    with pytest.raises(RuntimeError, match='returned no answer content'):
+        txt2kg._chunk_to_triples_str_cloud('Paris is in France.')

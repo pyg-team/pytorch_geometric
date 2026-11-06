@@ -12,8 +12,8 @@ from torch_geometric.nn.inits import uniform, zeros
 from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 from torch_geometric.utils.repeat import repeat
 
-if torch_geometric.typing.WITH_TORCH_SPLINE_CONV:
-    from torch_spline_conv import spline_basis, spline_weighting
+if torch_geometric.typing.WITH_SPLINE:
+    from pyg_lib.ops import spline_basis, spline_weighting
 else:
     spline_basis = spline_weighting = None
 
@@ -75,7 +75,7 @@ class SplineConv(MessagePassing):
         super().__init__(aggr=aggr, **kwargs)
 
         if spline_basis is None:
-            raise ImportError("'SplineConv' requires 'torch-spline-conv'")
+            raise ImportError("'SplineConv' requires 'pyg-lib>=0.6.0'")
 
         self.in_channels = in_channels
         self.out_channels = out_channels
