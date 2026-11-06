@@ -6,6 +6,7 @@ from collections.abc import Mapping
 from itertools import chain
 from typing import Any, Dict, List, NamedTuple, Optional, Tuple, Union
 
+import numpy as np
 import torch
 from torch import Tensor
 from typing_extensions import Self
@@ -484,6 +485,17 @@ class HeteroData(BaseData, FeatureStore, GraphStore):
                         f"({num_dst_nodes}) of this node type in '{cls_name}' "
                         f"(found {int(store.edge_index[1].max())})",
                         raise_on_error)
+
+        for store in chain(self.node_stores, self.edge_stores):
+            for key, value in store.items():
+                if isinstance(value, np.ndarray):
+                    status = False
+                    warn_or_raise(
+                        f"'{key}' in '{cls_name}' is stored as a "
+                        f"'numpy.ndarray' instead of a 'torch.Tensor'. NumPy "
+                        f"arrays are not moved by '.to()' and will cause "
+                        f"errors during model execution; convert it to a "
+                        f"tensor first", raise_on_error)
 
         return status
 
