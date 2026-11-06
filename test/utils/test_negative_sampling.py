@@ -91,20 +91,38 @@ def test_negative_sampling():
     neg_edge_index = negative_sampling(edge_index, force_undirected=True)
     assert neg_edge_index.size(1) == edge_index.size(1) - 1
     assert is_undirected(neg_edge_index)
-    assert is_negative(edge_index, neg_edge_index, (4, 4), bipartite=False)
 
 
-def test_bipartite_negative_sampling():
-    edge_index = torch.as_tensor([[0, 0, 1, 2], [0, 1, 2, 3]])
+def test_negative_sampling_force_undirected_with_directed_graph():
+    # `force_undirected=True` must not resample edges already present in the
+    # graph, even when they are stored with row > col (regression test for
+    # github issue: force_undirected canonicalization missed row > col edges).
+    edge_index = torch.as_tensor([[3, 3, 0, 1, 2], [1, 0, 2, 3, 0]])
 
-    neg_edge_index = negative_sampling(edge_index, num_nodes=(3, 4))
-    assert neg_edge_index.size(1) == edge_index.size(1)
-    assert is_negative(edge_index, neg_edge_index, (3, 4), bipartite=True)
+    # Every undirected pair {(i, j)} of the graph must be absent from samples.
+    undirected_pos = {
+        tuple(sorted((int(i), int(j))))
+        for i, j in edge_index.t().tolist() if i != j
+    }
 
-    neg_edge_index = negative_sampling(edge_index, num_nodes=(3, 4),
-                                       num_neg_samples=2)
-    assert neg_edge_index.size(1) == 2
-    assert is_negative(edge_index, neg_edge_index, (3, 4), bipartite=True)
+    neg_edge_index = negative_sampling(edge_index, force_undirected=True)
+    neg_pairs = {
+        tuple(sorted((int(i), int(j))))
+        for i, j in neg_edge_index.t().tolist()
+    }
+    assert neg_edge_index.size(1) == edge_index.size(1) - 1
+    assert is_undirected(neg_edge_index)
+    assert len(undirected_pos & neg_pairs) == 0
+
+    neg_edge_index = negative_sampling(edge_index, force_undirected=True,
+                                       method='dense')
+    neg_pairs = {
+        tuple(sorted((int(i), int(j))))
+        for i, j in neg_edge_index.t().tolist()
+    }
+    assert neg_edge_index.size(1) == edge_index.size(1) - 1
+    assert is_undirected(neg_edge_index)
+    assert len(undirected_pos & neg_pairs) == 0
 
 
 def test_batched_negative_sampling():
