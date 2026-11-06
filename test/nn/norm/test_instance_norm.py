@@ -1,8 +1,49 @@
+import copy
+
 import pytest
 import torch
 
 from torch_geometric.nn import InstanceNorm
 from torch_geometric.testing import is_full_test, withDevice
+
+
+@withDevice
+@pytest.mark.parametrize('affine', [False, True])
+def test_instance_norm_running_stats_grad(affine, device):
+    norm = InstanceNorm(4, affine=affine, track_running_stats=True,
+                        device=device)
+    reference = torch.nn.InstanceNorm1d(4, affine=affine,
+                                        track_running_stats=True,
+                                        device=device)
+    batch = torch.arange(3, device=device).repeat_interleave(8)
+
+    def reference_forward(x):
+        out = reference(x.view(3, 8, 4).transpose(1, 2))
+        return out.transpose(1, 2).reshape(24, 4)
+
+    for _ in range(2):
+        x = torch.randn(24, 4, device=device, requires_grad=True)
+        ref_x = x.detach().clone().requires_grad_()
+        out, ref_out = norm(x, batch), reference_forward(ref_x)
+        assert torch.allclose(out, ref_out, atol=1e-6)
+        out.square().mean().backward()
+        ref_out.square().mean().backward()
+        assert torch.allclose(x.grad, ref_x.grad, atol=1e-6)
+        assert torch.allclose(norm.running_mean, reference.running_mean)
+        assert torch.allclose(norm.running_var, reference.running_var)
+        assert not norm.running_mean.requires_grad
+        assert not norm.running_var.requires_grad
+
+    copy.deepcopy(norm)  # Also needed by torch.optim.swa_utils.AveragedModel.
+    norm.eval()
+    reference.eval()
+    x = torch.randn(24, 4, device=device, requires_grad=True)
+    ref_x = x.detach().clone().requires_grad_()
+    out, ref_out = norm(x, batch), reference_forward(ref_x)
+    assert torch.allclose(out, ref_out, atol=1e-6)
+    out.square().mean().backward()
+    ref_out.square().mean().backward()
+    assert torch.allclose(x.grad, ref_x.grad, atol=1e-6)
 
 
 @withDevice
