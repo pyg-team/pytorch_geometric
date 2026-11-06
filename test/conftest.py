@@ -42,6 +42,10 @@ def load_dataset(root: str, name: str, *args, **kwargs) -> Dataset:
     if name.lower() in ['hetero']:
         from torch_geometric.testing import FakeHeteroDataset
         return FakeHeteroDataset(*args, **kwargs)
+    if name.lower() in ['osc20', 'osc100', 'osctexas']:
+        from torch_geometric.datasets import OscillatorDataset
+        path = osp.join(root, 'OscillatorDataset')
+        return OscillatorDataset(path, *args, name=name, **kwargs)
 
     raise ValueError(f"Cannot load dataset with name '{name}'")
 
