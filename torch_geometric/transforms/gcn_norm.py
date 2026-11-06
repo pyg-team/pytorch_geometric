@@ -2,6 +2,7 @@ import torch_geometric
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform
+from torch_geometric.utils import is_torch_sparse_tensor
 
 
 @functional_transform('gcn_norm')
@@ -27,6 +28,9 @@ class GCNNorm(BaseTransform):
             data.edge_index, data.edge_weight = gcn_norm(
                 data.edge_index, data.edge_weight, data.num_nodes,
                 add_self_loops=self.add_self_loops)
+        elif is_torch_sparse_tensor(data.adj_t):
+            data.adj_t, _ = gcn_norm(data.adj_t,
+                                     add_self_loops=self.add_self_loops)
         else:
             data.adj_t = gcn_norm(data.adj_t,
                                   add_self_loops=self.add_self_loops)
