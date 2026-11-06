@@ -64,10 +64,20 @@ class MultiheadAttentionBlock(torch.nn.Module):
         if y_mask is not None:
             y_mask = ~y_mask
 
+        # A float key padding mask opts out of PyTorch's native MHA fastpath
+        # (which rejects floating-point masks and is only taken in eval mode),
+        # whose CUDA masked softmax kernel indexes with 32 bits and reads
+        # out-of-bounds for `batch_size * heads * T * T > 2**31` with even
+        # `heads` and `T <= 1024`. The regular `scaled_dot_product_attention`
+        # path converts a boolean mask into the same `-inf` mask:
+        if y_mask is not None and x.is_cuda:
+            y_mask = torch.zeros_like(y_mask, dtype=x.dtype).masked_fill(
+                y_mask, float('-inf'))
+
         out, _ = self.attn(x, y, y, y_mask, need_weights=False)
 
         if x_mask is not None:
-            out[~x_mask] = 0.
+            out = out.masked_fill(~x_mask.unsqueeze(-1), 0.)
 
         out = out + x
 
