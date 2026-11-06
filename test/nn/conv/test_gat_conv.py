@@ -191,6 +191,23 @@ def test_gat_conv_with_edge_attr():
             assert torch.allclose(conv(x, adj2.t()), out)
 
 
+def test_gat_conv_with_more_dst_than_src_nodes():
+    x1 = torch.randn(2, 8)
+    x2 = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 1, 0, 1], [1, 0, 2, 3]])
+    edge_attr = torch.randn(edge_index.size(1), 4)
+    adj1 = to_torch_csc_tensor(edge_index, size=(2, 4))
+
+    conv = GATConv((8, 16), 32, heads=2)
+    out = conv((x1, x2), edge_index)
+    assert out.size() == (4, 64)
+    assert torch.allclose(conv((x1, x2), adj1.t()), out, atol=1e-6)
+
+    conv = GATConv((8, 16), 32, heads=2, edge_dim=4, fill_value='mean')
+    out = conv((x1, x2), edge_index, edge_attr)
+    assert out.size() == (4, 64)
+
+
 @withDevice
 def test_gat_conv_empty_edge_index(device):
     x = torch.randn(0, 8, device=device)

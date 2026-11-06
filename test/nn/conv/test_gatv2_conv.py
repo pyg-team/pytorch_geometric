@@ -161,3 +161,20 @@ def test_gatv2_conv_with_edge_attr():
     conv = GATv2Conv(8, 32, heads=2, edge_dim=4, fill_value='mean')
     out = conv(x, edge_index, edge_attr)
     assert out.size() == (4, 64)
+
+
+def test_gatv2_conv_with_more_dst_than_src_nodes():
+    x1 = torch.randn(2, 8)
+    x2 = torch.randn(4, 8)
+    edge_index = torch.tensor([[0, 1, 0, 1], [1, 0, 2, 3]])
+    edge_attr = torch.randn(edge_index.size(1), 4)
+    adj1 = to_torch_csc_tensor(edge_index, size=(2, 4))
+
+    conv = GATv2Conv(8, 32, heads=2)
+    out = conv((x1, x2), edge_index)
+    assert out.size() == (4, 64)
+    assert torch.allclose(conv((x1, x2), adj1.t()), out, atol=1e-6)
+
+    conv = GATv2Conv(8, 32, heads=2, edge_dim=4, fill_value='mean')
+    out = conv((x1, x2), edge_index, edge_attr)
+    assert out.size() == (4, 64)

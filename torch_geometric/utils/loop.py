@@ -475,7 +475,7 @@ def add_self_loops(  # noqa: F811
         assert edge_attr is None
         assert value is not None
         loop_attr = compute_loop_attr(  #
-            edge_index, value, N, is_sparse, fill_value)
+            edge_index, value, N, is_sparse, fill_value, size[0])
         value = torch.cat([value, loop_attr], dim=0)
 
         if str(layout) == 'torch.sparse_coo':  # str(...) for TorchScript :(
@@ -486,7 +486,7 @@ def add_self_loops(  # noqa: F811
 
     if edge_attr is not None:
         loop_attr = compute_loop_attr(  #
-            edge_index, edge_attr, N, is_sparse, fill_value)
+            edge_index, edge_attr, N, is_sparse, fill_value, size[1])
         edge_attr = torch.cat([edge_attr, loop_attr], dim=0)
 
     return full_edge_index, edge_attr
@@ -713,6 +713,7 @@ def compute_loop_attr(
     num_nodes: int,
     is_sparse: bool,
     fill_value: Optional[float] = None,
+    dim_size: Optional[int] = None,
 ) -> Tensor:
     pass
 
@@ -724,6 +725,7 @@ def compute_loop_attr(  # noqa: F811
     num_nodes: int,
     is_sparse: bool,
     fill_value: Optional[Tensor] = None,
+    dim_size: Optional[int] = None,
 ) -> Tensor:
     pass
 
@@ -735,6 +737,7 @@ def compute_loop_attr(  # noqa: F811
     num_nodes: int,
     is_sparse: bool,
     fill_value: Optional[str] = None,
+    dim_size: Optional[int] = None,
 ) -> Tensor:
     pass
 
@@ -745,6 +748,7 @@ def compute_loop_attr(  # noqa: F811
     num_nodes: int,
     is_sparse: bool,
     fill_value: Optional[Union[float, Tensor, str]] = None,
+    dim_size: Optional[int] = None,
 ) -> Tensor:
 
     if fill_value is None:
@@ -764,6 +768,9 @@ def compute_loop_attr(  # noqa: F811
 
     elif isinstance(fill_value, str):
         col = edge_index[0] if is_sparse else edge_index[1]
-        return scatter(edge_attr, col, 0, num_nodes, fill_value)
+        if dim_size is None:
+            dim_size = num_nodes
+        # Destination indices of bipartite graphs can exceed `num_nodes`:
+        return scatter(edge_attr, col, 0, dim_size, fill_value)[:num_nodes]
 
     raise AttributeError("No valid 'fill_value' provided")

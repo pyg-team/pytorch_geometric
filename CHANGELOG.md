@@ -20,6 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fixed `add_self_loops` with a string `fill_value` on bipartite graphs that have more destination than source nodes, which also broke `GATConv` and `GATv2Conv` ([#10827](https://github.com/pyg-team/pytorch_geometric/pull/10827))
+
 - Fixed `HashTensor` string keys with `xxhash>=4.0` ([#10779](https://github.com/pyg-team/pytorch_geometric/pull/10779))
 
 - Fixed bounded Nemotron triple extraction producing reasoning-only output and rejected empty cloud responses
