@@ -2,6 +2,7 @@ r"""Model package."""
 
 from .mlp import MLP
 from .basic_gnn import GCN, GraphSAGE, GIN, GAT, PNA, EdgeCNN
+from .egnn import EGNN
 from .jumping_knowledge import JumpingKnowledge, HeteroJumpingKnowledge
 from .meta import MetaLayer
 from .node2vec import Node2Vec
@@ -46,6 +47,7 @@ __all__ = classes = [
     'GAT',
     'PNA',
     'EdgeCNN',
+    'EGNN',
     'JumpingKnowledge',
     'HeteroJumpingKnowledge',
     'MetaLayer',

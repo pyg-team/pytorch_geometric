@@ -18,6 +18,7 @@ def test_gnn_cheatsheet():
 
     assert utils.supports_bipartite_graphs('SAGEConv')
     assert not utils.supports_bipartite_graphs('GCNConv')
+    assert not utils.supports_bipartite_graphs('FAConv')
 
     assert utils.supports_static_graphs('GCNConv')
     assert not utils.supports_static_graphs('GATConv')
@@ -35,3 +36,16 @@ def test_gnn_cheatsheet():
     assert utils.processes_point_clouds('DynamicEdgeConv')
     assert utils.processes_point_clouds('XConv')
     assert not utils.processes_point_clouds('CuGraphSAGEConv')
+
+
+def test_egnn_cheatsheet():
+    assert utils.paper_title('EGNNConv') == (
+        'Exploiting Edge Features in Graph Neural Networks')
+    assert utils.paper_link('EGNNConv') == 'https://arxiv.org/abs/1809.02709'
+
+    assert utils.supports_sparse_tensor('EGNNConv')
+    assert not utils.supports_edge_weights('EGNNConv')
+    assert utils.supports_edge_features('EGNNConv')
+    assert not utils.supports_bipartite_graphs('EGNNConv')
+    assert not utils.supports_static_graphs('EGNNConv')
+    assert utils.supports_lazy_initialization('EGNNConv')
