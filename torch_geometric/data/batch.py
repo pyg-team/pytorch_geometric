@@ -32,7 +32,8 @@ class DynamicInheritance(type):
             class MetaResolver(type(cls), type(base_cls)):  # type: ignore
                 pass
 
-            if name not in globals():
+            if name not in globals() or globals(
+            )[name].__bases__[1] is not base_cls:
                 globals()[name] = MetaResolver(name, (cls, base_cls), {})
             new_cls = globals()[name]
 
