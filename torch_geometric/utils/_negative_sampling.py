@@ -347,9 +347,15 @@ def edge_index_to_vector(
         assert size[0] == size[1]
         num_nodes = size[0]
 
-        # We only operate on the upper triangular matrix:
-        mask = row < col
+        # We only operate on the upper triangular matrix, canonicalizing
+        # each edge to (min, max) so that an edge stored as (5, 3) is not
+        # sampled again as its upper-triangular counterpart {3, 5}.
+        row, col = torch.sort(torch.stack([row, col]), dim=0).values
+        mask = row != col
         row, col = row[mask], col[mask]
+        # Deduplicate canonical pairs so both orientations of an edge map to
+        # a single slot of the upper triangular matrix.
+        row, col = torch.unique(torch.stack([row, col]), dim=1)
         offset = torch.arange(1, num_nodes, device=row.device).cumsum(0)[row]
         idx = row.mul_(num_nodes).add_(col).sub_(offset)
         population = (num_nodes * (num_nodes + 1)) // 2 - num_nodes
