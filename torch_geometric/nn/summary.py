@@ -2,9 +2,9 @@ from collections import defaultdict
 from typing import Any, List, Optional, Union
 
 import torch
-from torch.jit import ScriptModule
 from torch.nn import Module
 
+from torch_geometric._jit import ScriptModule
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import is_uninitialized_parameter
 from torch_geometric.typing import SparseTensor

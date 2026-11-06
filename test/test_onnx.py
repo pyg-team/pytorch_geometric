@@ -320,7 +320,8 @@ def test_pytest_environment_detection() -> None:
 
                     # Should contain pytest-specific guidance
                     assert "pytest environments" in str(exc_info.value)
-                    assert "torch.jit.script()" in str(exc_info.value)
+                    assert ("torch.jit.script()" in str(exc_info.value)
+                            or "torch.compile()" in str(exc_info.value))
                 finally:
                     if os.path.exists(f.name):
                         try:

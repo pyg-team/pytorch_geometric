@@ -4,6 +4,7 @@ import torch
 from torch import Tensor
 
 from torch_geometric import EdgeIndex
+from torch_geometric._jit import is_scripting, unused
 from torch_geometric.typing import (
     Adj,
     EdgeType,
@@ -128,7 +129,7 @@ def trim_to_layer(
 
 
 class TrimToLayer(torch.nn.Module):
-    @torch.jit.unused
+    @unused
     def forward(
         self,
         layer: int,
@@ -192,7 +193,7 @@ def trim_adj(
             start=0,
             length=edge_index.size(1) - num_sampled_edges_per_hop[-layer],
         )
-        if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        if not is_scripting() and isinstance(edge_index, EdgeIndex):
             num_rows, num_cols = edge_index.sparse_size()
             if num_rows is not None:
                 num_rows -= num_sampled_src_nodes_per_hop[-layer]

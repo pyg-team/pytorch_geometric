@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from torch.nn import BatchNorm1d as BatchNorm
 from torch.nn import Linear, ReLU, Sequential
 
+import torch_geometric.typing
 from torch_geometric.datasets import TUDataset
 from torch_geometric.loader import DataLoader
 from torch_geometric.nn import GINConv, global_add_pool
@@ -57,7 +58,8 @@ class GIN(torch.nn.Module):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = GIN(dataset.num_features, 64, dataset.num_classes, num_layers=3)
 model = model.to(device)
-model = torch.jit.script(model)
+if not torch_geometric.typing.WITH_PT212:
+    model = torch.jit.script(model)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 

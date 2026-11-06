@@ -4,6 +4,7 @@ from typing import Optional
 import torch
 from torch import Tensor
 
+from torch_geometric._jit import script
 from torch_geometric.nn.pool.select import SelectOutput
 
 
@@ -48,7 +49,7 @@ class ConnectOutput:
         self.batch = batch
 
 
-ConnectOutput = torch.jit.script(ConnectOutput)
+ConnectOutput = script(ConnectOutput)
 
 
 class Connect(torch.nn.Module):

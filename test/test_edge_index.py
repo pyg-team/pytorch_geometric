@@ -8,7 +8,9 @@ import torch
 from torch import Tensor, tensor
 
 import torch_geometric
+import torch_geometric.typing
 from torch_geometric import EdgeIndex, Index
+from torch_geometric._jit import is_scripting
 from torch_geometric.edge_index import (
     ReduceType,
     SortReturnType,
@@ -1315,8 +1317,10 @@ def test_torch_script():
     assert expected.size() == (3, 8)
 
     # `torch.jit.script` does not support inheritance at the `Tensor` level :(
-    with pytest.raises(RuntimeError, match="attribute or method 'num_cols'"):
-        torch.jit.script(model)
+    if not torch_geometric.typing.WITH_PT212:
+        with pytest.raises(RuntimeError,
+                           match="attribute or method 'num_cols'"):
+            torch.jit.script(model)
 
     # A valid workaround is to treat `EdgeIndex` as a regular PyTorch tensor
     # whenever we are in script mode:
@@ -1325,16 +1329,16 @@ def test_torch_script():
             row, col = edge_index[0], edge_index[1]
             x_j = x[row]
             dim_size: Optional[int] = None
-            if (not torch.jit.is_scripting()
-                    and isinstance(edge_index, EdgeIndex)):
+            if (not is_scripting() and isinstance(edge_index, EdgeIndex)):
                 dim_size = edge_index.num_cols
             out = scatter(x_j, col, dim_size=dim_size)
             return out
 
-    script_model = torch.jit.script(ScriptableModel())
-    out = script_model(x, edge_index)
-    assert out.size() == (2, 8)
-    assert torch.allclose(out, expected[:2])
+    if not torch_geometric.typing.WITH_PT212:
+        script_model = torch.jit.script(ScriptableModel())
+        out = script_model(x, edge_index)
+        assert out.size() == (2, 8)
+        assert torch.allclose(out, expected[:2])
 
 
 @onlyLinux

@@ -7,6 +7,7 @@ from torch import Tensor
 from torch.nn import Linear, ModuleList
 from tqdm import tqdm
 
+from torch_geometric._jit import is_scripting
 from torch_geometric.data import Data
 from torch_geometric.loader import CachedLoader, NeighborLoader
 from torch_geometric.nn.conv import (
@@ -227,8 +228,7 @@ class BasicGNN(torch.nn.Module):
         xs: List[Tensor] = []
         assert len(self.convs) == len(self.norms)
         for i, (conv, norm) in enumerate(zip(self.convs, self.norms)):
-            if (not torch.jit.is_scripting()
-                    and num_sampled_nodes_per_hop is not None):
+            if (not is_scripting() and num_sampled_nodes_per_hop is not None):
                 x, edge_index, value = self._trim(
                     i,
                     num_sampled_nodes_per_hop,

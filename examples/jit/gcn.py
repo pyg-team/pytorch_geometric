@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from torch import Tensor
 
 import torch_geometric.transforms as T
+import torch_geometric.typing
 from torch_geometric.datasets import Planetoid
 from torch_geometric.nn import GCNConv
 
@@ -30,7 +31,9 @@ class GCN(torch.nn.Module):
 
 
 model = GCN(dataset.num_features, 16, dataset.num_classes)
-model = torch.jit.script(model).to(device)
+if not torch_geometric.typing.WITH_PT212:
+    model = torch.jit.script(model)
+model = model.to(device)
 data = data.to(device)
 optimizer = torch.optim.Adam([
     dict(params=model.conv1.parameters(), weight_decay=5e-4),
