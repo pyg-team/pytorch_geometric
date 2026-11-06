@@ -93,6 +93,27 @@ class Batch(metaclass=DynamicInheritance):
         In addition, creates assignment vectors for each key in
         :obj:`follow_batch`.
         Will exclude any keys given in :obj:`exclude_keys`.
+
+        .. warning::
+            The node and edge types of the resulting batch are taken from
+            :obj:`data_list[0]`. A :class:`~torch_geometric.data.HeteroData`
+            store whose type the **first** element does not carry is therefore
+            dropped, even if later elements hold it, and a warning is emitted.
+            With :obj:`shuffle=True` this is not deterministic: which types
+            survive depends on which graph happens to land first in a given
+            mini-batch, so the same dataset can yield different
+            :obj:`x_dict` keys from step to step.
+
+            This bites datasets with a wide, sparse type vocabulary, where a
+            given graph naturally touches only a subset of the schema. Give
+            every element the full schema, padding an absent type with an empty
+            store:
+
+            .. code-block:: python
+
+                for node_type in all_node_types:
+                    if node_type not in data.node_types:
+                        data[node_type].x = torch.empty(0, num_features)
         """
         batch, slice_dict, inc_dict = collate(
             cls,

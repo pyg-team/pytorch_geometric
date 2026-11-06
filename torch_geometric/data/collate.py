@@ -28,8 +28,16 @@ from torch_geometric.typing import (
 )
 from torch_geometric.utils import cumsum, is_sparse, is_torch_sparse_tensor
 from torch_geometric.utils.sparse import cat
+from torch_geometric.warnings import WarningCache
 
 T = TypeVar('T')
+
+# The schema of the collated object is taken from `data_list[0]`, so a store
+# type that the first element does not carry is dropped from every batch that
+# contains it. Warn once per distinct set of dropped types: `collate` runs per
+# mini-batch, and a plain `warnings.warn` in that loop would be either noise
+# or, under a non-default filter, nothing at all.
+_missing_store_cache = WarningCache()
 SliceDictType = Dict[str, Union[Tensor, Dict[str, Tensor]]]
 IncDictType = Dict[str, Union[Tensor, Dict[str, Tensor]]]
 
@@ -69,6 +77,25 @@ def collate(
     for data in data_list:
         for store in data.stores:
             key_to_stores[store._key].append(store)
+
+    # `out` only has the stores of `data_list[0]`, so any node or edge type
+    # that the first element happens not to carry is dropped from the batch
+    # without a word. Under `shuffle=True` this is not even deterministic:
+    # which types survive depends on which graph lands first in a given
+    # mini-batch, so the same dataset yields different `x_dict` keys from step
+    # to step.
+    collated_keys = {store._key for store in out.stores}  # type: ignore
+    missing_keys = set(key_to_stores.keys()) - collated_keys
+    if len(missing_keys) > 0:
+        _missing_store_cache.warn(
+            f"The collated object takes its node and edge types from the "
+            f"first element of 'data_list', which does not hold "
+            f"{sorted(missing_keys, key=str)}. Those stores are present in "
+            f"later elements but are dropped from the output. Ensure every "
+            f"element carries the full schema, padding an absent type with "
+            f"an empty store (e.g. 'data[node_type].x = "
+            f"torch.empty(0, num_features)'), or place an element holding "
+            f"every type first.")
 
     # With this, we iterate over each list of storage objects and recursively
     # collate all its attributes into a unified representation:
