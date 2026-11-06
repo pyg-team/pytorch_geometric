@@ -20,6 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fixed `examples/llm/glem.py` to recover from the Google Drive quota page served instead of `giant_sagn_scr.pt`, to keep that file in `data/ogb/ext_preds/` outside the folder `ogb` deletes (an existing copy is read in place), and to raise a descriptive `RuntimeError` when the download still fails ([#10806](https://github.com/pyg-team/pytorch_geometric/pull/10806))
+
 - Fixed `HashTensor` string keys with `xxhash>=4.0` ([#10779](https://github.com/pyg-team/pytorch_geometric/pull/10779))
 
 - Fixed bounded Nemotron triple extraction producing reasoning-only output and rejected empty cloud responses
