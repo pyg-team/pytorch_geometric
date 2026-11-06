@@ -3,6 +3,7 @@ import math
 import os
 import sys
 import time
+from collections import defaultdict
 from typing import Any, Dict, Optional
 
 import torch
@@ -63,7 +64,7 @@ class Logger:
         self._time_used = 0
         self._true = []
         self._pred = []
-        self._custom_stats = {}
+        self._custom_stats = defaultdict(float)
 
     # basic properties
     def basic(self):
@@ -158,10 +159,7 @@ class Logger:
         self._time_used += time_used
         self._time_total += time_used
         for key, val in kwargs.items():
-            if key not in self._custom_stats:
-                self._custom_stats[key] = val * batch_size
-            else:
-                self._custom_stats[key] += val * batch_size
+            self._custom_stats[key] += val * batch_size
 
     def write_iter(self):
         raise NotImplementedError
