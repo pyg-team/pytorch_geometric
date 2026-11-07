@@ -1,3 +1,4 @@
+import pytest
 import torch
 
 from torch_geometric.nn import GCNConv, Linear
@@ -142,3 +143,45 @@ def test_k_hop_subgraph():
     assert edge_index.tolist() == [[2, 3, 4, 5], [4, 4, 6, 6]]
     assert mapping.tolist() == [4]
     assert edge_mask.tolist() == [False, False, True, True, False, True, True]
+
+
+@pytest.mark.parametrize('subset', [
+    ([], []),
+    (torch.empty(0, dtype=torch.long), torch.empty(0, dtype=torch.long)),
+    (torch.empty(0, dtype=torch.bool), torch.empty(0, dtype=torch.bool)),
+    (torch.empty(0, dtype=torch.bool), []),
+    ([], torch.empty(0, dtype=torch.bool)),
+])
+@pytest.mark.parametrize('relabel_nodes', [False, True])
+@pytest.mark.parametrize('size', [None, (0, 0)])
+@pytest.mark.parametrize('attr_dim', [None, 1, 2])
+def test_bipartite_subgraph_empty(subset, relabel_nodes, size, attr_dim):
+    edge_index = torch.empty(2, 0, dtype=torch.long)
+    edge_attr = None
+    if attr_dim is not None:
+        edge_attr = torch.empty((0, ) if attr_dim == 1 else (0, 3))
+
+    out, attr, mask = bipartite_subgraph(subset, edge_index, edge_attr,
+                                         relabel_nodes=relabel_nodes,
+                                         size=size, return_edge_mask=True)
+
+    assert torch.equal(out, edge_index)
+    if edge_attr is None:
+        assert attr is None
+    else:
+        assert torch.equal(attr, edge_attr)
+    assert mask.dtype == torch.bool
+    assert mask.numel() == 0
+
+
+def test_bipartite_subgraph_repeated_empty_filter():
+    edge_index = torch.tensor([[0, 1, 1], [0, 0, 1]])
+    edge_attr = torch.tensor([[2., 3.], [5., 7.], [11., 13.]])
+    out, attr = bipartite_subgraph(([], []), edge_index, edge_attr,
+                                   relabel_nodes=True)
+    assert out.tolist() == [[], []]
+    assert attr.shape == (0, 2)
+
+    out, attr = bipartite_subgraph(([], []), out, attr, relabel_nodes=True)
+    assert out.tolist() == [[], []]
+    assert attr.shape == (0, 2)
