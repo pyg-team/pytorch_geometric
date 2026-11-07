@@ -108,6 +108,25 @@ def test_group_argsort(num_groups, descending, device):
     assert out.numel() == 0
 
 
+@withDevice
+@pytest.mark.parametrize('value', [-2, 0, 2])
+@pytest.mark.parametrize('dtype', [torch.float, torch.long])
+@pytest.mark.parametrize('descending', [False, True])
+@pytest.mark.parametrize('return_consecutive', [False, True])
+def test_group_argsort_constant(value, dtype, descending, return_consecutive,
+                                device):
+    src = torch.full((7, ), value, dtype=dtype, device=device)
+    index = torch.tensor([2, 0, 2, 4, 0, 4, 2], device=device)
+
+    out = group_argsort(src, index, num_groups=6, descending=descending,
+                        return_consecutive=return_consecutive, stable=True)
+
+    if return_consecutive:
+        assert out.tolist() == [2, 0, 3, 5, 1, 6, 4]
+    else:
+        assert out.tolist() == [0, 0, 1, 0, 1, 1, 2]
+
+
 @withCUDA
 def test_scatter_argmax(device):
     src = torch.arange(5, device=device)
