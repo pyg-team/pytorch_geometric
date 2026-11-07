@@ -20,6 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fixed `knn`, `knn_graph`, `radius`, `radius_graph`, `fps` and `nearest` silently producing wrong results for unsorted `batch` vectors by raising an error instead ([#10882](https://github.com/pyg-team/pytorch_geometric/pull/10882))
+
 - Fixed `HashTensor` string keys with `xxhash>=4.0` ([#10779](https://github.com/pyg-team/pytorch_geometric/pull/10779))
 
 - Fixed bounded Nemotron triple extraction producing reasoning-only output and rejected empty cloud responses
