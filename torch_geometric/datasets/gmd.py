@@ -3,6 +3,7 @@ from typing import Callable, Dict, List, Optional, Tuple
 
 import numpy as np
 import torch
+from torch import Tensor
 
 from torch_geometric.data import Data, InMemoryDataset, download_url
 
@@ -146,6 +147,9 @@ class GMD(InMemoryDataset):
     total :obj:`energy` and the atomic forces :obj:`force`, together with the
     trajectory :obj:`frame` index and the :obj:`molecule` and :obj:`family`
     names, *e.g.*, for grouping frames by molecule.
+    :meth:`atomref` returns the energies of the isolated atoms at the same
+    level of theory, *e.g.*, for predicting atomisation energies or for
+    :class:`~torch_geometric.nn.models.SchNet`.
 
     .. note::
 
@@ -255,6 +259,14 @@ class GMD(InMemoryDataset):
     tasks = TASKS
     molecules = MOLECULES
 
+    # Isolated-atom energies (in eV) at the level of theory of the labels:
+    atomrefs = {
+        1: -13.595298,
+        6: -1028.481145,
+        7: -1483.895483,
+        8: -2041.117735,
+    }
+
     # split -> [first frame, last frame + 1) of each molecule's trajectory:
     splits = {
         'train': (0, 1000),
@@ -294,6 +306,14 @@ class GMD(InMemoryDataset):
 
         idx = 0 if split is None else list(self.splits).index(split)
         self.load(self.processed_paths[idx])
+
+    def atomref(self) -> Tensor:
+        r"""Returns the isolated-atom energies (in eV) indexed by atomic
+        number, as a tensor of shape :obj:`[100, 1]`.
+        """
+        out = torch.zeros(100)
+        out[list(self.atomrefs)] = torch.tensor(list(self.atomrefs.values()))
+        return out.view(-1, 1)
 
     @property
     def task_molecules(self) -> List[str]:

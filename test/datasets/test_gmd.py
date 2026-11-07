@@ -41,3 +41,8 @@ def test_gmd(tmp_path):
     frame = dataset._data.frame
     assert frame.min() == 1400 and frame.max() == 1599
     assert torch.isfinite(dataset._data.energy).all()
+
+    atomref = dataset.atomref()
+    assert atomref.size() == (100, 1)
+    atomization_energy = data.energy - atomref[data.z].sum()
+    assert -4.5 < float(atomization_energy) / data.num_nodes < -3.5
