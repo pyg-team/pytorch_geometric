@@ -45,6 +45,21 @@ Models
    :undoc-members:
    :exclude-members: message, aggregate, message_and_aggregate, update, MessagePassing, training, init_conv
 
+Encodings
+---------
+
+.. currentmodule:: torch_geometric.contrib.nn.encoding
+
+.. autosummary::
+   :nosignatures:
+   {% for cls in torch_geometric.contrib.nn.encoding.classes %}
+     {{ cls }}
+   {% endfor %}
+
+.. automodule:: torch_geometric.contrib.nn.encoding
+   :members:
+   :undoc-members:
+
 Datasets
 --------
 
