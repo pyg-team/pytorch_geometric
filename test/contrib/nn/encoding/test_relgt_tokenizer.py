@@ -13,7 +13,8 @@ class DictEncoder(torch.nn.Module):
     def __init__(self, in_channels, channels):
         super().__init__()
         self.lins = torch.nn.ModuleDict({
-            key: torch.nn.Linear(in_channels, channels)
+            key:
+            torch.nn.Linear(in_channels, channels)
             for key in NODE_TYPES
         })
 
@@ -88,7 +89,10 @@ def test_relgt_tokenizer_backward():
 
 def test_relgt_tokenizer_feature_gathering():
     feat_dict, node_idx, node_type, hop, rel_time, edge_index = get_inputs()
-    feat_dict = {key: torch.randn(x.size(0), 8) for key, x in feat_dict.items()}
+    feat_dict = {
+        key: torch.randn(x.size(0), 8)
+        for key, x in feat_dict.items()
+    }
 
     model = RelGTTokenizer(8, NODE_TYPES, IdentityEncoder())
     select(model, slot=0)
@@ -179,8 +183,8 @@ def test_relgt_tokenizer_missing_node_type():
     assert out.size() == (2, 4, 16)
 
     with pytest.raises(ValueError, match="features for node type 'item'"):
-        model({'user': feat_dict['user']}, node_idx, node_type, hop,
-              rel_time, edge_index)
+        model({'user': feat_dict['user']}, node_idx, node_type, hop, rel_time,
+              edge_index)
 
 
 def test_relgt_tokenizer_invalid_inputs():
@@ -188,8 +192,7 @@ def test_relgt_tokenizer_invalid_inputs():
     model = RelGTTokenizer(16, NODE_TYPES, DictEncoder(4, 16))
 
     with pytest.raises(ValueError, match="Expected 'hop' to have shape"):
-        model(feat_dict, node_idx, node_type, hop[:, :3], rel_time,
-              edge_index)
+        model(feat_dict, node_idx, node_type, hop[:, :3], rel_time, edge_index)
 
     with pytest.raises(ValueError, match="to be two-dimensional"):
         model(feat_dict, node_idx.view(-1), node_type, hop, rel_time,
