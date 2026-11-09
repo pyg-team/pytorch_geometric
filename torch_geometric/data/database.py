@@ -316,6 +316,21 @@ class SQLiteDatabase(Database):
                  f')')
         self.cursor.execute(query)
 
+    def __getstate__(self) -> Dict[str, Any]:
+        if str(self.path) == ':memory:' and self._connection is not None:
+            raise TypeError('Cannot serialize an in-memory SQLite database')
+        state = self.__dict__.copy()
+        state['_connection'] = self._connection is not None
+        state['_cursor'] = None
+        return state
+
+    def __setstate__(self, state: Dict[str, Any]) -> None:
+        connected = state['_connection']
+        self.__dict__.update(state)
+        self._connection = None
+        if connected:
+            self.connect()
+
     def connect(self) -> None:
         import sqlite3
         self._connection = sqlite3.connect(self.path)

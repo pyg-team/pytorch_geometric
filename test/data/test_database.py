@@ -1,5 +1,6 @@
 import math
 import os.path as osp
+import pickle
 
 import pytest
 import torch
@@ -287,3 +288,29 @@ if __name__ == '__main__':
     )
 
     tmp_dir.cleanup()
+
+
+@pytest.mark.parametrize('connected', [True, False])
+def test_sqlite_database_pickle(tmp_path, connected):
+    db = SQLiteDatabase(str(tmp_path / 'storage.db'), name='test_table')
+    db.insert(0, torch.tensor([1, 2]))
+    if not connected:
+        db.close()
+    restored = pickle.loads(pickle.dumps(db))
+    assert (restored._connection is not None) == connected
+    if not connected:
+        restored.connect()
+    assert torch.equal(restored.get(0), torch.tensor([1, 2]))
+    if connected:
+        restored.insert(1, torch.tensor([3, 4]))
+        assert torch.equal(db.get(1), torch.tensor([3, 4]))
+        assert db._connection is not restored._connection
+    restored.close()
+    db.close()
+
+
+def test_sqlite_database_pickle_memory():
+    db = SQLiteDatabase(':memory:', name='test_table')
+    with pytest.raises(TypeError, match='in-memory'):
+        pickle.dumps(db)
+    db.close()
