@@ -200,7 +200,7 @@ class TestRAGQueryLoader:
         assert result.filtered is True
 
 
-@withPackage('pyg_lib', 'torch_sparse')
+@withPackage('pyg_lib')
 def test_rag_loader_integration(tmp_path):
     """Test RAGQueryLoader with real feature and graph stores from triples."""
     # Define test triplets - simple knowledge graph about cities/countries
