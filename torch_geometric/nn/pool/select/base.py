@@ -62,7 +62,7 @@ class SelectOutput:
         self.weight = weight
 
 
-SelectOutput = torch.jit.script(SelectOutput)
+SelectOutput = torch.compile(SelectOutput)
 
 
 class Select(torch.nn.Module):
