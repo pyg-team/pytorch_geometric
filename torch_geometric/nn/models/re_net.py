@@ -94,69 +94,6 @@ class RENet(torch.nn.Module):
         of a :class:`torch_geometric.datasets.icews.EventDataset` with
         :math:`k` denoting the sequence length :obj:`seq_len`.
         """
-        class PreTransform:
-            def __init__(self, seq_len: int):
-                self.seq_len = seq_len
-                self.inc = 5000
-                self.t_last = 0
-                self.sub_hist = self.increase_hist_node_size([])
-                self.obj_hist = self.increase_hist_node_size([])
-
-            def increase_hist_node_size(self, hist: List[int]) -> List[int]:
-                hist_inc = torch.zeros((self.inc, self.seq_len + 1, 0))
-                return hist + hist_inc.tolist()
-
-            def get_history(
-                self,
-                hist: List[int],
-                node: int,
-                rel: int,
-            ) -> Tuple[Tensor, Tensor]:
-                hists, ts = [], []
-                for s in range(seq_len):
-                    h = hist[node][s]
-                    hists += h
-                    ts.append(torch.full((len(h), ), s, dtype=torch.long))
-                node, r = torch.tensor(hists, dtype=torch.long).view(
-                    -1, 2).t().contiguous()
-                node = node[r == rel]
-                t = torch.cat(ts, dim=0)[r == rel]
-                return node, t
-
-            def step(self, hist: List[int]) -> List[int]:
-                for i in range(len(hist)):
-                    hist[i] = hist[i][1:]
-                    hist[i].append([])
-                return hist
-
-            def __call__(self, data: Data) -> Data:
-                sub, rel, obj, t = data.sub, data.rel, data.obj, data.t
-
-                if max(sub, obj) + 1 > len(self.sub_hist):  # pragma: no cover
-                    self.sub_hist = self.increase_hist_node_size(self.sub_hist)
-                    self.obj_hist = self.increase_hist_node_size(self.obj_hist)
-
-                # Delete last timestamp in history.
-                if t > self.t_last:
-                    self.sub_hist = self.step(self.sub_hist)
-                    self.obj_hist = self.step(self.obj_hist)
-                    self.t_last = t
-
-                # Save history in data object.
-                data.h_sub, data.h_sub_t = self.get_history(
-                    self.sub_hist, sub, rel)
-                data.h_obj, data.h_obj_t = self.get_history(
-                    self.obj_hist, obj, rel)
-
-                # Add new event to history.
-                self.sub_hist[sub][-1].append([obj, rel])
-                self.obj_hist[obj][-1].append([sub, rel])
-
-                return data
-
-            def __repr__(self) -> str:  # pragma: no cover
-                return f'{self.__class__.__name__}(seq_len={self.seq_len})'
-
         return PreTransform(seq_len)
 
     def forward(self, data: Data) -> Tuple[Tensor, Tensor]:
@@ -221,3 +158,65 @@ class RENet(torch.nn.Module):
         hits10 = mask[:, :10].sum().item() / y.size(0)
 
         return torch.tensor([mrr, hits1, hits3, hits10])
+
+
+class PreTransform:
+    def __init__(self, seq_len: int):
+        self.seq_len = seq_len
+        self.inc = 5000
+        self.t_last = 0
+        self.sub_hist = self.increase_hist_node_size([])
+        self.obj_hist = self.increase_hist_node_size([])
+
+    def increase_hist_node_size(self, hist: List[int]) -> List[int]:
+        hist_inc = torch.zeros((self.inc, self.seq_len + 1, 0))
+        return hist + hist_inc.tolist()
+
+    def get_history(
+        self,
+        hist: List[int],
+        node: int,
+        rel: int,
+    ) -> Tuple[Tensor, Tensor]:
+        hists, ts = [], []
+        for s in range(self.seq_len):
+            h = hist[node][s]
+            hists += h
+            ts.append(torch.full((len(h), ), s, dtype=torch.long))
+        node, r = torch.tensor(hists,
+                               dtype=torch.long).view(-1, 2).t().contiguous()
+        node = node[r == rel]
+        t = torch.cat(ts, dim=0)[r == rel]
+        return node, t
+
+    def step(self, hist: List[int]) -> List[int]:
+        for i in range(len(hist)):
+            hist[i] = hist[i][1:]
+            hist[i].append([])
+        return hist
+
+    def __call__(self, data: Data) -> Data:
+        sub, rel, obj, t = data.sub, data.rel, data.obj, data.t
+
+        if max(sub, obj) + 1 > len(self.sub_hist):  # pragma: no cover
+            self.sub_hist = self.increase_hist_node_size(self.sub_hist)
+            self.obj_hist = self.increase_hist_node_size(self.obj_hist)
+
+        # Delete last timestamp in history.
+        if t > self.t_last:
+            self.sub_hist = self.step(self.sub_hist)
+            self.obj_hist = self.step(self.obj_hist)
+            self.t_last = t
+
+        # Save history in data object.
+        data.h_sub, data.h_sub_t = self.get_history(self.sub_hist, sub, rel)
+        data.h_obj, data.h_obj_t = self.get_history(self.obj_hist, obj, rel)
+
+        # Add new event to history.
+        self.sub_hist[sub][-1].append([obj, rel])
+        self.obj_hist[obj][-1].append([sub, rel])
+
+        return data
+
+    def __repr__(self) -> str:  # pragma: no cover
+        return f'{self.__class__.__name__}(seq_len={self.seq_len})'

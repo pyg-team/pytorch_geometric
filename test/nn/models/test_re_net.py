@@ -1,3 +1,5 @@
+import pickle
+
 import torch
 
 from torch_geometric.datasets.icews import EventDataset
@@ -63,3 +65,33 @@ def test_re_net(tmp_path):
             assert torch.allclose(log_prob_sub_jit, log_prob_sub)
         model.test(log_prob_obj, data.obj)
         model.test(log_prob_sub, data.sub)
+
+
+def test_renet_pre_transform_pickle():
+    from torch_geometric.data import Data
+
+    transform = RENet.pre_transform(seq_len=2)
+    transform(Data(sub=0, rel=0, obj=1, t=0))
+    restored = pickle.loads(pickle.dumps(transform))
+    assert str(restored) == str(transform) == 'PreTransform(seq_len=2)'
+    for sub, obj, t in [(0, 1, 1), (1, 0, 2)]:
+        expected = transform(Data(sub=sub, rel=0, obj=obj, t=t))
+        actual = restored(Data(sub=sub, rel=0, obj=obj, t=t))
+        for key in ['h_sub', 'h_sub_t', 'h_obj', 'h_obj_t']:
+            assert torch.equal(expected[key], actual[key])
+
+
+def test_re_net_worker(tmp_path):
+    import multiprocessing
+
+    dataset = MyTestEventDataset(tmp_path, seq_len=4)
+    expected = next(
+        iter(DataLoader(dataset, 2, follow_batch=['h_sub', 'h_obj'])))
+    for context in ['spawn', 'forkserver']:
+        if context not in multiprocessing.get_all_start_methods():
+            continue
+        loader = DataLoader(dataset, 2, follow_batch=['h_sub', 'h_obj'],
+                            num_workers=1, multiprocessing_context=context)
+        actual = next(iter(loader))
+        for key in expected.keys():
+            assert torch.equal(expected[key], actual[key])

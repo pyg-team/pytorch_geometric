@@ -1,12 +1,20 @@
 import math
+import multiprocessing
 import os.path as osp
+import pickle
 
 import pytest
 import torch
 
 from torch_geometric import EdgeIndex, Index
-from torch_geometric.data import Data, RocksDatabase, SQLiteDatabase
+from torch_geometric.data import (
+    Data,
+    OnDiskDataset,
+    RocksDatabase,
+    SQLiteDatabase,
+)
 from torch_geometric.data.database import TensorInfo
+from torch_geometric.loader import DataLoader
 from torch_geometric.profile import benchmark
 from torch_geometric.testing import has_package, withPackage
 
@@ -287,3 +295,45 @@ if __name__ == '__main__':
     )
 
     tmp_dir.cleanup()
+
+
+@pytest.mark.parametrize('connected', [True, False])
+def test_sqlite_database_pickle(tmp_path, connected):
+    db = SQLiteDatabase(str(tmp_path / 'storage.db'), name='test_table')
+    db.insert(0, torch.tensor([1, 2]))
+    if not connected:
+        db.close()
+    restored = pickle.loads(pickle.dumps(db))
+    assert (restored._connection is not None) == connected
+    if not connected:
+        restored.connect()
+    assert torch.equal(restored.get(0), torch.tensor([1, 2]))
+    if connected:
+        restored.insert(1, torch.tensor([3, 4]))
+        assert torch.equal(db.get(1), torch.tensor([3, 4]))
+        assert db._connection is not restored._connection
+    restored.close()
+    db.close()
+
+
+def test_sqlite_database_pickle_memory():
+    db = SQLiteDatabase(':memory:', name='test_table')
+    with pytest.raises(TypeError, match='in-memory'):
+        pickle.dumps(db)
+    db.close()
+
+
+@pytest.mark.parametrize('context', ['spawn', 'forkserver'])
+def test_sqlite_on_disk_dataset_worker(tmp_path, context):
+    if context not in multiprocessing.get_all_start_methods():
+        pytest.skip(f'{context} is unavailable')
+    dataset = OnDiskDataset(tmp_path)
+    dataset.extend(
+        [Data(x=torch.tensor([[1], [2]])),
+         Data(x=torch.tensor([[3]]))])
+    loader = DataLoader(dataset, batch_size=2, num_workers=1,
+                        multiprocessing_context=context)
+    batch = next(iter(loader))
+    assert batch.x.tolist() == [[1], [2], [3]]
+    assert batch.batch.tolist() == [0, 0, 1]
+    dataset.close()
