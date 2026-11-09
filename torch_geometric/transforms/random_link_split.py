@@ -234,9 +234,22 @@ class RandomLinkSplit(BaseTransform):
             size = store.size()
             if store._key is None or store._key[0] == store._key[-1]:
                 size = size[0]
-            neg_edge_index = negative_sampling(edge_index, size,
-                                               num_neg_samples=num_neg,
-                                               method='sparse')
+
+            if is_undirected:
+                # Sample twice as many edges and keep only the canonical
+                # direction of each sampled undirected edge, so that the
+                # validation and test splits never share the same undirected
+                # negative edge (fixes #10706).
+                neg_edge_index = negative_sampling(edge_index, size,
+                                                   num_neg_samples=2 * num_neg,
+                                                   method='sparse',
+                                                   force_undirected=True)
+                neg_edge_index = neg_edge_index[:, :neg_edge_index.size(1) //
+                                                2]
+            else:
+                neg_edge_index = negative_sampling(edge_index, size,
+                                                   num_neg_samples=num_neg,
+                                                   method='sparse')
 
             # Adjust ratio if not enough negative edges exist
             if neg_edge_index.size(1) < num_neg:
