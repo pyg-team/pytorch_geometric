@@ -61,7 +61,6 @@ class Node2Vec(torch.nn.Module):
         if not WITH_PYG_LIB:
             raise ImportError(f"'{self.__class__.__name__}' "
                               f"requires 'pyg-lib>=0.6.0'")
-        self.random_walk_fn = torch.ops.pyg.random_walk
 
         self.num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
@@ -100,8 +99,8 @@ class Node2Vec(torch.nn.Module):
     @torch.jit.export
     def pos_sample(self, batch: Tensor) -> Tensor:
         batch = batch.repeat(self.walks_per_node)
-        rw = self.random_walk_fn(self.rowptr, self.col, batch,
-                                 self.walk_length, self.p, self.q)
+        rw = torch.ops.pyg.random_walk(self.rowptr, self.col, batch,
+                                       self.walk_length, self.p, self.q)
         if not isinstance(rw, Tensor):
             rw = rw[0]
 

@@ -1,3 +1,5 @@
+import pickle
+
 import pytest
 import torch
 
@@ -38,3 +40,21 @@ def test_node2vec(device, p, q):
 
         pos_rw, neg_rw = jit.sample(torch.arange(3))
         assert float(jit.loss(pos_rw.to(device), neg_rw.to(device))) >= 0
+
+
+@withPackage('pyg_lib>=0.6.0')
+def test_node2vec_pickle():
+    edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
+    model = Node2Vec(edge_index, embedding_dim=8, walk_length=3,
+                     context_size=2)
+    restored = pickle.loads(pickle.dumps(model))
+    assert torch.equal(model.embedding.weight, restored.embedding.weight)
+    for context in ['spawn', 'forkserver']:
+        import multiprocessing
+        if context not in multiprocessing.get_all_start_methods():
+            continue
+        loader = restored.loader(batch_size=3, num_workers=1,
+                                 multiprocessing_context=context)
+        pos, neg = next(iter(loader))
+        assert pos.size(1) == neg.size(1) == 2
+        assert 0 <= int(pos.min()) <= int(pos.max()) < 3
