@@ -20,7 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
-- Fixed `LineGraph` assigning edge features to the wrong line-graph nodes for directed graphs with unsorted or duplicated edges ([#FILL](https://github.com/pyg-team/pytorch_geometric/pull/FILL))
+- Fixed `LineGraph` assigning edge features to the wrong line-graph nodes for directed graphs with unsorted or duplicated edges ([#10897](https://github.com/pyg-team/pytorch_geometric/pull/10897))
 
 - Fixed `HashTensor` string keys with `xxhash>=4.0` ([#10779](https://github.com/pyg-team/pytorch_geometric/pull/10779))
 
