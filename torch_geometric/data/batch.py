@@ -121,6 +121,8 @@ class Batch(metaclass=DynamicInheritance):
                 "Cannot reconstruct 'Data' object from 'Batch' because "
                 "'Batch' was not created via 'Batch.from_data_list()'")
 
+        idx = range(self.num_graphs)[idx]  # Support negative indexing.
+
         data = separate(
             cls=self.__class__.__bases__[-1],
             batch=self,

@@ -133,6 +133,21 @@ def test_index():
         assert data.index.is_sorted == index.is_sorted
 
 
+def test_negative_index():
+    data_list = [Data(x=torch.full((i + 1, 2), float(i))) for i in range(4)]
+    batch = Batch.from_data_list(data_list)
+
+    for i in [-1, -2, -4]:
+        assert batch[i].x.equal(data_list[i].x)
+        assert batch.get_example(i).x.equal(data_list[i].x)
+    assert batch[torch.tensor(-1)].x.equal(data_list[-1].x)
+    assert [data.x.size(0) for data in batch[[-1, 0]]] == [4, 1]
+
+    for i in [4, -5]:
+        with pytest.raises(IndexError, match="out of range"):
+            batch[i]
+
+
 def test_edge_index():
     edge_index1 = EdgeIndex(
         [[0, 1, 1, 2], [1, 0, 2, 1]],

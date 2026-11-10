@@ -28,6 +28,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Fixed `config_store` on Python 3.14, where `typing.Union`/`typing.Optional` annotations could no longer be remapped in-place via the now read-only `__args__` attribute
 
+- Fixed `Batch.get_example` (and `batch[-1]`) raising an error or returning the wrong graph for negative indices
+
 ### Security
 
 ## [2.8.0] - 2026-06-05
