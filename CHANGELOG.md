@@ -20,6 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fixed `negative_sampling` returning a float `edge_index` (and raising for `method="dense"`) when the number of requested samples rounds down to zero ([#10794](https://github.com/pyg-team/pytorch_geometric/pull/10794))
+
 - Fixed `HashTensor` string keys with `xxhash>=4.0` ([#10779](https://github.com/pyg-team/pytorch_geometric/pull/10779))
 
 - Fixed bounded Nemotron triple extraction producing reasoning-only output and rejected empty cloud responses

@@ -326,7 +326,8 @@ def sample(
     if population <= k:
         return torch.arange(population, device=device)
     else:
-        return torch.tensor(random.sample(range(population), k), device=device)
+        return torch.tensor(random.sample(range(population), k),
+                            dtype=torch.long, device=device)
 
 
 def edge_index_to_vector(

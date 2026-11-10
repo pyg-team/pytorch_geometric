@@ -1,3 +1,4 @@
+import pytest
 import torch
 
 from torch_geometric.utils import (
@@ -11,6 +12,7 @@ from torch_geometric.utils import (
 )
 from torch_geometric.utils._negative_sampling import (
     edge_index_to_vector,
+    sample,
     vector_to_edge_index,
 )
 
@@ -186,3 +188,34 @@ def test_structured_negative_sampling_feasible():
     assert not structured_negative_sampling_feasible(edge_index, 3, False)
     assert structured_negative_sampling_feasible(edge_index, 3, True)
     assert structured_negative_sampling_feasible(edge_index, 4, False)
+
+
+def test_sample_dtype():
+    assert sample(population=10, k=3).dtype == torch.long
+    assert sample(population=10, k=0).dtype == torch.long
+    assert sample(population=0, k=0).dtype == torch.long
+
+
+@pytest.mark.parametrize('method', ['sparse', 'dense'])
+@pytest.mark.parametrize('num_neg_samples', [0, 0.2])
+def test_negative_sampling_without_samples(method, num_neg_samples):
+    edge_index = torch.tensor([[0, 1, 2], [1, 2, 0]])
+
+    neg_edge_index = negative_sampling(edge_index, num_nodes=4, method=method,
+                                       num_neg_samples=num_neg_samples)
+
+    assert neg_edge_index.size() == (2, 0)
+    assert neg_edge_index.dtype == edge_index.dtype
+
+
+@pytest.mark.parametrize('method', ['sparse', 'dense'])
+def test_negative_sampling_force_undirected_single_edge(method):
+    # `force_undirected` halves the number of requested samples, which rounds
+    # down to zero for a single edge:
+    edge_index = torch.tensor([[0], [1]])
+
+    neg_edge_index = negative_sampling(edge_index, num_nodes=4, method=method,
+                                       force_undirected=True)
+
+    assert neg_edge_index.size() == (2, 0)
+    assert neg_edge_index.dtype == edge_index.dtype
