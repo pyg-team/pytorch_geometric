@@ -18,7 +18,7 @@ def k_hop_subsets_rough(
     r"""Return *rough* (possibly overlapping) *k*-hop node subsets.
 
     This is a thin wrapper around
-    :pyfunc:`torch_geometric.utils.k_hop_subgraph` that *additionally* returns
+    :func:`torch_geometric.utils.k_hop_subgraph` that *additionally* returns
     **all** intermediate hop subsets rather than the full union only.
 
     Parameters
@@ -66,7 +66,7 @@ def k_hop_subsets_exact(
 ) -> List[Tensor]:
     """Return **disjoint** *k*-hop subsets.
 
-    This function refines :pyfunc:`k_hop_subsets_rough` by removing nodes that
+    This function refines :func:`k_hop_subsets_rough` by removing nodes that
     have already appeared in previous hops, ensuring that each subset contains
     nodes *exactly* *i* hops away from the seed.
     """
@@ -167,7 +167,12 @@ def avg_total_influence(
     influence_all_nodes: Tensor,
     normalize: bool = True,
 ) -> Tensor:
-    """Compute the *influence‑weighted receptive field* ``R``."""
+    """Average the per-node influence vectors over all seed nodes.
+
+    Given an influence matrix of shape ``[N, k+1]`` (*i*-th row contains the
+    per-hop influences of node *i*), return the hop-wise mean of shape
+    ``[k+1]``, optionally normalized by the hop-0 influence.
+    """
     avg_total_influences = torch.mean(influence_all_nodes, dim=0)
     if normalize:  # normalize by hop_0 (jacobian of the center node feature)
         avg_total_influences = avg_total_influences / avg_total_influences[0]
@@ -228,7 +233,10 @@ def total_influence(
         num_samples (int, optional): Number of random seed nodes to evaluate.
             If :obj:`None`, all nodes are used. (default: :obj:`None`)
         normalize (bool, optional): If :obj:`True`, normalize each hop‑wise
-            influence by the influence of hop 0. (default: :obj:`True`)
+            influence by the influence of hop 0. If :obj:`average=True`,
+            the averaged vector is divided by its own hop 0 entry;
+            otherwise each row of the returned matrix is divided by its
+            own hop 0 entry. (default: :obj:`True`)
         average (bool, optional): If :obj:`True`, return the hop‑wise **mean**
             over all seed nodes (shape ``[k+1]``).
             If :obj:`False`, return the full influence matrix of shape
@@ -270,6 +278,8 @@ def total_influence(
     # Average total influence at each hop
     if average:
         avg_influence = avg_total_influence(allnodes, normalize=normalize)
+    elif normalize:  # normalize each row by its own hop-0 influence:
+        avg_influence = allnodes / allnodes[:, 0:1]
     else:
         avg_influence = allnodes
 
