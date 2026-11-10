@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Added a `--num_workers` option to `examples/llm/glem.py` ([#10805](https://github.com/pyg-team/pytorch_geometric/pull/10805))
 - Improved error handling in `txt2kg` multi-process execution. ([#10771](https://github.com/pyg-team/pytorch_geometric/pull/10771))
 
 ### Deprecated
@@ -18,6 +19,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Removed
 
 ### Fixed
+
+- Fixed `HashTensor` string keys with `xxhash>=4.0` ([#10779](https://github.com/pyg-team/pytorch_geometric/pull/10779))
+
+- Fixed bounded Nemotron triple extraction producing reasoning-only output and rejected empty cloud responses
+
+- Fixed the heterogeneous CSV example with pandas Arrow-backed strings by passing text as a Python list
 
 - Fixed `config_store` on Python 3.14, where `typing.Union`/`typing.Optional` annotations could no longer be remapped in-place via the now read-only `__args__` attribute
 
