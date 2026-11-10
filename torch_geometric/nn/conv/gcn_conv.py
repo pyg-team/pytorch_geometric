@@ -95,13 +95,14 @@ def gcn_norm(  # noqa: F811
     assert flow in ['source_to_target', 'target_to_source']
     num_nodes = maybe_num_nodes(edge_index, num_nodes)
 
-    if add_self_loops:
-        edge_index, edge_weight = add_remaining_self_loops(
-            edge_index, edge_weight, fill_value, num_nodes)
-
     if edge_weight is None:
         edge_weight = torch.ones((edge_index.size(1), ), dtype=dtype,
                                  device=edge_index.device)
+
+    if add_self_loops:
+        edge_index, edge_weight = add_remaining_self_loops(
+            edge_index, edge_weight, fill_value, num_nodes)
+        assert edge_weight is not None
 
     row, col = edge_index[0], edge_index[1]
     idx = col if flow == 'source_to_target' else row
