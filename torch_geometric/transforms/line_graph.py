@@ -56,7 +56,7 @@ class LineGraph(BaseTransform):
             row, col = torch.cat(rows, dim=0), torch.cat(cols, dim=0)
 
             data.edge_index = torch.stack([row, col], dim=0)
-            data.x = data.edge_attr
+            data.x = edge_attr
             data.num_nodes = edge_index.size(1)
 
         else:
