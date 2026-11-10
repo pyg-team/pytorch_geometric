@@ -200,6 +200,11 @@ class Aggregation(torch.nn.Module):
         self.assert_sorted_index(index)
         self.assert_two_dimensional_input(x, dim)
 
+        if max_num_elements is None and x.size(dim) == 0:
+            # Sequence models cannot operate on zero-length sequences, so we
+            # pad empty inputs to a single (masked) element:
+            max_num_elements = 1
+
         return to_dense_batch(
             x,
             index,

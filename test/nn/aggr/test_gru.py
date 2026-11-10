@@ -12,3 +12,12 @@ def test_gru_aggregation():
 
     out = aggr(x, index)
     assert out.size() == (3, 32)
+
+
+def test_gru_aggregation_empty_input():
+    aggr = GRUAggregation(16, 32)
+
+    out = aggr(torch.empty(0, 16), torch.empty(0, dtype=torch.long),
+               dim_size=3)
+    assert out.size() == (3, 32)
+    assert torch.isfinite(out).all()

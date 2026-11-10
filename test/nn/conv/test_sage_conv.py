@@ -87,6 +87,16 @@ def test_lstm_aggr_sage_conv():
         conv(x, edge_index)
 
 
+def test_lstm_aggr_sage_conv_without_edges():
+    x = torch.randn(4, 8)
+    edge_index = torch.empty(2, 0, dtype=torch.long)
+
+    conv = SAGEConv(8, 32, aggr='lstm')
+    out = conv(x, edge_index)
+    assert out.size() == (4, 32)
+    assert torch.isfinite(out).all()
+
+
 def test_mlp_sage_conv():
     x = torch.randn(4, 8)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
