@@ -54,6 +54,48 @@ def test_gcn_conv():
         assert torch.allclose(conv(x, adj3.t()), out1, atol=1e-6)
 
 
+def test_gcn_norm_improved_without_edge_weight():
+    edge_index = torch.tensor([[0, 1, 1, 2, 2], [1, 0, 2, 1, 2]])
+    edge_weight = torch.ones(edge_index.size(1))
+
+    out1 = gcn_norm(edge_index, None, 3, improved=True)
+    out2 = gcn_norm(edge_index, edge_weight, 3, improved=True)
+    assert torch.equal(out1[0], out2[0])
+    assert torch.allclose(out1[1], out2[1])
+
+    adj = torch.zeros(3, 3)
+    adj[edge_index[1], edge_index[0]] = 1.0
+    # Existing self-loops are kept, others get weight 2:
+    adj[torch.arange(3), torch.arange(3)] = torch.tensor([2., 2., 1.])
+    deg_inv_sqrt = adj.sum(dim=1).pow(-0.5)
+    expected = deg_inv_sqrt.view(-1, 1) * adj * deg_inv_sqrt.view(1, -1)
+    actual = torch.zeros(3, 3)
+    actual[out1[0][1], out1[0][0]] = out1[1]
+    assert torch.allclose(actual, expected)
+
+
+def test_gcn_conv_improved():
+    x = torch.randn(4, 16)
+    edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
+    adj1 = to_torch_csc_tensor(edge_index, size=(4, 4))
+
+    conv = GCNConv(16, 32, improved=True)
+
+    # D^{-1/2} (A + 2I) D^{-1/2} X W + b:
+    adj = torch.zeros(4, 4)
+    adj[edge_index[1], edge_index[0]] = 1.0
+    adj = adj + 2 * torch.eye(4)
+    deg_inv_sqrt = adj.sum(dim=1).pow(-0.5)
+    adj = deg_inv_sqrt.view(-1, 1) * adj * deg_inv_sqrt.view(1, -1)
+    expected = adj @ conv.lin(x) + conv.bias
+
+    out = conv(x, edge_index)
+    assert torch.allclose(out, expected, atol=1e-6)
+    assert torch.allclose(conv(x, adj1.t()), expected, atol=1e-6)
+    value = torch.ones(edge_index.size(1))
+    assert torch.allclose(conv(x, edge_index, value), expected, atol=1e-6)
+
+
 def test_gcn_conv_with_decomposed_layers():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
