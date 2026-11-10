@@ -233,3 +233,29 @@ def test_graph_mask_explainer_regression(
     )
 
     check_explanation(edge_mask_type, node_mask_type, explanation)
+
+
+def test_graph_mask_explainer_restores_model():
+    model_config = ModelConfig(mode='regression', task_level='node')
+    model = GCN(model_config)
+
+    with torch.no_grad():
+        out = model(x, edge_index)
+
+    explainer = Explainer(
+        model=model,
+        algorithm=GraphMaskExplainer(2, epochs=5, log=False),
+        explanation_type='model',
+        node_mask_type='attributes',
+        edge_mask_type='object',
+        model_config=model_config,
+    )
+    explainer(x, edge_index)
+
+    # Check that the model is left unchanged:
+    with torch.no_grad():
+        assert torch.allclose(model(x, edge_index), out)
+    assert all(param.requires_grad for param in model.parameters())
+    for conv in [model.conv1, model.conv2]:
+        assert not conv.explain
+        assert 'explain_message' not in conv.__dict__
