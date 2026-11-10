@@ -87,6 +87,17 @@ def test_dense_to_sparse_bipartite():
     assert edge_index[1].max() == 9
 
 
+@pytest.mark.parametrize('mask', [None, torch.tensor([[True, True, False]])])
+def test_dense_to_sparse_backward(mask):
+    adj = torch.rand(1, 3, 3).requires_grad_()
+
+    _, edge_attr = dense_to_sparse(adj, mask)
+    edge_attr.sum().backward()
+
+    assert adj.grad is not None
+    assert adj.grad.shape == adj.shape
+
+
 def test_is_torch_sparse_tensor():
     x = torch.randn(5, 5)
 
