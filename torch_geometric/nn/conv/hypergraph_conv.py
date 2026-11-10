@@ -188,6 +188,7 @@ class HypergraphConv(MessagePassing):
                     dim=0, dim_size=num_edges, reduce='sum')
         B = 1.0 / B
         B[B == float("inf")] = 0
+        B = B * hyperedge_weight[:num_edges].view(-1)
 
         out = self.propagate(hyperedge_index, x=x, norm=B, alpha=alpha,
                              size=(num_nodes, num_edges))
