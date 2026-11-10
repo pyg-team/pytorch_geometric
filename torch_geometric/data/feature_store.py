@@ -63,6 +63,14 @@ class TensorAttr(CastMixin):
     # The node indices the rows of the tensor correspond to. Defaults to UNSET.
     index: Optional[IndexType] = _FieldStatus.UNSET
 
+    def __eq__(self, other: Any) -> bool:
+        if self.__class__ is not other.__class__:
+            return NotImplemented
+        # Retain tuple comparison and its identity shortcuts for shared
+        # tensor/array fields on Python versions with field-wise dataclass eq.
+        return (self.group_name, self.attr_name,
+                self.index) == (other.group_name, other.attr_name, other.index)
+
     # Convenience methods #####################################################
 
     def is_set(self, key: str) -> bool:

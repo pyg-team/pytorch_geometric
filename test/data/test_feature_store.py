@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+import numpy as np
 import pytest
 import torch
 
@@ -107,3 +108,35 @@ def test_feature_store_override():
     assert torch.equal(store[attr_name][index], tensor)
     assert torch.equal(store[attr_name][:], tensor)
     assert torch.equal(store[attr_name, :], tensor)
+
+
+@pytest.mark.parametrize('index', [
+    torch.empty(0, dtype=torch.long),
+    torch.arange(1),
+    torch.arange(3),
+    np.arange(0),
+    np.arange(3),
+    slice(0, 3),
+    None,
+])
+def test_tensor_attr_equality_shared_index(index):
+    attr = TensorAttr('group', 'feat', index)
+    other = TensorAttr('group', 'feat', index)
+    assert attr == other
+    assert other == attr
+    assert attr == attr
+    assert attr != TensorAttr('other', 'feat', index)
+    assert attr != TensorAttr('group', 'other', index)
+
+
+def test_tensor_attr_equality_class_and_hash():
+    class OtherTensorAttr(TensorAttr):
+        pass
+
+    index = torch.arange(3)
+    attr = TensorAttr('group', 'feat', index)
+    assert TensorAttr.__eq__(attr, object()) is NotImplemented
+    assert attr != object()
+    assert attr != OtherTensorAttr('group', 'feat', index)
+    with pytest.raises(TypeError):
+        hash(attr)
