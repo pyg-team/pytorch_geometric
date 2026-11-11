@@ -77,6 +77,41 @@ def test_median_aggregation():
     ]
 
 
+@pytest.mark.parametrize('q', [0.25, 0.5, [0.1, 0.5, 0.9]])
+@pytest.mark.parametrize('interpolation', QuantileAggregation.interpolations)
+def test_quantile_aggregation_multiple_groups(q, interpolation):
+    x = torch.randn(11, 3)
+    # Groups of size 3, 4 and 4 with empty groups before, between and after:
+    index = torch.tensor([1, 1, 1, 3, 3, 3, 3, 4, 4, 4, 4])
+    dim_size = 7
+
+    aggr = QuantileAggregation(q, interpolation=interpolation, fill_value=-1.)
+    out = aggr(x, index, dim_size=dim_size)
+
+    qs = q if isinstance(q, list) else [q]
+    expected = torch.full((dim_size, len(qs) * 3), -1.)
+    for i in index.unique().tolist():
+        expected[i] = torch.cat([
+            x[index == i].quantile(v, dim=0, interpolation=interpolation)
+            for v in qs
+        ])
+
+    assert torch.allclose(out.view(dim_size, -1), expected)
+
+
+def test_median_aggregation_empty_leading_group():
+    # What `SAGEConv(aggr='median')` computes for a graph in which node 0 has
+    # no incoming edge, i.e. the first group is empty:
+    x = torch.randn(3, 8)
+    edge_index = torch.tensor([[0, 1], [1, 2]])
+
+    out = MedianAggregation()(x[edge_index[0]], edge_index[1], dim_size=3)
+    assert out.size() == (3, 8)
+    assert torch.equal(out[0], torch.zeros(8))
+    assert torch.equal(out[1], x[0])
+    assert torch.equal(out[2], x[1])
+
+
 def test_quantile_aggregation_multi():
     x = torch.tensor([
         [0.0, 1.0, 2.0],

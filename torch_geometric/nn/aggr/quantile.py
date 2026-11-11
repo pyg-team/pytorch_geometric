@@ -85,8 +85,12 @@ class QuantileAggregation(Aggregation):
         if dim_size is not None:
             ptr = ptr.clamp(max=x.size(dim) - 1)
 
-        q_point = self.q * (count - 1) + ptr
+        # Add the group offset only after rounding (empty groups are masked
+        # below):
+        q_point = self.q * (count - 1).clamp(min=0)
         q_point = q_point.t().reshape(-1)
+        repeats = self.q.numel()
+        ptr = ptr.repeat_interleave(repeats, output_size=repeats * ptr.numel())
 
         shape = [1] * x.dim()
         shape[dim] = -1
@@ -101,14 +105,14 @@ class QuantileAggregation(Aggregation):
 
         # Compute the quantile interpolations:
         if self.interpolation == 'lower':
-            quantile = x.index_select(dim, q_point.floor().long())
+            quantile = x.index_select(dim, q_point.floor().long() + ptr)
         elif self.interpolation == 'higher':
-            quantile = x.index_select(dim, q_point.ceil().long())
+            quantile = x.index_select(dim, q_point.ceil().long() + ptr)
         elif self.interpolation == 'nearest':
-            quantile = x.index_select(dim, q_point.round().long())
+            quantile = x.index_select(dim, q_point.round().long() + ptr)
         else:
-            l_quant = x.index_select(dim, q_point.floor().long())
-            r_quant = x.index_select(dim, q_point.ceil().long())
+            l_quant = x.index_select(dim, q_point.floor().long() + ptr)
+            r_quant = x.index_select(dim, q_point.ceil().long() + ptr)
 
             if self.interpolation == 'linear':
                 q_frac = q_point.frac().view(shape)
@@ -117,7 +121,6 @@ class QuantileAggregation(Aggregation):
                 quantile = 0.5 * l_quant + 0.5 * r_quant
 
         # If the number of elements is zero, fill with pre-defined value:
-        repeats = self.q.numel()
         mask = (count == 0).repeat_interleave(
             repeats, output_size=repeats * count.numel()).view(shape)
         out = quantile.masked_fill(mask, self.fill_value)
