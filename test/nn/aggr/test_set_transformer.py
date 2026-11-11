@@ -29,3 +29,12 @@ def test_set_transformer_aggregation():
     if is_full_test():
         jit = torch.jit.script(aggr)
         assert torch.allclose(jit(x, index), out)
+
+
+def test_set_transformer_aggregation_empty_input():
+    aggr = SetTransformerAggregation(16)
+
+    out = aggr(torch.empty(0, 16), torch.empty(0, dtype=torch.long),
+               dim_size=3)
+    assert out.size() == (3, 16)
+    assert torch.isfinite(out).all()
