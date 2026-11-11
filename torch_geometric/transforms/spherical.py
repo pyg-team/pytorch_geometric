@@ -46,7 +46,8 @@ class Spherical(BaseTransform):
         theta = torch.atan2(cart[..., 1], cart[..., 0]).view(-1, 1)
         theta = theta + (theta < 0).type_as(theta) * (2 * PI)
 
-        phi = torch.acos(cart[..., 2] / rho.view(-1)).view(-1, 1)
+        xy_norm = torch.norm(cart[..., :2], p=2, dim=-1)
+        phi = torch.atan2(xy_norm, cart[..., 2]).view(-1, 1)
 
         if self.norm:
             rho = rho / (rho.max() if self.max is None else self.max)
