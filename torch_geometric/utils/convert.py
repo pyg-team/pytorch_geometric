@@ -1,6 +1,7 @@
 from collections import defaultdict
 from typing import Any, Dict, Iterable, List, Literal, Optional, Tuple, Union
 
+import numpy as np
 import torch
 from torch import Tensor
 from torch.utils.dlpack import from_dlpack, to_dlpack
@@ -229,10 +230,14 @@ def from_networkx(
     G = G.to_directed() if not nx.is_directed(G) else G
 
     mapping = dict(zip(G.nodes(), range(G.number_of_nodes())))
-    edge_index = torch.empty((2, G.number_of_edges()), dtype=torch.long)
-    for i, (src, dst) in enumerate(G.edges()):
-        edge_index[0, i] = mapping[src]
-        edge_index[1, i] = mapping[dst]
+    num_edges = G.number_of_edges()
+    edge_index = torch.empty((2, num_edges), dtype=torch.long)
+    # Fill each row at once: writing single tensor elements is slow, and
+    # `np.fromiter` avoids holding all edges as Python objects in memory.
+    for i in range(2):
+        row = np.fromiter((mapping[edge[i]] for edge in G.edges()),
+                          dtype=np.int64, count=num_edges)
+        edge_index[i] = torch.from_numpy(row)
 
     data_dict: Dict[str, Any] = defaultdict(list)
     data_dict['edge_index'] = edge_index
@@ -251,17 +256,19 @@ def from_networkx(
     if group_edge_attrs is not None and not isinstance(group_edge_attrs, list):
         group_edge_attrs = edge_attrs
 
+    node_attr_set, edge_attr_set = set(node_attrs), set(edge_attrs)
+
     for _, feat_dict in G.nodes(data=True):
-        if set(feat_dict.keys()) != set(node_attrs):
+        if feat_dict.keys() != node_attr_set:
             raise ValueError('Not all nodes contain the same attributes')
         for key, value in feat_dict.items():
             data_dict[str(key)].append(value)
 
     for _, _, feat_dict in G.edges(data=True):
-        if set(feat_dict.keys()) != set(edge_attrs):
+        if feat_dict.keys() != edge_attr_set:
             raise ValueError('Not all edges contain the same attributes')
         for key, value in feat_dict.items():
-            key = f'edge_{key}' if key in node_attrs else key
+            key = f'edge_{key}' if key in node_attr_set else key
             data_dict[str(key)].append(value)
 
     for key, value in G.graph.items():
