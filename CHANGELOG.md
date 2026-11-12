@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Changed
 
+- Sped up `from_networkx` by building `edge_index` one row at a time instead of one element at a time ([#XXXXX](https://github.com/pyg-team/pytorch_geometric/pull/XXXXX))
 - Added a `--num_workers` option to `examples/llm/glem.py` ([#10805](https://github.com/pyg-team/pytorch_geometric/pull/10805))
 - Improved error handling in `txt2kg` multi-process execution. ([#10771](https://github.com/pyg-team/pytorch_geometric/pull/10771))
 
