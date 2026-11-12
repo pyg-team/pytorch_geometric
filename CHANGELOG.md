@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
-- Added the `kumo_gretriever.py` example that fuses `KumoRelational` into `GRetriever` for candidate ranking, with a RelBench `rel-amazon` benchmark and an OpenClaw agent baseline (`kumo_openclaw.py`) ([#XXXX](https://github.com/pyg-team/pytorch_geometric/pull/XXXX))
+- Added the `kumo_gretriever.py` example that fuses `KumoRelational` into `GRetriever` for candidate ranking, with a RelBench `rel-amazon` benchmark and an OpenClaw agent baseline (`kumo_openclaw.py`) ([#10904](https://github.com/pyg-team/pytorch_geometric/pull/10904))
 - Added `torch_geometric.contrib.nn.models.MGNAN` (M-GNAN, an extension of `GNAN` to multivariate shape functions) model plus an example ([#10371](https://github.com/pyg-team/pytorch_geometric/pull/10371))
 
 ### Changed
