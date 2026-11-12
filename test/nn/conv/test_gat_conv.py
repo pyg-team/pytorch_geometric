@@ -44,7 +44,7 @@ def test_gat_conv(residual):
             ) -> Tensor:
                 return self.conv(x, edge_index, size=size)
 
-        jit = torch.jit.script(MyModule())
+        jit = torch.compile(MyModule())
         assert torch.allclose(jit(x1, edge_index), out)
         assert torch.allclose(jit(x1, edge_index, size=(4, 4)), out)
 
@@ -82,7 +82,7 @@ def test_gat_conv(residual):
             ) -> Tuple[Tensor, Tuple[Tensor, Tensor]]:
                 return self.conv(x, edge_index, return_attention_weights=True)
 
-        jit = torch.jit.script(MyModule())
+        jit = torch.compile(MyModule())
         result = jit(x1, edge_index)
         assert torch.allclose(result[0], out)
         assert result[1][0].size() == (2, 7)
@@ -104,7 +104,7 @@ def test_gat_conv(residual):
                     return self.conv(x, edge_index,
                                      return_attention_weights=True)
 
-            jit = torch.jit.script(MyModule())
+            jit = torch.compile(MyModule())
             result = jit(x1, adj2.t())
             assert torch.allclose(result[0], out, atol=1e-6)
             assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 7
@@ -144,7 +144,7 @@ def test_gat_conv(residual):
             ) -> Tensor:
                 return self.conv(x, edge_index, size=size)
 
-        jit = torch.jit.script(MyModule())
+        jit = torch.compile(MyModule())
         assert torch.allclose(jit((x1, x2), edge_index), out1)
         assert torch.allclose(jit((x1, x2), edge_index, size=(4, 2)), out1)
         assert torch.allclose(jit((x1, None), edge_index, size=(4, 2)), out2)

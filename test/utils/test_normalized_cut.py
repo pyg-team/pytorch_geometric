@@ -15,6 +15,6 @@ def test_normalized_cut():
     assert torch.allclose(out, expected)
 
     if is_full_test():
-        jit = torch.jit.script(normalized_cut)
+        jit = torch.compile(normalized_cut)
         out = jit(torch.stack([row, col], dim=0), edge_attr)
         assert torch.allclose(out, expected)

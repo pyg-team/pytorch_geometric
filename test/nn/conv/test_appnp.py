@@ -35,7 +35,7 @@ def test_appnp():
     assert conv._cached_adj_t is None
 
     if is_full_test():
-        jit = torch.jit.script(conv)
+        jit = torch.compile(conv)
         assert torch.allclose(jit(x, edge_index), out, rtol=1e-5, atol=1e-6)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:

@@ -33,7 +33,7 @@ def test_dense_graph_conv(aggr):
     assert torch.allclose(sparse_out, dense_out, atol=1e-04)
 
     if is_full_test():
-        jit = torch.jit.script(dense_conv)
+        jit = torch.compile(dense_conv)
         assert torch.allclose(jit(x, adj, mask), dense_out)
 
 

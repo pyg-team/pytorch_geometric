@@ -22,7 +22,7 @@ def test_avg_pool_x():
     assert out[1].tolist() == [0, 0, 1]
 
     if is_full_test():
-        jit = torch.jit.script(avg_pool_x)
+        jit = torch.compile(avg_pool_x)
         out = jit(cluster, x, batch)
         assert out[0].tolist() == [[3, 4], [5, 6], [10, 11]]
         assert out[1].tolist() == [0, 0, 1]
@@ -35,7 +35,7 @@ def test_avg_pool_x():
     assert torch.equal(out, out2)
 
     if is_full_test():
-        jit = torch.jit.script(avg_pool_x)
+        jit = torch.compile(avg_pool_x)
         out, _ = jit(cluster, x, batch, size=2)
         assert out.tolist() == [[3, 4], [5, 6], [10, 11], [0, 0]]
 

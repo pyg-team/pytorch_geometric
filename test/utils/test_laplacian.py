@@ -13,7 +13,7 @@ def test_get_laplacian():
     assert lap[1].tolist() == [-1, -2, -2, -4, 1, 4, 4]
 
     if is_full_test():
-        jit = torch.jit.script(get_laplacian)
+        jit = torch.compile(get_laplacian)
         lap = jit(edge_index, edge_weight)
         assert lap[0].tolist() == [[0, 1, 1, 2, 0, 1, 2],
                                    [1, 0, 2, 1, 0, 1, 2]]

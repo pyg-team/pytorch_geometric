@@ -21,7 +21,7 @@ def test_wl_conv():
         assert torch.allclose(conv(x, adj.t()), out)
 
     if is_full_test():
-        jit = torch.jit.script(conv)
+        jit = torch.compile(conv)
         assert torch.allclose(jit(x, edge_index), out)
         if torch_geometric.typing.WITH_TORCH_SPARSE:
             assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)

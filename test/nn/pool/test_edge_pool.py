@@ -19,7 +19,7 @@ def test_compute_edge_score_softmax():
     )
 
     if is_full_test():
-        jit = torch.jit.script(EdgePooling.compute_edge_score_softmax)
+        jit = torch.compile(EdgePooling.compute_edge_score_softmax)
         assert torch.allclose(jit(raw, edge_index, 6), e)
 
 
@@ -32,7 +32,7 @@ def test_compute_edge_score_tanh():
     assert torch.all(torch.argsort(raw) == torch.argsort(e))
 
     if is_full_test():
-        jit = torch.jit.script(EdgePooling.compute_edge_score_tanh)
+        jit = torch.compile(EdgePooling.compute_edge_score_tanh)
         assert torch.allclose(jit(raw, edge_index, 6), e)
 
 
@@ -45,7 +45,7 @@ def test_compute_edge_score_sigmoid():
     assert torch.all(torch.argsort(raw) == torch.argsort(e))
 
     if is_full_test():
-        jit = torch.jit.script(EdgePooling.compute_edge_score_sigmoid)
+        jit = torch.compile(EdgePooling.compute_edge_score_sigmoid)
         assert torch.allclose(jit(raw, edge_index, 6), e)
 
 
@@ -70,7 +70,7 @@ def test_edge_pooling():
     assert new_batch.tolist() == [1, 0, 0, 0]
 
     if is_full_test():
-        jit = torch.jit.script(op)
+        jit = torch.compile(op)
         out = jit(x, edge_index, batch)
         assert torch.allclose(new_x, out[0])
         assert torch.equal(new_edge_index, out[1])

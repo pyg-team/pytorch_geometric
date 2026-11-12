@@ -43,7 +43,7 @@ def test_scatter(reduce, device):
     assert out1.device == device
     assert torch.allclose(out1, out2, atol=1e-6)
 
-    jit = torch.jit.script(scatter)
+    jit = torch.compile(scatter)
     out3 = jit(src, index, dim=0, reduce=reduce)
     assert torch.allclose(out1, out3, atol=1e-6)
 

@@ -32,7 +32,7 @@ def test_node2vec(device, p, q):
         assert 0 <= acc and acc <= 1
 
     if is_full_test():
-        jit = torch.jit.script(model)
+        jit = torch.compile(model)
 
         assert jit(torch.arange(3, device=device)).size() == (3, 16)
 

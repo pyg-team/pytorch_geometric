@@ -40,11 +40,11 @@ def test_sag_pooling():
         assert out3[1].size() == (2, 2)
 
         if is_full_test():
-            jit1 = torch.jit.script(pool1)
+            jit1 = torch.compile(pool1)
             assert torch.allclose(jit1(x, edge_index)[0], out1[0])
 
-            jit2 = torch.jit.script(pool2)
+            jit2 = torch.compile(pool2)
             assert torch.allclose(jit2(x, edge_index)[0], out2[0])
 
-            jit3 = torch.jit.script(pool3)
+            jit3 = torch.compile(pool3)
             assert torch.allclose(jit3(x, edge_index)[0], out3[0])

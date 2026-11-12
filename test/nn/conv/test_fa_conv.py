@@ -43,7 +43,7 @@ def test_fa_conv():
             ) -> Tensor:
                 return self.conv(x, x_0, edge_index)
 
-        jit = torch.jit.script(MyModule())
+        jit = torch.compile(MyModule())
         assert torch.allclose(jit(x, x_0, edge_index), out, atol=1e-6)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
@@ -95,7 +95,7 @@ def test_fa_conv():
                 return self.conv(x, x_0, edge_index,
                                  return_attention_weights=True)
 
-        jit = torch.jit.script(MyModule())
+        jit = torch.compile(MyModule())
         result = jit(x, x_0, edge_index)
         assert torch.allclose(result[0], out, atol=1e-6)
         assert result[1][0].size() == (2, 10)
@@ -118,7 +118,7 @@ def test_fa_conv():
                     return self.conv(x, x_0, edge_index,
                                      return_attention_weights=True)
 
-            jit = torch.jit.script(MyModule())
+            jit = torch.compile(MyModule())
             result = jit(x, x_0, adj2.t())
             assert torch.allclose(result[0], out, atol=1e-6)
             assert result[1].sizes() == [4, 4] and result[1].nnz() == 10

@@ -13,7 +13,7 @@ def test_contains_isolated_nodes():
     assert contains_isolated_nodes(edge_index, num_nodes=3)
 
     if is_full_test():
-        jit = torch.jit.script(contains_isolated_nodes)
+        jit = torch.compile(contains_isolated_nodes)
         assert not jit(edge_index)
         assert jit(edge_index, num_nodes=3)
 
@@ -29,7 +29,7 @@ def test_remove_isolated_nodes():
     assert mask.tolist() == [1, 1]
 
     if is_full_test():
-        jit = torch.jit.script(remove_isolated_nodes)
+        jit = torch.compile(remove_isolated_nodes)
         out, _, mask = jit(edge_index)
         assert out.tolist() == [[0, 1, 0], [1, 0, 0]]
         assert mask.tolist() == [1, 1]

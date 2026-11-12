@@ -19,7 +19,7 @@ def test_is_undirected():
 
     assert not is_undirected(torch.stack([row, col], dim=0))
 
-    @torch.jit.script
+    @torch.compile
     def jit(edge_index: Tensor) -> bool:
         return is_undirected(edge_index)
 
@@ -33,7 +33,7 @@ def test_to_undirected():
     edge_index = to_undirected(torch.stack([row, col], dim=0))
     assert edge_index.tolist() == [[0, 1, 1, 2], [1, 0, 2, 1]]
 
-    @torch.jit.script
+    @torch.compile
     def jit(edge_index: Tensor) -> Tensor:
         return to_undirected(edge_index)
 

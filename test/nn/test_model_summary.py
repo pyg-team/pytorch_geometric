@@ -237,17 +237,14 @@ def test_summary_with_module_dict_model():
 @withPackage('tabulate')
 def test_summary_with_jit_model():
     model = nn.Sequential(nn.Linear(32, 16), nn.ReLU(), nn.Linear(16, 8))
-    model = torch.jit.script(model)
+    model = torch.compile(model)
     x = torch.randn(100, 32)
 
     expected = """
-+----------------------------+---------------+----------------+----------+
-| Layer                      | Input Shape   | Output Shape   | #Param   |
-|----------------------------+---------------+----------------+----------|
-| RecursiveScriptModule      | --            | --             | 664      |
-| ├─(0)RecursiveScriptModule | --            | --             | 528      |
-| ├─(1)RecursiveScriptModule | --            | --             | --       |
-| ├─(2)RecursiveScriptModule | --            | --             | 136      |
-+----------------------------+---------------+----------------+----------+
++-----------------+---------------+----------------+----------+
+| Layer           | Input Shape   | Output Shape   | #Param   |
+|-----------------+---------------+----------------+----------|
+| OptimizedModule | [100, 32]     | [100, 8]       | 664      |
++-----------------+---------------+----------------+----------+
 """
     assert summary(model, x) == expected[1:-1]

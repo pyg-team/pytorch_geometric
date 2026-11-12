@@ -18,5 +18,5 @@ def test_radius_graph_jit():
     batch = torch.tensor([0, 0, 0, 0])
 
     model = Net()
-    jit = torch.jit.script(model)
+    jit = torch.compile(model)
     assert model(x, batch).size() == jit(x, batch).size()

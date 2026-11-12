@@ -78,7 +78,7 @@ def test_sequential_jit():
         ReLU(inplace=True),
         Linear(64, 7),
     ])
-    torch.jit.script(model)(x, edge_index)
+    torch.compile(model)(x, edge_index)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj_t = SparseTensor.from_edge_index(edge_index).t()
@@ -90,7 +90,7 @@ def test_sequential_jit():
             ReLU(inplace=True),
             Linear(64, 7),
         ])
-        torch.jit.script(model)(x, adj_t)
+        torch.compile(model)(x, adj_t)
 
 
 def symbolic_trace(module):

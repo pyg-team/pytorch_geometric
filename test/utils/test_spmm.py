@@ -84,12 +84,12 @@ def test_spmm_layout(device, layout, reduce):
 
 @pytest.mark.parametrize('reduce', ['sum', 'mean'])
 def test_spmm_jit(reduce):
-    @torch.jit.script
+    @torch.compile
     def jit_torch_sparse(src: SparseTensor, other: Tensor,
                          reduce: str) -> Tensor:
         return spmm(src, other, reduce=reduce)
 
-    @torch.jit.script
+    @torch.compile
     def jit_torch(src: Tensor, other: Tensor, reduce: str) -> Tensor:
         return spmm(src, other, reduce=reduce)
 

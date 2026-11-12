@@ -41,7 +41,7 @@ def test_gen_conv(aggr):
         assert torch.allclose(conv(x1, adj4.t()), out2, atol=1e-4)
 
     if is_full_test():
-        jit = torch.jit.script(conv)
+        jit = torch.compile(conv)
         assert torch.allclose(jit(x1, edge_index), out1, atol=1e-4)
         assert torch.allclose(jit(x1, edge_index, size=(4, 4)), out1,
                               atol=1e-4)
@@ -129,7 +129,7 @@ def test_gen_conv(aggr):
         assert torch.allclose(conv((x1, None), adj4.t()), out2, atol=1e-4)
 
     if is_full_test():
-        jit = torch.jit.script(conv)
+        jit = torch.compile(conv)
         assert torch.allclose(jit((x1, x2), edge_index, value), out1,
                               atol=1e-4)
         assert torch.allclose(jit((x1, x2), edge_index, value, size=(4, 2)),

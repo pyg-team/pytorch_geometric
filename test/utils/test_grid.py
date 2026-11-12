@@ -19,7 +19,7 @@ def test_grid():
     assert pos.tolist() == expected_pos
 
     if is_full_test():
-        jit = torch.jit.script(grid)
+        jit = torch.compile(grid)
         (row, col), pos = jit(height=3, width=2)
         assert row.tolist() == expected_row
         assert col.tolist() == expected_col

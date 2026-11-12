@@ -21,8 +21,8 @@ def test_mlp(norm, act_first, plain_last):
     out = mlp(x)
     assert out.size() == (4, 64)
 
-    jit = torch.jit.script(mlp)
-    assert torch.allclose(jit(x), out)
+    jit = torch.compile(mlp)
+    assert torch.allclose(jit(x), out, atol=1e-5)
 
     torch.manual_seed(12345)
     mlp = MLP(

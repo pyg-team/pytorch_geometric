@@ -115,7 +115,7 @@ def test_to_dense_batch_overflow():
 
 @onlyFullTest
 def test_to_dense_batch_jit():
-    @torch.jit.script
+    @torch.compile
     def to_dense_batch_jit(
         x: Tensor,
         batch: Tensor,

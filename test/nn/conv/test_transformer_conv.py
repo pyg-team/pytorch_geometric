@@ -50,7 +50,7 @@ def test_transformer_conv(edge_dim, concat):
             ) -> Tensor:
                 return self.conv(x, edge_index, edge_attr)
 
-        jit = torch.jit.script(MyModule())
+        jit = torch.compile(MyModule())
         assert torch.allclose(jit(x1, edge_index, edge_attr), out)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
@@ -86,7 +86,7 @@ def test_transformer_conv(edge_dim, concat):
                 return self.conv(x, edge_index, edge_attr,
                                  return_attention_weights=True)
 
-        jit = torch.jit.script(MyModule())
+        jit = torch.compile(MyModule())
         result = jit(x1, edge_index, edge_attr)
         assert torch.allclose(result[0], out)
         assert result[1][0].size() == (2, 4)
@@ -109,7 +109,7 @@ def test_transformer_conv(edge_dim, concat):
                     return self.conv(x, edge_index,
                                      return_attention_weights=True)
 
-            jit = torch.jit.script(MyModule())
+            jit = torch.compile(MyModule())
             result = jit(x1, adj2.t())
             assert torch.allclose(result[0], out, atol=1e-6)
             assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 4
@@ -147,7 +147,7 @@ def test_transformer_conv(edge_dim, concat):
             ) -> Tensor:
                 return self.conv(x, edge_index, edge_attr)
 
-        jit = torch.jit.script(MyModule())
+        jit = torch.compile(MyModule())
         assert torch.allclose(jit((x1, x2), edge_index, edge_attr), out)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:

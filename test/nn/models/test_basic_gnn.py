@@ -140,7 +140,7 @@ def test_jit():
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
 
     model = GCN(8, 16, num_layers=2)
-    model = torch.jit.script(model)
+    model = torch.compile(model)
 
     assert model(x, edge_index).size() == (3, 16)
 

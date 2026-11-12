@@ -22,7 +22,7 @@ def test_x_conv():
     assert out2.size() == (8, 32)
 
     if is_full_test():
-        jit = torch.jit.script(conv)
+        jit = torch.compile(conv)
 
         torch.manual_seed(12345)
         assert torch.allclose(jit(x, pos), out1, atol=1e-6)

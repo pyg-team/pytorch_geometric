@@ -22,7 +22,7 @@ def test_max_pool_x():
     assert out[1].tolist() == [0, 0, 1]
 
     if is_full_test():
-        jit = torch.jit.script(max_pool_x)
+        jit = torch.compile(max_pool_x)
         out = jit(cluster, x, batch)
         assert out[0].tolist() == [[5, 6], [7, 8], [11, 12]]
         assert out[1].tolist() == [0, 0, 1]
@@ -35,7 +35,7 @@ def test_max_pool_x():
     assert torch.equal(out, out2)
 
     if is_full_test():
-        jit = torch.jit.script(max_pool_x)
+        jit = torch.compile(max_pool_x)
         out, _ = jit(cluster, x, batch, size=2)
         assert out.tolist() == [[5, 6], [7, 8], [11, 12], [0, 0]]
 

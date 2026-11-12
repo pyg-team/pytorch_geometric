@@ -31,7 +31,7 @@ def test_dense_to_sparse():
     assert edge_attr.tolist() == [3, 1, 2]
 
     if is_full_test():
-        jit = torch.jit.script(dense_to_sparse)
+        jit = torch.compile(dense_to_sparse)
         edge_index, edge_attr = jit(adj)
         assert edge_index.tolist() == [[0, 0, 1], [0, 1, 0]]
         assert edge_attr.tolist() == [3, 1, 2]
@@ -48,7 +48,7 @@ def test_dense_to_sparse():
     assert edge_attr.tolist() == [3, 1, 2, 1, 2]
 
     if is_full_test():
-        jit = torch.jit.script(dense_to_sparse)
+        jit = torch.compile(dense_to_sparse)
         edge_index, edge_attr = jit(adj)
         assert edge_index.tolist() == [[0, 0, 1, 2, 3], [0, 1, 0, 3, 3]]
         assert edge_attr.tolist() == [3, 1, 2, 1, 2]
@@ -74,7 +74,7 @@ def test_dense_to_sparse():
     assert edge_attr.tolist() == [3, 1, 2, 1, 2, 3, 5]
 
     if is_full_test():
-        jit = torch.jit.script(dense_to_sparse)
+        jit = torch.compile(dense_to_sparse)
         edge_index, edge_attr = jit(adj, mask)
         assert edge_index.tolist() == [[0, 0, 1, 2, 3, 3, 4],
                                        [0, 1, 0, 3, 3, 4, 3]]
@@ -138,7 +138,7 @@ def test_to_torch_coo_tensor():
     assert torch.allclose(adj.values(), edge_attr)
 
     if is_full_test():
-        jit = torch.jit.script(to_torch_coo_tensor)
+        jit = torch.compile(to_torch_coo_tensor)
         adj = jit(edge_index, edge_attr)
         assert adj.size() == (4, 4, 8)
         assert adj.layout == torch.sparse_coo
@@ -242,7 +242,7 @@ def test_to_edge_index():
     assert edge_attr.tolist() == [1., 1., 1., 1., 1., 1.]
 
     if is_full_test():
-        jit = torch.jit.script(to_edge_index)
+        jit = torch.compile(to_edge_index)
         edge_index, edge_attr = jit(adj)
         assert edge_index.tolist() == [[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]]
         assert edge_attr.tolist() == [1., 1., 1., 1., 1., 1.]

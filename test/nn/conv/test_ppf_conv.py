@@ -41,7 +41,7 @@ def test_ppf_conv():
         assert torch.allclose(conv(x1, pos1, n1, adj2.t()), out, atol=1e-3)
 
     if is_full_test():
-        jit = torch.jit.script(conv)
+        jit = torch.compile(conv)
         assert torch.allclose(jit(x1, pos1, n1, edge_index), out, atol=1e-3)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:

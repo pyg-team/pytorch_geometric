@@ -15,7 +15,7 @@ def test_jumping_knowledge():
     assert out.size() == (num_nodes, channels * num_layers)
 
     if is_full_test():
-        jit = torch.jit.script(model)
+        jit = torch.compile(model)
         assert torch.allclose(jit(xs), out)
 
     model = JumpingKnowledge('max')
@@ -25,7 +25,7 @@ def test_jumping_knowledge():
     assert out.size() == (num_nodes, channels)
 
     if is_full_test():
-        jit = torch.jit.script(model)
+        jit = torch.compile(model)
         assert torch.allclose(jit(xs), out)
 
     model = JumpingKnowledge('lstm', channels, num_layers)
@@ -36,7 +36,7 @@ def test_jumping_knowledge():
     assert out.size() == (num_nodes, channels)
 
     if is_full_test():
-        jit = torch.jit.script(model)
+        jit = torch.compile(model)
         assert torch.allclose(jit(xs), out)
 
 
@@ -58,7 +58,7 @@ def test_hetero_jumping_knowledge():
         assert out.size() == (num_nodes, channels * num_layers)
 
     if is_full_test():
-        jit = torch.jit.script(model)
+        jit = torch.compile(model)
         jit_out = jit(xs_dict)
         for key in types:
             assert torch.allclose(jit_out[key], out_dict[key])
@@ -71,7 +71,7 @@ def test_hetero_jumping_knowledge():
         assert out.size() == (num_nodes, channels)
 
     if is_full_test():
-        jit = torch.jit.script(model)
+        jit = torch.compile(model)
         jit_out = jit(xs_dict)
         for key in types:
             assert torch.allclose(jit_out[key], out_dict[key])
@@ -86,7 +86,7 @@ def test_hetero_jumping_knowledge():
         assert out.size() == (num_nodes, channels)
 
     if is_full_test():
-        jit = torch.jit.script(model)
+        jit = torch.compile(model)
         jit_out = jit(xs_dict)
         for key in types:
             assert torch.allclose(jit_out[key], out_dict[key])

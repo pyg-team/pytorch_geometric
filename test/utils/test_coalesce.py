@@ -54,18 +54,18 @@ def test_coalesce_without_duplicates():
 
 
 def test_coalesce_jit():
-    @torch.jit.script
+    @torch.compile
     def wrapper1(edge_index: Tensor) -> Tensor:
         return coalesce(edge_index)
 
-    @torch.jit.script
+    @torch.compile
     def wrapper2(
         edge_index: Tensor,
         edge_attr: Optional[Tensor],
     ) -> Tuple[Tensor, Optional[Tensor]]:
         return coalesce(edge_index, edge_attr)
 
-    @torch.jit.script
+    @torch.compile
     def wrapper3(
         edge_index: Tensor,
         edge_attr: List[Tensor],

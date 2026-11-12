@@ -42,7 +42,7 @@ def test_dense_gat_conv(heads, concat):
     dense_out = dense_conv(x, adj, mask)
 
     if is_full_test():
-        jit = torch.jit.script(dense_conv)
+        jit = torch.compile(dense_conv)
         assert torch.allclose(jit(x, adj, mask), dense_out)
 
     assert dense_out[1, 2].abs().sum() == 0

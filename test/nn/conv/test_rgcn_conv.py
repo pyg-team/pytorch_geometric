@@ -81,7 +81,7 @@ def test_rgcn_conv_basic(cls, conf, device):
             assert torch.allclose(conv(idx1, adj.t()), out2, atol=1e-3)
 
     if is_full_test():
-        jit = torch.jit.script(conv)
+        jit = torch.compile(conv)
         assert torch.allclose(jit(x1, edge_index, edge_type), out1, atol=1e-3)
         if num_blocks is None:
             assert torch.allclose(jit(idx1, edge_index, edge_type), out2,
@@ -116,7 +116,7 @@ def test_rgcn_conv_basic(cls, conf, device):
             assert torch.allclose(conv((idx1, idx2), adj.t()), out2, atol=1e-3)
 
     if is_full_test():
-        jit = torch.jit.script(conv)
+        jit = torch.compile(conv)
         assert torch.allclose(jit((x1, x2), edge_index, edge_type), out1,
                               atol=1e-3)
         if num_blocks is None:

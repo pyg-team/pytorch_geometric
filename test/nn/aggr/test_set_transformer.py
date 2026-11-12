@@ -27,5 +27,5 @@ def test_set_transformer_aggregation():
         assert out[2].abs().sum() == 0
 
     if is_full_test():
-        jit = torch.jit.script(aggr)
+        jit = torch.compile(aggr)
         assert torch.allclose(jit(x, index), out)

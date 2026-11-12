@@ -1314,27 +1314,10 @@ def test_torch_script():
     expected = model(x, edge_index)
     assert expected.size() == (3, 8)
 
-    # `torch.jit.script` does not support inheritance at the `Tensor` level :(
-    with pytest.raises(RuntimeError, match="attribute or method 'num_cols'"):
-        torch.jit.script(model)
-
-    # A valid workaround is to treat `EdgeIndex` as a regular PyTorch tensor
-    # whenever we are in script mode:
-    class ScriptableModel(torch.nn.Module):
-        def forward(self, x: Tensor, edge_index: EdgeIndex) -> Tensor:
-            row, col = edge_index[0], edge_index[1]
-            x_j = x[row]
-            dim_size: Optional[int] = None
-            if (not torch.jit.is_scripting()
-                    and isinstance(edge_index, EdgeIndex)):
-                dim_size = edge_index.num_cols
-            out = scatter(x_j, col, dim_size=dim_size)
-            return out
-
-    script_model = torch.jit.script(ScriptableModel())
-    out = script_model(x, edge_index)
-    assert out.size() == (2, 8)
-    assert torch.allclose(out, expected[:2])
+    compiled_model = torch.compile(model)
+    out = compiled_model(x, edge_index)
+    assert out.size() == (3, 8)
+    assert torch.allclose(out, expected)
 
 
 @onlyLinux
