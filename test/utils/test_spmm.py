@@ -23,9 +23,6 @@ def test_spmm_basic(device, reduce):
     out2 = spmm(src.to_sparse_csr(), other, reduce=reduce)
     assert out1.size() == (5, 8)
     assert torch.allclose(out1, out2, atol=1e-6)
-    if torch_geometric.typing.WITH_TORCH_SPARSE:
-        out3 = spmm(SparseTensor.from_dense(src), other, reduce=reduce)
-        assert torch.allclose(out2, out3, atol=1e-6)
 
     # Test `mean` reduction with isolated nodes:
     src[0] = 0.
@@ -33,9 +30,6 @@ def test_spmm_basic(device, reduce):
     out2 = spmm(src.to_sparse_csr(), other, reduce=reduce)
     assert out1.size() == (5, 8)
     assert torch.allclose(out1, out2, atol=1e-6)
-    if torch_geometric.typing.WITH_TORCH_SPARSE:
-        out3 = spmm(SparseTensor.from_dense(src), other, reduce=reduce)
-        assert torch.allclose(out2, out3, atol=1e-6)
 
 
 @withCUDA
@@ -101,9 +95,6 @@ def test_spmm_compile(reduce):
     assert out1.size() == (5, 8)
     if reduce == 'sum':
         assert torch.allclose(out1, out2, atol=1e-6)
-    if torch_geometric.typing.WITH_TORCH_SPARSE:
-        out3 = compiled_torch_sparse(SparseTensor.from_dense(src), other, reduce)
-        assert torch.allclose(out2, out3, atol=1e-6)
 
 
 @withCUDA

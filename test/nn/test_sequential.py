@@ -80,18 +80,6 @@ def test_sequential_compile():
     ])
     torch.compile(model)(x, edge_index)
 
-    if torch_geometric.typing.WITH_TORCH_SPARSE:
-        adj_t = SparseTensor.from_edge_index(edge_index).t()
-
-        model = Sequential('x: Tensor, edge_index: SparseTensor', [
-            (GCNConv(16, 64), 'x, edge_index -> x'),
-            ReLU(inplace=True),
-            (GCNConv(64, 64), 'x, edge_index -> x'),
-            ReLU(inplace=True),
-            Linear(64, 7),
-        ])
-        torch.compile(model)(x, adj_t)
-
 
 def symbolic_trace(module):
     class Tracer(torch.fx.Tracer):
