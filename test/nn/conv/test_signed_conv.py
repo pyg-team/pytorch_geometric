@@ -65,11 +65,13 @@ def test_signed_conv():
     if is_full_test():
         assert torch.allclose(compiled1((x, x[:2]), edge_index, edge_index),
                               out1[:2], atol=1e-6)
-        assert torch.allclose(compiled2((out1, out1[:2]), edge_index, edge_index),
-                              out2[:2], atol=1e-6)
+        assert torch.allclose(
+            compiled2((out1, out1[:2]), edge_index, edge_index), out2[:2],
+            atol=1e-6)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
             assert torch.allclose(compiled1((x, x[:2]), adj2.t(), adj2.t()),
                                   out1[:2], atol=1e-6)
-            assert torch.allclose(compiled2((out1, out1[:2]), adj2.t(), adj2.t()),
-                                  out2[:2], atol=1e-6)
+            assert torch.allclose(
+                compiled2((out1, out1[:2]), adj2.t(), adj2.t()), out2[:2],
+                atol=1e-6)

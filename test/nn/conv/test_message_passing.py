@@ -7,16 +7,9 @@ import torch
 from torch import Tensor
 from torch.nn import Linear
 
-import torch_geometric.typing
 from torch_geometric import EdgeIndex
 from torch_geometric.nn import MessagePassing, aggr
-from torch_geometric.typing import (
-    Adj,
-    OptPairTensor,
-    OptTensor,
-    Size,
-    SparseTensor,
-)
+from torch_geometric.typing import Adj, OptPairTensor, OptTensor, Size
 from torch_geometric.utils import (
     add_self_loops,
     scatter,
@@ -210,7 +203,8 @@ def test_my_conv_compile():
 
     compiled = torch.compile(conv)
     assert torch.allclose(compiled(x1, edge_index, value), out, atol=1e-6)
-    assert torch.allclose(compiled(x1, edge_index, value, (4, 4)), out, atol=1e-6)
+    assert torch.allclose(compiled(x1, edge_index, value, (4, 4)), out,
+                          atol=1e-6)
 
     conv = MyConv((8, 16), 32)
     out1 = conv((x1, x2), edge_index, value)
@@ -219,7 +213,8 @@ def test_my_conv_compile():
     compiled = torch.compile(conv)
     assert torch.allclose(compiled((x1, x2), edge_index, value), out1)
     assert torch.allclose(compiled((x1, x2), edge_index, value, (4, 2)), out1)
-    assert torch.allclose(compiled((x1, None), edge_index, value, (4, 2)), out2)
+    assert torch.allclose(compiled((x1, None), edge_index, value, (4, 2)),
+                          out2)
 
 
 def test_my_conv_compile_save(tmp_path):

@@ -39,7 +39,8 @@ def test_film_conv():
 
     if is_full_test():
         compiled = torch.compile(conv)
-        assert torch.allclose(compiled(x1, edge_index, edge_type), out, atol=1e-6)
+        assert torch.allclose(compiled(x1, edge_index, edge_type), out,
+                              atol=1e-6)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
             assert torch.allclose(compiled(x1, adj.t()), out, atol=1e-6)

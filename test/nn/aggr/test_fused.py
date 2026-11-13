@@ -33,7 +33,8 @@ def test_fused_aggregation(aggrs):
     assert torch.allclose(out, expected, atol=1e-5)
 
     compiled = torch.compile(aggr)
-    assert torch.allclose(torch.cat(compiled(x, index), dim=-1), out, atol=1e-5)
+    assert torch.allclose(torch.cat(compiled(x, index), dim=-1), out,
+                          atol=1e-5)
 
     out.mean().backward()
     assert x.grad is not None

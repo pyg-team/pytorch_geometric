@@ -1,6 +1,5 @@
 from typing import Final, Tuple, Union
 
-import torch
 from torch import Tensor
 
 from torch_geometric import EdgeIndex

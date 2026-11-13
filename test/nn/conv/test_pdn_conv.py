@@ -52,4 +52,5 @@ def test_pdn_conv_with_sparse_node_input_feature():
         assert torch.allclose(compiled(x, edge_index, edge_attr), out)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(compiled(x, adj.t(), edge_attr), out, atol=1e-6)
+            assert torch.allclose(compiled(x, adj.t(), edge_attr), out,
+                                  atol=1e-6)

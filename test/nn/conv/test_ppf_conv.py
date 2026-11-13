@@ -42,10 +42,12 @@ def test_ppf_conv():
 
     if is_full_test():
         compiled = torch.compile(conv)
-        assert torch.allclose(compiled(x1, pos1, n1, edge_index), out, atol=1e-3)
+        assert torch.allclose(compiled(x1, pos1, n1, edge_index), out,
+                              atol=1e-3)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(compiled(x1, pos1, n1, adj2.t()), out, atol=1e-3)
+            assert torch.allclose(compiled(x1, pos1, n1, adj2.t()), out,
+                                  atol=1e-3)
 
     # Test bipartite message passing:
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 2))

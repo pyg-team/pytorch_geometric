@@ -35,5 +35,5 @@ def test_heat_conv(concat):
             atol=1e-5)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(compiled(x, adj.t(), node_type, edge_type), out,
-                                  atol=1e-5)
+            assert torch.allclose(compiled(x, adj.t(), node_type, edge_type),
+                                  out, atol=1e-5)

@@ -48,8 +48,10 @@ def test_mf_conv():
     if is_full_test():
         compiled = torch.compile(conv)
         assert torch.allclose(compiled((x1, x2), edge_index), out1)
-        assert torch.allclose(compiled((x1, x2), edge_index, size=(4, 2)), out1)
-        assert torch.allclose(compiled((x1, None), edge_index, size=(4, 2)), out2)
+        assert torch.allclose(compiled((x1, x2), edge_index, size=(4, 2)),
+                              out1)
+        assert torch.allclose(compiled((x1, None), edge_index, size=(4, 2)),
+                              out2)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
             assert torch.allclose(compiled((x1, x2), adj.t()), out1)

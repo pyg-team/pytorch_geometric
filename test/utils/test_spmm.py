@@ -80,7 +80,7 @@ def test_spmm_layout(device, layout, reduce):
 def test_spmm_compile(reduce):
     @torch.compile
     def compiled_torch_sparse(src: SparseTensor, other: Tensor,
-                         reduce: str) -> Tensor:
+                              reduce: str) -> Tensor:
         return spmm(src, other, reduce=reduce)
 
     @torch.compile

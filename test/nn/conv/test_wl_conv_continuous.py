@@ -46,8 +46,10 @@ def test_wl_conv():
     if is_full_test():
         assert torch.allclose(
             compiled((x1, None), edge_index, edge_weight, size=(4, 2)), out1)
-        assert torch.allclose(compiled((x1, x2), edge_index, edge_weight), out2)
+        assert torch.allclose(compiled((x1, x2), edge_index, edge_weight),
+                              out2)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(compiled((x1, None), adj.t()), out1, atol=1e-6)
+            assert torch.allclose(compiled((x1, None), adj.t()), out1,
+                                  atol=1e-6)
             assert torch.allclose(compiled((x1, x2), adj.t()), out2, atol=1e-6)

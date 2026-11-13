@@ -33,7 +33,8 @@ def test_gcn2_conv():
     if is_full_test():
         compiled = torch.compile(conv)
         assert torch.allclose(compiled(x, x_0, edge_index), out1, atol=1e-6)
-        assert torch.allclose(compiled(x, x_0, edge_index, value), out2, atol=1e-6)
+        assert torch.allclose(compiled(x, x_0, edge_index, value), out2,
+                              atol=1e-6)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
             assert torch.allclose(compiled(x, x_0, adj3.t()), out1, atol=1e-6)

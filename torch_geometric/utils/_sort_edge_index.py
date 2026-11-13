@@ -1,6 +1,5 @@
 from typing import List, Optional, Tuple, Union, overload
 
-import torch
 from torch import Tensor
 
 import torch_geometric.typing

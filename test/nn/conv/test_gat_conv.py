@@ -146,12 +146,16 @@ def test_gat_conv(residual):
 
         compiled = torch.compile(MyModule())
         assert torch.allclose(compiled((x1, x2), edge_index), out1)
-        assert torch.allclose(compiled((x1, x2), edge_index, size=(4, 2)), out1)
-        assert torch.allclose(compiled((x1, None), edge_index, size=(4, 2)), out2)
+        assert torch.allclose(compiled((x1, x2), edge_index, size=(4, 2)),
+                              out1)
+        assert torch.allclose(compiled((x1, None), edge_index, size=(4, 2)),
+                              out2)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(compiled((x1, x2), adj2.t()), out1, atol=1e-6)
-            assert torch.allclose(compiled((x1, None), adj2.t()), out2, atol=1e-6)
+            assert torch.allclose(compiled((x1, x2), adj2.t()), out1,
+                                  atol=1e-6)
+            assert torch.allclose(compiled((x1, None), adj2.t()), out2,
+                                  atol=1e-6)
 
 
 def test_gat_conv_with_edge_attr():

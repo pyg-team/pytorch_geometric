@@ -34,11 +34,14 @@ def test_rect():
     if is_full_test():
         compiled = torch.compile(model)
         assert torch.allclose(compiled(x, edge_index), out, atol=1e-6)
-        assert torch.allclose(embed_out, compiled.embed(x, edge_index), atol=1e-6)
-        assert torch.allclose(labels_out, compiled.get_semantic_labels(x, y, mask))
+        assert torch.allclose(embed_out, compiled.embed(x, edge_index),
+                              atol=1e-6)
+        assert torch.allclose(labels_out,
+                              compiled.get_semantic_labels(x, y, mask))
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
             assert torch.allclose(compiled(x, adj.t()), out, atol=1e-6)
-            assert torch.allclose(embed_out, compiled.embed(x, adj.t()), atol=1e-6)
+            assert torch.allclose(embed_out, compiled.embed(x, adj.t()),
+                                  atol=1e-6)
             assert torch.allclose(labels_out,
                                   compiled.get_semantic_labels(x, y, mask))

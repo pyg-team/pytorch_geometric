@@ -82,7 +82,8 @@ def test_rgcn_conv_basic(cls, conf, device):
 
     if is_full_test():
         compiled = torch.compile(conv)
-        assert torch.allclose(compiled(x1, edge_index, edge_type), out1, atol=1e-3)
+        assert torch.allclose(compiled(x1, edge_index, edge_type), out1,
+                              atol=1e-3)
         if num_blocks is None:
             assert torch.allclose(compiled(idx1, edge_index, edge_type), out2,
                                   atol=1e-3)
@@ -120,10 +121,10 @@ def test_rgcn_conv_basic(cls, conf, device):
         assert torch.allclose(compiled((x1, x2), edge_index, edge_type), out1,
                               atol=1e-3)
         if num_blocks is None:
-            assert torch.allclose(compiled((None, idx2), edge_index, edge_type),
-                                  out2, atol=1e-3)
-            assert torch.allclose(compiled((idx1, idx2), edge_index, edge_type),
-                                  out2, atol=1e-3)
+            assert torch.allclose(
+                compiled((None, idx2), edge_index, edge_type), out2, atol=1e-3)
+            assert torch.allclose(
+                compiled((idx1, idx2), edge_index, edge_type), out2, atol=1e-3)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
             assert torch.allclose(compiled((x1, x2), adj.t()), out1, atol=1e-3)

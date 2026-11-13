@@ -60,8 +60,9 @@ def test_point_net_conv():
                               atol=1e-6)
 
     if is_full_test():
-        assert torch.allclose(compiled((x1, None), (pos1, pos2), edge_index), out)
+        assert torch.allclose(compiled((x1, None), (pos1, pos2), edge_index),
+                              out)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(compiled((x1, None), (pos1, pos2), adj2.t()), out,
-                                  atol=1e-6)
+            assert torch.allclose(compiled((x1, None), (pos1, pos2), adj2.t()),
+                                  out, atol=1e-6)

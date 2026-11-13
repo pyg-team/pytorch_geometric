@@ -42,7 +42,8 @@ def test_cheb_conv():
     assert out5.size() == (num_nodes, out_channels)
 
     if is_full_test():
-        assert torch.allclose(compiled(x, edge_index, edge_weight, batch), out4)
+        assert torch.allclose(compiled(x, edge_index, edge_weight, batch),
+                              out4)
         assert torch.allclose(
             compiled(x, edge_index, edge_weight, batch, lambda_max), out5)
 

@@ -23,7 +23,8 @@ def test_dense_mincut_pool():
     if is_full_test():
         compiled = torch.compile(dense_mincut_pool)
 
-        x_compiled, adj_compiled, mincut_loss, ortho_loss = compiled(x, adj, s, mask)
+        x_compiled, adj_compiled, mincut_loss, ortho_loss = compiled(
+            x, adj, s, mask)
         assert x_compiled.size() == (2, 10, 16)
         assert adj_compiled.size() == (2, 10, 10)
         assert -1 <= mincut_loss <= 0

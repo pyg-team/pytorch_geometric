@@ -1,7 +1,6 @@
 from copy import copy
 from typing import Dict, Optional, Tuple, Union
 
-import torch
 from torch import Tensor
 
 import torch_geometric

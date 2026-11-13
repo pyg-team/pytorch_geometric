@@ -60,7 +60,9 @@ def test_point_transformer_conv():
 
     if is_full_test():
         compiled = torch.compile(conv)
-        assert torch.allclose(compiled((x1, x2), (pos1, pos2), edge_index), out)
+        assert torch.allclose(compiled((x1, x2), (pos1, pos2), edge_index),
+                              out)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(compiled((x1, x2), (pos1, pos2), adj2.t()), out)
+            assert torch.allclose(compiled((x1, x2), (pos1, pos2), adj2.t()),
+                                  out)
