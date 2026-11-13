@@ -107,10 +107,12 @@ def scatter(
             else:
                 info = torch.iinfo(src.dtype)
                 fill = info.max if 'min' in reduce else info.min
-            out = src.new_full(size, fill).scatter_reduce_(
-                dim, index, src, reduce=f'a{reduce[-3:]}', include_self=True)
-            count = index.new_zeros(size).scatter_add_(
-                dim, index, torch.ones_like(index))
+            out = src.new_full(size,
+                               fill).scatter_reduce_(dim, index, src,
+                                                     reduce=f'a{reduce[-3:]}',
+                                                     include_self=True)
+            count = index.new_zeros(size).scatter_add_(dim, index,
+                                                       torch.ones_like(index))
             return out.masked_fill(count == 0, 0)
 
         return torch_scatter.scatter(src, index, dim, dim_size=dim_size,
