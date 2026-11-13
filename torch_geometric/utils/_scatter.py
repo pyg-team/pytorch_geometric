@@ -99,18 +99,21 @@ def scatter(
                     dim, index, src, reduce=f'a{reduce[-3:]}',
                     include_self=False)
 
-            fill = torch.full(  # type: ignore
-                size=(1, ),
-                fill_value=src.min() if 'max' in reduce else src.max(),
-                dtype=src.dtype,
-                device=src.device,
-            ).expand_as(src)
-            out = src.new_zeros(size).scatter_reduce_(dim, index, fill,
-                                                      reduce=f'a{reduce[-3:]}',
-                                                      include_self=True)
-            return out.scatter_reduce_(dim, index, src,
-                                       reduce=f'a{reduce[-3:]}',
-                                       include_self=True)
+            # `include_self=False` is currently not supported by ONNX, so we
+            # start from the identity element of the reduction instead and
+            # reset empty groups to zero afterwards:
+            if src.is_floating_point():
+                fill = float('inf') if 'min' in reduce else float('-inf')
+            else:
+                info = torch.iinfo(src.dtype)
+                fill = info.max if 'min' in reduce else info.min
+            out = src.new_full(size,
+                               fill).scatter_reduce_(dim, index, src,
+                                                     reduce=f'a{reduce[-3:]}',
+                                                     include_self=True)
+            count = index.new_zeros(size).scatter_add_(dim, index,
+                                                       torch.ones_like(index))
+            return out.masked_fill(count == 0, 0)
 
         return torch_scatter.scatter(src, index, dim, dim_size=dim_size,
                                      reduce=reduce[-3:])
