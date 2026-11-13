@@ -1,6 +1,5 @@
 from typing import Final, Tuple, Union
 
-import torch
 from torch import Tensor
 
 from torch_geometric import EdgeIndex
@@ -101,7 +100,7 @@ class GraphConv(MessagePassing):
         edge_weight: OptTensor,
     ) -> Tensor:
 
-        if not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+        if isinstance(edge_index, EdgeIndex):
             return edge_index.matmul(
                 other=x[0],
                 input_value=edge_weight,

@@ -4,7 +4,6 @@ import torch
 import torch.fx
 from torch.nn import Dropout, Linear, ReLU
 
-import torch_geometric.typing
 from torch_geometric.nn import (
     GCNConv,
     JumpingKnowledge,
@@ -14,7 +13,6 @@ from torch_geometric.nn import (
     global_mean_pool,
     to_hetero,
 )
-from torch_geometric.typing import SparseTensor
 
 
 def test_sequential_basic():
@@ -67,7 +65,7 @@ def test_sequential_basic():
     assert out.size() == (1, 7)
 
 
-def test_sequential_jit():
+def test_sequential_compile():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
 
@@ -78,19 +76,7 @@ def test_sequential_jit():
         ReLU(inplace=True),
         Linear(64, 7),
     ])
-    torch.jit.script(model)(x, edge_index)
-
-    if torch_geometric.typing.WITH_TORCH_SPARSE:
-        adj_t = SparseTensor.from_edge_index(edge_index).t()
-
-        model = Sequential('x: Tensor, edge_index: SparseTensor', [
-            (GCNConv(16, 64), 'x, edge_index -> x'),
-            ReLU(inplace=True),
-            (GCNConv(64, 64), 'x, edge_index -> x'),
-            ReLU(inplace=True),
-            Linear(64, 7),
-        ])
-        torch.jit.script(model)(x, adj_t)
+    torch.compile(model)(x, edge_index)
 
 
 def symbolic_trace(module):

@@ -23,7 +23,7 @@ def test_batch_norm(device, conf):
     assert (bn.bias is not None) == conf
 
     if is_full_test():
-        torch.jit.script(norm)
+        torch.compile(norm)
 
     out = norm(x)
     assert out.size() == (100, 16)

@@ -14,7 +14,7 @@ def test_graph_norm(device):
     assert str(norm) == 'GraphNorm(16)'
 
     if is_full_test():
-        torch.jit.script(norm)
+        torch.compile(norm)
 
     out = norm(x)
     assert out.size() == (200, 16)

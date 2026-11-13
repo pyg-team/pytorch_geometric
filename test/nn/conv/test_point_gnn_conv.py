@@ -33,8 +33,8 @@ def test_point_gnn_conv():
         assert torch.allclose(conv(x, pos, adj2.t()), out, atol=1e-6)
 
     if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x, pos, edge_index), out, atol=1e-6)
+        compiled = torch.compile(conv)
+        assert torch.allclose(compiled(x, pos, edge_index), out, atol=1e-6)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x, pos, adj2.t()), out, atol=1e-6)
+            assert torch.allclose(compiled(x, pos, adj2.t()), out, atol=1e-6)

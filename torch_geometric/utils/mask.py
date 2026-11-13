@@ -18,10 +18,9 @@ def mask_select(src: Tensor, dim: int, mask: Tensor) -> Tensor:
     """
     assert mask.dim() == 1
 
-    if not torch.jit.is_scripting():
-        if isinstance(src, TensorFrame):
-            assert dim == 0 and src.num_rows == mask.numel()
-            return src[mask]
+    if isinstance(src, TensorFrame):
+        assert dim == 0 and src.num_rows == mask.numel()
+        return src[mask]
 
     assert src.size(dim) == mask.numel()
     dim = dim + src.dim() if dim < 0 else dim

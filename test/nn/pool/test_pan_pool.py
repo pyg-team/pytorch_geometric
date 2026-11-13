@@ -25,8 +25,8 @@ def test_pan_pooling():
     assert score.size() == (2, )
 
     if is_full_test():
-        jit = torch.jit.script(pool)
-        out = jit(x, M)
+        compiled = torch.compile(pool)
+        out = compiled(x, M)
         assert torch.allclose(h, out[0])
         assert torch.equal(edge_index, out[1])
         assert torch.allclose(edge_weight, out[2])

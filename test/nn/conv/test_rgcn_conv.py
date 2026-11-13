@@ -81,19 +81,20 @@ def test_rgcn_conv_basic(cls, conf, device):
             assert torch.allclose(conv(idx1, adj.t()), out2, atol=1e-3)
 
     if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x1, edge_index, edge_type), out1, atol=1e-3)
+        compiled = torch.compile(conv)
+        assert torch.allclose(compiled(x1, edge_index, edge_type), out1,
+                              atol=1e-3)
         if num_blocks is None:
-            assert torch.allclose(jit(idx1, edge_index, edge_type), out2,
+            assert torch.allclose(compiled(idx1, edge_index, edge_type), out2,
                                   atol=1e-3)
-            assert torch.allclose(jit(None, edge_index, edge_type), out2,
+            assert torch.allclose(compiled(None, edge_index, edge_type), out2,
                                   atol=1e-3)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x1, adj.t()), out1)
+            assert torch.allclose(compiled(x1, adj.t()), out1)
             if num_blocks is None:
-                assert torch.allclose(jit(idx1, adj.t()), out2, atol=1e-3)
-                assert torch.allclose(jit(None, adj.t()), out2, atol=1e-3)
+                assert torch.allclose(compiled(idx1, adj.t()), out2, atol=1e-3)
+                assert torch.allclose(compiled(None, adj.t()), out2, atol=1e-3)
 
     # Test bipartite message passing:
     conv = cls((4, 16), 32, 2, num_bases, num_blocks, aggr='sum').to(device)
@@ -116,19 +117,19 @@ def test_rgcn_conv_basic(cls, conf, device):
             assert torch.allclose(conv((idx1, idx2), adj.t()), out2, atol=1e-3)
 
     if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit((x1, x2), edge_index, edge_type), out1,
+        compiled = torch.compile(conv)
+        assert torch.allclose(compiled((x1, x2), edge_index, edge_type), out1,
                               atol=1e-3)
         if num_blocks is None:
-            assert torch.allclose(jit((None, idx2), edge_index, edge_type),
-                                  out2, atol=1e-3)
-            assert torch.allclose(jit((idx1, idx2), edge_index, edge_type),
-                                  out2, atol=1e-3)
+            assert torch.allclose(
+                compiled((None, idx2), edge_index, edge_type), out2, atol=1e-3)
+            assert torch.allclose(
+                compiled((idx1, idx2), edge_index, edge_type), out2, atol=1e-3)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-3)
+            assert torch.allclose(compiled((x1, x2), adj.t()), out1, atol=1e-3)
             if num_blocks is None:
-                assert torch.allclose(jit((None, idx2), adj.t()), out2,
+                assert torch.allclose(compiled((None, idx2), adj.t()), out2,
                                       atol=1e-3)
-                assert torch.allclose(jit((idx1, idx2), adj.t()), out2,
+                assert torch.allclose(compiled((idx1, idx2), adj.t()), out2,
                                       atol=1e-3)

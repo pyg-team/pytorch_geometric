@@ -42,5 +42,5 @@ def test_signed_gcn():
         assert f1 >= 0
 
     if is_full_test():
-        jit = torch.jit.export(model)
-        assert torch.allclose(jit(x, train_pos_index, train_neg_index), z)
+        compiled = torch.compile(model)
+        assert torch.allclose(compiled(x, train_pos_index, train_neg_index), z)

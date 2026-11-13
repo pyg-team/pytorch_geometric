@@ -23,7 +23,7 @@ def test_asap():
         assert out[1].size() == (2, 2)
 
         if is_full_test():
-            torch.jit.script(pool)
+            torch.compile(pool)
 
         pool = ASAPooling(in_channels, ratio=0.5, GNN=GNN, add_self_loops=True)
         assert str(pool) == ('ASAPooling(16, ratio=0.5)')
@@ -39,6 +39,7 @@ def test_asap():
 
 
 @onlyFullTest
-def test_asap_jit_save():
+def test_asap_compile_save():
     pool = ASAPooling(in_channels=16)
-    torch.jit.save(torch.jit.script(pool), io.BytesIO())
+    model = torch.compile(pool)
+    torch.save(model, io.BytesIO())

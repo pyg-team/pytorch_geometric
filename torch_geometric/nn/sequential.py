@@ -258,16 +258,7 @@ class Sequential(torch.nn.Module):
 
             self.forward = module.forward.__get__(self)
 
-            # NOTE We override `forward` on the class level here in order to
-            # support `torch.jit.trace` - this is generally dangerous to do,
-            # and limits `torch.jit.trace` to a single `Sequential` module:
             self.__class__.forward = module.forward
         except Exception as e:  # pragma: no cover
             if raise_on_error:
                 raise e
-
-    def __prepare_scriptable__(self) -> 'Sequential':
-        # Prevent type sharing when scripting `Sequential` modules:
-        type_store = torch.jit._recursive.concrete_type_store.type_store
-        type_store.pop(self.__class__, None)
-        return self

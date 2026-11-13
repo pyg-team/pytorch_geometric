@@ -1,7 +1,6 @@
 from copy import copy
 from typing import Dict, Optional, Tuple, Union
 
-import torch
 from torch import Tensor
 
 import torch_geometric
@@ -15,19 +14,11 @@ def maybe_num_nodes(
 ) -> int:
     if num_nodes is not None:
         return num_nodes
-    elif not torch.jit.is_scripting() and isinstance(edge_index, EdgeIndex):
+    elif isinstance(edge_index, EdgeIndex):
         return max(edge_index.get_sparse_size())
     elif isinstance(edge_index, Tensor):
         if torch_geometric.utils.is_torch_sparse_tensor(edge_index):
             return max(edge_index.size(0), edge_index.size(1))
-
-        if torch.jit.is_tracing():
-            # Avoid non-traceable if-check for empty `edge_index` tensor:
-            tmp = torch.concat([
-                edge_index.view(-1),
-                edge_index.new_full((1, ), fill_value=-1)
-            ])
-            return tmp.max() + 1  # type: ignore
 
         return int(edge_index.max()) + 1 if edge_index.numel() > 0 else 0
     elif isinstance(edge_index, tuple):

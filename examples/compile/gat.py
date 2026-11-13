@@ -31,7 +31,7 @@ class GAT(torch.nn.Module):
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model, data = GAT().to(device), dataset[0].to(device)
-model = torch.jit.script(model)
+model = torch.compile(model)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.005, weight_decay=5e-4)
 
 

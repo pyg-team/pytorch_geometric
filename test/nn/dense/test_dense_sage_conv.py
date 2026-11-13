@@ -40,8 +40,8 @@ def test_dense_sage_conv():
     assert dense_out.size() == (2, 3, channels)
 
     if is_full_test():
-        jit = torch.jit.script(dense_conv)
-        assert torch.allclose(jit(x, adj, mask), dense_out)
+        compiled = torch.compile(dense_conv)
+        assert torch.allclose(compiled(x, adj, mask), dense_out)
 
     assert dense_out[1, 2].abs().sum().item() == 0
     dense_out = dense_out.view(6, channels)[:-1]

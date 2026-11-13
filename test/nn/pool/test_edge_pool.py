@@ -19,8 +19,8 @@ def test_compute_edge_score_softmax():
     )
 
     if is_full_test():
-        jit = torch.jit.script(EdgePooling.compute_edge_score_softmax)
-        assert torch.allclose(jit(raw, edge_index, 6), e)
+        compiled = torch.compile(EdgePooling.compute_edge_score_softmax)
+        assert torch.allclose(compiled(raw, edge_index, 6), e)
 
 
 def test_compute_edge_score_tanh():
@@ -32,8 +32,8 @@ def test_compute_edge_score_tanh():
     assert torch.all(torch.argsort(raw) == torch.argsort(e))
 
     if is_full_test():
-        jit = torch.jit.script(EdgePooling.compute_edge_score_tanh)
-        assert torch.allclose(jit(raw, edge_index, 6), e)
+        compiled = torch.compile(EdgePooling.compute_edge_score_tanh)
+        assert torch.allclose(compiled(raw, edge_index, 6), e)
 
 
 def test_compute_edge_score_sigmoid():
@@ -45,8 +45,8 @@ def test_compute_edge_score_sigmoid():
     assert torch.all(torch.argsort(raw) == torch.argsort(e))
 
     if is_full_test():
-        jit = torch.jit.script(EdgePooling.compute_edge_score_sigmoid)
-        assert torch.allclose(jit(raw, edge_index, 6), e)
+        compiled = torch.compile(EdgePooling.compute_edge_score_sigmoid)
+        assert torch.allclose(compiled(raw, edge_index, 6), e)
 
 
 def test_edge_pooling():
@@ -70,8 +70,8 @@ def test_edge_pooling():
     assert new_batch.tolist() == [1, 0, 0, 0]
 
     if is_full_test():
-        jit = torch.jit.script(op)
-        out = jit(x, edge_index, batch)
+        compiled = torch.compile(op)
+        out = compiled(x, edge_index, batch)
         assert torch.allclose(new_x, out[0])
         assert torch.equal(new_edge_index, out[1])
         assert torch.equal(new_batch, out[2])
@@ -84,8 +84,8 @@ def test_edge_pooling():
     assert torch.equal(out[2], batch)
 
     if is_full_test():
-        jit = torch.jit.export(op)
-        out = jit.unpool(new_x, unpool_info)
+        compiled = torch.compiled.export(op)
+        out = compiled.unpool(new_x, unpool_info)
         assert out[0].size() == x.size()
         assert out[0].tolist() == [[1], [1], [5], [5], [9], [9], [-1]]
         assert torch.equal(out[1], edge_index)

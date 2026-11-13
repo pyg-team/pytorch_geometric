@@ -20,7 +20,7 @@ def test_instance_norm(conf, device):
     assert str(norm1) == 'InstanceNorm(16)'
 
     if is_full_test():
-        torch.jit.script(norm1)
+        torch.compile(norm1)
 
     out1 = norm1(x1)
     out2 = norm2(x1, batch)

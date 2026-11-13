@@ -21,10 +21,10 @@ def test_wl_conv():
         assert torch.allclose(conv(x, adj.t()), out)
 
     if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x, edge_index), out)
+        compiled = torch.compile(conv)
+        assert torch.allclose(compiled(x, edge_index), out)
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
+            assert torch.allclose(compiled(x, adj.t()), out, atol=1e-6)
 
     # Test bipartite message passing:
     x1 = torch.randn(4, 8)
@@ -45,9 +45,11 @@ def test_wl_conv():
 
     if is_full_test():
         assert torch.allclose(
-            jit((x1, None), edge_index, edge_weight, size=(4, 2)), out1)
-        assert torch.allclose(jit((x1, x2), edge_index, edge_weight), out2)
+            compiled((x1, None), edge_index, edge_weight, size=(4, 2)), out1)
+        assert torch.allclose(compiled((x1, x2), edge_index, edge_weight),
+                              out2)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit((x1, None), adj.t()), out1, atol=1e-6)
-            assert torch.allclose(jit((x1, x2), adj.t()), out2, atol=1e-6)
+            assert torch.allclose(compiled((x1, None), adj.t()), out1,
+                                  atol=1e-6)
+            assert torch.allclose(compiled((x1, x2), adj.t()), out2, atol=1e-6)

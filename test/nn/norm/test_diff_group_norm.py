@@ -14,8 +14,8 @@ def test_diff_group_norm(device):
     assert torch.allclose(norm(x), x)
 
     if is_full_test():
-        jit = torch.jit.script(norm)
-        assert torch.allclose(jit(x), x)
+        compiled = torch.compile(norm)
+        assert torch.allclose(compiled(x), x)
 
     norm = DiffGroupNorm(16, groups=4, lamda=0.01, device=device)
     assert str(norm) == 'DiffGroupNorm(16, groups=4)'
@@ -24,8 +24,8 @@ def test_diff_group_norm(device):
     assert out.size() == x.size()
 
     if is_full_test():
-        jit = torch.jit.script(norm)
-        assert torch.allclose(jit(x), out)
+        compiled = torch.compile(norm)
+        assert torch.allclose(compiled(x), out)
 
 
 def test_group_distance_ratio():
@@ -35,5 +35,5 @@ def test_group_distance_ratio():
     assert DiffGroupNorm.group_distance_ratio(x, y) > 0
 
     if is_full_test():
-        jit = torch.jit.script(DiffGroupNorm.group_distance_ratio)
-        assert jit(x, y) > 0
+        compiled = torch.compile(DiffGroupNorm.group_distance_ratio)
+        assert compiled(x, y) > 0

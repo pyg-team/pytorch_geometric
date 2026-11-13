@@ -33,8 +33,8 @@ def test_dense_graph_conv(aggr):
     assert torch.allclose(sparse_out, dense_out, atol=1e-04)
 
     if is_full_test():
-        jit = torch.jit.script(dense_conv)
-        assert torch.allclose(jit(x, adj, mask), dense_out)
+        compiled = torch.compile(dense_conv)
+        assert torch.allclose(compiled(x, adj, mask), dense_out)
 
 
 @pytest.mark.parametrize('aggr', ['add', 'mean', 'max'])

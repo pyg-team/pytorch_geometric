@@ -25,11 +25,11 @@ def test_linkx(num_edge_layers):
         assert torch.allclose(out, model(x, adj.t()), atol=1e-6)
 
     if is_full_test():
-        jit = torch.jit.script(model)
-        assert torch.allclose(jit(x, edge_index), out)
+        compiled = torch.compile(model)
+        assert torch.allclose(compiled(x, edge_index), out)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
+            assert torch.allclose(compiled(x, adj.t()), out, atol=1e-6)
 
     out = model(None, edge_index)
     assert out.size() == (4, 8)

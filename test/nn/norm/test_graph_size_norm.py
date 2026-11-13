@@ -15,5 +15,5 @@ def test_graph_size_norm():
     assert out.size() == (100, 16)
 
     if is_full_test():
-        jit = torch.jit.script(norm)
-        assert torch.allclose(jit(x, batch), out)
+        compiled = torch.compile(norm)
+        assert torch.allclose(compiled(x, batch), out)

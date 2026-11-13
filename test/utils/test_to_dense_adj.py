@@ -17,8 +17,8 @@ def test_to_dense_adj():
     assert adj[1].tolist() == [[0, 1, 0], [0, 0, 1], [1, 0, 0]]
 
     if is_full_test():
-        jit = torch.jit.script(to_dense_adj)
-        adj = jit(edge_index, batch)
+        compiled = torch.compile(to_dense_adj)
+        adj = compiled(edge_index, batch)
         assert adj.size() == (2, 3, 3)
         assert adj[0].tolist() == [[1, 1, 0], [1, 0, 0], [0, 0, 0]]
         assert adj[1].tolist() == [[0, 1, 0], [0, 0, 1], [1, 0, 0]]

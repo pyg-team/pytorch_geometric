@@ -114,9 +114,9 @@ def test_to_dense_batch_overflow():
 
 
 @onlyFullTest
-def test_to_dense_batch_jit():
-    @torch.jit.script
-    def to_dense_batch_jit(
+def test_to_dense_batch_compile():
+    @torch.compile
+    def to_dense_batch_compiled(
         x: Tensor,
         batch: Tensor,
         fill_value: Tensor,
@@ -126,6 +126,6 @@ def test_to_dense_batch_jit():
     x = torch.randn(6, 2)
     batch = torch.tensor([0, 0, 1, 2, 2, 2])
 
-    out, mask = to_dense_batch_jit(x, batch, fill_value=torch.tensor(0.0))
+    out, mask = to_dense_batch_compiled(x, batch, fill_value=torch.tensor(0.0))
     assert out.size() == (3, 3, 2)
     assert mask.size() == (3, 3)

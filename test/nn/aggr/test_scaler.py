@@ -20,7 +20,7 @@ def test_degree_scaler_aggregation(train_norm):
 
     out = aggr(x, index)
     assert out.size() == (3, 240)
-    assert torch.allclose(torch.jit.script(aggr)(x, index), out)
+    assert torch.allclose(torch.compile(aggr)(x, index), out)
 
     with pytest.raises(NotImplementedError, match="requires 'index'"):
         aggr(x, ptr=ptr)

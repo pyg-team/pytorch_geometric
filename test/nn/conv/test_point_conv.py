@@ -37,11 +37,11 @@ def test_point_net_conv():
         assert torch.allclose(conv(x1, pos1, adj2.t()), out, atol=1e-6)
 
     if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x1, pos1, edge_index), out, atol=1e-6)
+        compiled = torch.compile(conv)
+        assert torch.allclose(compiled(x1, pos1, edge_index), out, atol=1e-6)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x1, pos1, adj2.t()), out, atol=1e-6)
+            assert torch.allclose(compiled(x1, pos1, adj2.t()), out, atol=1e-6)
 
     # Test bipartite message passing:
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 2))
@@ -60,8 +60,9 @@ def test_point_net_conv():
                               atol=1e-6)
 
     if is_full_test():
-        assert torch.allclose(jit((x1, None), (pos1, pos2), edge_index), out)
+        assert torch.allclose(compiled((x1, None), (pos1, pos2), edge_index),
+                              out)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit((x1, None), (pos1, pos2), adj2.t()), out,
-                                  atol=1e-6)
+            assert torch.allclose(compiled((x1, None), (pos1, pos2), adj2.t()),
+                                  out, atol=1e-6)

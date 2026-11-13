@@ -12,7 +12,7 @@ def test_mean_subtraction_norm():
     assert str(norm) == 'MeanSubtractionNorm()'
 
     if is_full_test():
-        torch.jit.script(norm)
+        torch.compile(norm)
 
     out = norm(x)
     assert out.size() == (6, 16)

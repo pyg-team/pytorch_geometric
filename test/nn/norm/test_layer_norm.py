@@ -16,7 +16,7 @@ def test_layer_norm(device, affine, mode):
     assert str(norm) == f'LayerNorm(16, affine={affine}, mode={mode})'
 
     if is_full_test():
-        torch.jit.script(norm)
+        torch.compile(norm)
 
     out1 = norm(x)
     assert out1.size() == (100, 16)

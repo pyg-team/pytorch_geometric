@@ -34,14 +34,14 @@ def test_signed_conv():
         assert torch.allclose(conv2(out1, adj2.t(), adj2.t()), out2)
 
     if is_full_test():
-        jit1 = torch.jit.script(conv1)
-        jit2 = torch.jit.script(conv2)
-        assert torch.allclose(jit1(x, edge_index, edge_index), out1)
-        assert torch.allclose(jit2(out1, edge_index, edge_index), out2)
+        compiled1 = torch.compile(conv1)
+        compiled2 = torch.compile(conv2)
+        assert torch.allclose(compiled1(x, edge_index, edge_index), out1)
+        assert torch.allclose(compiled2(out1, edge_index, edge_index), out2)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit1(x, adj2.t(), adj2.t()), out1)
-            assert torch.allclose(jit2(out1, adj2.t(), adj2.t()), out2)
+            assert torch.allclose(compiled1(x, adj2.t(), adj2.t()), out1)
+            assert torch.allclose(compiled2(out1, adj2.t(), adj2.t()), out2)
 
     # Test bipartite message passing:
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 2))
@@ -63,13 +63,15 @@ def test_signed_conv():
                               out2[:2], atol=1e-6)
 
     if is_full_test():
-        assert torch.allclose(jit1((x, x[:2]), edge_index, edge_index),
+        assert torch.allclose(compiled1((x, x[:2]), edge_index, edge_index),
                               out1[:2], atol=1e-6)
-        assert torch.allclose(jit2((out1, out1[:2]), edge_index, edge_index),
-                              out2[:2], atol=1e-6)
+        assert torch.allclose(
+            compiled2((out1, out1[:2]), edge_index, edge_index), out2[:2],
+            atol=1e-6)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit1((x, x[:2]), adj2.t(), adj2.t()),
+            assert torch.allclose(compiled1((x, x[:2]), adj2.t(), adj2.t()),
                                   out1[:2], atol=1e-6)
-            assert torch.allclose(jit2((out1, out1[:2]), adj2.t(), adj2.t()),
-                                  out2[:2], atol=1e-6)
+            assert torch.allclose(
+                compiled2((out1, out1[:2]), adj2.t(), adj2.t()), out2[:2],
+                atol=1e-6)

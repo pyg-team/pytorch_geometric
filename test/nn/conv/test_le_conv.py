@@ -23,8 +23,8 @@ def test_le_conv():
         assert torch.allclose(conv(x, adj2.t()), out)
 
     if is_full_test():
-        jit = torch.jit.script(conv)
-        torch.allclose(jit(x, edge_index), out)
+        compiled = torch.compile(conv)
+        torch.allclose(compiled(x, edge_index), out)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x, adj2.t()), out)
+            assert torch.allclose(compiled(x, adj2.t()), out)

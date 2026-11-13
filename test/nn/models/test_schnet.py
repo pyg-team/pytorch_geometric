@@ -44,8 +44,8 @@ def test_schnet(use_interaction_graph, use_atomref):
         assert out.size() == (1, 1)
 
         if is_full_test():
-            jit = torch.jit.export(model)
-            out = jit(data.z, data.pos)
+            compiled = torch.compile(model)
+            out = compiled(data.z, data.pos)
             assert out.size() == (1, 1)
 
 

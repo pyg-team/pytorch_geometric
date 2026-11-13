@@ -53,11 +53,11 @@ def test_eg_conv(aggregators, add_self_loops):
         assert torch.allclose(conv(x, adj2.t()), out, atol=1e-2)
 
     if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x, edge_index), out, atol=1e-2)
+        compiled = torch.compile(conv)
+        assert torch.allclose(compiled(x, edge_index), out, atol=1e-2)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x, adj2.t()), out, atol=1e-2)
+            assert torch.allclose(compiled(x, adj2.t()), out, atol=1e-2)
 
 
 def test_eg_conv_with_sparse_input_feature():

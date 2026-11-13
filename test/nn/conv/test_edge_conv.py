@@ -36,13 +36,13 @@ def test_edge_conv_conv():
         assert torch.allclose(conv((x1, x1), adj2.t()), out, atol=1e-6)
 
     if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x1, edge_index), out, atol=1e-6)
-        assert torch.allclose(jit((x1, x1), edge_index), out, atol=1e-6)
+        compiled = torch.compile(conv)
+        assert torch.allclose(compiled(x1, edge_index), out, atol=1e-6)
+        assert torch.allclose(compiled((x1, x1), edge_index), out, atol=1e-6)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x1, adj2.t()), out, atol=1e-6)
-            assert torch.allclose(jit((x1, x1), adj2.t()), out, atol=1e-6)
+            assert torch.allclose(compiled(x1, adj2.t()), out, atol=1e-6)
+            assert torch.allclose(compiled((x1, x1), adj2.t()), out, atol=1e-6)
 
     # Test bipartite message passing:
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 2))
@@ -56,10 +56,10 @@ def test_edge_conv_conv():
         assert torch.allclose(conv((x1, x2), adj2.t()), out, atol=1e-6)
 
     if is_full_test():
-        assert torch.allclose(jit((x1, x2), edge_index), out, atol=1e-6)
+        assert torch.allclose(compiled((x1, x2), edge_index), out, atol=1e-6)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit((x1, x2), adj2.t()), out, atol=1e-6)
+            assert torch.allclose(compiled((x1, x2), adj2.t()), out, atol=1e-6)
 
 
 @withPackage('pyg_lib')
@@ -90,8 +90,8 @@ def test_dynamic_edge_conv():
     assert out22.size() == (4, 32)
 
     if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x1), out11)
-        assert torch.allclose(jit(x1, batch1), out12)
-        assert torch.allclose(jit((x1, x2)), out21)
-        assert torch.allclose(jit((x1, x2), (batch1, batch2)), out22)
+        compiled = torch.compile(conv)
+        assert torch.allclose(compiled(x1), out11)
+        assert torch.allclose(compiled(x1, batch1), out12)
+        assert torch.allclose(compiled((x1, x2)), out21)
+        assert torch.allclose(compiled((x1, x2), (batch1, batch2)), out22)

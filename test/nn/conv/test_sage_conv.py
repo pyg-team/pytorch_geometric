@@ -25,13 +25,14 @@ def test_sage_conv(project, aggr):
     out = assert_module(conv, x, edge_index, expected_size=(4, 32))
 
     if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit(x, edge_index), out, atol=1e-6)
-        assert torch.allclose(jit(x, edge_index, size=(4, 4)), out, atol=1e-6)
+        compiled = torch.compile(conv)
+        assert torch.allclose(compiled(x, edge_index), out, atol=1e-6)
+        assert torch.allclose(compiled(x, edge_index, size=(4, 4)), out,
+                              atol=1e-6)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
             adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
-            assert torch.allclose(jit(x, adj.t()), out, atol=1e-6)
+            assert torch.allclose(compiled(x, adj.t()), out, atol=1e-6)
 
     # Test bipartite message passing:
     x1 = torch.randn(4, 8)
@@ -45,15 +46,18 @@ def test_sage_conv(project, aggr):
                          expected_size=(2, 32))
 
     if is_full_test():
-        jit = torch.jit.script(conv)
-        assert torch.allclose(jit((x1, x2), edge_index), out1, atol=1e-6)
-        assert torch.allclose(jit((x1, x2), edge_index, size=(4, 2)), out1)
-        assert torch.allclose(jit((x1, None), edge_index, size=(4, 2)), out2)
+        compiled = torch.compile(conv)
+        assert torch.allclose(compiled((x1, x2), edge_index), out1, atol=1e-6)
+        assert torch.allclose(compiled((x1, x2), edge_index, size=(4, 2)),
+                              out1)
+        assert torch.allclose(compiled((x1, None), edge_index, size=(4, 2)),
+                              out2)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
             adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 2))
-            assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-6)
-            assert torch.allclose(jit((x1, None), adj.t()), out2, atol=1e-6)
+            assert torch.allclose(compiled((x1, x2), adj.t()), out1, atol=1e-6)
+            assert torch.allclose(compiled((x1, None), adj.t()), out2,
+                                  atol=1e-6)
 
 
 @pytest.mark.parametrize('project', [False, True])

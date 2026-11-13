@@ -43,11 +43,11 @@ def test_fa_conv():
             ) -> Tensor:
                 return self.conv(x, x_0, edge_index)
 
-        jit = torch.jit.script(MyModule())
-        assert torch.allclose(jit(x, x_0, edge_index), out, atol=1e-6)
+        compiled = torch.compile(MyModule())
+        assert torch.allclose(compiled(x, x_0, edge_index), out, atol=1e-6)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x, x_0, adj2.t()), out)
+            assert torch.allclose(compiled(x, x_0, adj2.t()), out)
 
     conv.reset_parameters()
     assert conv._cached_edge_index is None
@@ -95,8 +95,8 @@ def test_fa_conv():
                 return self.conv(x, x_0, edge_index,
                                  return_attention_weights=True)
 
-        jit = torch.jit.script(MyModule())
-        result = jit(x, x_0, edge_index)
+        compiled = torch.compile(MyModule())
+        result = compiled(x, x_0, edge_index)
         assert torch.allclose(result[0], out, atol=1e-6)
         assert result[1][0].size() == (2, 10)
         assert result[1][1].size() == (10, )
@@ -118,8 +118,8 @@ def test_fa_conv():
                     return self.conv(x, x_0, edge_index,
                                      return_attention_weights=True)
 
-            jit = torch.jit.script(MyModule())
-            result = jit(x, x_0, adj2.t())
+            compiled = torch.compile(MyModule())
+            result = compiled(x, x_0, adj2.t())
             assert torch.allclose(result[0], out, atol=1e-6)
             assert result[1].sizes() == [4, 4] and result[1].nnz() == 10
             assert conv._alpha is None

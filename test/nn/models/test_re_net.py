@@ -46,7 +46,7 @@ def test_re_net(tmp_path):
                   seq_len=4)
 
     if is_full_test():
-        jit = torch.jit.export(model)
+        compiled = torch.compile(model)
 
     logits = torch.randn(6, 6)
     y = torch.tensor([0, 1, 2, 3, 4, 5])
@@ -58,8 +58,8 @@ def test_re_net(tmp_path):
     for data in loader:
         log_prob_obj, log_prob_sub = model(data)
         if is_full_test():
-            log_prob_obj_jit, log_prob_sub_jit = jit(data)
-            assert torch.allclose(log_prob_obj_jit, log_prob_obj)
-            assert torch.allclose(log_prob_sub_jit, log_prob_sub)
+            log_prob_obj_compiled, log_prob_sub_compiled = compiled(data)
+            assert torch.allclose(log_prob_obj_compiled, log_prob_obj)
+            assert torch.allclose(log_prob_sub_compiled, log_prob_sub)
         model.test(log_prob_obj, data.obj)
         model.test(log_prob_sub, data.sub)

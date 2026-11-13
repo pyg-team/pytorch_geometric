@@ -34,7 +34,7 @@ def spmm(
     if reduce not in ['sum', 'mean', 'min', 'max']:
         raise ValueError(f"`reduce` argument '{reduce}' not supported")
 
-    if not torch.jit.is_scripting() and isinstance(src, EdgeIndex):
+    if isinstance(src, EdgeIndex):
         return src.matmul(other=other, reduce=reduce)  # type: ignore
 
     if isinstance(src, SparseTensor):
