@@ -103,14 +103,14 @@ def to_dense_batch(
         batch = x.new_zeros(x.size(0), dtype=torch.long)
 
     if batch_size is None:
-        batch_size = int(batch.max()) + 1
+        batch_size = int(batch.max()) + 1 if batch.numel() > 0 else 0
 
     num_nodes = scatter(batch.new_ones(x.size(0)), batch, dim=0,
                         dim_size=batch_size, reduce='sum')
     cum_nodes = cumsum(num_nodes)
 
     if max_num_nodes is None:
-        max_num_nodes = int(num_nodes.max())
+        max_num_nodes = int(num_nodes.max()) if num_nodes.numel() > 0 else 0
 
     tmp = torch.arange(batch.size(0), device=x.device) - cum_nodes[batch]
     idx = tmp + (batch * max_num_nodes)

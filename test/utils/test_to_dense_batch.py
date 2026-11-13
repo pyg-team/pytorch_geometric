@@ -129,3 +129,20 @@ def test_to_dense_batch_jit():
     out, mask = to_dense_batch_jit(x, batch, fill_value=torch.tensor(0.0))
     assert out.size() == (3, 3, 2)
     assert mask.size() == (3, 3)
+
+
+@pytest.mark.parametrize('batch_size', [None, 0, 2])
+@pytest.mark.parametrize('max_num_nodes', [None, 3])
+def test_to_dense_batch_empty(batch_size, max_num_nodes):
+    x = torch.randn(0, 4)
+    batch = torch.empty(0, dtype=torch.long)
+
+    out, mask = to_dense_batch(x, batch, batch_size=batch_size,
+                               max_num_nodes=max_num_nodes)
+
+    expected_batch_size = batch_size or 0
+    expected_max_num_nodes = max_num_nodes or 0
+    assert out.size() == (expected_batch_size, expected_max_num_nodes, 4)
+    assert mask.size() == (expected_batch_size, expected_max_num_nodes)
+    assert mask.dtype == torch.bool
+    assert not mask.any()
