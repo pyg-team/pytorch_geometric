@@ -26,8 +26,8 @@ def test_filter_edges():
     assert out1.batch.tolist() == [0, 1]
 
     if is_full_test():
-        jit = torch.compile(connect)
-        out2 = jit(select_output, edge_index, edge_attr, batch)
+        compiled = torch.compile(connect)
+        out2 = compiled(select_output, edge_index, edge_attr, batch)
         torch.equal(out1.edge_index, out2.edge_index)
         torch.equal(out1.edge_attr, out2.edge_attr)
         torch.equal(out1.batch, out2.batch)

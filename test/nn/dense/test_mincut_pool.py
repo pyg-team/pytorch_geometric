@@ -21,10 +21,10 @@ def test_dense_mincut_pool():
     assert 0 <= ortho_loss <= 2
 
     if is_full_test():
-        jit = torch.compile(dense_mincut_pool)
+        compiled = torch.compile(dense_mincut_pool)
 
-        x_jit, adj_jit, mincut_loss, ortho_loss = jit(x, adj, s, mask)
-        assert x_jit.size() == (2, 10, 16)
-        assert adj_jit.size() == (2, 10, 10)
+        x_compiled, adj_compiled, mincut_loss, ortho_loss = compiled(x, adj, s, mask)
+        assert x_compiled.size() == (2, 10, 16)
+        assert adj_compiled.size() == (2, 10, 10)
         assert -1 <= mincut_loss <= 0
         assert 0 <= ortho_loss <= math.sqrt(2)

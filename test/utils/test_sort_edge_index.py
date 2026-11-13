@@ -38,7 +38,7 @@ def test_sort_edge_index():
     assert out[1][1].tolist() == [4, 3, 2, 1]
 
 
-def test_sort_edge_index_jit():
+def test_sort_edge_index_compile():
     @torch.compile
     def wrapper1(edge_index: Tensor) -> Tensor:
         return sort_edge_index(edge_index)

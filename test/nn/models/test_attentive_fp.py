@@ -19,5 +19,5 @@ def test_attentive_fp():
     assert out.size() == (1, 32)
 
     if is_full_test():
-        jit = torch.compile(model)
-        assert torch.allclose(jit(x, edge_index, edge_attr, batch), out)
+        compiled = torch.compile(model)
+        assert torch.allclose(compiled(x, edge_index, edge_attr, batch), out)

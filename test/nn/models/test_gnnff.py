@@ -21,5 +21,5 @@ def test_gnnff():
     assert out.size() == (20, 3)
 
     if is_full_test():
-        jit = torch.jit.export(model)
-        assert torch.allclose(jit(z, pos), out)
+        compiled = torch.compile(model)
+        assert torch.allclose(compiled(z, pos), out)

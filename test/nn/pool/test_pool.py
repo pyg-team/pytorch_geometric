@@ -9,7 +9,7 @@ from torch_geometric.testing import onlyFullTest, withPackage
 
 @onlyFullTest
 @withPackage('pyg_lib')
-def test_radius_graph_jit():
+def test_radius_graph_compile():
     class Net(torch.nn.Module):
         def forward(self, x: Tensor, batch: Optional[Tensor] = None) -> Tensor:
             return radius_graph(x, r=2.5, batch=batch, loop=False)
@@ -18,5 +18,5 @@ def test_radius_graph_jit():
     batch = torch.tensor([0, 0, 0, 0])
 
     model = Net()
-    jit = torch.compile(model)
-    assert model(x, batch).size() == jit(x, batch).size()
+    compiled = torch.compile(model)
+    assert model(x, batch).size() == compiled(x, batch).size()

@@ -24,5 +24,5 @@ def test_neural_fingerprint(batch):
         assert torch.allclose(model(x, adj.t(), batch), out)
 
     if is_full_test():
-        jit = torch.jit.export(model)
-        assert torch.allclose(jit(x, edge_index, batch), out)
+        compiled = torch.compile(model)
+        assert torch.allclose(compiled(x, edge_index, batch), out)

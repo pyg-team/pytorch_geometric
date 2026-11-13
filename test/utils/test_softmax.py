@@ -23,8 +23,8 @@ def test_softmax():
     assert out.tolist() == [[0.5], [0.5], [1], [1]]
     assert softmax(src, ptr=ptr).tolist() == out.tolist()
 
-    jit = torch.compile(softmax)
-    assert torch.allclose(jit(src, index), out)
+    compiled = torch.compile(softmax)
+    assert torch.allclose(compiled(src, index), out)
 
 
 def test_softmax_backward():

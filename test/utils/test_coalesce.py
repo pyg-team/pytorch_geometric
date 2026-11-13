@@ -53,7 +53,7 @@ def test_coalesce_without_duplicates():
     assert out[1][1].tolist() == [4, 3, 2, 1]
 
 
-def test_coalesce_jit():
+def test_coalesce_compile():
     @torch.compile
     def wrapper1(edge_index: Tensor) -> Tensor:
         return coalesce(edge_index)

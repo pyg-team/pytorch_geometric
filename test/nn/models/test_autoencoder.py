@@ -28,9 +28,9 @@ def test_gae():
     assert torch.allclose(value, torch.tensor([-1.0, 4.0]).sigmoid())
 
     if is_full_test():
-        jit = torch.jit.export(model)
-        assert torch.allclose(jit.encode(x), z)
-        assert torch.allclose(jit.decode(z, edge_index), value)
+        compiled = torch.compile(model)
+        assert torch.allclose(compiled.encode(x), z)
+        assert torch.allclose(compiled.decode(z, edge_index), value)
 
     edge_index = torch.tensor([[0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
                                [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]])
@@ -60,9 +60,9 @@ def test_vgae():
     model.encode(x)
 
     if is_full_test():
-        jit = torch.jit.export(model)
-        jit.encode(x)
-        assert float(jit.kl_loss()) > 0
+        compiled = torch.compile(model)
+        compiled.encode(x)
+        assert float(compiled.kl_loss()) > 0
 
 
 def test_arga():
@@ -76,10 +76,10 @@ def test_arga():
     assert float(model.discriminator_loss(z)) > 0
 
     if is_full_test():
-        jit = torch.jit.export(model)
-        assert torch.allclose(jit.encode(x), z)
-        assert float(jit.reg_loss(z)) > 0
-        assert float(jit.discriminator_loss(z)) > 0
+        compiled = torch.compile(model)
+        assert torch.allclose(compiled.encode(x), z)
+        assert float(compiled.reg_loss(z)) > 0
+        assert float(compiled.discriminator_loss(z)) > 0
 
 
 def test_argva():
@@ -91,10 +91,10 @@ def test_argva():
     assert float(model.kl_loss()) > 0
 
     if is_full_test():
-        jit = torch.jit.export(model)
-        jit.encode(x)
-        jit.reparametrize(jit.__mu__, jit.__logstd__)
-        assert float(jit.kl_loss()) > 0
+        compiled = torch.compile(model)
+        compiled.encode(x)
+        compiled.reparametrize(compiled.__mu__, compiled.__logstd__)
+        assert float(compiled.kl_loss()) > 0
 
 
 def test_init():

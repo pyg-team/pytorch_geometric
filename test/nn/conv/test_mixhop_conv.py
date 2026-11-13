@@ -32,10 +32,10 @@ def test_mixhop_conv():
         assert torch.allclose(conv(x, adj3.t()), out1, atol=1e-6)
 
     if is_full_test():
-        jit = torch.compile(conv)
-        assert torch.allclose(jit(x, edge_index), out1, atol=1e-6)
-        assert torch.allclose(jit(x, edge_index, value), out2, atol=1e-6)
+        compiled = torch.compile(conv)
+        assert torch.allclose(compiled(x, edge_index), out1, atol=1e-6)
+        assert torch.allclose(compiled(x, edge_index, value), out2, atol=1e-6)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x, adj3.t()), out1, atol=1e-6)
-            assert torch.allclose(jit(x, adj4.t()), out2, atol=1e-6)
+            assert torch.allclose(compiled(x, adj3.t()), out1, atol=1e-6)
+            assert torch.allclose(compiled(x, adj4.t()), out2, atol=1e-6)

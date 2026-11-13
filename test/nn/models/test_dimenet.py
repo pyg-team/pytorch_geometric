@@ -52,8 +52,8 @@ def test_dimenet(Model):
         out = model(z, pos)
         assert out.size() == (1, )
 
-        jit = torch.jit.export(model)
-        assert torch.allclose(jit(z, pos), out)
+        compiled = torch.compile(model)
+        assert torch.allclose(compiled(z, pos), out)
 
     if is_full_test():
         optimizer = torch.optim.Adam(model.parameters(), lr=0.1)

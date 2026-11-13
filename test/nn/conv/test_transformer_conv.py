@@ -50,11 +50,11 @@ def test_transformer_conv(edge_dim, concat):
             ) -> Tensor:
                 return self.conv(x, edge_index, edge_attr)
 
-        jit = torch.compile(MyModule())
-        assert torch.allclose(jit(x1, edge_index, edge_attr), out)
+        compiled = torch.compile(MyModule())
+        assert torch.allclose(compiled(x1, edge_index, edge_attr), out)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x1, adj2.t()), out, atol=1e-6)
+            assert torch.allclose(compiled(x1, adj2.t()), out, atol=1e-6)
 
     # Test `return_attention_weights`.
     result = conv(x1, edge_index, edge_attr, return_attention_weights=True)
@@ -86,8 +86,8 @@ def test_transformer_conv(edge_dim, concat):
                 return self.conv(x, edge_index, edge_attr,
                                  return_attention_weights=True)
 
-        jit = torch.compile(MyModule())
-        result = jit(x1, edge_index, edge_attr)
+        compiled = torch.compile(MyModule())
+        result = compiled(x1, edge_index, edge_attr)
         assert torch.allclose(result[0], out)
         assert result[1][0].size() == (2, 4)
         assert result[1][1].size() == (4, 2)
@@ -109,8 +109,8 @@ def test_transformer_conv(edge_dim, concat):
                     return self.conv(x, edge_index,
                                      return_attention_weights=True)
 
-            jit = torch.compile(MyModule())
-            result = jit(x1, adj2.t())
+            compiled = torch.compile(MyModule())
+            result = compiled(x1, adj2.t())
             assert torch.allclose(result[0], out, atol=1e-6)
             assert result[1].sizes() == [4, 4, 2] and result[1].nnz() == 4
             assert conv._alpha is None
@@ -147,8 +147,8 @@ def test_transformer_conv(edge_dim, concat):
             ) -> Tensor:
                 return self.conv(x, edge_index, edge_attr)
 
-        jit = torch.compile(MyModule())
-        assert torch.allclose(jit((x1, x2), edge_index, edge_attr), out)
+        compiled = torch.compile(MyModule())
+        assert torch.allclose(compiled((x1, x2), edge_index, edge_attr), out)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit((x1, x2), adj2.t()), out, atol=1e-6)
+            assert torch.allclose(compiled((x1, x2), adj2.t()), out, atol=1e-6)

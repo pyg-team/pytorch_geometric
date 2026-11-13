@@ -35,11 +35,11 @@ def test_appnp():
     assert conv._cached_adj_t is None
 
     if is_full_test():
-        jit = torch.compile(conv)
-        assert torch.allclose(jit(x, edge_index), out, rtol=1e-5, atol=1e-6)
+        compiled = torch.compile(conv)
+        assert torch.allclose(compiled(x, edge_index), out, rtol=1e-5, atol=1e-6)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x, adj2.t()), out, rtol=1e-5, atol=1e-6)
+            assert torch.allclose(compiled(x, adj2.t()), out, rtol=1e-5, atol=1e-6)
 
 
 def test_appnp_dropout():

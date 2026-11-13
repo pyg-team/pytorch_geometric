@@ -119,9 +119,9 @@ def test_meta_layer_example():
     assert u_out.size() == (2, 20)
 
     if is_full_test():
-        jit = torch.compile(op)
+        compiled = torch.compile(op)
 
-        x_out, edge_attr_out, u_out = jit(x, edge_index, edge_attr, u, batch)
+        x_out, edge_attr_out, u_out = compiled(x, edge_index, edge_attr, u, batch)
         assert x_out.size() == (20, 10)
         assert edge_attr_out.size() == (40, 5)
         assert u_out.size() == (2, 20)

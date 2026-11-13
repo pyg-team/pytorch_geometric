@@ -34,12 +34,12 @@ def test_gin_conv():
         assert torch.allclose(conv(x1, adj2.t()), out, atol=1e-6)
 
     if is_full_test():
-        jit = torch.compile(conv)
-        assert torch.allclose(jit(x1, edge_index), out, atol=1e-6)
-        assert torch.allclose(jit(x1, edge_index, size=(4, 4)), out, atol=1e-6)
+        compiled = torch.compile(conv)
+        assert torch.allclose(compiled(x1, edge_index), out, atol=1e-6)
+        assert torch.allclose(compiled(x1, edge_index, size=(4, 4)), out, atol=1e-6)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x1, adj2.t()), out, atol=1e-6)
+            assert torch.allclose(compiled(x1, adj2.t()), out, atol=1e-6)
 
     # Test bipartite message passing:
     adj1 = to_torch_csc_tensor(edge_index, size=(4, 2))
@@ -59,13 +59,13 @@ def test_gin_conv():
         assert torch.allclose(conv((x1, None), adj2.t()), out2, atol=1e-6)
 
     if is_full_test():
-        assert torch.allclose(jit((x1, x2), edge_index), out1)
-        assert torch.allclose(jit((x1, x2), edge_index, size=(4, 2)), out1)
-        assert torch.allclose(jit((x1, None), edge_index, size=(4, 2)), out2)
+        assert torch.allclose(compiled((x1, x2), edge_index), out1)
+        assert torch.allclose(compiled((x1, x2), edge_index, size=(4, 2)), out1)
+        assert torch.allclose(compiled((x1, None), edge_index, size=(4, 2)), out2)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit((x1, x2), adj2.t()), out1)
-            assert torch.allclose(jit((x1, None), adj2.t()), out2)
+            assert torch.allclose(compiled((x1, x2), adj2.t()), out1)
+            assert torch.allclose(compiled((x1, None), adj2.t()), out2)
 
 
 def test_gine_conv():
@@ -91,12 +91,12 @@ def test_gine_conv():
         assert torch.allclose(conv(x1, adj.t()), out)
 
     if is_full_test():
-        jit = torch.compile(conv)
-        assert torch.allclose(jit(x1, edge_index, value), out)
-        assert torch.allclose(jit(x1, edge_index, value, size=(4, 4)), out)
+        compiled = torch.compile(conv)
+        assert torch.allclose(compiled(x1, edge_index, value), out)
+        assert torch.allclose(compiled(x1, edge_index, value, size=(4, 4)), out)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x1, adj.t()), out)
+            assert torch.allclose(compiled(x1, adj.t()), out)
 
     # Test bipartite message passing:
     out1 = conv((x1, x2), edge_index, value)
@@ -112,15 +112,15 @@ def test_gine_conv():
         assert torch.allclose(conv((x1, None), adj.t()), out2)
 
     if is_full_test():
-        assert torch.allclose(jit((x1, x2), edge_index, value), out1)
-        assert torch.allclose(jit((x1, x2), edge_index, value, size=(4, 2)),
+        assert torch.allclose(compiled((x1, x2), edge_index, value), out1)
+        assert torch.allclose(compiled((x1, x2), edge_index, value, size=(4, 2)),
                               out1)
-        assert torch.allclose(jit((x1, None), edge_index, value, size=(4, 2)),
+        assert torch.allclose(compiled((x1, None), edge_index, value, size=(4, 2)),
                               out2)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit((x1, x2), adj.t()), out1)
-            assert torch.allclose(jit((x1, None), adj.t()), out2)
+            assert torch.allclose(compiled((x1, x2), adj.t()), out1)
+            assert torch.allclose(compiled((x1, None), adj.t()), out2)
 
 
 def test_gine_conv_edge_dim():

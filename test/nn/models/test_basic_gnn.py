@@ -135,7 +135,7 @@ def test_edge_cnn(out_dim, dropout, act, norm, jk):
     assert model(x, edge_index).size() == (3, out_channels)
 
 
-def test_jit():
+def test_compile():
     x = torch.randn(3, 8)
     edge_index = torch.tensor([[0, 1, 1, 2], [1, 0, 2, 1]])
 

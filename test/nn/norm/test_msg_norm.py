@@ -14,8 +14,8 @@ def test_message_norm(device):
     assert out.size() == (100, 16)
 
     if is_full_test():
-        jit = torch.compile(norm)
-        assert torch.allclose(jit(x, msg), out)
+        compiled = torch.compile(norm)
+        assert torch.allclose(compiled(x, msg), out)
 
     norm = MessageNorm(learn_scale=False, device=device)
     assert str(norm) == 'MessageNorm(learn_scale=False)'
@@ -23,5 +23,5 @@ def test_message_norm(device):
     assert out.size() == (100, 16)
 
     if is_full_test():
-        jit = torch.compile(norm)
-        assert torch.allclose(jit(x, msg), out)
+        compiled = torch.compile(norm)
+        assert torch.allclose(compiled(x, msg), out)

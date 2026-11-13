@@ -11,8 +11,8 @@ def test_mask_select():
     assert out.size() == (3, 8)
     assert torch.equal(src[torch.tensor([1, 3, 5])], out)
 
-    jit = torch.compile(mask_select)
-    assert torch.equal(jit(src, 0, mask), out)
+    compiled = torch.compile(mask_select)
+    assert torch.equal(compiled(src, 0, mask), out)
 
 
 def test_index_to_mask():

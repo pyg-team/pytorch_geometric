@@ -39,7 +39,7 @@ def test_asap():
 
 
 @onlyFullTest
-def test_asap_jit_save():
+def test_asap_compile_save():
     pool = ASAPooling(in_channels=16)
     model = torch.compile(pool)
     torch.save(model, io.BytesIO())

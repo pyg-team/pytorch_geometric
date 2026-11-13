@@ -17,5 +17,5 @@ def test_graph_multiset_transformer():
     assert out.size() == (3, 16)
 
     if is_full_test():
-        jit = torch.compile(aggr)
-        assert torch.allclose(jit(x, index), out)
+        compiled = torch.compile(aggr)
+        assert torch.allclose(compiled(x, index), out)

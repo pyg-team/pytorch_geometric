@@ -235,7 +235,7 @@ def test_summary_with_module_dict_model():
 
 
 @withPackage('tabulate')
-def test_summary_with_jit_model():
+def test_summary_with_compile_model():
     model = nn.Sequential(nn.Linear(32, 16), nn.ReLU(), nn.Linear(16, 8))
     model = torch.compile(model)
     x = torch.randn(100, 32)

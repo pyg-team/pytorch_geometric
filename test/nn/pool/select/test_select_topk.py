@@ -29,10 +29,10 @@ def test_topk_ratio():
     assert batch[perm3].tolist() == [0, 0, 1, 1, 1]
 
     if is_full_test():
-        jit = torch.compile(topk)
-        assert torch.equal(jit(x, 0.5, batch), perm1)
-        assert torch.equal(jit(x, 2, batch), perm2)
-        assert torch.equal(jit(x, 3, batch), perm3)
+        compiled = torch.compile(topk)
+        assert torch.equal(compiled(x, 0.5, batch), perm1)
+        assert torch.equal(compiled(x, 2, batch), perm2)
+        assert torch.equal(compiled(x, 3, batch), perm3)
 
 
 @pytest.mark.parametrize('min_score', [None, 2.0])

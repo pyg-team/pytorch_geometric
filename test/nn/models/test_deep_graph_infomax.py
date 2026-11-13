@@ -28,8 +28,8 @@ def test_infomax(device):
     assert float(loss) >= 0
 
     if is_full_test():
-        jit = torch.jit.export(model)
-        pos_z, neg_z, summary = jit(x)
+        compiled = torch.compile(model)
+        pos_z, neg_z, summary = compiled(x)
         assert pos_z.size() == (20, 16) and neg_z.size() == (20, 16)
         assert summary.size() == (16, )
 

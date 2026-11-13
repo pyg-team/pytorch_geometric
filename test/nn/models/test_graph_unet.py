@@ -17,6 +17,6 @@ def test_graph_unet():
     assert out.size() == (3, 8)
 
     if is_full_test():
-        jit = torch.jit.export(model)
-        out = jit(x, edge_index)
+        compiled = torch.compile(model, dynamic=False)
+        out = compiled(x, edge_index)
         assert out.size() == (3, 8)

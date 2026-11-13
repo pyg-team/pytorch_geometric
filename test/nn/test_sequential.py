@@ -67,7 +67,7 @@ def test_sequential_basic():
     assert out.size() == (1, 7)
 
 
-def test_sequential_jit():
+def test_sequential_compile():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 0, 0, 1, 2, 3], [1, 2, 3, 0, 0, 0]])
 

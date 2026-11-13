@@ -36,12 +36,12 @@ def test_simple_conv(aggr, combine_root):
         assert torch.allclose(conv(x1, adj2.t()), out)
 
     if is_full_test():
-        jit = torch.compile(conv)
-        assert torch.allclose(jit(x1, edge_index), out)
-        assert torch.allclose(jit(x1, edge_index, size=(4, 4)), out)
+        compiled = torch.compile(conv)
+        assert torch.allclose(compiled(x1, edge_index), out)
+        assert torch.allclose(compiled(x1, edge_index, size=(4, 4)), out)
 
         if torch_geometric.typing.WITH_TORCH_SPARSE:
-            assert torch.allclose(jit(x1, adj2.t()), out)
+            assert torch.allclose(compiled(x1, adj2.t()), out)
 
     # Test bipartite message passing:
     if combine_root != 'self_loop':

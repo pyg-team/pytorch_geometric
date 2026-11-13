@@ -175,8 +175,8 @@ def test_my_commented_conv():
     conv = MyCommentedConv()
     conv(x, edge_index)
 
-    jit = torch.compile(conv)
-    jit(x, edge_index)
+    compiled = torch.compile(conv)
+    compiled(x, edge_index)
 
 
 class MyKwargsConv(MessagePassing):
@@ -194,8 +194,8 @@ def test_my_kwargs_conv():
     conv = MyKwargsConv()
     conv(x, edge_index)
 
-    jit = torch.compile(conv)
-    jit(x, edge_index)
+    compiled = torch.compile(conv)
+    compiled(x, edge_index)
 
 
 def test_my_conv_out_of_bounds():
@@ -213,7 +213,7 @@ def test_my_conv_out_of_bounds():
         conv(x, edge_index, value)
 
 
-def test_my_conv_jit():
+def test_my_conv_compile():
     x1 = torch.randn(4, 8)
     x2 = torch.randn(2, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
@@ -222,39 +222,39 @@ def test_my_conv_jit():
     conv = MyConv(8, 32)
     out = conv(x1, edge_index, value)
 
-    jit = torch.compile(conv)
-    assert torch.allclose(jit(x1, edge_index, value), out, atol=1e-6)
-    assert torch.allclose(jit(x1, edge_index, value, (4, 4)), out, atol=1e-6)
+    compiled = torch.compile(conv)
+    assert torch.allclose(compiled(x1, edge_index, value), out, atol=1e-6)
+    assert torch.allclose(compiled(x1, edge_index, value, (4, 4)), out, atol=1e-6)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj = SparseTensor.from_edge_index(edge_index, value, (4, 4))
 
-        assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
-        jit.fuse = False
-        assert torch.allclose(jit(x1, adj.t()), out, atol=1e-6)
-        jit.fuse = True
+        assert torch.allclose(compiled(x1, adj.t()), out, atol=1e-6)
+        compiled.fuse = False
+        assert torch.allclose(compiled(x1, adj.t()), out, atol=1e-6)
+        compiled.fuse = True
 
     conv = MyConv((8, 16), 32)
     out1 = conv((x1, x2), edge_index, value)
     out2 = conv((x1, None), edge_index, value, (4, 2))
 
-    jit = torch.compile(conv)
-    assert torch.allclose(jit((x1, x2), edge_index, value), out1)
-    assert torch.allclose(jit((x1, x2), edge_index, value, (4, 2)), out1)
-    assert torch.allclose(jit((x1, None), edge_index, value, (4, 2)), out2)
+    compiled = torch.compile(conv)
+    assert torch.allclose(compiled((x1, x2), edge_index, value), out1)
+    assert torch.allclose(compiled((x1, x2), edge_index, value, (4, 2)), out1)
+    assert torch.allclose(compiled((x1, None), edge_index, value, (4, 2)), out2)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj = SparseTensor.from_edge_index(edge_index, value, (4, 2))
 
-        assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-6)
-        assert torch.allclose(jit((x1, None), adj.t()), out2, atol=1e-6)
-        jit.fuse = False
-        assert torch.allclose(jit((x1, x2), adj.t()), out1, atol=1e-6)
-        assert torch.allclose(jit((x1, None), adj.t()), out2, atol=1e-6)
-        jit.fuse = True
+        assert torch.allclose(compiled((x1, x2), adj.t()), out1, atol=1e-6)
+        assert torch.allclose(compiled((x1, None), adj.t()), out2, atol=1e-6)
+        compiled.fuse = False
+        assert torch.allclose(compiled((x1, x2), adj.t()), out1, atol=1e-6)
+        assert torch.allclose(compiled((x1, None), adj.t()), out2, atol=1e-6)
+        compiled.fuse = True
 
 
-def test_my_conv_jit_save(tmp_path):
+def test_my_conv_compile_save(tmp_path):
     path = osp.join(tmp_path, 'model.pt2')
     x = torch.randn(4, 8)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
@@ -339,19 +339,19 @@ def test_my_multiple_aggr_conv(multi_aggr_tuple):
         assert torch.allclose(conv(x, adj2.t()), out)
 
 
-def test_my_multiple_aggr_conv_jit():
+def test_my_multiple_aggr_conv_compile():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
 
     conv = MyMultipleAggrConv()
     out = conv(x, edge_index)
 
-    jit = torch.compile(conv)
-    assert torch.allclose(jit(x, edge_index), out)
+    compiled = torch.compile(conv)
+    assert torch.allclose(compiled(x, edge_index), out)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
-        assert torch.allclose(jit(x, adj.t()), out)
+        assert torch.allclose(compiled(x, adj.t()), out)
 
 
 def test_copy():
@@ -410,19 +410,19 @@ def test_my_edge_conv():
         assert torch.allclose(conv(x, adj2.t()), out)
 
 
-def test_my_edge_conv_jit():
+def test_my_edge_conv_compile():
     x = torch.randn(4, 16)
     edge_index = torch.tensor([[0, 1, 2, 3], [0, 0, 1, 1]])
 
     conv = MyEdgeConv()
     out = conv(x, edge_index)
 
-    jit = torch.compile(conv)
-    assert torch.allclose(jit(x, edge_index), out)
+    compiled = torch.compile(conv)
+    assert torch.allclose(compiled(x, edge_index), out)
 
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         adj = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
-        assert torch.allclose(jit(x, adj.t()), out)
+        assert torch.allclose(compiled(x, adj.t()), out)
 
 
 num_pre_hook_calls = 0
@@ -565,9 +565,9 @@ def test_my_default_arg_conv():
         adj2 = SparseTensor.from_edge_index(edge_index, sparse_sizes=(4, 4))
         assert conv(x, adj2.t()).view(-1).tolist() == [0, 0, 0, 0]
 
-    jit = torch.compile(conv)
-    assert jit(x, edge_index).view(-1).tolist() == [0, 0, 0, 0]
-    assert jit(x, adj1.t()).view(-1).tolist() == [0, 0, 0, 0]
+    compiled = torch.compile(conv)
+    assert compiled(x, edge_index).view(-1).tolist() == [0, 0, 0, 0]
+    assert compiled(x, adj1.t()).view(-1).tolist() == [0, 0, 0, 0]
 
 
 class MyMultipleOutputConv(MessagePassing):
@@ -600,7 +600,7 @@ def test_tuple_output():
     assert isinstance(out1, tuple) and len(out1) == 2
 
 
-def test_tuple_output_jit():
+def test_tuple_output_compile():
     conv = MyMultipleOutputConv()
 
     x = torch.randn(4, 8)
@@ -609,8 +609,8 @@ def test_tuple_output_jit():
     out1 = conv(x, edge_index)
     assert isinstance(out1, tuple) and len(out1) == 2
 
-    jit = torch.compile(conv)
-    out2 = jit(x, edge_index)
+    compiled = torch.compile(conv)
+    out2 = compiled(x, edge_index)
     assert isinstance(out2, tuple) and len(out2) == 2
     assert torch.allclose(out1[0], out2[0])
     assert torch.allclose(out1[1], out2[1])
