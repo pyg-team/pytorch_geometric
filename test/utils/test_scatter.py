@@ -72,6 +72,20 @@ def test_scatter_backward(reduce, device):
     assert src.grad is not None
 
 
+@pytest.mark.parametrize('reduce', ['min', 'max'])
+@pytest.mark.parametrize('dtype', [torch.float, torch.long])
+def test_scatter_min_max_onnx_export(reduce, dtype, monkeypatch):
+    # Groups 0/1 contain only positive/negative values, group 3 is empty:
+    src = torch.tensor([3, 5, -4, -2, 1, -7], dtype=dtype).view(-1, 1)
+    index = torch.tensor([0, 0, 1, 1, 2, 2])
+    expected = scatter(src, index, dim=0, dim_size=4, reduce=reduce)
+
+    monkeypatch.setattr('torch_geometric.utils._scatter.is_in_onnx_export',
+                        lambda: True)
+    out = scatter(src, index, dim=0, dim_size=4, reduce=reduce)
+    assert torch.equal(out, expected)
+
+
 @withDevice
 def test_scatter_any(device):
     src = torch.randn(6, 4, device=device)
