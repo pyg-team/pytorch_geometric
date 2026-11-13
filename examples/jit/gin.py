@@ -57,7 +57,7 @@ class GIN(torch.nn.Module):
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = GIN(dataset.num_features, 64, dataset.num_classes, num_layers=3)
 model = model.to(device)
-model = torch.jit.script(model)
+model = torch.compile(model)
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
 

@@ -30,7 +30,7 @@ class GCN(torch.nn.Module):
 
 
 model = GCN(dataset.num_features, 16, dataset.num_classes)
-model = torch.jit.script(model).to(device)
+model = torch.compile(model.to(device))
 data = data.to(device)
 optimizer = torch.optim.Adam([
     dict(params=model.conv1.parameters(), weight_decay=5e-4),

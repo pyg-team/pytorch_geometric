@@ -47,5 +47,8 @@ class GIN(torch.nn.Module):
 
 
 model = GIN(32, 64, 16, num_layers=3)
-model = torch.jit.script(model)
-model.save('model.pt')
+x = torch.randn(4, 32)
+edge_index = torch.tensor([[0, 1, 1, 2, 2, 3], [1, 0, 2, 1, 3, 2]])
+batch = torch.zeros(4, dtype=torch.long)
+exported = torch.export.export(model, (x, edge_index, batch))
+torch.export.save(exported, 'model.pt2')
