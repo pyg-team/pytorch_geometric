@@ -2,7 +2,8 @@ r"""Answers the questions of ``kumo_gretriever.py``'s benchmark with an
 OpenClaw agent (``openclaw agent exec``, one turn per question, no gateway)
 driving Nemotron-Nano-9B-v2 served by vLLM. The agent gets the question with
 its candidate rows and one plugin tool, ``kumo_rank``, that filters the
-candidates with a SQLite condition and ranks them with KumoRelational's churn
+candidates with a SQLite condition and the family's own eligibility (a ``P5``
+book needs a positive price) and ranks them with KumoRelational's churn
 forecast under the selection rule of the question's family, as
 ``kumo_gretriever.rank`` does: by churn probability times a SQLite value
 expression for ``expected_value`` (``P2``), or the predicted churners by that
@@ -15,20 +16,25 @@ strict recall: its first ``k`` candidate ids, in order; a question that times
 out, fails or yields no candidate id scores ``0``. The answer that applies the
 forecasts as ``--arm kumo`` does counts as equal to KumoRelational's ranking.
 
-The workspace's ``AGENTS.md`` describes the table and the tool;
-``--no-kumo`` instead denies every tool and gives the agent no forecasts:
-Nemotron answers zero-shot from the rows. ``--slim-prompt`` makes
-``AGENTS.md`` the whole system prompt instead of a part of
-OpenClaw's ~17k-character assistant prompt. The agent runs reasoning off by
-default (``/no_think`` in ``AGENTS.md``, greedy sampling, as the model card
-recommends); ``--think`` turns it on (temperature 0.6, top-p 0.95). OpenClaw
-always streams, while the model's tool parser cannot, so the script relays
-every request to vLLM without streaming, parses the model's ``<TOOLCALL>``
-itself and replays the reply as a stream (``--no-relay`` connects OpenClaw
-directly). The relay fails a reasoning-off question whose prompt contains
-``/think`` and audits every ``exec`` call: a question whose commands mention
-RelBench, Hugging Face, caches, Parquet, ``sdm`` or these examples scores
-``0``, and ``audit.json`` in ``--out`` lists them.
+The workspace's ``AGENTS.md`` describes the table and the tool; ``--no-kumo``
+instead denies every tool and gives the agent no forecasts: Nemotron answers
+zero-shot from the rows, and KumoRelational is not loaded. ``--slim-prompt``
+makes ``AGENTS.md`` the whole system prompt instead of a part of OpenClaw's
+~17k-character assistant prompt. The agent runs reasoning off by default
+(``/no_think`` in ``AGENTS.md``, greedy sampling, as the model card
+recommends); ``--think`` turns it on (temperature 0.6, top-p 0.95, unseeded, so
+its recall varies from run to run), and a reply cut off before its reasoning
+ends counts as no answer. OpenClaw always streams, while the model's tool
+parser cannot, so the script relays every request to vLLM without streaming,
+parses the model's ``<TOOLCALL>`` itself and replays the reply as a stream
+(``--no-relay`` connects OpenClaw directly, to a server started with
+``--enable-auto-tool-choice`` and a streaming ``--tool-call-parser``). The
+relay fails a reasoning-off question whose prompt contains ``/think`` and
+audits every ``exec`` call: a question whose commands mention RelBench, Hugging
+Face, caches, Parquet, ``sdm`` or these examples scores ``0``, and
+``audit.json`` in ``--out`` lists them. ``exec`` is not sandboxed: it runs as
+the user, with only ``PATH``, the locale, ``TERM``, ``TZ``, ``TMPDIR`` and
+``NODE_*`` of the environment, so run the script in a container.
 
 Requirements: those of ``kumo_gretriever.py`` (the NGC PyG container
 ``nvcr.io/nvidia/pyg:26.09-py3`` after ``bash kumo_gretriever_setup.sh``),
@@ -42,9 +48,11 @@ KumoRelational (``--device``) does not use, e.g., in the NGC vLLM container
         --trust-remote-code --mamba-ssm-cache-dtype float32 \
         --max-model-len 131072
 
-Usage:
-    python kumo_openclaw.py --kumo-ckpt kumo.pt --slim-prompt --think
-    python kumo_openclaw.py --kumo-ckpt kumo.pt --slim-prompt --think --no-kumo
+Usage (the reported rows: ``--as-of test`` and ``--seed`` 50 and 52)::
+
+    python kumo_openclaw.py --kumo-ckpt kumo.pt --slim-prompt --think \
+        --as-of test
+    python kumo_openclaw.py --slim-prompt --think --no-kumo --as-of test
 """
 import argparse
 import http.client
@@ -61,12 +69,17 @@ import time
 from contextlib import suppress
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from urllib.parse import urlsplit
 
 import torch
-from kumo_gretriever import MODEL, RULES, KumoEncoder, predict, rank
-from kumo_gretriever_data import MARKER, build_benchmark, strict_recall
+from kumo_gretriever import MODEL, RULES, KumoEncoder, anchors, predict, rank
+from kumo_gretriever_data import (
+    MARKER,
+    build_benchmark,
+    family_eligible,
+    strict_recall,
+)
 
 PROVIDER, PLUGIN = 'vllm', 'kumo-relational'
 TOOLS = ['kumo_rank', 'exec']
@@ -100,14 +113,16 @@ of its `categories`. Answers are scored on exactly the requested number of
 IDs. Reply with only the requested candidate IDs, comma-separated, best
 first.
 """
+ENV_KEEP = ('PATH', 'LANG', 'TERM', 'TZ', 'TMPDIR')
 # Commands that may read the labels: RelBench, its caches or these scripts.
 LEAK = re.compile(
     r'relbench|rel-amazon|hugging|hf_|\.cache|parquet|'
-    r'kumo_gretriever|\bsdm\b|torch_geometric', re.IGNORECASE)
+    r'kumo_gretriever|\bsdm\b|\btorch_geometric\b', re.IGNORECASE)
 CONFIG_SCHEMA = dict(
     type='object', additionalProperties=False, required=['rows'],
     properties=dict(rows=dict(type='array', items=dict(type='object')),
                     rule=dict(enum=['expected_value', 'predicted_churners']),
+                    ineligible=dict(type='array', items=dict(type='integer')),
                     systemPrompt=dict(type='string')))
 PLUGIN_JS = """\
 import { DatabaseSync } from 'node:sqlite';
@@ -149,10 +164,13 @@ const entry = defineToolPlugin({
       for (const row of config.rows) {
         insert.run(...columns.map((c) => row[c] ?? null));
       }
+      // The family's eligibility (`family_eligible`), as `rank` applies it:
+      const ineligible = new Set(config.ineligible ?? []);
       const rows = db.prepare(
         `SELECT id, churn_probability AS p, predicted_churner AS c, ` +
         `prior_ltv AS v, (${score}) AS s, (${cost ?? '0'}) AS cost ` +
-        `FROM candidates WHERE (${where})`).all();
+        `FROM candidates WHERE (${where})`).all()
+        .filter((r) => !ineligible.has(Number(r.id)));
       db.close();
       const num = (x) => (x === null || !isFinite(x) ? -Infinity : Number(x));
       const order = (key) => (a, b) =>
@@ -254,9 +272,16 @@ def candidate_rows(record: Dict[str, Any]) -> List[str]:
     ]
 
 
+def after_reasoning(text: str) -> str:
+    r"""The text after the reasoning, empty if the reasoning never ended."""
+    if '<think>' in text and '</think>' not in text:
+        return ''
+    return text.rsplit('</think>', 1)[-1]
+
+
 def numbers(text: str) -> List[str]:
     r"""The integers of an answer after its reasoning, in order."""
-    return re.findall(r'\b\d+\b', text.rsplit('</think>', 1)[-1])
+    return re.findall(r'\b\d+\b', after_reasoning(text))
 
 
 def parse_ids(text: str, pool: List[str], k: int) -> List[str]:
@@ -278,7 +303,7 @@ def ask(record: Dict[str, Any], predictions: List[Dict[str, Any]], root: Path,
     rows = candidate_rows(record)
     probability = {p['id']: p['probability'] for p in predictions}
     table = []
-    for row in map(json.loads, rows):
+    for row in map(json.loads, [] if args.no_kumo else rows):
         p = probability[row['id']]
         table.append(
             dict(
@@ -286,23 +311,27 @@ def ask(record: Dict[str, Any], predictions: List[Dict[str, Any]], root: Path,
                 categories=json.dumps(row.get('categories', []),
                                       ensure_ascii=False), churn_probability=p,
                 predicted_churner=int(p >= 0.5)))
-    if args.no_kumo:  # Nemotron alone, zero-shot: no tools, no forecasts.
-        table = []
     agents = (AGENTS_ZERO if args.no_kumo else AGENTS) + ('' if args.think else
                                                           '/no_think\n')
     (workspace / 'AGENTS.md').write_text(agents)
     prompt = root / 'prompt.txt'
     prompt.write_text(record['question'] + '\n\nCandidates:\n' +
                       '\n'.join(rows) + '\n')
-    rule = RULES[record['policy']['family']]  # As `rank` applies it.
-    plugin_config: Dict[str, Any] = dict(rows=table, rule=rule)
+    # The family's rule and eligibility, as `rank` applies them:
+    rule = RULES[record['policy']['family']]
+    ineligible = [
+        int(c['id']) for c in record['candidates']
+        if not family_eligible(c, record['policy'])
+    ]
+    plugin_config: Dict[str, Any] = dict(rows=table, rule=rule,
+                                         ineligible=ineligible)
     if args.slim_prompt:
         plugin_config['systemPrompt'] = agents
     config = root / 'openclaw.json'
     config.write_text(
         json.dumps(openclaw_config(args, workspace, plugin, plugin_config),
                    indent=2))
-    if not args.think and '/think' in str(root) + prompt.read_text():
+    if not args.think and '/think' in prompt.read_text():
         return '', "'/think' in the prompt turns reasoning on"
     argv = shlex.split(args.openclaw) + ['agent', 'exec']
     for flag, value in [('config', config), ('state-dir', state),
@@ -310,11 +339,12 @@ def ask(record: Dict[str, Any], predictions: List[Dict[str, Any]], root: Path,
                         ('code-mode', 'direct'), ('timeout', args.timeout)]:
         argv += [f'--{flag}', str(value)]
     argv.append('--json')
-    # Keep the user's caches and tokens away from `exec`:
+    # `exec` runs unsandboxed on the host: pass it no tokens or caches, only
+    # what Node.js needs:
     env = {
         k: v
         for k, v in os.environ.items()
-        if not k.startswith(('HF_', 'HUGGING', 'XDG_'))
+        if k in ENV_KEEP or k.startswith(('LC_', 'NODE_'))
     }
     env.update(HOME=str(home), OPENCLAW_DISABLE_BONJOUR='1',
                OPENCLAW_STATE_DIR=str(state), OPENCLAW_CONFIG_PATH=str(config))
@@ -447,7 +477,7 @@ def _parse_tool_calls(choice: Dict[str, Any], prefix: str) -> None:
     OpenAI tool calls, as the model's ``nemotron_json`` parser does.
     """
     message = choice['message']
-    text = (message.get('content') or '').rsplit('</think>', 1)[-1].lstrip()
+    text = after_reasoning(message.get('content') or '').lstrip()
     match = re.search(r'<TOOLCALL>(.*?)</TOOLCALL>', text, re.DOTALL)
     if not message.get('tool_calls') and match:
         try:
@@ -530,8 +560,9 @@ def report(results: Dict[str, Dict[str, List[float]]], failures: int,
           'or no answer)')
 
 
-def run(records: List[Dict[str, Any]], probabilities: List[Dict[str, float]],
-        args: Any, out: Path) -> None:
+def run(records: List[Dict[str, Any]],
+        probabilities: List[Optional[Dict[str, float]]], args: Any,
+        out: Path) -> None:
     r"""Asks OpenClaw every record, keeping each run in :obj:`out`, then
     reports its recall.
     """
@@ -545,7 +576,9 @@ def run(records: List[Dict[str, Any]], probabilities: List[Dict[str, float]],
     for i, (record, p) in enumerate(zip(records, probabilities)):
         pool, k = record['pool']['candidate_ids'], record['k']
         root = out / f'{record["task"]}-{record["anchor"]}-{i}'
-        predictions = [dict(id=c, probability=p[c]) for c in pool]
+        predictions = [] if p is None else [
+            dict(id=c, probability=p[c]) for c in pool
+        ]
         if relay is not None:  # Past OpenClaw's own timeout, as `ask`:
             relay.start(args.timeout + 60)
         try:
@@ -573,8 +606,8 @@ def run(records: List[Dict[str, Any]], probabilities: List[Dict[str, float]],
             extra += len(numbers(answer)) > len(ids)
         failures += bool(failure)
         # Whether the agent applied the forecasts as KumoRelational alone:
-        same += not failure and ids == rank(record['candidates'],
-                                            record['policy'], p)
+        same += (not failure and p is not None
+                 and ids == rank(record['candidates'], record['policy'], p))
         recall = 0.0 if failure else strict_recall(ids, record['gold'], pool,
                                                    k)
         results.setdefault(record['task'],
@@ -603,7 +636,7 @@ def main() -> None:
                         default='stanford-star/relbench-v1/rel-amazon')
     parser.add_argument(
         '--as-of', nargs='+', default=['2015-10-01'],
-        help='Test anchors, e.g., all 12 from 2013-01-03 to '
+        help='Test anchors, or `test` for all 12 from 2013-01-03 to '
         '2015-10-01, 91 days apart')
     parser.add_argument('--num-questions', type=int, default=8)
     parser.add_argument('--kumo-ckpt', help='The KumoEncoder state dict')
@@ -628,7 +661,10 @@ def main() -> None:
                         help='A new directory to keep every question run in')
     parser.add_argument('--device', default='cuda:0')
     args = parser.parse_args()
+    args.as_of = anchors(args.as_of)
     out = Path(args.out).resolve()
+    if '/think' in str(out):  # The relay would see it in the prompt.
+        parser.error(f"--out {out} contains '/think'")
     if out.exists() and (not out.is_dir() or any(out.iterdir())):
         parser.error(f'--out {out} is not empty')
     # The forecasts of `kumo_gretriever.py --arm kumo`, see its docstring:
@@ -647,17 +683,19 @@ def main() -> None:
             key: value.to(device)
             for key, value in record['pool']['model_input'].items()
         }
-    from sdm.models import KumoRelational
-    kumo = KumoRelational(task='classification', device=device)
-    encoder = KumoEncoder(kumo, seed=args.seed)
-    if args.kumo_ckpt is not None:
-        encoder.load_state_dict(
-            torch.load(args.kumo_ckpt, map_location='cpu', weights_only=True,
-                       mmap=True))
-    with torch.no_grad():
-        probabilities = [predict(None, encoder, r)[0] for r in records]
     out.mkdir(parents=True, exist_ok=True)
-    (out / 'forecasts.json').write_text(json.dumps(probabilities))
+    probabilities: List[Optional[Dict[str, float]]] = [None] * len(records)
+    if not args.no_kumo:
+        from sdm.models import KumoRelational
+        kumo = KumoRelational(task='classification', device=device)
+        encoder = KumoEncoder(kumo, seed=args.seed)
+        if args.kumo_ckpt is not None:
+            encoder.load_state_dict(
+                torch.load(args.kumo_ckpt, map_location='cpu',
+                           weights_only=True, mmap=True))
+        with torch.no_grad():
+            probabilities = [predict(None, encoder, r)[0] for r in records]
+        (out / 'forecasts.json').write_text(json.dumps(probabilities))
     run(records, probabilities, args, out)
 
 

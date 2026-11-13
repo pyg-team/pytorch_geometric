@@ -24,7 +24,9 @@ shrinks the correction it fits). Only finetuned checkpoints are meant for
 graph tokens come from the model's own KumoRelational, which ``--save`` and
 ``--ckpt`` carry, and ``U2`` from a separate one: the pretrained model, or a
 KumoRelational adapted outside this script whose :class:`KumoEncoder` state
-dict ``--kumo-ckpt`` loads, so ``--ckpt`` never changes ``U2``. Evaluation
+dict ``--kumo-ckpt`` loads, so ``--ckpt`` never changes ``U2``. Pass
+``--finetune`` the ``--kumo-ckpt`` of the evaluation, as the correction is fit
+to the probabilities it corrects. Evaluation
 needs about 40 GB of GPU memory (a few GB with ``--arm kumo``), training
 about 165 GB (fp32 weights and AdamW state of the 9B LLM on a single GPU).
 
@@ -47,20 +49,35 @@ it, run ``bash kumo_gretriever_setup.sh`` once. It installs
 builds the ``mamba-ssm`` and ``causal-conv1d`` kernels of Nemotron-H from
 source with a one-line patch: their ``setup.py`` compiles with
 ``-std=c++17``, while the container's PyTorch 2.14 requires C++20. The patch
-is expected to be unnecessary from the 26.11 container on.
+is needed until a newer container ships C++20-ready builds.
 
 The KumoRelational checkpoint adapted to ``rel-amazon`` that ``--kumo-ckpt``
 loads for the reported numbers is not published; please contact the author
 (@puririshi98 on GitHub) for access. Without it, ``U2`` comes from the
-pretrained KumoRelational.
+pretrained KumoRelational. It and every other reported checkpoint were trained
+only on questions anchored from 2008-04-10 to 2012-07-05, whose labels end on
+2012-10-04, before the first test anchor.
 
-Usage:
-    python kumo_gretriever.py --arm kumo
-    python kumo_gretriever.py --arm fusion --train --save stage1.pt
+Usage (``--as-of test`` stands for the 12 test anchors from 2013-01-03 to
+2015-10-01, ``--train-as-of train`` for the 12 earlier ones from 2010-01-07 to
+2012-10-04; the reported numbers are the mean of ``--seed 50`` and ``52``,
+each with its own checkpoints)::
+
+    python kumo_gretriever.py --arm kumo --kumo-ckpt kumo.pt --as-of test
+    python kumo_gretriever.py --arm fusion --train --train-as-of train \
+        --kumo-ckpt kumo.pt --save stage1.pt
     python kumo_gretriever.py --arm fusion --train --finetune \
-        --ckpt stage1.pt --save fusion.pt
-    python kumo_gretriever.py --arm nemotron --train --save nemotron.pt
-    python kumo_gretriever.py --arm fusion --ckpt fusion.pt --kumo-ckpt kumo.pt
+        --ckpt stage1.pt --train-as-of train --kumo-ckpt kumo.pt \
+        --save fusion.pt
+    python kumo_gretriever.py --arm fusion --ckpt fusion.pt \
+        --kumo-ckpt kumo.pt --as-of test
+    python kumo_gretriever.py --arm nemotron --train --train-as-of train \
+        --save nemotron.pt
+
+The reported stage-one and Nemotron checkpoints were trained longer than these
+commands do by default (about 2,000 updates, with an earlier version of this
+script), and the
+reported fusion checkpoints were finetuned from them as above.
 """
 import argparse
 import bisect
@@ -75,6 +92,7 @@ from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 import torch
 import torch.nn.functional as F
 from kumo_gretriever_data import (
+    ANCHORS,
     MARKER,
     build_benchmark,
     dec,
@@ -98,6 +116,7 @@ INPUTS = ('x_context', 'y_context', 'x_query', 'related_context_tables',
 # The selection rule of each question family, see `utility`:
 RULES = dict(P2='expected_value', P5='predicted_churners',
              RV1='predicted_churners', RV3='predicted_churners')
+EPS = 1e-6  # Clamps churn probabilities before their logit.
 
 
 class KumoOutput(NamedTuple):
@@ -373,7 +392,7 @@ def rank(candidates: List[dict], policy: dict,
         for c, r in zip(candidates, residual):
             if not math.isfinite(float(r)):
                 raise ValueError('The residual is not finite')
-            p = min(max(float(probabilities[c['id']]), 1e-6), 1 - 1e-6)
+            p = min(max(float(probabilities[c['id']]), EPS), 1 - EPS)
             z = math.log(p / (1 - p)) + lam * float(r)
             corrected[c['id']] = (1 / (1 + math.exp(-z)) if z >= 0 else
                                   math.exp(z) / (1 + math.exp(z)))
@@ -486,7 +505,7 @@ def train(model: RankGRetriever, encoder: Optional[KumoEncoder],
                     labels = {str(k): v for k, v in record['labels'].items()}
                     ids = [c['id'] for c in record['candidates']]
                     p = torch.tensor([
-                        min(max(float(probabilities[i]), 1e-4), 1 - 1e-4)
+                        min(max(float(probabilities[i]), EPS), 1 - EPS)
                         for i in ids
                     ], device=residual.device)
                     y = torch.tensor([float(labels[str(i)]) for i in ids],
@@ -519,6 +538,14 @@ def train(model: RankGRetriever, encoder: Optional[KumoEncoder],
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             optimizer.step()
         print(f'Epoch {epoch}: loss {total / len(records):.4f}')
+
+
+def anchors(names: List[str]) -> List[str]:
+    r"""Expands ``test`` and ``train`` to the 12 test anchors and the 12
+    anchors before them.
+    """
+    groups = dict(test=list(ANCHORS[20:]), train=list(ANCHORS[8:20]))
+    return [a for name in names for a in groups.get(name, [name])]
 
 
 @torch.no_grad()
@@ -558,12 +585,14 @@ def main() -> None:
                         default='stanford-star/relbench-v1/rel-amazon')
     parser.add_argument(
         '--as-of', nargs='+', default=['2015-10-01'],
-        help='Test anchors, e.g., all 12 from 2013-01-03 to '
+        help='Test anchors, or `test` for all 12 from 2013-01-03 to '
         '2015-10-01, 91 days apart')
-    parser.add_argument('--train-as-of', nargs='+', default=['2012-10-04'])
+    parser.add_argument(
+        '--train-as-of', nargs='+', default=['2012-10-04'],
+        help='Training anchors, or `train` for the 12 before the test ones')
     parser.add_argument('--num-questions', type=int, default=8)
     parser.add_argument('--train-questions', type=int, default=48,
-                        help='Questions per anchor and task of --finetune')
+                        help='Training questions per anchor and task')
     parser.add_argument('--train', action='store_true')
     parser.add_argument('--finetune', action='store_true',
                         help='Train again as the churn correction')
@@ -573,6 +602,8 @@ def main() -> None:
     parser.add_argument('--save', help='Where to save the trained state dict')
     parser.add_argument('--device', default='cuda:0')
     args = parser.parse_args()
+    args.as_of = anchors(args.as_of)
+    args.train_as_of = anchors(args.train_as_of)
     if args.arm in ['kumo', 'rule'] and (args.ckpt or args.train):
         parser.error(f'--arm {args.arm} takes no --ckpt or --train')
     if args.arm in ['nemotron', 'rule'] and args.kumo_ckpt:
@@ -583,6 +614,8 @@ def main() -> None:
         parser.error('--finetune needs --train and --ckpt')
     if args.finetune and args.arm != 'fusion':
         parser.error('--finetune needs --arm fusion')
+    if args.train and set(args.as_of) & set(args.train_as_of):
+        parser.error('--as-of and --train-as-of overlap')
     # Arrow joins instead of cuDF, no TF32 and no cuDNN attention, see the
     # docstring. Arrow runs single-threaded since its multi-threaded hash join
     # reorders the graph's edges, and `temporal_strategy='last'` then samples
@@ -595,15 +628,10 @@ def main() -> None:
     torch.manual_seed(args.seed)
     device = torch.device(args.device)
 
-    # The first stage draws its questions after the test questions, the
-    # finetuning stage from a fresh stream, as the checkpoints were trained:
-    first = args.train and not args.finetune
-    records = build_benchmark(args.root,
-                              args.as_of + (args.train_as_of if first else []),
+    records = build_benchmark(args.root, args.as_of,
                               n_questions=args.num_questions, seed=args.seed)
-    train_records = [r for r in records if r['anchor'] in args.train_as_of]
-    records = [r for r in records if r['anchor'] in args.as_of]
-    if args.finetune:
+    train_records = []
+    if args.train:  # From their own stream, apart from the test questions:
         train_records = build_benchmark(args.root, args.train_as_of,
                                         n_questions=args.train_questions,
                                         seed=args.seed)
@@ -637,6 +665,9 @@ def main() -> None:
                   args.finetune)
             if args.save is not None:
                 torch.save(model.state_dict(), args.save)
+            if args.arm == 'fusion' and not args.finetune:
+                print('Stage one done; evaluate after --finetune')
+                return
         # Frozen weights keep autocast from caching a bf16 copy of the LLM:
         model.eval().requires_grad_(False)
     evaluate(model, encoder, records, args.arm, args.lam)

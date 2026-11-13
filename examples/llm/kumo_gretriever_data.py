@@ -8,7 +8,8 @@ eligibility is a *future* label: no review in ``(T, T + 91 days]`` (the
 RelBench ``user-churn``/``item-churn`` definition).  Families: ``RV1``
 (churning customers by trailing 91-day spend ``prior_ltv``, optionally within
 a segment), ``RV3`` (churning customers by spend per offer cost under
-other/Gold/Platinum tiers, funded greedily within a budget), ``P2`` (books
+other/Gold/Platinum tiers, funded greedily within a budget, which the drawn
+budgets never make bind before ``k``), ``P2`` (books
 going dormant by trailing review revenue, optionally within a genre or price
 band) and ``P5`` (books going dormant by ``factor * price - prior_ltv``).
 
@@ -28,13 +29,14 @@ the anchor, so the order carries no label.  Ranking them by the question's rule
 as if all of them churned (``kumo_gretriever.py --arm rule``) shows what the
 forecast adds.
 
-The in-context examples are 256 labeled rows from the fit period
-(prediction times up to 2012-07-05, whose 91-day windows close before every
-anchor) sampled with ``num_neighbors=(16, 16)``; relational tables are cut at
-the anchor, so no later event reaches the model.  Strict recall of an answer
-is ``|ids & gold| / k`` when exactly ``k`` distinct pool ids are returned,
-else ``0``.  No Amazon data is redistributed; RelBench downloads
-``rel-amazon`` on demand, at the Hub revision :obj:`RELBENCH_REVISION`.
+The in-context examples are 256 labeled rows at the latest fit date whose
+91-day window closes before the anchor (2012-07-05 for every anchor from
+2012-10-04 on, so test questions condition on 2012 labels), sampled with
+``num_neighbors=(16, 16)``; relational tables are cut at the anchor, so no
+later event reaches the model. Strict recall of an answer is ``|ids & gold| /
+k`` when exactly ``k`` distinct pool ids are returned, else ``0``. No Amazon
+data is redistributed; RelBench downloads ``rel-amazon`` on demand, at the Hub
+revision :obj:`RELBENCH_REVISION`.
 """
 import hashlib
 import json
@@ -56,10 +58,10 @@ CONTEXT_ROWS = 256
 NUM_NEIGHBORS = (16, 16)
 FEATURES = ('prior_ltv', 'prior_reviews', 'prior_avg_rating')
 # The 32 rel-amazon anchors, 91 days apart: 19 fit dates (labels for the
-# in-context examples), one validation anchor, then the 12 test anchors.
+# in-context examples), the default training anchor, then the 12 test anchors.
 ANCHORS = tuple(
     str(t.date()) for t in pd.date_range('2008-01-10', periods=32, freq='91D'))
-FIT_DATES, VALIDATION_ANCHOR = ANCHORS[:19], ANCHORS[19]
+FIT_DATES, TRAIN_ANCHOR = ANCHORS[:19], ANCHORS[19]
 KS = (3, 5, 8, 10, 12, 15, 20, 25, 30, 40, 50)
 RV1_KS = KS + (4, 6, 7, 9, 14, 18, 22, 35, 45)  # Unsegmented RV1 questions.
 SEGMENT_KS, RV3_KS = (5, 10, 20), (6, 12, 20, 25)
@@ -178,12 +180,16 @@ def allowed(candidate: Dict[str, Any], constraint) -> bool:
     return bool(OPS[c['op']](dec(value), x))
 
 
-def eligible(candidate: Dict[str, Any], policy: Dict[str, Any]) -> bool:
-    r"""Constraint plus the P5 rule that a book must have a positive price."""
+def family_eligible(candidate: Dict[str, Any], policy: Dict[str, Any]) -> bool:
+    r"""The P5 rule that a book must have a positive price."""
     price = candidate['features'].get('price')
-    if policy['family'] == 'P5' and (price is None or dec(price) <= 0):
-        return False
-    return allowed(candidate, policy['constraint'])
+    return policy['family'] != 'P5' or (price is not None and dec(price) > 0)
+
+
+def eligible(candidate: Dict[str, Any], policy: Dict[str, Any]) -> bool:
+    r"""The question's constraint plus :func:`family_eligible`."""
+    return family_eligible(candidate, policy) and allowed(
+        candidate, policy['constraint'])
 
 
 def offer_cost(features: Dict[str, Any], policy: Dict[str, Any]) -> Decimal:
@@ -289,7 +295,8 @@ def render_question(text: str, policy: Dict[str, Any]) -> str:
             f'exclusive; other below ${gold}. Costs are ${platinum_cost}, '
             f'${gold_cost}, and ${other}, respectively. '
             f'Budget: ${policy["budget"]}.')
-        lines.append(  # Fixed wording; trained models expect it verbatim.
+        lines.append(  # Fixed wording, typo included, as the reported
+            # checkpoints were trained on it:
             'Rank by historical value divided by offer cost, rounded '
             'to9decimalplaces. Fund the sorted prefix whose cumulative cost '
             'stays within budget. Return its first requested number of IDs.')
@@ -580,7 +587,7 @@ class _Amazon:
 
 def build_benchmark(
     root: str = 'stanford-star/relbench-v1/rel-amazon',
-    anchors=(VALIDATION_ANCHOR, ),
+    anchors=(TRAIN_ANCHOR, ),
     tasks=('item', 'user'),
     n_questions: int = 32,
     seed: int = 50,
