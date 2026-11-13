@@ -20,7 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
-- Fixed `scatter(reduce="min"/"max")` during ONNX export returning `0` for groups whose values are all positive (`min`) or all negative (`max`)
+- Fixed `scatter(reduce="min"/"max")` during ONNX export returning `0` for groups whose values are all positive (`min`) or all negative (`max`) ([#10905](https://github.com/pyg-team/pytorch_geometric/pull/10905))
 
 - Fixed `HashTensor` string keys with `xxhash>=4.0` ([#10779](https://github.com/pyg-team/pytorch_geometric/pull/10779))
 
