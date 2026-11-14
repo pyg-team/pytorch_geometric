@@ -223,11 +223,11 @@ class FusedAggregation(Aggregation):
             assert isinstance(reduce, str)
 
             if reduce == 'pow_sum':
-                if self.semi_grad:
-                    out = scatter(x.detach() * x.detach(), index, 0, dim_size,
-                                  reduce='sum')
-                else:
-                    out = scatter(x * x, index, 0, dim_size, reduce='sum')
+                if not self.semi_grad:  # Computed two-pass via `self._var`:
+                    outs.append(None)
+                    continue
+                out = scatter(x.detach() * x.detach(), index, 0, dim_size,
+                              reduce='sum')
             else:
                 out = scatter(x, index, 0, dim_size, reduce=reduce)
 
@@ -276,11 +276,8 @@ class FusedAggregation(Aggregation):
                 else:
                     raise NotImplementedError
 
-            pow_sum = outs[i]
-
-            assert pow_sum is not None
             assert mean is not None
-            outs[i] = (pow_sum / count) - (mean * mean)
+            outs[i] = self._var(x, index, dim_size, count, mean, outs[i])
 
         # Compute `StdAggregation` last:
         if 'StdAggregation' in self.aggr_index:
@@ -315,10 +312,9 @@ class FusedAggregation(Aggregation):
                     raise NotImplementedError
 
             if var is None:
-                assert pow_sum is not None
                 assert count is not None
                 assert mean is not None
-                var = (pow_sum / count) - (mean * mean)
+                var = self._var(x, index, dim_size, count, mean, pow_sum)
 
             # Allow "undefined" gradient at `sqrt(0.0)`:
             out = var.clamp(min=1e-5).sqrt()
@@ -334,3 +330,12 @@ class FusedAggregation(Aggregation):
             vals.append(out)
 
         return vals
+
+    def _var(self, x: Tensor, index: Tensor, dim_size: int, count: Tensor,
+             mean: Tensor, pow_sum: Optional[Tensor]) -> Tensor:
+        if pow_sum is not None:  # `semi_grad`, see `VarAggregation`:
+            return (pow_sum / count) - (mean * mean)
+        # Subtract the mean first, since `E[X^2] - E[X]^2` cancels
+        # catastrophically when the mean is large compared to the spread:
+        diff = x - mean[index]
+        return scatter(diff * diff, index, 0, dim_size, reduce='sum') / count
