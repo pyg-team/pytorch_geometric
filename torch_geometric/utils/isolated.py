@@ -44,7 +44,7 @@ def remove_isolated_nodes(
     with optional edge attributes :attr:`edge_attr`.
     In addition, returns a mask of shape :obj:`[num_nodes]` to manually filter
     out isolated node features later on.
-    Self-loops are preserved for non-isolated nodes.
+    Self-loops, including duplicates, are preserved for non-isolated nodes.
 
     Args:
         edge_index (LongTensor): The edge indices.
@@ -79,13 +79,9 @@ def remove_isolated_nodes(
     assoc[mask] = torch.arange(mask.sum(), device=assoc.device)  # type: ignore
     edge_index = assoc[edge_index]
 
-    loop_mask = torch.zeros_like(mask)
-    loop_mask[loop_edge_index[0]] = 1
-    loop_mask = loop_mask & mask
-    loop_assoc = torch.full_like(assoc, -1)
-    loop_assoc[loop_edge_index[0]] = torch.arange(loop_edge_index.size(1),
-                                                  device=loop_assoc.device)
-    loop_idx = loop_assoc[loop_mask]
+    # Keep each self-loop rather than only the last loop for each node.
+    loop_idx = loop_edge_index[0].argsort(stable=True)
+    loop_idx = loop_idx[mask[loop_edge_index[0, loop_idx]]]
     loop_edge_index = assoc[loop_edge_index[:, loop_idx]]
 
     edge_index = torch.cat([edge_index, loop_edge_index], dim=1)
