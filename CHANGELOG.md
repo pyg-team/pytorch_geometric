@@ -20,6 +20,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
+- Fixed `AddRandomWalkPE` ignoring `edge_weight` values and dropping duplicated edges on its dense code path ([#10825](https://github.com/pyg-team/pytorch_geometric/pull/10825))
+
 - Fixed `HashTensor` string keys with `xxhash>=4.0` ([#10779](https://github.com/pyg-team/pytorch_geometric/pull/10779))
 
 - Fixed bounded Nemotron triple extraction producing reasoning-only output and rejected empty cloud responses

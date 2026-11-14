@@ -146,12 +146,16 @@ class AddRandomWalkPE(BaseTransform):
             value = torch.ones(data.num_edges, device=row.device)
         else:
             value = data.edge_weight
-        value = scatter(value, row, dim_size=N, reduce='sum').clamp(min=1)[row]
-        value = 1.0 / value
+        # Row-normalize into transition probabilities. A weighted edge keeps
+        # its share of the weighted out-degree, so every row sums to one:
+        deg = scatter(value, row, dim_size=N, reduce='sum')
+        deg_inv = deg.reciprocal().masked_fill(deg == 0, 0.0)
+        value = value * deg_inv[row]
 
         if N <= 2_000:  # Dense code path for faster computation:
-            adj = torch.zeros((N, N), device=row.device)
-            adj[row, col] = value
+            adj = torch.zeros((N, N), device=row.device, dtype=value.dtype)
+            # Accumulate duplicated edges, as the sparse code paths do:
+            adj.index_put_((row, col), value, accumulate=True)
             loop_index = torch.arange(N, device=row.device)
         elif torch_geometric.typing.NO_MKL:  # pragma: no cover
             adj = to_torch_coo_tensor(data.edge_index, value, size=data.size())
