@@ -5,6 +5,7 @@ import torch
 from torch import Tensor
 from torch.nn import Parameter
 
+from torch_geometric.index import ptr2index
 from torch_geometric.nn.aggr import Aggregation
 from torch_geometric.utils import softmax
 
@@ -106,9 +107,15 @@ class VarAggregation(Aggregation):
         if self.semi_grad:
             with torch.no_grad():
                 mean2 = self.reduce(x * x, index, ptr, dim_size, dim, 'mean')
-        else:
-            mean2 = self.reduce(x * x, index, ptr, dim_size, dim, 'mean')
-        return mean2 - mean * mean
+            return mean2 - mean * mean
+
+        # Subtract the mean first, since `E[X^2] - E[X]^2` cancels
+        # catastrophically when the mean is large compared to the spread:
+        if index is None:
+            assert ptr is not None
+            index = ptr2index(ptr, output_size=x.size(dim))
+        diff = x - mean.index_select(dim, index)
+        return self.reduce(diff * diff, index, ptr, dim_size, dim, 'mean')
 
 
 class StdAggregation(Aggregation):

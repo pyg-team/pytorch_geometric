@@ -75,6 +75,18 @@ def test_var_aggregation():
     assert torch.allclose(out, expected, atol=1e-6)
 
 
+def test_var_aggregation_large_mean():
+    # `E[X^2] - E[X]^2` would give -2.0 for the first group:
+    x = torch.tensor([[4095.0], [4097.0], [4097.0], [1.0], [2.0]])
+    index = torch.tensor([0, 0, 0, 1, 1])
+    ptr = torch.tensor([0, 3, 5])
+    expected = torch.tensor([[8 / 9], [1 / 4]])
+
+    assert torch.allclose(VarAggregation()(x, index), expected)
+    assert torch.allclose(VarAggregation()(x, ptr=ptr), expected)
+    assert torch.allclose(StdAggregation()(x, index), expected.sqrt())
+
+
 def test_empty_std_aggregation():
     aggr = StdAggregation()
 

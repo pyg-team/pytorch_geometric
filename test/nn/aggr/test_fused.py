@@ -42,6 +42,27 @@ def test_fused_aggregation(aggrs):
     assert torch.allclose(x.grad, y.grad, atol=1e-5)
 
 
+@pytest.mark.parametrize('aggrs', [
+    ['var', 'std'],
+    ['sum', 'var', 'std'],
+    ['mean', 'std'],
+    ['std'],
+])
+def test_fused_var_aggregation_large_mean(aggrs):
+    # `E[X^2] - E[X]^2` would give -2.0 for the first group:
+    x = torch.tensor([[4095.0], [4097.0], [4097.0], [1.0], [2.0]])
+    index = torch.tensor([0, 0, 0, 1, 1])
+    expected = {
+        'var': torch.tensor([[8 / 9], [1 / 4]]),
+        'std': torch.tensor([[8 / 9], [1 / 4]]).sqrt(),
+    }
+
+    aggr = FusedAggregation([aggregation_resolver(aggr) for aggr in aggrs])
+    for name, out in zip(aggrs, aggr(x, index)):
+        if name in expected:
+            assert torch.allclose(out, expected[name])
+
+
 def test_empty_fused_std_aggregation():
     aggrs = [aggregation_resolver(aggr) for aggr in ['mean', 'var', 'std']]
     aggr = FusedAggregation(aggrs)
