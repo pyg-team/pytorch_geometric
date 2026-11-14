@@ -20,7 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
-- Fixed catastrophic cancellation in `VarAggregation` and `StdAggregation` (and their fused versions in `MultiAggregation`) for inputs with a large mean
+- Fixed catastrophic cancellation in `VarAggregation` and `StdAggregation` (and their fused versions in `MultiAggregation`) for inputs with a large mean ([#10908](https://github.com/pyg-team/pytorch_geometric/pull/10908))
 
 - Fixed `HashTensor` string keys with `xxhash>=4.0` ([#10779](https://github.com/pyg-team/pytorch_geometric/pull/10779))
 
