@@ -255,6 +255,10 @@ def get_edge_index(
 ) -> Tensor:
 
     num_edges = int(num_src_nodes * avg_degree)
+    if is_undirected:
+        # `to_undirected` adds the reverse of every sampled edge, so sampling
+        # `num_src_nodes * avg_degree` pairs would double the average degree:
+        num_edges = int(num_src_nodes * avg_degree / 2)
     row = torch.randint(num_src_nodes, (num_edges, ), dtype=torch.int64)
     col = torch.randint(num_dst_nodes, (num_edges, ), dtype=torch.int64)
     edge_index = torch.stack([row, col], dim=0)
