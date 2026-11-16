@@ -585,6 +585,22 @@ def test_torch_sparse_batch(layout):
     assert torch.equal(out[1], torch.cat([edge_attr, edge_attr], 0))
 
 
+@withPackage('torch>=2.0.0')
+def test_torch_sparse_batch_higher_dim():
+    x1 = torch.randint(0, 2, (2, 3, 4)).to_sparse()
+    x2 = torch.randint(0, 2, (3, 3, 4)).to_sparse()
+
+    data1 = Data(x=x1)
+    data2 = Data(x=x2)
+
+    batch = Batch.from_data_list([data1, data2])
+
+    assert batch.x.size() == (5, 3, 4)
+    assert batch.x.layout == torch.sparse_coo
+    assert torch.equal(batch.x.to_dense(),
+                       torch.cat([x1.to_dense(), x2.to_dense()], dim=0))
+
+
 def test_torch_nested_batch():
     from torch.nested import nested_tensor
 
