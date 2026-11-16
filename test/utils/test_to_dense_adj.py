@@ -89,13 +89,12 @@ def test_to_dense_adj_with_zero_batch_size():
         adj = to_dense_adj(edge_index, batch_vector, batch_size=0)
         assert adj.size() == (0, 0, 0)
 
-        adj = to_dense_adj(
-            edge_index, batch_vector, max_num_nodes=10, batch_size=0)
+        adj = to_dense_adj(edge_index, batch_vector, max_num_nodes=10,
+                           batch_size=0)
         assert adj.size() == (0, 10, 10)
 
         edge_attr = torch.empty((0, 2))
-        adj = to_dense_adj(
-            edge_index, batch_vector, edge_attr, batch_size=0)
+        adj = to_dense_adj(edge_index, batch_vector, edge_attr, batch_size=0)
         assert adj.size() == (0, 0, 0, 2)
 
 
