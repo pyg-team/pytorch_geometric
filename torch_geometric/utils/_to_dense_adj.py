@@ -76,7 +76,7 @@ def to_dense_adj(
     idx2 = edge_index[1] - cum_nodes[batch][edge_index[1]]
 
     if max_num_nodes is None:
-        max_num_nodes = int(num_nodes.max())
+        max_num_nodes = int(num_nodes.max()) if num_nodes.numel() > 0 else 0
 
     elif ((idx1.numel() > 0 and idx1.max() >= max_num_nodes)
           or (idx2.numel() > 0 and idx2.max() >= max_num_nodes)):

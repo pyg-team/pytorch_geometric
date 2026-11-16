@@ -81,6 +81,24 @@ def test_to_dense_adj_with_empty_edge_index():
     assert adj.size() == (2, 10, 10) and adj.sum() == 0
 
 
+def test_to_dense_adj_with_zero_batch_size():
+    edge_index = torch.empty((2, 0), dtype=torch.long)
+    batch = torch.empty(0, dtype=torch.long)
+
+    for batch_vector in (None, batch):
+        adj = to_dense_adj(edge_index, batch_vector, batch_size=0)
+        assert adj.size() == (0, 0, 0)
+
+        adj = to_dense_adj(
+            edge_index, batch_vector, max_num_nodes=10, batch_size=0)
+        assert adj.size() == (0, 10, 10)
+
+        edge_attr = torch.empty((0, 2))
+        adj = to_dense_adj(
+            edge_index, batch_vector, edge_attr, batch_size=0)
+        assert adj.size() == (0, 0, 0, 2)
+
+
 def test_to_dense_adj_with_duplicate_entries():
     edge_index = torch.tensor([
         [0, 0, 0, 1, 2, 3, 3, 4],
