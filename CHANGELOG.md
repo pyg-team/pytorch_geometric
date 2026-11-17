@@ -20,7 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
-- Fixed the `PGExplainer` size loss growing with the number of graphs in a mini-batch ([#10911](https://github.com/pyg-team/pytorch_geometric/issues/10911))
+- Fixed the `PGExplainer` size loss growing with the number of graphs in a mini-batch ([#10912](https://github.com/pyg-team/pytorch_geometric/pull/10912))
 
 - Fixed `HashTensor` string keys with `xxhash>=4.0` ([#10779](https://github.com/pyg-team/pytorch_geometric/pull/10779))
 
