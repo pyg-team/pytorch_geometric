@@ -207,11 +207,18 @@ class PGExplainer(ExplainerAlgorithm):
         # Forward pass with masks applied
         y_hat, y = model(x, edge_index, **kwargs), target
 
+        # The prediction loss is a mean over graphs, so the size loss
+        # needs to be one too:
+        num_graphs = 1
+        if (self.model_config.task_level == ModelTaskLevel.graph
+                and index is None and y_hat.dim() > 0):
+            num_graphs = y_hat.size(0)
+
         if index is not None:
             y_hat, y = y_hat[index], y[index]
 
         # Calculate loss
-        loss = self._loss(y_hat, y, edge_mask)
+        loss = self._loss(y_hat, y, edge_mask, num_graphs)
 
         # Backward pass and optimization
         loss.backward()
@@ -463,15 +470,17 @@ class PGExplainer(ExplainerAlgorithm):
         return (eps.log() - (1 - eps).log() + logits) / temperature
 
     def _loss(self, y_hat: Tensor, y: Tensor,
-              edge_mask: Union[Tensor, Dict[EdgeType, Tensor]]) -> Tensor:
+              edge_mask: Union[Tensor, Dict[EdgeType, Tensor]],
+              num_graphs: int = 1) -> Tensor:
         # Calculate base loss based on model configuration
         loss = self._calculate_base_loss(y_hat, y)
 
         # Apply regularization based on graph type
         if self.is_hetero:
-            loss = self._apply_hetero_regularization(loss, edge_mask)
+            loss = self._apply_hetero_regularization(loss, edge_mask,
+                                                     num_graphs)
         else:
-            loss = self._apply_homo_regularization(loss, edge_mask)
+            loss = self._apply_homo_regularization(loss, edge_mask, num_graphs)
 
         return loss
 
@@ -487,26 +496,28 @@ class PGExplainer(ExplainerAlgorithm):
             raise ValueError(
                 f"Unsupported model mode: {self.model_config.mode}")
 
-    def _apply_hetero_regularization(
-            self, loss: Tensor, edge_mask: Dict[EdgeType, Tensor]) -> Tensor:
+    def _apply_hetero_regularization(self, loss: Tensor,
+                                     edge_mask: Dict[EdgeType, Tensor],
+                                     num_graphs: int = 1) -> Tensor:
         """Apply regularization for heterogeneous graph."""
         for _, mask in edge_mask.items():
-            loss = self._add_mask_regularization(loss, mask)
+            loss = self._add_mask_regularization(loss, mask, num_graphs)
 
         return loss
 
-    def _apply_homo_regularization(self, loss: Tensor,
-                                   edge_mask: Tensor) -> Tensor:
+    def _apply_homo_regularization(self, loss: Tensor, edge_mask: Tensor,
+                                   num_graphs: int = 1) -> Tensor:
         """Apply regularization for homogeneous graph."""
-        return self._add_mask_regularization(loss, edge_mask)
+        return self._add_mask_regularization(loss, edge_mask, num_graphs)
 
-    def _add_mask_regularization(self, loss: Tensor, mask: Tensor) -> Tensor:
+    def _add_mask_regularization(self, loss: Tensor, mask: Tensor,
+                                 num_graphs: int = 1) -> Tensor:
         """Add size and entropy regularization for a mask."""
         # Apply sigmoid for mask values
         mask = mask.sigmoid()
 
         # Size regularization
-        size_loss = mask.sum() * self.coeffs['edge_size']
+        size_loss = mask.sum() / num_graphs * self.coeffs['edge_size']
 
         # Entropy regularization
         masked = 0.99 * mask + 0.005

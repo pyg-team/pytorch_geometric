@@ -469,3 +469,37 @@ def test_pg_explainer_hetero_conv(device, hetero_data, hetero_model_custom,
     # Run through the standard explanation checker
     check_explanation_hetero(explanation, None, explainer.edge_mask_type,
                              hetero_data)
+
+
+def test_pg_explainer_graph_batch_size():
+    x = torch.randn(8, 3)
+    edge_index = torch.tensor([
+        [0, 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7],
+        [1, 0, 2, 1, 3, 2, 4, 3, 5, 4, 6, 5, 7, 6],
+    ])
+    model_config = ModelConfig(mode='binary_classification',
+                               task_level='graph', return_type='raw')
+    model = GCN(model_config)
+
+    def train(num_graphs):
+        torch.manual_seed(12345)
+        algorithm = PGExplainer(epochs=1)
+        # bias=0.5 removes the sampling noise from the edge mask. Set it on
+        # a copy so the class-level defaults stay untouched:
+        algorithm.coeffs = dict(algorithm.coeffs, bias=0.5)
+        algorithm.connect(
+            dict(explanation_type='phenomenon', edge_mask_type='object'),
+            model_config,
+        )
+        return algorithm.train(
+            0,
+            model,
+            x.repeat(num_graphs, 1),
+            torch.cat([edge_index + i * 8 for i in range(num_graphs)], dim=1),
+            target=torch.ones(num_graphs),
+            batch=torch.arange(num_graphs).repeat_interleave(8),
+        )
+
+    # The same graph repeated in a batch should give the same loss:
+    assert train(1) == pytest.approx(train(4))
+    assert train(1) == pytest.approx(train(16))
