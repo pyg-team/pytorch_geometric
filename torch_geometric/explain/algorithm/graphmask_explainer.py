@@ -1,5 +1,5 @@
 import math
-from typing import List, Optional, Tuple, Union
+from typing import Callable, List, Optional, Tuple, Union
 
 import torch
 import torch.nn.functional as F
@@ -120,19 +120,31 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         **kwargs,
     ) -> Explanation:
 
-        hard_node_mask = None
+        # Save the model state such that it can be restored after explaining:
+        requires_grad = [(p, p.requires_grad) for p in model.parameters()]
+        layer_states = [
+            (module, module.explain, module.__dict__.get('explain_message'))
+            for module in model.modules()
+            if isinstance(module, MessagePassing)
+        ]
 
-        if self.model_config.task_level == ModelTaskLevel.node:
-            hard_node_mask, hard_edge_mask = self._get_hard_masks(
-                model, index, edge_index, num_nodes=x.size(0))
-        self._train_explainer(model, x, edge_index, target=target, index=index,
-                              **kwargs)
-        node_mask = self._post_process_mask(self.node_feat_mask,
-                                            hard_node_mask, apply_sigmoid=True)
-        edge_mask = self._explain(model, index=index)
-        edge_mask = edge_mask[:edge_index.size(1)]
+        try:
+            hard_node_mask = None
 
-        return Explanation(node_mask=node_mask, edge_mask=edge_mask)
+            if self.model_config.task_level == ModelTaskLevel.node:
+                hard_node_mask, hard_edge_mask = self._get_hard_masks(
+                    model, index, edge_index, num_nodes=x.size(0))
+            self._train_explainer(model, x, edge_index, target=target,
+                                  index=index, **kwargs)
+            node_mask = self._post_process_mask(self.node_feat_mask,
+                                                hard_node_mask,
+                                                apply_sigmoid=True)
+            edge_mask = self._explain(model, index=index)
+            edge_mask = edge_mask[:edge_index.size(1)]
+
+            return Explanation(node_mask=node_mask, edge_mask=edge_mask)
+        finally:
+            self._clean_model(model, requires_grad, layer_states)
 
     def supports(self) -> bool:
         return True
@@ -306,6 +318,35 @@ class GraphMaskExplainer(ExplainerAlgorithm):
                 module.explain_message = explain_message.__get__(
                     module, MessagePassing)
                 module.explain = True
+
+    def _clean_model(
+        self,
+        model: torch.nn.Module,
+        requires_grad: List[Tuple[Parameter, bool]],
+        layer_states: List[Tuple[MessagePassing, Optional[bool],
+                                 Optional[Callable]]],
+    ):
+        r"""Restores the original GNN model to its state before explaining.
+
+        Reverts the changes made by :meth:`_freeze_model` and
+        :meth:`_set_flags`, and removes the messages injected by
+        :meth:`_inject_messages` and :meth:`explain_message`.
+        """
+        for param, value in requires_grad:
+            param.requires_grad = value
+
+        for module, explain, explain_message in layer_states:
+            module.explain = explain
+            if explain_message is None:
+                if 'explain_message' in module.__dict__:
+                    del module.explain_message
+            else:
+                module.explain_message = explain_message
+            for attr in ('message_scale', 'message_replacement',
+                         'latest_messages', 'latest_source_embeddings',
+                         'latest_target_embeddings'):
+                if attr in module.__dict__:
+                    delattr(module, attr)
 
     def _inject_messages(
         self,

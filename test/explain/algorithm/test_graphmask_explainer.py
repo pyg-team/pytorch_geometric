@@ -1,7 +1,12 @@
 import pytest
 import torch
 
-from torch_geometric.explain import Explainer, Explanation, GraphMaskExplainer
+from torch_geometric.explain import (
+    Explainer,
+    Explanation,
+    GNNExplainer,
+    GraphMaskExplainer,
+)
 from torch_geometric.explain.config import (
     MaskType,
     ModelConfig,
@@ -140,6 +145,61 @@ def test_graph_mask_explainer_binary_classification(
     )
 
     check_explanation(edge_mask_type, node_mask_type, explanation)
+
+
+def test_graph_mask_explainer_restores_model():
+    model_config = ModelConfig(mode='regression', task_level='node')
+    model = GCN(model_config)
+
+    # Freeze a parameter to ensure its state is preserved as well:
+    model.conv1.bias.requires_grad = False
+    requires_grad = [p.requires_grad for p in model.parameters()]
+
+    with torch.no_grad():
+        out = model(x, edge_index)
+
+    explainer = Explainer(
+        model=model,
+        algorithm=GraphMaskExplainer(2, epochs=5, log=False),
+        explanation_type='model',
+        node_mask_type='attributes',
+        edge_mask_type='object',
+        model_config=model_config,
+    )
+    explainer(x, edge_index)
+
+    # Check that the model gives the same predictions as before:
+    with torch.no_grad():
+        assert torch.allclose(model(x, edge_index), out)
+
+    # Check that the parameters retain their original `requires_grad` state:
+    assert [p.requires_grad for p in model.parameters()] == requires_grad
+
+    # Check that no explanation flags or hooks are left on the model:
+    for conv in [model.conv1, model.conv2]:
+        assert conv.explain is None
+        assert 'explain_message' not in conv.__dict__
+        assert not hasattr(conv, 'message_scale')
+        assert not hasattr(conv, 'latest_messages')
+
+    # Check that gradients still flow through the model:
+    model.zero_grad()
+    model(x, edge_index).sum().backward()
+    trainable = [p for p in model.parameters() if p.requires_grad]
+    assert all(p.grad is not None for p in trainable)
+
+    # Check that another explainer runs on the same model without errors:
+    gnn_explainer = Explainer(
+        model=model,
+        algorithm=GNNExplainer(epochs=5),
+        explanation_type='model',
+        node_mask_type='attributes',
+        edge_mask_type='object',
+        model_config=model_config,
+    )
+    explanation = gnn_explainer(x, edge_index)
+
+    check_explanation(MaskType.object, MaskType.attributes, explanation)
 
 
 @pytest.mark.parametrize('edge_mask_type', edge_mask_types)
