@@ -122,11 +122,10 @@ class GraphMaskExplainer(ExplainerAlgorithm):
 
         # Save the model state such that it can be restored after explaining:
         requires_grad = [(p, p.requires_grad) for p in model.parameters()]
-        layer_states = [
-            (module, module.explain, module.__dict__.get('explain_message'))
-            for module in model.modules()
-            if isinstance(module, MessagePassing)
-        ]
+        layer_states = [(module, module.explain,
+                         module.__dict__.get('explain_message'))
+                        for module in model.modules()
+                        if isinstance(module, MessagePassing)]
 
         try:
             hard_node_mask = None
