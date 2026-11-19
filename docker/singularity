@@ -1,5 +1,5 @@
 Bootstrap: docker
-From: nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04
+From: nvidia/cuda:10.2-cudnn8-devel-ubuntu18.04
 
 %post
   CURDIR=$(pwd)
@@ -33,41 +33,42 @@ From: nvidia/cuda:10.1-cudnn7-devel-ubuntu18.04
     libopenblas-dev \
     libhdf5-dev
 
-  export PYENV_ROOT=/opt/pyenv
-  export PATH="/opt/pyenv/bin:$PATH"
-  curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
-  pyenv install 3.7.2
-  echo 'export PATH=/opt/pyenv/versions/3.7.2/bin/:$PATH' >> $SINGULARITY_ENVIRONMENT
-  export PATH=/opt/pyenv/versions/3.7.2/bin/:$PATH
+  export PYENV_ROOT=/opt/pyenv && \
+    export PATH="/opt/pyenv/bin:$PATH" && \
+    curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash && \
+    pyenv install 3.10.3 && \
+    echo 'export PATH=/opt/pyenv/versions/3.10.3/bin:$PATH' >> $SINGULARITY_ENVIRONMENT && \
+    export PATH=/opt/pyenv/versions/3.10.3/bin:$PATH
 
-  pip install torch==1.3.0
+  pip install torch==1.11.0
 
   mkdir -p $SINGULARITY_ROOTFS/tmp/sing_build_cuda
   cd $SINGULARITY_ROOTFS/tmp/sing_build_cuda
 
-  export TORCH_CUDA_ARCH_LIST="5.0 6.1"
+  echo 'export TORCH_CUDA_ARCH_LIST="5.0 6.1"' >> $SINGULARITY_ENVIRONMENT && \
+    export TORCH_CUDA_ARCH_LIST="5.0 6.1"
 
   git clone https://github.com/rusty1s/pytorch_scatter.git && \
     cd ./pytorch_scatter && \
-    git checkout 1.4.0 && \
+    git checkout 2.0.9 && \
     python3 -m pip install . && \
     cd ..
 
   git clone https://github.com/rusty1s/pytorch_sparse.git && \
     cd ./pytorch_sparse && \
-    git checkout 0.4.3 && \
+    git checkout 0.6.13 && \
     python3 -m pip install . && \
     cd ..
 
   git clone https://github.com/rusty1s/pytorch_cluster.git && \
     cd ./pytorch_cluster && \
-    git checkout 1.4.5 && \
+    git checkout 1.6.0 && \
     python3 -m pip install . && \
     cd ..
 
   git clone https://github.com/pyg-team/pytorch_geometric.git && \
     cd ./pytorch_geometric && \
-    git checkout 1.3.2 && \
+    git checkout 2.0.4 && \
     python3 -m pip install . && \
     cd ..
 
