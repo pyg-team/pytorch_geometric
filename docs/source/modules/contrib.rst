@@ -32,6 +32,18 @@ Convolutional Layers
 Models
 ------
 
+Relational prediction
+~~~~~~~~~~~~~~~~~~~~~
+
+:class:`~torch_geometric.contrib.nn.models.RelGTTokenEncoder` combines row
+embeddings with table, hop, time, and structural encodings.
+:class:`~torch_geometric.contrib.nn.models.RelGT` applies local attention and
+persistent centroid-based global attention to predict seed-level scores.
+The models accept tensors without requiring RelBench or TorchFrame.
+The `RelGT example <https://github.com/pyg-team/pytorch_geometric/tree/master/examples/contrib/relgt>`_
+shows how to build prediction-time contexts, train on simulated customer
+histories, and map a RelBench task row to a seed and cutoff.
+
 .. currentmodule:: torch_geometric.contrib.nn.models
 
 .. autosummary::
