@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - Added a `--num_workers` option to `examples/llm/glem.py` ([#10805](https://github.com/pyg-team/pytorch_geometric/pull/10805))
 - Improved error handling in `txt2kg` multi-process execution. ([#10771](https://github.com/pyg-team/pytorch_geometric/pull/10771))
+- Clarified in the `radius` and `radius_graph` docstrings that the CPU implementation uses a `k`-d tree while the GPU implementation performs a brute-force `O(N * M)` search ([#10757](https://github.com/pyg-team/pytorch_geometric/pull/10757))
 
 ### Deprecated
 

@@ -256,6 +256,14 @@ def radius(
         is biased towards certain quadrants.
         Consider setting :obj:`max_num_neighbors` to :obj:`None` or moving
         inputs to GPU before proceeding.
+
+    .. note::
+
+        The CPU implementation of :meth:`radius` builds a :obj:`k`-d tree
+        (via :obj:`nanoflann`) to avoid comparing every pair of points, while
+        the GPU implementation performs a brute-force :math:`O(N \cdot M)`
+        search. For large point sets, this means the CPU path can scale
+        better than moving the computation to GPU.
     """
     if not torch_geometric.typing.WITH_RADIUS:
         raise ImportError("'radius' requires 'pyg-lib>=0.6.0'")
@@ -315,6 +323,14 @@ def radius_graph(
         :obj:`max_num_neighbors` is biased towards certain quadrants.
         Consider setting :obj:`max_num_neighbors` to :obj:`None` or moving
         inputs to GPU before proceeding.
+
+    .. note::
+
+        The CPU implementation of :meth:`radius_graph` builds a :obj:`k`-d
+        tree (via :obj:`nanoflann`) to avoid comparing every pair of points,
+        while the GPU implementation performs a brute-force
+        :math:`O(N \cdot M)` search. For large point sets, this means the
+        CPU path can scale better than moving the computation to GPU.
     """
     if not torch_geometric.typing.WITH_RADIUS:
         raise ImportError("'radius_graph' requires 'pyg-lib>=0.6.0'")
