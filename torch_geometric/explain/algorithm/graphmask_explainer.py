@@ -121,18 +121,23 @@ class GraphMaskExplainer(ExplainerAlgorithm):
     ) -> Explanation:
 
         hard_node_mask = None
+        orig_requires_grad = [p.requires_grad for p in model.parameters()]
 
-        if self.model_config.task_level == ModelTaskLevel.node:
-            hard_node_mask, hard_edge_mask = self._get_hard_masks(
-                model, index, edge_index, num_nodes=x.size(0))
-        self._train_explainer(model, x, edge_index, target=target, index=index,
-                              **kwargs)
-        node_mask = self._post_process_mask(self.node_feat_mask,
-                                            hard_node_mask, apply_sigmoid=True)
-        edge_mask = self._explain(model, index=index)
-        edge_mask = edge_mask[:edge_index.size(1)]
+        try:
+            if self.model_config.task_level == ModelTaskLevel.node:
+                hard_node_mask, hard_edge_mask = self._get_hard_masks(
+                    model, index, edge_index, num_nodes=x.size(0))
+            self._train_explainer(model, x, edge_index, target=target,
+                                  index=index, **kwargs)
+            node_mask = self._post_process_mask(self.node_feat_mask,
+                                                hard_node_mask,
+                                                apply_sigmoid=True)
+            edge_mask = self._explain(model, index=index)
+            edge_mask = edge_mask[:edge_index.size(1)]
 
-        return Explanation(node_mask=node_mask, edge_mask=edge_mask)
+            return Explanation(node_mask=node_mask, edge_mask=edge_mask)
+        finally:
+            self._clean_model(model, orig_requires_grad)
 
     def supports(self) -> bool:
         return True
@@ -296,6 +301,33 @@ class GraphMaskExplainer(ExplainerAlgorithm):
         """
         for param in module.parameters():
             param.requires_grad = False
+
+    def _clean_model(
+        self,
+        model: torch.nn.Module,
+        orig_requires_grad: List[bool],
+    ):
+        r"""Restores the parameters of the original GNN model and cleans
+        injected explain flags and attributes from MessagePassing layers.
+        """
+        for param, req_grad in zip(model.parameters(), orig_requires_grad):
+            param.requires_grad = req_grad
+
+        for module in model.modules():
+            if isinstance(module, MessagePassing):
+                if hasattr(module, 'explain_message'):
+                    del module.explain_message
+                module.explain = None
+                if hasattr(module, 'message_scale'):
+                    del module.message_scale
+                if hasattr(module, 'message_replacement'):
+                    del module.message_replacement
+                if hasattr(module, 'latest_messages'):
+                    del module.latest_messages
+                if hasattr(module, 'latest_source_embeddings'):
+                    del module.latest_source_embeddings
+                if hasattr(module, 'latest_target_embeddings'):
+                    del module.latest_target_embeddings
 
     def _set_flags(self, model: torch.nn.Module):
         r"""Initializes the underlying explainer model's parameters for each
