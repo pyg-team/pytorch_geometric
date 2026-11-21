@@ -233,3 +233,33 @@ def test_graph_mask_explainer_regression(
     )
 
     check_explanation(edge_mask_type, node_mask_type, explanation)
+
+
+def test_graphmask_explainer_preserves_model():
+    model_config = ModelConfig(
+        mode='multiclass_classification',
+        task_level='node',
+        return_type='raw',
+    )
+    model = GCN(model_config)
+    orig_trainable = sum(p.requires_grad for p in model.parameters())
+    assert orig_trainable > 0
+
+    with torch.no_grad():
+        before_out = model(x, edge_index)
+
+    explainer = Explainer(
+        model=model,
+        algorithm=GraphMaskExplainer(2, epochs=5, log=False),
+        explanation_type='model',
+        node_mask_type='attributes',
+        edge_mask_type='object',
+        model_config=model_config,
+    )
+    _ = explainer(x, edge_index, index=1)
+
+    with torch.no_grad():
+        after_out = model(x, edge_index)
+
+    assert torch.allclose(before_out, after_out, atol=1e-6)
+    assert sum(p.requires_grad for p in model.parameters()) == orig_trainable
