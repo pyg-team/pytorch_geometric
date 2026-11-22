@@ -172,13 +172,11 @@ class NeighborSamplingRAGGraphStore(LocalGraphStore):
         seed_nodes: Tensor,
     ) -> SamplerOutput:
         """Sample the graph starting from the given nodes using the
-        in-built NeighborSampler.
+        in-built NeighborSampler. The number of hops and neighbors per hop
+        come from :obj:`num_neighbors` in :obj:`config`.
 
         Args:
             seed_nodes (InputNodes): Seed nodes to start sampling from.
-            num_neighbors (Optional[NumNeighborsType], optional): Parameters
-                to determine how many hops and number of neighbors per hop.
-                Defaults to None.
 
         Returns:
             Union[SamplerOutput, HeteroSamplerOutput]: NeighborSamplerOutput

@@ -463,7 +463,6 @@ class LLM(torch.nn.Module):
 
         Args:
             question (list[str]): The questions/prompts.
-            answer (list[str]): The answers/labels.
             context (list[str], optional): Additional context to give to the
                 LLM, such as textified knowledge graphs. (default: :obj:`None`)
             embedding (list[torch.Tensor], optional): RAG embedding
