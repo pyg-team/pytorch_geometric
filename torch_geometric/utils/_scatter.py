@@ -7,8 +7,11 @@ import torch_geometric.typing
 from torch_geometric import is_compiling, is_in_onnx_export, warnings
 from torch_geometric.typing import torch_scatter
 from torch_geometric.utils.functions import cumsum
+from torch_geometric.warnings import WarningCache
 
 warnings.filterwarnings('ignore', '.*is in beta and the API may change.*')
+
+_warning_cache = WarningCache()
 
 
 def scatter(
@@ -88,7 +91,7 @@ def scatter(
 
             if (src.is_cuda and src.requires_grad and not is_compiling()
                     and not is_in_onnx_export()):
-                warnings.warn(
+                _warning_cache.warn(
                     f"The usage of `scatter(reduce='{reduce}')` "
                     f"can be accelerated via the 'torch-scatter'"
                     f" package, but it was not found", stacklevel=2)
@@ -121,7 +124,7 @@ def scatter(
                 or not src.is_cuda):
 
             if src.is_cuda and not is_compiling():
-                warnings.warn(
+                _warning_cache.warn(
                     f"The usage of `scatter(reduce='{reduce}')` "
                     f"can be accelerated via the 'torch-scatter'"
                     f" package, but it was not found", stacklevel=2)
