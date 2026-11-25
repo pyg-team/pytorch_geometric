@@ -3,6 +3,7 @@ from typing import Any, Dict, List, Optional, Tuple, TypeVar, Union
 import torch
 from torch import Tensor
 
+from torch_geometric import EdgeIndex
 from torch_geometric.data import Data, HeteroData
 from torch_geometric.data.storage import EdgeStorage
 from torch_geometric.index import index2ptr
@@ -84,10 +85,16 @@ def to_csc(
             colptr, row, _ = data.adj_t.csr()
 
     elif data.edge_index is not None:
+        edge_index = data.edge_index
+        if isinstance(edge_index, EdgeIndex):
+            # The sampling kernels read the raw storage of `colptr` and `row`,
+            # which the `Index` wrappers returned by unpacking do not have:
+            edge_index = edge_index.as_tensor()
+
         if to_transpose:
-            col, row = data.edge_index
+            col, row = edge_index
         else:
-            row, col = data.edge_index
+            row, col = edge_index
 
         if not is_sorted:
             row, col, perm = sort_csc(row, col, src_node_time, edge_time)
