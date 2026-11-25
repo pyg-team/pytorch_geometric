@@ -20,7 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Fixed
 
-- Fixed neighbor sampling failing on heterogeneous graphs whose edges are stored as `EdgeIndex`
+- Fixed neighbor sampling failing on heterogeneous graphs whose edges are stored as `EdgeIndex` ([#10921](https://github.com/pyg-team/pytorch_geometric/pull/10921))
 
 - Fixed `HashTensor` string keys with `xxhash>=4.0` ([#10779](https://github.com/pyg-team/pytorch_geometric/pull/10779))
 
