@@ -42,7 +42,7 @@ class GATv2Conv(MessagePassing):
 
     .. math::
         \mathbf{x}^{\prime}_i = \sum_{j \in \mathcal{N}(i) \cup \{ i \}}
-        \alpha_{i,j}\mathbf{\Theta}_{t}\mathbf{x}_{j},
+        \alpha_{i,j}\mathbf{\Theta}_{s}\mathbf{x}_{j},
 
     where the attention coefficients :math:`\alpha_{i,j}` are computed as
 
@@ -50,11 +50,11 @@ class GATv2Conv(MessagePassing):
         \alpha_{i,j} =
         \frac{
         \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(
-        \mathbf{\Theta}_{s} \mathbf{x}_i + \mathbf{\Theta}_{t} \mathbf{x}_j
+        \mathbf{\Theta}_{s} \mathbf{x}_j + \mathbf{\Theta}_{t} \mathbf{x}_i
         \right)\right)}
         {\sum_{k \in \mathcal{N}(i) \cup \{ i \}}
         \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(
-        \mathbf{\Theta}_{s} \mathbf{x}_i + \mathbf{\Theta}_{t} \mathbf{x}_k
+        \mathbf{\Theta}_{s} \mathbf{x}_k + \mathbf{\Theta}_{t} \mathbf{x}_i
         \right)\right)}.
 
     If the graph has multi-dimensional edge features :math:`\mathbf{e}_{i,j}`,
@@ -64,14 +64,14 @@ class GATv2Conv(MessagePassing):
         \alpha_{i,j} =
         \frac{
         \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(
-        \mathbf{\Theta}_{s} \mathbf{x}_i
-        + \mathbf{\Theta}_{t} \mathbf{x}_j
+        \mathbf{\Theta}_{s} \mathbf{x}_j
+        + \mathbf{\Theta}_{t} \mathbf{x}_i
         + \mathbf{\Theta}_{e} \mathbf{e}_{i,j}
         \right)\right)}
         {\sum_{k \in \mathcal{N}(i) \cup \{ i \}}
         \exp\left(\mathbf{a}^{\top}\mathrm{LeakyReLU}\left(
-        \mathbf{\Theta}_{s} \mathbf{x}_i
-        + \mathbf{\Theta}_{t} \mathbf{x}_k
+        \mathbf{\Theta}_{s} \mathbf{x}_k
+        + \mathbf{\Theta}_{t} \mathbf{x}_i
         + \mathbf{\Theta}_{e} \mathbf{e}_{i,k}]
         \right)\right)}.
 
