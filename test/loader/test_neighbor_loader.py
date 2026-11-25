@@ -309,6 +309,50 @@ def test_hetero_neighbor_loader_basic(subgraph_type, dtype):
         assert not batch.has_isolated_nodes()
 
 
+@onlyNeighborSampler
+@pytest.mark.parametrize('sort_order', [None, 'row', 'col'])
+def test_neighbor_loader_with_edge_index(sort_order):
+    edge_index = EdgeIndex(
+        [[3, 1, 0, 2, 1, 4], [4, 3, 1, 3, 2, 0]],
+        sparse_size=(5, 5),
+    )
+    if sort_order is not None:
+        edge_index = edge_index.sort_by(sort_order).values
+
+    def sample_homo(edge_index):
+        data = Data(edge_index=edge_index, num_nodes=5)
+        loader = NeighborLoader(data, num_neighbors=[-1, -1], batch_size=2)
+        return next(iter(loader))
+
+    def sample_hetero(edge_index):
+        data = HeteroData()
+        data['paper'].num_nodes = 5
+        data['paper', 'paper'].edge_index = edge_index
+        loader = NeighborLoader(
+            data,
+            num_neighbors=[-1, -1],
+            input_nodes='paper',
+            batch_size=2,
+        )
+        batch = next(iter(loader))
+        return batch['paper'], batch['paper', 'paper']
+
+    # Full neighborhoods are deterministic, so sampling from an `EdgeIndex`
+    # needs to match sampling from the plain tensor it wraps:
+    batch = sample_homo(edge_index)
+    expected = sample_homo(edge_index.as_tensor())
+    assert batch.n_id.tolist() == expected.n_id.tolist()
+    assert batch.e_id.tolist() == expected.e_id.tolist()
+    assert batch.edge_index.tolist() == expected.edge_index.tolist()
+
+    node, edge = sample_hetero(edge_index)
+    expected_node, expected_edge = sample_hetero(edge_index.as_tensor())
+    assert node.n_id.tolist() == expected_node.n_id.tolist()
+    assert edge.e_id.tolist() == expected_edge.e_id.tolist()
+    assert edge.edge_index.tolist() == expected_edge.edge_index.tolist()
+    assert edge.edge_index.size(1) > 0
+
+
 @pytest.mark.dataset
 @onlyNeighborSampler
 @pytest.mark.parametrize('subgraph_type', SUBGRAPH_TYPES)
