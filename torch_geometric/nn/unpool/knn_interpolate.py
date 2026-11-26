@@ -35,13 +35,15 @@ def knn_interpolate(x: torch.Tensor, pos_x: torch.Tensor, pos_y: torch.Tensor,
             each node from :math:`\mathbf{X}` to a specific example.
             (default: :obj:`None`)
         batch_y (torch.Tensor, optional): Batch vector
-            :math:`\mathbf{b_y} \in {\{ 0, \ldots, B-1\}}^N`, which assigns
+            :math:`\mathbf{b_y} \in {\{ 0, \ldots, B-1\}}^M`, which assigns
             each node from :math:`\mathbf{Y}` to a specific example.
             (default: :obj:`None`)
         k (int, optional): Number of neighbors. (default: :obj:`3`)
         num_workers (int, optional): Number of workers to use for computation.
             Has no effect in case :obj:`batch_x` or :obj:`batch_y` is not
             :obj:`None`, or the input lies on the GPU. (default: :obj:`1`)
+
+    :rtype: :class:`torch.Tensor`
     """
     with torch.no_grad():
         assign_index = knn(pos_x, pos_y, k, batch_x=batch_x, batch_y=batch_y,
