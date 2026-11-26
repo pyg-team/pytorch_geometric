@@ -333,6 +333,30 @@ def test_hetero_data_subgraph():
     assert out['paper', 'paper'].edge_attr.size() == (4, 8)
 
 
+def test_hetero_data_subgraph_edge_attr_with_nonzero_cat_dim():
+    data = HeteroData()
+    data['paper'].num_nodes = 3
+    data['paper', 'cites', 'paper'].edge_index = torch.tensor([
+        [0, 1, 2],
+        [1, 2, 0],
+    ])
+    data['paper', 'cites', 'paper'].pair_index = torch.tensor([
+        [10, 11, 12],
+        [20, 21, 22],
+    ])
+
+    out = data.subgraph({'paper': torch.tensor([0, 1])})
+
+    assert torch.equal(
+        out['paper', 'cites', 'paper'].edge_index,
+        torch.tensor([[0], [1]]),
+    )
+    assert torch.equal(
+        out['paper', 'cites', 'paper'].pair_index,
+        torch.tensor([[10], [20]]),
+    )
+
+
 def test_hetero_data_empty_subgraph():
     data = HeteroData()
     data.num_node_types = 3
