@@ -229,7 +229,9 @@ def group_argsort(
 
     # Normalize `src` to range [0, 1]:
     src = src - src.min()
-    src = src / src.max()
+    # Avoid dividing by zero when all values are equal:
+    src_max = src.max()
+    src = src / src_max.masked_fill(src_max == 0, 1)
 
     # Compute `grouped_argsort`:
     src = src - 2 * index if descending else src + 2 * index
