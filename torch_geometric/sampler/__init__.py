@@ -5,6 +5,7 @@ from .base import (BaseSampler, NodeSamplerInput, EdgeSamplerInput,
                    NumNeighbors)
 from .neighbor_sampler import NeighborSampler, BidirectionalNeighborSampler
 from .hgt_sampler import HGTSampler
+from .database_sampler import DatabaseSampler
 
 __all__ = classes = [
     'BaseSampler',
@@ -17,4 +18,5 @@ __all__ = classes = [
     'NeighborSampler',
     'BidirectionalNeighborSampler',
     'HGTSampler',
+    'DatabaseSampler',
 ]

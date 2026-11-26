@@ -29,6 +29,11 @@ from .decorators import (
 from .asserts import assert_module
 from .feature_store import MyFeatureStore
 from .graph_store import MyGraphStore
+from .database_stores import (
+    FakeDatabaseFeatureStore,
+    FakeDatabaseGraphStore,
+    FakeDatabaseSampler,
+)
 from .data import (
     get_random_edge_index,
     get_random_tensor_frame,
@@ -60,6 +65,9 @@ __all__ = [
     'assert_module',
     'MyFeatureStore',
     'MyGraphStore',
+    'FakeDatabaseFeatureStore',
+    'FakeDatabaseGraphStore',
+    'FakeDatabaseSampler',
     'get_random_edge_index',
     'get_random_tensor_frame',
     'FakeHeteroDataset',
