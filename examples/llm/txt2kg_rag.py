@@ -151,6 +151,11 @@ def parse_args():
         '--use_x_percent_corpus', default=100.0, type=float,
         help="Debug flag that allows user to only use a random percentage "
         "of available knowledge base corpus for RAG")
+    parser.add_argument(
+        '--max_test_samples', default=0, type=int,
+        help="If > 0, cap the number of test samples used for evaluation. "
+        "Useful for smoke tests where the LLMJudge loop "
+        "would otherwise dominate runtime.")
     args = parser.parse_args()
 
     assert args.NV_NIM_KEY, "NVIDIA API key is required for TXT2KG and eval"
@@ -786,7 +791,10 @@ if __name__ == '__main__':
     val_loader = DataLoader(data_lists["validation"],
                             batch_size=eval_batch_size, drop_last=False,
                             pin_memory=True, shuffle=False)
-    test_loader = DataLoader(data_lists["test"], batch_size=eval_batch_size,
+    test_data = data_lists["test"]
+    if args.max_test_samples > 0:
+        test_data = test_data[:args.max_test_samples]
+    test_loader = DataLoader(test_data, batch_size=eval_batch_size,
                              drop_last=False, pin_memory=True, shuffle=False)
 
     model = train(args, train_loader, val_loader)

@@ -98,6 +98,18 @@ def test_string_key(device):
 
 @withCUDA
 @withHashTensor
+def test_utf8_and_bytes_keys(device: torch.device) -> None:
+    keys = ['café', '日本語', '']
+    encoded = [key.encode('utf-8') for key in keys]
+    tensor = HashTensor(keys, device=device)
+    expected = torch.arange(3, device=device)
+    assert tensor[encoded].equal(expected)
+    assert HashTensor(encoded, device=device)[keys].equal(expected)
+    assert tensor[['missing']].item() == -1
+
+
+@withCUDA
+@withHashTensor
 def test_clone(device):
     key = torch.tensor([2, 1, 0], device=device)
     value = torch.randn(key.size(0), 2, device=device)

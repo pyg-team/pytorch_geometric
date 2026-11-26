@@ -457,3 +457,58 @@ def test_extract_relevant_triples_cloud_non_retryable(monkeypatch):
         model._extract_relevant_triples("Some text")
 
     assert len(calls) == 1
+
+
+@pytest.mark.parametrize('model', [
+    'nvidia/nemotron-3.5-lightning-30b-a3b',
+    'meta/llama-3.1-70b-instruct',
+])
+def test_cloud_extraction_request_mode(monkeypatch, model):
+    """Keep bounded extraction parseable for the default-thinking NIM model."""
+    requests = []
+
+    def create(**kwargs):
+        """Record the provider request and return normal streamed triples."""
+        requests.append(kwargs)
+        return [
+            types.SimpleNamespace(choices=[
+                types.SimpleNamespace(delta=types.SimpleNamespace(
+                    content=part))
+            ]) for part in
+            [None, '(Paris, capital of, France)', '\n(France, in, Europe)']
+        ]
+
+    client = types.SimpleNamespace(chat=types.SimpleNamespace(
+        completions=types.SimpleNamespace(create=create)))
+    monkeypatch.setattr(txt2kg, 'CLIENT', client, raising=False)
+    monkeypatch.setattr(txt2kg, 'CLIENT_INITD', True)
+    response = txt2kg._chunk_to_triples_str_cloud('Paris is in France.',
+                                                  NIM_MODEL=model)
+    assert len(_parse_n_check_triples(response)) == 2
+    assert requests[0]['max_tokens'] == 1024
+    if 'nemotron-3.5-lightning' in model:
+        assert requests[0]['extra_body']['chat_template_kwargs'] == {
+            'enable_thinking': False,
+        }
+    else:
+        assert 'extra_body' not in requests[0]
+
+
+def test_cloud_extraction_empty_answer_fails(monkeypatch):
+    """Reject reasoning-only output before it becomes an empty graph."""
+    def create(**kwargs):
+        """Return a provider stream with no answer tokens."""
+        return [
+            types.SimpleNamespace(choices=[
+                types.SimpleNamespace(delta=types.SimpleNamespace(
+                    content=None))
+            ])
+        ]
+
+    monkeypatch.setattr(
+        txt2kg, 'CLIENT',
+        types.SimpleNamespace(chat=types.SimpleNamespace(
+            completions=types.SimpleNamespace(create=create))), raising=False)
+    monkeypatch.setattr(txt2kg, 'CLIENT_INITD', True)
+    with pytest.raises(RuntimeError, match='returned no answer content'):
+        txt2kg._chunk_to_triples_str_cloud('Paris is in France.')
