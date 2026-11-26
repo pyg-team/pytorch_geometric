@@ -67,5 +67,5 @@ def unbatch_edge_index(
 
     edge_batch = batch[edge_index[0]]
     edge_index = edge_index - ptr[edge_batch]
-    sizes = degree(edge_batch, batch_size, dtype=torch.long).cpu().tolist()
+    sizes = degree(edge_batch, deg.numel(), dtype=torch.long).cpu().tolist()
     return edge_index.split(sizes, dim=1)
