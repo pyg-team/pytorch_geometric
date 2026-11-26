@@ -1,3 +1,4 @@
+import copy
 import os.path as osp
 
 import numpy as np
@@ -106,6 +107,24 @@ def test_batch_basic():
     assert data_list[2].num_nodes == 4
 
     torch_geometric.set_debug(True)
+
+
+def test_batch_deepcopy_isolates_metadata():
+    batch = Batch.from_data_list([
+        Data(x=torch.randn(2, 1)),
+        Data(x=torch.randn(3, 1)),
+    ])
+    out = copy.deepcopy(batch)
+
+    assert id(out._slice_dict) != id(batch._slice_dict)
+    assert id(out._inc_dict) != id(batch._inc_dict)
+    assert id(out._slice_dict['x']) != id(batch._slice_dict['x'])
+
+    out._slice_dict['x'][0] = 123
+    out._inc_dict['x'][0] = 456
+    assert batch._slice_dict['x'][0] == 0
+    assert batch._inc_dict['x'][0] == 0
+    assert torch.equal(out.get_example(1).x, batch.get_example(1).x)
 
 
 def test_index():

@@ -143,8 +143,13 @@ class BaseStorage(MutableMapping):
     def __deepcopy__(self, memo: Optional[Dict[int, Any]]) -> Self:
         out = self.__class__.__new__(self.__class__)
         for key, value in self.__dict__.items():
-            out.__dict__[key] = value
-        out._mapping = copy.deepcopy(out._mapping, memo)
+            if key == '_mapping':
+                continue
+            # Keep the parent weak reference intact; owning data objects
+            # rebind it after copying their stores.
+            out.__dict__[key] = (value if key == '_parent' else copy.deepcopy(
+                value, memo))
+        out._mapping = copy.deepcopy(self._mapping, memo)
         return out
 
     def __getstate__(self) -> Dict[str, Any]:
