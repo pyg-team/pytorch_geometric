@@ -52,12 +52,14 @@ def maybe_num_nodes_dict(
 
         key = keys[0]
         if key not in found_types:
-            N = int(edge_index[0].max() + 1)
+            N = int(edge_index[0].max() +
+                    1) if edge_index[0].numel() > 0 else 0
             num_nodes_dict[key] = max(N, num_nodes_dict.get(key, N))
 
         key = keys[-1]
         if key not in found_types:
-            N = int(edge_index[1].max() + 1)
+            N = int(edge_index[1].max() +
+                    1) if edge_index[1].numel() > 0 else 0
             num_nodes_dict[key] = max(N, num_nodes_dict.get(key, N))
 
     return num_nodes_dict
