@@ -18,7 +18,10 @@ class MetaPath2Vec(torch.nn.Module):
     <https://ericdongyx.github.io/papers/
     KDD17-dong-chawla-swami-metapath2vec.pdf>`_ paper where random walks based
     on a given :obj:`metapath` are sampled in a heterogeneous graph, and node
-    embeddings are learned via negative sampling optimization.
+    embeddings are learned via negative sampling optimization. Positive random
+    walks follow edges along the :obj:`metapath`, while negative random walks
+    sample each node after the starting node independently and uniformly from
+    all nodes of the node type at the corresponding :obj:`metapath` position.
 
     .. note::
 
