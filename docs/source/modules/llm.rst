@@ -1,5 +1,5 @@
 torch_geometric.llm
-=======================
+===================
 
 .. currentmodule:: torch_geometric.llm
 
