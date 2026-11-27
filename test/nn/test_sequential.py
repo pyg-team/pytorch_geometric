@@ -174,3 +174,39 @@ def test_sequential_to_hetero():
     assert isinstance(out_dict, dict) and len(out_dict) == 2
     assert out_dict['paper'].size() == (100, 64)
     assert out_dict['author'].size() == (100, 64)
+
+
+def test_sequential_no_caller_reexecution():
+    # Regression test for #10393: instantiating `Sequential` from a script
+    # whose filename is a valid Python identifier used to re-execute the
+    # script, because the generated jit template emitted
+    # `from <filename> import *` (which re-imports the `__main__` module).
+    import os
+    import subprocess
+    import sys
+    import tempfile
+    from pathlib import Path
+
+    import torch_geometric
+
+    root = os.path.dirname(
+        os.path.dirname(os.path.abspath(torch_geometric.__file__)))
+    env = dict(os.environ)
+    env['PYTHONPATH'] = root + os.pathsep + env.get('PYTHONPATH', '')
+
+    with tempfile.TemporaryDirectory() as tmp:
+        script = Path(tmp) / 'sequential_caller.py'
+        script.write_text("import torch_geometric.nn as pyg\n"
+                          "print('before')\n"
+                          "pyg.Sequential('x', [(lambda x: x, 'x -> y')])\n"
+                          "print('after')\n")
+
+        result = subprocess.run(
+            [sys.executable, str(script)],
+            capture_output=True,
+            text=True,
+            check=True,
+            env=env,
+        )
+
+    assert result.stdout.strip().splitlines() == ['before', 'after']
