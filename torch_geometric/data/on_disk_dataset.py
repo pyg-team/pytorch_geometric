@@ -1,6 +1,7 @@
 import os
 from typing import Any, Callable, Iterable, List, Optional, Sequence, Union
 
+import numpy as np
 from torch import Tensor
 
 from torch_geometric.data import Database, RocksDatabase, SQLiteDatabase
@@ -143,10 +144,31 @@ class OnDiskDataset(Dataset):
 
     def multi_get(
         self,
-        indices: Union[Iterable[int], Tensor, slice, range],
+        indices: Union[Iterable[int], Tensor, np.ndarray, slice, range],
         batch_size: Optional[int] = None,
     ) -> List[BaseData]:
         r"""Gets a list of data objects from the specified indices."""
+        if isinstance(indices, slice):
+            indices = self.indices()[indices]
+            if isinstance(indices, (Tensor, np.ndarray)):
+                indices = indices.tolist()
+            elif not isinstance(indices, range) and any(
+                    type(i) is not int for i in indices):
+                indices = [int(i) for i in indices]
+        else:
+            if isinstance(indices, (Tensor, np.ndarray)):
+                indices = indices.tolist()
+            elif not isinstance(indices, (Sequence, range)):
+                indices = [int(i) for i in indices]
+
+            if self._indices is not None:
+                indices = [int(self._indices[i]) for i in indices]
+            elif (len(indices) > 0 and (indices[0] < 0 or indices[-1] < 0)
+                  if isinstance(indices, range) else any(
+                      i < 0 or type(i) is not int for i in indices)):
+                dataset_indices = self.indices()
+                indices = [int(dataset_indices[i]) for i in indices]
+
         if len(indices) == 1:
             data_list = [self.db.get(indices[0])]
         else:
