@@ -157,3 +157,14 @@ def test_random_node_split_on_hetero_data():
     assert data['paper'].train_mask.sum() == 500
     assert data['paper'].val_mask.sum() == 500
     assert data['paper'].test_mask.sum() == 1000
+
+
+def test_random_node_split_missing_labels_raises():
+    data = HeteroData()
+    data['user'].x = torch.randn(100, 16)
+    data['item'].x = torch.randn(200, 16)
+
+    for split in ['test_rest', 'random']:
+        transform = RandomNodeSplit(split=split)
+        with pytest.raises(ValueError, match="requires ground-truth labels"):
+            transform(data)
