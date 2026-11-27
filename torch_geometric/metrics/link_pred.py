@@ -553,12 +553,13 @@ class LinkPredNDCG(LinkPredMetric):
 
     def _compute(self, data: LinkPredMetricData) -> Tensor:
         pred_rel_mat = data.pred_rel_mat[:, :self.k]
-        discount = self.discount[:pred_rel_mat.size(1)].view(1, -1)
+        device = pred_rel_mat.device
+        discount = self.discount[:pred_rel_mat.size(1)].view(1, -1).to(device)
         dcg = (pred_rel_mat / discount).sum(dim=-1)
 
         if not self.weighted:
             assert self.idcg is not None
-            idcg = self.idcg[data.label_count.clamp(max=self.k)]
+            idcg = self.idcg.to(device)[data.label_count.clamp(max=self.k)]
         else:
             assert data.edge_label_weight is not None
             pos = data.edge_label_weight_pos
@@ -567,7 +568,7 @@ class LinkPredNDCG(LinkPredMetric):
             discount = torch.cat([
                 self.discount,
                 self.discount.new_full((1, ), fill_value=float('inf')),
-            ])
+            ]).to(device)
             discount = discount[pos.clamp(max=self.k)]
 
             idcg = scatter(  # Apply discount and aggregate:
