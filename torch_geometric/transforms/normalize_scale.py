@@ -1,3 +1,5 @@
+import torch
+
 from torch_geometric.data import Data
 from torch_geometric.data.datapipes import functional_transform
 from torch_geometric.transforms import BaseTransform, Center
@@ -15,7 +17,10 @@ class NormalizeScale(BaseTransform):
         data = self.center(data)
 
         assert data.pos is not None
-        scale = (1.0 / data.pos.abs().max()) * 0.999999
-        data.pos = data.pos * scale
+        if data.pos.numel() > 0:
+            max_abs = data.pos.abs().max()
+            max_abs = torch.where(max_abs > 0, max_abs,
+                                  torch.ones_like(max_abs))
+            data.pos = data.pos * ((1.0 / max_abs) * 0.999999)
 
         return data
