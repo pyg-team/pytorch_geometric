@@ -34,7 +34,7 @@ from .sparse import (dense_to_sparse, is_sparse, is_torch_sparse_tensor,
                      to_torch_csc_tensor, to_torch_sparse_tensor,
                      to_edge_index)
 from ._spmm import spmm
-from ._unbatch import unbatch, unbatch_edge_index
+from ._unbatch import unbatch, unbatch_edge_index, to_batch_edge_index
 from ._one_hot import one_hot
 from ._normalized_cut import normalized_cut
 from ._grid import grid
@@ -115,6 +115,7 @@ __all__ = [
     'spmm',
     'unbatch',
     'unbatch_edge_index',
+    'to_batch_edge_index',
     'one_hot',
     'normalized_cut',
     'grid',
