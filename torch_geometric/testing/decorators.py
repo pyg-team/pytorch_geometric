@@ -121,6 +121,15 @@ def onlyXPU(func: Callable) -> Callable:
     )(func)
 
 
+def onlyNPU(func: Callable) -> Callable:
+    r"""A decorator to skip tests if NPU is not found."""
+    import pytest
+    return pytest.mark.skipif(
+        not torch_geometric.is_npu_available(),
+        reason="NPU not available",
+    )(func)
+
+
 def onlyOnline(func: Callable) -> Callable:
     r"""A decorator to skip tests if there exists no connection to the
     internet.
@@ -229,6 +238,9 @@ def withDevice(func: Callable) -> Callable:
 
     if torch_geometric.is_xpu_available():
         devices.append(pytest.param(torch.device('xpu:0'), id='xpu'))
+
+    if torch_geometric.is_npu_available():
+        devices.append(pytest.param(torch.device('npu:0'), id='npu'))
 
     # Additional devices can be registered through environment variables:
     device = os.getenv('TORCH_DEVICE')
