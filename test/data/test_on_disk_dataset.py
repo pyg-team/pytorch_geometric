@@ -1,9 +1,11 @@
 import os.path as osp
 from typing import Any, Dict
 
+import numpy as np
 import torch
 
 from torch_geometric.data import Data, OnDiskDataset
+from torch_geometric.loader import DataLoader
 from torch_geometric.testing import withPackage
 
 
@@ -107,5 +109,56 @@ def test_custom_schema(tmp_path):
         assert torch.equal(out.x, data.x)
         assert torch.equal(out.edge_index, data.edge_index)
         assert out.num_nodes == data.num_nodes
+
+    dataset.close()
+
+
+@withPackage('sqlite3')
+def test_on_disk_dataset_indices_and_dataloader(tmp_path):
+    dataset = OnDiskDataset(tmp_path)
+    data_list = [Data(x=torch.tensor([[float(i)]])) for i in range(6)]
+    dataset.extend(data_list)
+
+    subset = dataset.index_select([2, 4, 5])
+    assert len(subset) == 3
+
+    # `get()` keeps raw DB index semantics while `__getitem__` maps indices:
+    assert torch.equal(subset.get(0).x, data_list[0].x)
+    assert torch.equal(subset[0].x, data_list[2].x)
+
+    # `multi_get()` and `__getitems__()` respect `_indices`:
+    for out, expected in zip(subset.multi_get([0, 2]),
+                             [data_list[2], data_list[5]]):
+        assert torch.equal(out.x, expected.x)
+
+    assert torch.equal(subset.multi_get([1])[0].x, data_list[4].x)
+    assert torch.equal(subset.multi_get([-1])[0].x, data_list[5].x)
+    assert torch.equal(subset.multi_get(slice(1, 3))[0].x, data_list[4].x)
+    assert torch.equal(subset.multi_get(torch.tensor([0, 2]))[1].x,
+                       data_list[5].x)
+    assert torch.equal(subset.multi_get(np.array([0, 2]))[1].x, data_list[5].x)
+    assert torch.equal(dataset.multi_get(np.array([1]))[0].x, data_list[1].x)
+    assert torch.equal(dataset.multi_get(np.array([1, 4]))[1].x,
+                       data_list[4].x)
+    assert torch.equal(subset.__getitems__([1, 2])[0].x, data_list[4].x)
+
+    loader = DataLoader(subset, batch_size=2, shuffle=False)
+    batches = list(loader)
+    assert len(batches) == 2
+    assert torch.equal(batches[0].x, torch.tensor([[2.0], [4.0]]))
+    assert torch.equal(batches[1].x, torch.tensor([[5.0]]))
+
+    shuffled, perm = dataset.shuffle(return_perm=True)
+    shuffled_x = torch.cat(
+        [b.x for b in DataLoader(shuffled, batch_size=2, shuffle=False)],
+        dim=0,
+    ).squeeze(-1)
+    assert torch.equal(shuffled_x, perm.to(torch.float))
+
+    # Also verify direct `_indices` assignment (e.g., split-based datasets):
+    dataset._indices = [3, 1]
+    loader = DataLoader(dataset, batch_size=2, shuffle=False)
+    batch = next(iter(loader))
+    assert torch.equal(batch.x, torch.tensor([[3.0], [1.0]]))
 
     dataset.close()
