@@ -27,6 +27,21 @@ class ResGatedGraphConv(MessagePassing):
 
     with :math:`\sigma` denoting the sigmoid function.
 
+    In case edge features :math:`\mathbf{e}_{j,i}` of dimensionality
+    :obj:`edge_dim` are given, they are concatenated to the node features
+    before computing the key, query, and value projections, *i.e.*
+
+    .. math::
+        \eta_{i,j} = \sigma(\mathbf{W}_3 [\mathbf{x}_i \Vert \mathbf{e}_{j,i}]
+        + \mathbf{W}_4 [\mathbf{x}_j \Vert \mathbf{e}_{j,i}])
+
+    and the transformed neighbor features become
+
+    .. math::
+        \mathbf{W}_2 [\mathbf{x}_j \Vert \mathbf{e}_{j,i}]
+
+    where :math:`[\cdot \Vert \cdot]` denotes concatenation.
+
     Args:
         in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
             derive the size from the first input(s) to the forward method.
@@ -50,7 +65,8 @@ class ResGatedGraphConv(MessagePassing):
           node features :math:`(|\mathcal{V}|, F_{in})` or
           :math:`((|\mathcal{V_s}|, F_{s}), (|\mathcal{V_t}|, F_{t}))`
           if bipartite,
-          edge indices :math:`(2, |\mathcal{E}|)`
+          edge indices :math:`(2, |\mathcal{E}|)`,
+          edge features :math:`(|\mathcal{E}|, D)` *(optional)*
         - **outputs:** node features :math:`(|\mathcal{V}|, F_{out})` or
           :math:`(|\mathcal{V_t}|, F_{out})` if bipartite
     """
