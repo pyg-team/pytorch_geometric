@@ -32,5 +32,9 @@ def normalized_cut(
     row, col = edge_index[0], edge_index[1]
     deg = 1. / degree(col, num_nodes, edge_attr.dtype)
     deg = deg[row] + deg[col]
+    # ``deg`` has shape ``(E,)`` but must align with the edge axis (dim 0) of
+    # ``edge_attr``. Reshape it to ``(E, 1, ...)`` so multi-dimensional edge
+    # features are scaled along edges rather than broadcast along the last axis.
+    deg = deg.view(deg.size(0), *([1] * (edge_attr.dim() - 1)))
     cut = edge_attr * deg
     return cut
