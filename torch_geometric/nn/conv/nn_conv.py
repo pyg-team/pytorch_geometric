@@ -26,7 +26,8 @@ class NNConv(MessagePassing):
         h_{\mathbf{\Theta}}(\mathbf{e}_{i,j}),
 
     where :math:`h_{\mathbf{\Theta}}` denotes a neural network, *.i.e.*
-    a MLP.
+    a MLP. The term :math:`\mathbf{\Theta} \mathbf{x}_i` denotes the
+    optional root-node linear transform controlled by :obj:`root_weight`.
 
     Args:
         in_channels (int or tuple): Size of each input sample, or :obj:`-1` to
