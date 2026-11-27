@@ -37,6 +37,11 @@ class LRGBDataset(InMemoryDataset):
     | :obj:`Peptides-struct` | Chemistry         | Graph Regression     |
     +------------------------+-------------------+----------------------+
 
+    .. note::
+        The shipped :obj:`Peptides-func` and :obj:`Peptides-struct` splits are
+        stratified random splits and apply no sequence-identity or homology
+        control.
+
     Args:
         root (str): Root directory where the dataset should be saved.
         name (str): The name of the dataset (one of :obj:`"PascalVOC-SP"`,
