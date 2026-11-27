@@ -134,12 +134,12 @@ def test_on_disk_dataset_indices_and_dataloader(tmp_path):
     assert torch.equal(subset.multi_get([1])[0].x, data_list[4].x)
     assert torch.equal(subset.multi_get([-1])[0].x, data_list[5].x)
     assert torch.equal(subset.multi_get(slice(1, 3))[0].x, data_list[4].x)
-    assert torch.equal(subset.multi_get(torch.tensor([0, 2]))[1].x,
-                       data_list[5].x)
+    assert torch.equal(
+        subset.multi_get(torch.tensor([0, 2]))[1].x, data_list[5].x)
     assert torch.equal(subset.multi_get(np.array([0, 2]))[1].x, data_list[5].x)
     assert torch.equal(dataset.multi_get(np.array([1]))[0].x, data_list[1].x)
-    assert torch.equal(dataset.multi_get(np.array([1, 4]))[1].x,
-                       data_list[4].x)
+    assert torch.equal(
+        dataset.multi_get(np.array([1, 4]))[1].x, data_list[4].x)
     assert torch.equal(subset.__getitems__([1, 2])[0].x, data_list[4].x)
 
     loader = DataLoader(subset, batch_size=2, shuffle=False)
