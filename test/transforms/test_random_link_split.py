@@ -332,3 +332,22 @@ def test_random_link_split_on_dataset(get_dataset):
     assert isinstance(test_dataset[0], Data)
     assert test_dataset[0].edge_label.min() == 0.0
     assert test_dataset[0].edge_label.max() == 1.0
+
+
+def test_random_link_split_undirected_overlap():
+    # Tests that negative samples do not leak across val/test when undirected
+    edge_index = to_undirected(torch.tensor([[0, 1, 2], [1, 2, 3]]))
+    data = Data(edge_index=edge_index, num_nodes=4)
+
+    transform = RandomLinkSplit(num_val=1, num_test=1, is_undirected=True,
+                                add_negative_train_samples=False)
+    train_data, val_data, test_data = transform(data)
+
+    val_neg = val_data.edge_label_index[:, val_data.edge_label == 0]
+    test_neg = test_data.edge_label_index[:, test_data.edge_label == 0]
+
+    val_neg_set = set(map(tuple, val_neg.t().tolist()))
+    test_neg_set = set(map(tuple, test_neg.t().tolist()))
+    test_neg_rev_set = {(v, u) for u, v in test_neg_set}
+
+    assert not val_neg_set.intersection(test_neg_rev_set)
