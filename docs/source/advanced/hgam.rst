@@ -13,10 +13,10 @@ It works seamlessly across several models, basically reducing the amount of comp
 Crucially, HGAM recognizes that the computation of the final node representations is only necessary for the seed nodes (which are the real target of the batch computation).
 Thus, HGAM allows for every layer of the GNN to compute only the representations of the nodes that are necessary for that layer, leading to a reduction of the computation and a speed up of the training process that grows with the depth of the GNN being considered.
 In practice, this is achieved by **trimming the adjacency matrix** and the various **features matrices** as the computation proceeds throughout the GNN layers.
-This is in line with the fact that in order to compute the representation for the seed/target nodes (from which the mini-batch was build via sampling methods), the depth of the relevant neighborhood shrinks as we proceed through the layers of the GNN.
+This is in line with the fact that in order to compute the representation for the seed/target nodes (from which the mini-batch was built via sampling methods), the depth of the relevant neighborhood shrinks as we proceed through the layers of the GNN.
 The trimming applied by HGAM is possible as the nodes of the subgraph built via sampling are ordered according to a *Breadth First Search (BFS)* strategy, meaning that the rows and columns of the adjacency matrix refer to a node ordering that starts with the seed nodes (in any order) followed by the 1-hop neighbors of the first seed node, followed by the 1-hop sampled neighbors of the second seed node and so on.
 The BFS ordering of nodes in a mini-batch allows for incremental trimming (reduction) of the adjacency matrix of the subgraph.
-This progressive trimming is done in a computational convenient manner thanks to the BFS ordering that causes the nodes more distant from the seed nodes to be appear farther away in the list of ordered nodes.
+This progressive trimming is done in a computational convenient manner thanks to the BFS ordering that causes the nodes more distant from the seed nodes to appear farther away in the list of ordered nodes.
 
 To support this trimming and implement it effectively, the :class:`~torch_geometric.loader.NeighborLoader` implementation in :pyg:`PyG` and in :pyg:`pyg-lib` additionally return the number of nodes and edges sampled in hop.
 This information allows for fast manipulation of the adjacency matrix, which in turns lead to great computation reduction.
