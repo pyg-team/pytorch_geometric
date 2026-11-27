@@ -108,6 +108,20 @@ def test_group_argsort(num_groups, descending, device):
     assert out.numel() == 0
 
 
+@withDevice
+def test_group_argsort_constant_src(device):
+    # Regression: a constant `src` (all values equal) previously normalized to
+    # NaN (`src / src.max()` with `max == 0`), corrupting the group order for
+    # unsorted `index`.
+    src = torch.full((6, ), 3.0, device=device)
+    index = torch.tensor([1, 0, 1, 0, 2, 2], device=device)
+
+    out = group_argsort(src, index)
+
+    expected = torch.tensor([0, 0, 1, 1, 0, 1], device=device)
+    assert torch.equal(out, expected)
+
+
 @withCUDA
 def test_scatter_argmax(device):
     src = torch.arange(5, device=device)
