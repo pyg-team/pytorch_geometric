@@ -31,3 +31,9 @@ def test_homophily():
     if torch_geometric.typing.WITH_TORCH_SPARSE:
         assert pytest.approx(homophily(adj, y, method=method)) == 0.1999999
     assert homophily(edge_index, y, batch, method).tolist() == [0., 0.]
+
+    method = 'adjusted'
+    assert pytest.approx(homophily(edge_index, y, method=method)) == -0.1428571
+    if torch_geometric.typing.WITH_TORCH_SPARSE:
+        assert pytest.approx(homophily(adj, y, method=method)) == -0.1428571
+    assert homophily(edge_index, y, batch, method).tolist() == [1., -1.]
